@@ -1,4 +1,4 @@
-name: Criterion testing of minishell project
+name: Criterion testing of webserv project
 
 on:
   push:

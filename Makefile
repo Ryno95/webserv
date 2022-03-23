@@ -23,6 +23,7 @@ re: fclean all
 clean:
 	rm -f $(NAME)
 	rm -f *.o
+	rm -f $(TEST_NAME)
 
 fclean: clean
 
