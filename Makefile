@@ -14,12 +14,8 @@ $(NAME):
 test: $(TEST_FILES)
 	clang++ -o test $(TEST_FILES) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
 
-rhino_test: $(TEST_FILES)
-	clang++ -o test $(TEST_FILES) -lcriterion -L /Users/rmeiboom/.brew/lib -I /Users/rmeiboom/.brew/include -std=c++11 -o $(TEST_NAME)
-	./unit_test
-
-psp_test: $(TEST_FILES)
-	clang++ -o test $(TEST_FILES) -lcriterion -L /Users/pspijkst/.brew/lib -I /Users/pspijkst/.brew/include -std=c++11 -o $(TEST_NAME)
+local_test: $(TEST_FILES)
+	clang++ -o test $(TEST_FILES) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11 -o $(TEST_NAME)
 	./unit_test
 
 re: fclean all
