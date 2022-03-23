@@ -36,6 +36,14 @@ local_test: $(TEST_SRC)
 	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(TEST_CFLAGS) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11
 	./$(TEST_NAME)
 
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJS): | $(OBJ_DIR)
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
 re: fclean all
 
 clean:
