@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Criterion testing of minishell project
 
 on:
   push:
@@ -6,18 +6,25 @@ on:
   pull_request:
     branches: [ main ]
 
+
+  workflow_dispatch:
+
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+# runs on ubuntu because it is WAYYY cheaper (setting up macos seems to take longer and the price is x10 for every second ran..)
+# runs on ubuntu 18.04 becuase there is no package available for ubuntu 20.04 and github does not support ubuntu 21.x (which does have a package.. criterion skipped ubuntu 20?)
+    name: ubuntu 18.04
+    runs-on: ubuntu-18.04
 
     steps:
     - uses: actions/checkout@v2
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+
+# install criterion
+    - name: install criterion
+      run: |
+        sudo add-apt-repository ppa:snaipewastaken/ppa
+        sudo apt-get update
+        sudo apt-get install criterion-dev
+    - name: Run make in tests directory
+      run: make test && ./test
