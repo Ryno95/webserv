@@ -2,8 +2,10 @@ name: Criterion testing of webserv project
 
 on:
   push:
-    branches: [ main ]
-    branches: [ class_architecture ]
+    # branches: [ main ]
+     branches:
+      - main
+      - class_architecture
   pull_request:
     branches: [ main ]
 
