@@ -1,30 +1,56 @@
-NAME=project
-TEST_NAME=unit_test
-CC=clang
-CFLAGS=-Wall -Wextra -Werror
+# Section Settings
 
-TEST_FILES=				\
-	unit_tests/test.cpp	\
+NAME		?=	Webserver.out
+TEST_NAME	=	unit_test
+
+OBJ_DIR		=	objs/
+SRC_DIR		=	srcs/
+INCL_DIR	=	includes/
+TEST_DIR	=	unit_tests/
+
+MAIN		?=	$(SRC_DIR)main.cpp
+CLASSES		=	
+
+OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
+HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
+
+CC			=	clang++
+CFLAGS		=	-Wall -Wextra -pedantic
+TEST_CFLAGS	=	$(CFLAGS) -Werror
+LINKING		=	-I $(INCL_DIR)
+
+TEST_SRC	=	$(TEST_DIR)test.cpp
+
+
+# Section Rules
 
 all: $(NAME)
 
 $(NAME):
 	echo "Hello"
 
-test: $(TEST_FILES)
-	clang++ -o test $(TEST_FILES) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
+test: $(TEST_SRC)
+	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(TEST_CFLAGS) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
 
-local_test: $(TEST_FILES)
-	clang++ -o test $(TEST_FILES) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11 -o $(TEST_NAME)
-	./unit_test
+local_test: $(TEST_SRC)
+	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(TEST_CFLAGS) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11
+	./$(TEST_NAME)
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 re: fclean all
 
 clean:
-	rm -f $(NAME)
-	rm -f *.o
-	rm -f $(TEST_NAME)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
+	rm -f $(TEST_NAME)
+	rm -f $(NAME)
 
-.PHONY: all clean fclean re test rhino_test psp_test
+.PHONY: all clean fclean re test local_test
