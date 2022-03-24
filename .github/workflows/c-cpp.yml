@@ -27,4 +27,4 @@ jobs:
         sudo apt-get update
         sudo apt-get install criterion-dev
     - name: Run make in tests directory
-      run: make test && ./test
+      run: make test && ./unit_test

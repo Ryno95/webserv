@@ -8,7 +8,7 @@ SRC_DIR		=	srcs/
 INCL_DIR	=	includes/
 TEST_DIR	=	unit_tests/
 
-MAIN		=	$(SRC_DIR)main.cpp
+MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
@@ -39,7 +39,7 @@ local_test: $(TEST_SRC)
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJS): | $(OBJ_DIR)
+$(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
