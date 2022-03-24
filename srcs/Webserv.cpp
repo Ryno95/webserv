@@ -29,7 +29,6 @@ Webserv::~Webserv()
 	std::cout << "Destroying Webserv instance with port : " << this->_port << std::endl;
 }
 
-// s_addr might be changed to localhost 127.0.0.1
 void	Webserv::setupSocket()
 {
 	const int			socketSwitch = 1;
