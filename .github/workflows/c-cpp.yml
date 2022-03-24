@@ -1,7 +1,6 @@
 name: Criterion testing of webserv project
 
-on:
-  [ push ]
+on: [ push ]
   pull_request:
     branches: [ main ]
 
