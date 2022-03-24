@@ -9,7 +9,7 @@ INCL_DIR	=	includes/
 TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
-CLASSES		=	
+CLASSES		=	Webserv
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -26,8 +26,8 @@ TEST_SRC	=	$(TEST_DIR)test.cpp
 
 all: $(NAME)
 
-$(NAME):
-	echo "Hello"
+$(NAME): $(OBJS) $(HPPS)
+	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC)
 	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(TEST_CFLAGS) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
@@ -37,7 +37,7 @@ local_test: $(TEST_SRC)
 	./$(TEST_NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
 
 $(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
 
