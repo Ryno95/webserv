@@ -18,6 +18,8 @@ class Webserv
 		~Webserv();
 
 		void run();
+		void handleListener();
+		void handleClients();
 
 	private:
 		void setupSocket();
