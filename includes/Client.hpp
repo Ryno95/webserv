@@ -1,15 +1,19 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 class Client
 {
 public:
-	Client();
+	Client(int fd);
 	~Client();
 
-	void accept();
-	void receiveRequest();
-	void sendResponse();
+	bool recvRequest();
+	bool sendResponse();
 
 private:
+	int _fd;
+	std::string _buffer;
 
 };
