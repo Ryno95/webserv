@@ -4,9 +4,10 @@
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <poll.h>
+#include <strings.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
- #include <unistd.h>
+#include <unistd.h>
 
 #include <defines.hpp>
 #include <Webserv.hpp>
@@ -62,54 +63,28 @@ void	Webserv::setupSocket()
 	this->_listenFd = listenSocket.fd;
 }
 
-void	Webserv::run()
+void	Webserv::handleClients()
 {
-	int		pollRet;
-	pollfd	newClient;
-	int		fdSize;
-	int		receivedBytes;
+	int fdSize, receivedBytes;
 
-	while(true)
+	fdSize = this->_fds.size();
+	for (int i = 1; i < fdSize; ++i) // i = 1, so we skip the listen socket here
 	{
-		pollRet = poll(&this->_fds.front(), this->_fds.size(), - 1);
-		std::cout << "LOOPING POLLY: " << pollRet << std::endl;
-		if (pollRet == SYSTEM_ERR)
-			throw std::runtime_error("poll() failed");
-		else if (pollRet == 0)
+		std::cout << "Revents : " << this->_fds[i].revents << std::endl;
+		if (this->_fds[i].revents == 0)
+			continue ;
+
+		// else if (this->_fds[i].revents == DISCONNECT)
+		// {
+		// 	std::cout << "Removing client\n";
+		// 	close(this->_fds[i].fd);
+		// 	this->_fds.erase(this->_fds.begin() + i);
+		// 	--i;
+		// 	--fdSize;
+		// }
+
+		if (this->_fds[i].revents == POLLIN)
 		{
-			perror("poll() timed out, program ends");
-			break;
-		}
-		fdSize = this->_fds.size();
-		for (int i = 0; i < fdSize; ++i)
-		{
-			std::cout << "Revents : " << this->_fds[i].revents << std::endl;
-			if (this->_fds[i].revents == 0)
-				continue ;
-			else if (this->_fds[i].revents == DISCONNECT)
-			{
-				std::cout << "Removing client\n";
-				close(this->_fds[i].fd);
-				this->_fds.erase(this->_fds.begin() + i);
-				--i;
-				--fdSize;
-			}
-			std::cout << "Size: " << fdSize << std::endl; 
-			if (this->_fds[i].revents == POLLIN)
-			{
-				if (this->_fds[i].fd == this->_listenFd)
-				{
-					// Accepting a new client, replace with class methods
-					std::cout << "Accepting new client\n";
-					newClient.fd = accept(this->_listenFd, NULL, NULL);
-					if (newClient.fd != SYSTEM_ERR)
-					{
-						newClient.events = POLLIN;
-						this->_fds.push_back(newClient);
-						++fdSize;
-					}
-				}
-			}
 			bzero(_buffer, BUFFER_SIZE);
 			receivedBytes = recv(this->_fds[i].fd, _buffer, BUFFER_SIZE - 1, 0);
 			std::cout << "RB: " << receivedBytes << std::endl;
@@ -124,7 +99,42 @@ void	Webserv::run()
 			if (receivedBytes != SYSTEM_ERR)
 				std::cout << "Received: \n" << _buffer << std::endl;
 		}
-		
+	}
+}
+
+void	Webserv::handleListener()
+{
+	pollfd	newClient;
+
+	if (_fds[0].revents == POLLIN)
+	{
+		std::cout << "Accepting new client" << std::endl;
+		newClient.fd = accept(this->_listenFd, NULL, NULL);
+		if (newClient.fd != SYSTEM_ERR)
+		{
+			newClient.events = POLLIN;
+			this->_fds.push_back(newClient);
+		}
+	}
+}
+
+void	Webserv::run()
+{
+	int		pollRet;
+
+	while (true)
+	{
+		pollRet = poll(&this->_fds.front(), this->_fds.size(), - 1);
+		if (pollRet == SYSTEM_ERR)
+			throw std::runtime_error("poll() failed");
+		else if (pollRet == 0)
+		{
+			perror("poll() timed out, program ends");
+			break;
+		}
+
+		handleListener();
+		handleClients();
 	}
 }
 
