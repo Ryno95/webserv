@@ -13,7 +13,7 @@
 #include <Webserv.hpp>
 
 Webserv::Webserv(uint port, std::string name)
-	: _port(port), _buffer(new char[BUFFER_SIZE]), _name(name)
+	: _port(port), _name(name)
 {
 	try {
 		setupSocket();
@@ -26,7 +26,6 @@ Webserv::Webserv(uint port, std::string name)
 
 Webserv::~Webserv()
 {
-	delete [] _buffer;
 	std::cout << "Destroying Webserv instance with port : " << this->_port << std::endl;
 }
 
@@ -65,16 +64,16 @@ void	Webserv::setupSocket()
 
 void	Webserv::handleClients()
 {
-	int fdSize, receivedBytes;
+	int fdSize;
 
-	fdSize = this->_fds.size();
-	for (int i = 1; i < fdSize; ++i) // i = 1, so we skip the listen socket here
+	fdSize = _fds.size();
+	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
 	{
-		std::cout << "Revents : " << this->_fds[i].revents << std::endl;
-		if (this->_fds[i].revents == 0)
+		std::cout << "Revents : " << _fds[i].revents << std::endl;
+		if (_fds[i].revents == 0)
 			continue ;
 
-		// else if (this->_fds[i].revents == DISCONNECT)
+		// if (this->_fds[i].revents == 17)
 		// {
 		// 	std::cout << "Removing client\n";
 		// 	close(this->_fds[i].fd);
@@ -83,48 +82,55 @@ void	Webserv::handleClients()
 		// 	--fdSize;
 		// }
 
-		if (this->_fds[i].revents == POLLIN)
+		if (_fds[i].revents == POLLIN)
 		{
-			bzero(_buffer, BUFFER_SIZE);
-			receivedBytes = recv(this->_fds[i].fd, _buffer, BUFFER_SIZE - 1, 0);
-			std::cout << "RB: " << receivedBytes << std::endl;
-			if (receivedBytes == 0)
+			if (_clients[i - 1].recvRequest() == false)
 			{
-				std::cout << "Removing client\n";
-				close(this->_fds[i].fd);
-				this->_fds.erase(this->_fds.begin() + i);
+				removeClient(i);
 				--i;
 				--fdSize;
 			}
-			if (receivedBytes != SYSTEM_ERR)
-				std::cout << "Received: \n" << _buffer << std::endl;
 		}
 	}
 }
 
 void	Webserv::handleListener()
 {
-	pollfd	newClient;
+	pollfd newClient;
 
 	if (_fds[0].revents == POLLIN)
 	{
-		std::cout << "Accepting new client" << std::endl;
-		newClient.fd = accept(this->_listenFd, NULL, NULL);
+		std::cout << "Accepting new client..." << std::endl;
+
+		newClient.fd = accept(_listenFd, NULL, NULL);
 		if (newClient.fd != SYSTEM_ERR)
 		{
 			newClient.events = POLLIN;
-			this->_fds.push_back(newClient);
+			_fds.push_back(newClient);
+			_clients.push_back(Client(newClient.fd));
+			std::cout << "Accepted client on fd: " << newClient.fd << std::endl;
 		}
+		else
+			std::cout << "Nothing accepted." << std::endl;
 	}
+}
+
+void	Webserv::removeClient(int index)
+{
+	std::cout << "Removing client" << std::endl;
+
+	close(_fds[index].fd);
+	_clients.erase(_clients.begin() + index - 1);
+	_fds.erase(_fds.begin() + index);
 }
 
 void	Webserv::run()
 {
-	int		pollRet;
+	int pollRet;
 
 	while (true)
 	{
-		pollRet = poll(&this->_fds.front(), this->_fds.size(), - 1);
+		pollRet = poll(&_fds.front(), _fds.size(), - 1);
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
 		else if (pollRet == 0)
