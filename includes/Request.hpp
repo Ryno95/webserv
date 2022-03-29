@@ -12,10 +12,10 @@ public:
 	~Request();
 
 private:
-	void parse();
-	void parseBody();
-	void parseRequestLine();
-	void parseHeaderFields();
+	httpStatusCode parse();
+	httpStatusCode parseBody();
+	httpStatusCode parseRequestLine();
+	httpStatusCode parseHeaderFields();
 
 
 	std::string	_query;
