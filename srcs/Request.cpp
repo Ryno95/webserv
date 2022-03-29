@@ -1,9 +1,13 @@
 #include <Request.hpp>
 
-Request::Request()
+Request::Request(std::string uri) : _uri(uri)
 {
 }
 
 Request::~Request()
+{
+}
+
+void Request::parseURI()
 {
 }

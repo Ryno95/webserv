@@ -13,7 +13,7 @@ public:
 	bool sendResponse();
 
 private:
-	int _fd;
-	std::string _buffer;
+	int			_fd;
+	std::string	_buffer;
 
 };

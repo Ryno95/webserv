@@ -28,7 +28,7 @@ bool Client::recvRequest()
 	_buffer.resize(_buffer.size() + BUFFER_SIZE);
 	receivedBytes = recv(_fd, &_buffer.front() + prevSize, BUFFER_SIZE, 0);
 	std::cout << "RB: " << receivedBytes << std::endl;
-	if (receivedBytes == 0) // This only works on Linux?
+	if (receivedBytes == 0)
 		return false;
 	if (receivedBytes != SYSTEM_ERR)
 	{
