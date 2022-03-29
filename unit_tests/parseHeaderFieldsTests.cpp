@@ -4,14 +4,15 @@
 #include <iostream>
 #include <../includes/Request.hpp>
 
-const std::string input = 	"User-Agent: libcurl/7.16.3\n"
-							"Host: www.example.com\n"
-							"Accept-Language: en, mi\n";
-
 Test(ParseHeaderTests, ValidHeader)
 {
+	const std::string input =	"User-Agent: libcurl/7.16.3\r\n"
+								"Host: www.example.com\r\n"
+								"Accept-Language: en, mi\r\n";
+
 	Request myRequest(input);
 
+	cr_expect(myRequest.parseHeaderFields() == OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
 	cr_expect(myRequest._headerFields["Host"] == "www.example.com");
 	cr_expect(myRequest._headerFields["Accept-Language"] == "en, mi");
@@ -24,8 +25,8 @@ Test(ParseHeaderTests, ValidHeader)
 Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 {
 
-	const std::string localInput = "User-Agent : libcurl/7.16.3\n";
-	Request myRequest(localInput);
+	const std::string input = "User-Agent : libcurl/7.16.3\r\n";
+	Request myRequest(input);
 
 	cr_expect(myRequest.parseHeaderFields() == BAD_REQUEST);
 }
@@ -34,8 +35,18 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 Test(ParseHeaderTests, EmptyHeaderString)
 {
 
-	const std::string localInput = "";
-	Request myRequest(localInput);
+	const std::string input = "";
+	Request myRequest(input);
 
+	cr_expect(myRequest._headerFields.size() == 0);
 	cr_expect(myRequest.parseHeaderFields() == OK);
+}
+
+Test(ParseHeaderTests, NoColon)
+{
+
+	const std::string input = "User-Agent  libcurl/7.16.3\r\n";
+	Request myRequest(input);
+
+	cr_expect(myRequest.parseHeaderFields() == BAD_REQUEST);
 }

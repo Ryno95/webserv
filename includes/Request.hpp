@@ -8,7 +8,8 @@
 class Request
 {
 #define COLON ":"
-#define NEW_LINE "\n"
+#define CRLF "\r\n"
+#define CRLF_COUNT 2
 public:
 	Request(std::string query);
 	~Request();
