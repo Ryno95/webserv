@@ -7,6 +7,8 @@
 
 class Request
 {
+#define COLON ":"
+#define NEW_LINE "\n"
 public:
 	Request(std::string query);
 	~Request();
@@ -25,5 +27,6 @@ private:
 	std::string	_version;
 	std::map<std::string, std::string>	_headerFields;
 	std::string	_body;
-
 };
+
+
