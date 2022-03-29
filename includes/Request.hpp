@@ -8,7 +8,7 @@
 class Request
 {
 public:
-	Request(std::string request);
+	Request(std::string query);
 	~Request();
 
 private:
@@ -18,7 +18,7 @@ private:
 	void parseHeaderFields();
 
 
-	std::string	_request;
+	std::string	_query;
 
 	method		_method;
 	std::string	_target;
