@@ -1,8 +1,18 @@
 #pragma once
 
+#ifdef TEST
+	#define private public
+#endif
+
 #define SYSTEM_ERR -1
 #define STD_TCP 0
 
+// Defines to be contained in config file
+
+#define MAX_TARGET_LEN 50
+#define BUFFER_SIZE 9
+
+// End of region config file
 
 #define BIT_ISSET(num, pos) ((num) & (1 << pos))
 #define POLLIN_BIT 0
