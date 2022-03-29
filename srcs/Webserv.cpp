@@ -69,7 +69,6 @@ void	Webserv::handleClients()
 	fdSize = _fds.size();
 	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
 	{
-		std::cout << "Revents : " << _fds[i].revents << std::endl;
 		if (_fds[i].revents == 0)
 			continue ;
 
