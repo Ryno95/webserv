@@ -6,11 +6,11 @@
 #include <string>
 #include <vector>
 
+#include <Client.hpp>
+
 #define BACKLOG_AMOUNT 42
-#define BUFFER_SIZE 1024
 #define DISCONNECT 17
 
-// Closing of fds will take place in te Client class
 class Webserv
 {
 	public:
@@ -21,10 +21,13 @@ class Webserv
 
 	private:
 		void setupSocket();
+		void handleListener();
+		void handleClients();
+		void removeClient(int index);
 
 		uint				_port;
 		int					_listenFd;
 		std::vector<pollfd>	_fds;
-		char				*_buffer;
+		std::vector<Client>	_clients;
 		std::string			_name;
 };
