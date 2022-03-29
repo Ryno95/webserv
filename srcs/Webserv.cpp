@@ -75,7 +75,7 @@ void	Webserv::handleClients()
 
 		if (BIT_ISSET(this->_fds[i].revents, POLLIN_BIT))
 		{
-			if (_clients[i - 1].recvRequest() == false)
+			if (_clients[i - 1].handleRequest() == false)
 			{
 				removeClient(i);
 				--i;
