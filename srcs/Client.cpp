@@ -16,38 +16,37 @@ Client::~Client()
 {
 }
 
-bool Client::recvRequest()
+Client::state Client::recvRequest()
 {
 	int receivedBytes, prevSize;
 
-	std::cout << "Reading on socket: " << _fd << std::endl;
-
-	// Increase the buffer size: std::string::resize
-	// Append to buffer with recv
 	prevSize = _buffer.size();
 	_buffer.resize(_buffer.size() + BUFFER_SIZE);
 	receivedBytes = recv(_fd, &_buffer.front() + prevSize, BUFFER_SIZE, 0);
-	std::cout << "RB: " << receivedBytes << std::endl;
+
 	if (receivedBytes == 0)
-		return false;
+		return DISCONNECTED;
 	if (receivedBytes != SYSTEM_ERR)
 	{
-		// Check if the last portion of the request is received
-		// The request seems to end on double CRLF: CR = Carriage Return (ascii 13) and LF = Line Feed (ascii 10)
-		// So that means [13] [10] [13] [10] for the last 4 bytes in _buffer.
-		if (_buffer.size() >= 4)
-		{
 			// This probably needs to be optimised
 			// for example only check the last 4 bytes read instead of the whole buffer
-			if (_buffer.find("\r\n\r\n") != std::string::npos)
-			{
-				// End of request received!
-				std::cout << _buffer << std::endl;
-			}
-		}
+		if (_buffer.size() >= 4 && _buffer.find("\r\n\r\n") != std::string::npos)
+			return RECV_DONE;
 	}
 	else
 		perror("Read error");
+	return CONTINUE;
+}
+
+bool Client::handleRequest()
+{
+	state st = recvRequest();
+
+	if (st == CONTINUE)
+		return true;
+	else if (st == DISCONNECTED)
+		return false;
+	Request request(_buffer);
 	return true;
 }
 

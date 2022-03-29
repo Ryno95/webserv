@@ -1,8 +1,12 @@
 #include <Request.hpp>
 
-Request::Request(std::string request) : _request(request)
+#include <iostream>
+
+Request::Request(std::string query) : _query(query)
 {
+	std::cout << query << std::endl;
 	(void)_method;
+	parse();
 }
 
 Request::~Request()
@@ -24,4 +28,7 @@ void Request::parseHeaderFields()
 
 void Request::parse()
 {
+	parseRequestLine();
+	parseHeaderFields();
+	parseBody();
 }
