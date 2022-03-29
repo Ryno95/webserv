@@ -4,7 +4,6 @@
 
 Request::Request(std::string query) : _query(query)
 {
-	std::cout << query << std::endl;
 	parse();
 }
 
@@ -12,12 +11,12 @@ Request::~Request()
 {
 }
 
-void Request::parseBody()
+httpStatusCode Request::parseBody()
 {
 }
 
 // request-line = method SP request-target SP HTTP-version CRLF
-void Request::parseRequestLine()
+httpStatusCode Request::parseRequestLine()
 {
 	size_t pos, pos2, len;
 
@@ -26,7 +25,7 @@ void Request::parseRequestLine()
 // Get method
 	pos = _query.find(' ');
 	if (pos == std::string::npos)
-		return;
+		return BAD_REQUEST;
 	std::string method = _query.substr(0, pos);
 	if (method == "GET")
 		_method = GET;
@@ -35,28 +34,30 @@ void Request::parseRequestLine()
 	else if (method == "DELETE")
 		_method = DELETE;
 	else
-		return;
+		return BAD_REQUEST;
 
 // Get target
 	++pos;
 	pos2 = _query.find(' ', pos);
-	if (pos == std::string::npos)
-		return;
+	if (pos == std::string::npos || pos2 - pos == 0)
+		return BAD_REQUEST;
 	_target = _query.substr(pos, (pos2 - pos));
+	if (_target.size() > MAX_TARGET_LEN)
+		return URI_TOO_LONG;
 
 // Get version
 	++pos2;
 	pos = _query.find('\r', pos2);
 	if (pos == std::string::npos)
-		return;
+		return BAD_REQUEST;
 	_version = _query.substr(pos2, pos - pos2);
+	if (_version != "http/1.1")
+		return BAD_REQUEST;
 
-	std::cout << "Method: " << method << "(" << _method << ")" << std::endl;
-	std::cout << "Target: " << _target << std::endl;
-	std::cout << "Version: " << _version << std::endl;
+	return OK;
 }
 
-void Request::parseHeaderFields()
+httpStatusCode Request::parseHeaderFields()
 {
 }
 
