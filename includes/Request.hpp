@@ -7,9 +7,9 @@
 
 class Request
 {
-#define COLON ":"
-#define CRLF "\r\n"
-#define CRLF_COUNT 2
+#define COLON 		":"
+#define CRLF		"\r\n"
+#define CRLF_COUNT	2
 public:
 	Request(std::string query);
 	~Request();
