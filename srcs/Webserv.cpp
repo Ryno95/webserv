@@ -73,16 +73,7 @@ void	Webserv::handleClients()
 		if (_fds[i].revents == 0)
 			continue ;
 
-		// if (this->_fds[i].revents == 17)
-		// {
-		// 	std::cout << "Removing client\n";
-		// 	close(this->_fds[i].fd);
-		// 	this->_fds.erase(this->_fds.begin() + i);
-		// 	--i;
-		// 	--fdSize;
-		// }
-
-		if (_fds[i].revents == POLLIN)
+		if (BIT_ISSET(this->_fds[i].revents, POLLIN_BIT))
 		{
 			if (_clients[i - 1].recvRequest() == false)
 			{
@@ -91,6 +82,15 @@ void	Webserv::handleClients()
 				--fdSize;
 			}
 		}
+
+		// if (BIT_ISSET(this->_fds[i].revents, POLLHUP_BIT))
+		// {
+		// 	std::cout << "Removing client\n";
+		// 	close(this->_fds[i].fd);
+		// 	this->_fds.erase(this->_fds.begin() + i);
+		// 	--i;
+		// 	--fdSize;
+		// }
 	}
 }
 
@@ -117,7 +117,7 @@ void	Webserv::handleListener()
 
 void	Webserv::removeClient(int index)
 {
-	std::cout << "Removing client" << std::endl;
+	std::cout << "Removing client: " << _fds[index].fd << std::endl;
 
 	close(_fds[index].fd);
 	_clients.erase(_clients.begin() + index - 1);
@@ -143,4 +143,3 @@ void	Webserv::run()
 		handleClients();
 	}
 }
-

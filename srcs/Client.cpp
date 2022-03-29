@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 9
 
 Client::Client(int fd) : _fd(fd)
 {
