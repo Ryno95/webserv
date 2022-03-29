@@ -15,3 +15,13 @@ typedef enum method
 	POST,
 	DELETE
 } method;
+
+typedef enum httpStatusCode
+{
+	OK				= 200,
+	BAD_REQUEST		= 400,
+	NOT_FOUND		= 404,
+	URI_TOO_LONG	= 414,
+	TEAPOT			= 418,
+	NOT_IMPLEMENTED	= 501
+} httpStatusCode;
