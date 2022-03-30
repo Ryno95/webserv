@@ -19,6 +19,8 @@ httpStatusCode Request::parseBody()
 httpStatusCode Request::parseRequestLine()
 {
 	size_t pos, pos2, len;
+	int major, minor;
+	std::string tmp;
 
 	len = _query.size();
 
@@ -47,12 +49,42 @@ httpStatusCode Request::parseRequestLine()
 
 // Get version
 	++pos2;
-	pos = _query.find('\r', pos2);
-	if (pos == std::string::npos)
+	if (_query.substr(pos2, 5) != "HTTP/") // case insensitive?
 		return BAD_REQUEST;
-	_version = _query.substr(pos2, pos - pos2);
-	if (_version != "http/1.1")
+	pos = pos2 + 5;
+
+	pos2 = _query.find('.', pos);
+	if (pos2 == std::string::npos)
 		return BAD_REQUEST;
+
+	tmp = _query.substr(pos, pos2 - pos);  // check if this section (major) ONLY contains digits
+	for (size_t i = 0; i < tmp.size(); i++)
+	{
+		if (!std::isdigit(tmp[i]))
+			return BAD_REQUEST;
+	}
+	major = std::atoi(tmp.c_str());
+	if (major != HTTPVERSION_MAJOR)
+		return BAD_REQUEST;
+
+	pos = _query.find('\r', 0);
+	if (_query.find('\n', 0) - pos != 1) // there's no \n somewhere in the line, only at \r\n
+		return BAD_REQUEST;
+
+	tmp = _query.substr(pos2 + 1, pos - pos2 - 1); // check if this section (minor) ONLY contains digits
+	for (size_t i = 0; i < tmp.size(); i++)
+	{
+		if (!std::isdigit(tmp[i]))
+			return BAD_REQUEST;
+	}
+	minor = std::atoi(tmp.c_str());
+	if (minor != HTTPVERSION_MINOR)
+		return BAD_REQUEST;
+
+	_version = "HTTP/";
+	_version += (major + '0');
+	_version += '.';
+	_version += (minor + '0');
 
 	return OK;
 }

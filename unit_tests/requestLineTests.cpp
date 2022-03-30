@@ -3,17 +3,17 @@
 
 Test(requestLineTests, GET_valid_request)
 {
-	std::string seed = "GET / http/1.1\r\n";
+	std::string seed = "GET / HTTP/1.1\r\n";
 	Request request(seed);
 
 	cr_expect(request._method == GET);
 	cr_expect(request._target == "/");
-	cr_expect(request._version == "http/1.1");
+	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, GET_valid_request_large_path)
 {
-	std::string seed = "GET /fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj http/1.1\r\n";
+	std::string seed = "GET /fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj HTTP/1.1\r\n";
 	Request request(seed);
 
 	httpStatusCode status = request.parseRequestLine();
@@ -21,32 +21,32 @@ Test(requestLineTests, GET_valid_request_large_path)
 		return;
 	cr_expect(request._method == GET);
 	cr_expect(request._target == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
-	cr_expect(request._version == "http/1.1");
+	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, POST_valid_request)
 {
-	std::string seed = "POST / http/1.1\r\n";
+	std::string seed = "POST / HTTP/1.1\r\n";
 	Request request(seed);
 
 	cr_expect(request._method == POST);
 	cr_expect(request._target == "/");
-	cr_expect(request._version == "http/1.1");
+	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, DELETE_valid_request)
 {
-	std::string seed = "DELETE / http/1.1\r\n";
+	std::string seed = "DELETE / HTTP/1.1\r\n";
 	Request request(seed);
 
 	cr_expect(request._method == DELETE);
 	cr_expect(request._target == "/");
-	cr_expect(request._version == "http/1.1");
+	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, DELETE_no_target)
 {
-	std::string seed = "DELETE  http/1.1\r\n";
+	std::string seed = "DELETE  HTTP/1.1\r\n";
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
 
@@ -73,7 +73,7 @@ Test(requestLineTests, DELETE_no_version2)
 
 Test(requestLineTests, DELETE_too_many_whitespace1)
 {
-	std::string seed = "DELETE  / http/1.1\r\n";
+	std::string seed = "DELETE  / HTTP/1.1\r\n";
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
 
@@ -82,7 +82,7 @@ Test(requestLineTests, DELETE_too_many_whitespace1)
 
 Test(requestLineTests, DELETE_too_many_whitespace2)
 {
-	std::string seed = "DELETE /  http/1.1\r\n";
+	std::string seed = "DELETE /  HTTP/1.1\r\n";
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
 
@@ -100,7 +100,7 @@ Test(requestLineTests, empty_seed)
 
 Test(requestLineTests, DELETE_leading_whitespace)
 {
-	std::string seed = " DELETE / http/1.1\r\n";
+	std::string seed = " DELETE / HTTP/1.1\r\n";
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
 
@@ -109,7 +109,7 @@ Test(requestLineTests, DELETE_leading_whitespace)
 
 Test(requestLineTests, DELETE_trailing_whitespace)
 {
-	std::string seed = "DELETE / http/1.1 \r\n";
+	std::string seed = "DELETE / HTTP/1.1 \r\n";
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
 
@@ -123,7 +123,7 @@ Test(requestLineTests, target_just_fits)
 	{
 		seed += "a";
 	}
-	seed += " http/1.1\r\n";
+	seed += " HTTP/1.1\r\n";
 	
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
@@ -139,10 +139,109 @@ Test(requestLineTests, target_just_too_long)
 	{
 		seed += "a";
 	}
-	seed += " http/1.1\r\n";
+	seed += " HTTP/1.1\r\n";
 	
 	Request request(seed);
 	httpStatusCode status = request.parseRequestLine();
 
 	cr_expect(status == URI_TOO_LONG);
+}
+
+Test(requestLineTests, GET_invalid_version1)
+{
+	std::string seed = "GET / HTTP/a1.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_invalid_version2)
+{
+	std::string seed = "GET / HTTP/1a.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_invalid_version3)
+{
+	std::string seed = "GET / HTTP/1.a1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_invalid_version4)
+{
+	std::string seed = "GET / HTTP/1.1a\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_invalid_version5)
+{
+	std::string seed = "GET / HTTP/1.\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_invalid_version6)
+{
+	std::string seed = "GET / HTTP/.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_redundant_zeros)
+{
+	std::string seed = "GET / HTTP/00000001.000000000000001\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == OK);
+}
+
+Test(requestLineTests, GET_CR_in_target)
+{
+	std::string seed = "GET /\r HTTP/1.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_LF_in_target)
+{
+	std::string seed = "GET /\n HTTP/1.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_CRLF_in_target)
+{
+	std::string seed = "GET /\r\n HTTP/1.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+Test(requestLineTests, GET_LFCR_in_target)
+{
+	std::string seed = "GET /\n\r HTTP/1.1\r\n";
+	Request request(seed);
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
 }
