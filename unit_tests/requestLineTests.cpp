@@ -1,6 +1,17 @@
 #include <criterion/criterion.h>
 #include <Request.hpp>
 
+Test(requestLineTests, INVALID_METHOD)
+{
+	std::string seed = "BLADIEBLA / HTTP/1.1\r\n";
+	Request request(seed);
+
+
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
+
+
 Test(requestLineTests, GET_valid_request)
 {
 	std::string seed = "GET / HTTP/1.1\r\n";
@@ -8,7 +19,6 @@ Test(requestLineTests, GET_valid_request)
 
 	cr_expect(request._method == GET);
 	cr_expect(request._target == "/");
-	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, GET_valid_request_large_path)
@@ -21,7 +31,6 @@ Test(requestLineTests, GET_valid_request_large_path)
 		return;
 	cr_expect(request._method == GET);
 	cr_expect(request._target == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
-	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, POST_valid_request)
@@ -31,7 +40,6 @@ Test(requestLineTests, POST_valid_request)
 
 	cr_expect(request._method == POST);
 	cr_expect(request._target == "/");
-	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, DELETE_valid_request)
@@ -41,7 +49,6 @@ Test(requestLineTests, DELETE_valid_request)
 
 	cr_expect(request._method == DELETE);
 	cr_expect(request._target == "/");
-	cr_expect(request._version == "HTTP/1.1");
 }
 
 Test(requestLineTests, DELETE_no_target)
