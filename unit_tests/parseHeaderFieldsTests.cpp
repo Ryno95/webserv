@@ -31,6 +31,36 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 	cr_expect(myRequest.parseHeaderFields() == BAD_REQUEST);
 }
 
+Test(ParseHeaderTests, WhiteSpaceAfterColon)
+{
+
+	const std::string input = "User-Agent:       libcurl/7.16.3\r\n";
+	Request myRequest(input);
+
+	cr_expect(myRequest.parseHeaderFields() == OK);
+	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
+}
+
+Test(ParseHeaderTests, WhiteSpaceBeforeKey)
+{
+
+	const std::string input = "       User-Agent: libcurl/7.16.3\r\n";
+	Request myRequest(input);
+
+	cr_expect(myRequest.parseHeaderFields() == OK);
+	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
+}
+
+Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
+{
+
+	const std::string input = "User-Agent: libcurl/7.16.3    \r\n";
+	Request myRequest(input);
+
+	cr_expect(myRequest.parseHeaderFields() == OK);
+	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
+}
+
 // Might change as we continue
 Test(ParseHeaderTests, EmptyHeaderString)
 {
