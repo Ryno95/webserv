@@ -2,9 +2,10 @@
 
 #define SYSTEM_ERR -1
 #define STD_TCP 0
-// REMOVE MEEEEE
-// IFNDEF
-#define private public
+
+#ifndef TEST
+	#define private public
+#endif
 
 #define BIT_ISSET(num, pos) ((num) & (1 << pos))
 #define POLLIN_BIT 0
