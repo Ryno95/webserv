@@ -32,21 +32,11 @@ httpStatusCode	addKeyValuePair(const std::string &src, size_t newLinePos,
 
 	if (colonPos == std::string::npos || std::isspace(src[colonPos - 1]))
 		return BAD_REQUEST;
-
-	// while(std::isspace(src[i]))
-	// 	++i;
+	
 	std::string key = src.substr(i, colonPos);
-
-	i = 0;
 	while(std::isspace(src[colonPos + CRLF_CHAR_COUNT + i]))
 		++i;
-	// std::cout << "POS BEFORE: " << newLinePos;
-	// while(std::isspace(src[newLinePos - 1]))
-	// 	--newLinePos;
-	// std::cout << "   POS AFTER: " << newLinePos << std::endl;
-
 	std::string value = src.substr(colonPos + CRLF_CHAR_COUNT + i, newLinePos);
-	// std::cout << "VALUE: " << value << std::endl;
 	headerFields->insert(std::pair<std::string, std::string>(key, value));
 	return OK;
 }
