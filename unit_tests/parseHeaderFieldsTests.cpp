@@ -13,7 +13,7 @@ Test(ParseHeaderTests, ValidHeader)
 	Request myRequest(input);
 	try 
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 	
@@ -35,7 +35,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 	Request myRequest(input);
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 	cr_expect(myRequest.getStatus() == BAD_REQUEST);
@@ -49,7 +49,7 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 	
@@ -65,7 +65,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 	cr_expect(myRequest.getStatus() == OK);
@@ -80,7 +80,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 	
@@ -97,7 +97,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 	Request myRequest(input);
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 	
@@ -112,7 +112,7 @@ Test(ParseHeaderTests, NoColon)
 	Request myRequest(input);
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 
@@ -128,7 +128,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 	Request myRequest(input);
 	try
 	{
-		myRequest.parseHeaderFields();
+		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
 

@@ -22,13 +22,13 @@ public:
 
 private:
 	void parseBody();
-	void parseRequestLine();
-	void parseHeaderFields();
+	size_t parseRequestLine();
+	void parseHeaderFields(size_t pos);
 	void addKeyValuePair(const std::string &src, size_t newLinePos);
 
 	size_t parseMethod();
 	size_t parseTarget(size_t pos);
-	void parseVersion(size_t pos);
+	size_t parseVersion(size_t pos);
 
 	std::string	_query;
 

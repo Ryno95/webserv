@@ -47,7 +47,7 @@ size_t Request::parseTarget(size_t pos)
 	return pos2;
 }
 
-void Request::parseVersion(size_t pos)
+size_t Request::parseVersion(size_t pos)
 {
 	const std::string	versionPrefix = "HTTP/";
 	const int			versionPrefixLen = versionPrefix.size();
@@ -87,16 +87,19 @@ void Request::parseVersion(size_t pos)
 	minor = std::atoi(tmp.c_str());
 	if (minor != HTTPVERSION_MINOR)
 		throwError(BAD_REQUEST);
+	return pos2 + 2;
 }
 
 // request-line = method SP request-target SP HTTP-version CRLF
-void Request::parseRequestLine()
+size_t Request::parseRequestLine()
 {
 	size_t pos;
 
 	pos = parseMethod();
 	pos = parseTarget(pos + 1);
-	parseVersion(pos + 1);
+	pos = parseVersion(pos + 1);
+	
+	return pos;
 }
 
 void	Request::addKeyValuePair(const std::string &src, size_t newLinePos)
@@ -134,10 +137,10 @@ static bool	isTerminatorStr(const std::string str)
 	return (str.compare(terminatorStr) == 0);
 }
 
-void Request::parseHeaderFields()
+void Request::parseHeaderFields(size_t pos)
 {
 	const size_t		endLen = _query.size() - TERMINATOR_LEN;
-	size_t				next = 0, last = 0;
+	size_t				next = 0, last = pos;
 	std::string			trimmedLine;
 
 	while ((next = _query.find(CRLF, last)) != std::string::npos)
@@ -152,8 +155,8 @@ void Request::parseHeaderFields()
 
 void Request::parse()
 {
-	parseRequestLine();
-	parseHeaderFields();
+	size_t pos = parseRequestLine();
+	parseHeaderFields(pos);
 	parseBody();
 }
 
