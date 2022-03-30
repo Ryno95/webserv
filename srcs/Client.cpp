@@ -47,6 +47,15 @@ bool Client::handleRequest()
 	else if (st == DISCONNECTED)
 		return false;
 	Request request(_buffer);
+	try
+	{
+		request.parse();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
 	return true;
 }
 

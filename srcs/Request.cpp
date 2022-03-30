@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cctype>
 
-Request::Request(std::string query) : _query(query)
+Request::Request(std::string query) : _query(query), _status(OK)
 {
 }
 
@@ -49,20 +49,19 @@ size_t Request::parseTarget(size_t pos)
 
 void Request::parseVersion(size_t pos)
 {
-	size_t pos, pos2;
+	size_t pos2;
 	std::string tmp;
 	int major, minor;
 
-	++pos2;
-	if (_query.substr(pos2, 5) != "HTTP/") // case insensitive?
+	if (_query.substr(pos, 5) != "HTTP/") // case insensitive?
 		throwError(BAD_REQUEST);
-	pos = pos2 + 5;
+	pos2 = pos + 5;
 
-	pos2 = _query.find('.', pos);
-	if (pos2 == std::string::npos)
+	pos = _query.find('.', pos2);
+	if (pos == std::string::npos)
 		throwError(BAD_REQUEST);
 
-	tmp = _query.substr(pos, pos2 - pos);  // check if this section (major) ONLY contains digits
+	tmp = _query.substr(pos2, pos - pos2);  // check if this section (major) ONLY contains digits
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
 		if (!std::isdigit(tmp[i]))
@@ -72,11 +71,11 @@ void Request::parseVersion(size_t pos)
 	if (major != HTTPVERSION_MAJOR)
 		throwError(BAD_REQUEST);
 
-	pos = _query.find('\r', 0);
-	if (_query.find('\n', 0) - pos != 1) // there's no \n somewhere in the line, only at \r\n
+	pos2 = _query.find('\r', 0);
+	if (_query.find('\n', 0) - pos2 != 1) // there's no \n somewhere in the line, only at \r\n
 		throwError(BAD_REQUEST);
 
-	tmp = _query.substr(pos2 + 1, pos - pos2 - 1); // check if this section (minor) ONLY contains digits
+	tmp = _query.substr(pos + 1, pos2 - pos - 1); // check if this section (minor) ONLY contains digits
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
 		if (!std::isdigit(tmp[i]))
@@ -141,8 +140,8 @@ void Request::parseHeaderFields()
 void Request::parse()
 {
 	parseRequestLine();
-	parseHeaderFields();
-	parseBody();
+	// parseHeaderFields();
+	// parseBody();
 }
 
 void Request::throwError(httpStatusCode code)
