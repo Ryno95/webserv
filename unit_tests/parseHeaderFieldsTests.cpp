@@ -11,14 +11,11 @@ Test(ParseHeaderTests, ValidHeader)
 								"Accept-Language: en, mi\r\n\r\n";
 
 	Request myRequest(input);
-	try
+	try 
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	
 
 	cr_expect(myRequest.getStatus() == OK);
@@ -40,10 +37,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	cr_expect(myRequest.getStatus() == BAD_REQUEST);
 }
 
@@ -57,10 +51,7 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	
 	cr_expect(myRequest.getStatus() == OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
@@ -76,10 +67,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	cr_expect(myRequest.getStatus() == OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
 }
@@ -94,10 +82,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	
 	cr_expect(myRequest.getStatus() == OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
@@ -114,10 +99,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	
 	cr_expect(myRequest._headerFields.size() == 0);
 	cr_expect(myRequest.getStatus() == OK);
@@ -132,10 +114,7 @@ Test(ParseHeaderTests, NoColon)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 
 	cr_expect(myRequest.getStatus() == BAD_REQUEST);
 	cr_expect(myRequest._headerFields.size() == 0);
@@ -151,10 +130,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 	{
 		myRequest.parseHeaderFields();
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 
 	cr_expect(myRequest.getStatus() == BAD_REQUEST);
 	cr_expect(myRequest._headerFields.size() == 0);

@@ -136,7 +136,7 @@ static bool	isTerminatorStr(const std::string str)
 
 void Request::parseHeaderFields()
 {
-	const int			endLen = _query.length() - TERMINATOR_LEN;
+	const size_t			endLen = _query.size() - TERMINATOR_LEN;
 	size_t				next = 0, last = 0;
 	std::string			trimmedLine;
 
