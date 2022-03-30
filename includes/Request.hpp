@@ -16,9 +16,9 @@ public:
 
 	httpStatusCode getStatus() const;
 	void throwError(httpStatusCode code);
+	void parse();
 
 private:
-	void parse();
 	void parseBody();
 	void parseRequestLine();
 	void parseHeaderFields();

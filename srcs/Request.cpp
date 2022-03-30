@@ -5,8 +5,6 @@
 
 Request::Request(std::string query) : _query(query)
 {
-	(void)_method;
-	parse();
 }
 
 Request::~Request()
