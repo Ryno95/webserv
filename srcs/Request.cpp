@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include <cctype>
+#include <cstdlib>
+
 Request::Request(std::string query) : _query(query)
 {
 	parse();
