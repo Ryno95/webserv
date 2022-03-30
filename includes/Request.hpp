@@ -10,6 +10,8 @@ class Request
 #define COLON 			":"
 #define CRLF			"\r\n"
 #define CRLF_CHAR_COUNT	2
+#define TERMINATOR_LEN	4
+
 public:
 	Request(std::string query);
 	~Request();

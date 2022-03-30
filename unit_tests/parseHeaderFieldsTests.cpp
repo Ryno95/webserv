@@ -8,7 +8,7 @@ Test(ParseHeaderTests, ValidHeader)
 {
 	const std::string input =	"User-Agent: libcurl/7.16.3\r\n"
 								"Host: www.example.com\r\n"
-								"Accept-Language: en, mi\r\n";
+								"Accept-Language: en, mi\r\n\r\n";
 
 	Request myRequest(input);
 	try
@@ -29,8 +29,8 @@ Test(ParseHeaderTests, ValidHeader)
 
 //  A server MUST reject any received request message that contains
 //  whitespace between a header field-name and colon with a response code
-//  of 400 (Bad Request). A proxy MUST remove any such whitespace from a
-//  response message before forwarding the message downstream.
+// //  of 400 (Bad Request). A proxy MUST remove any such whitespace from a
+// //  response message before forwarding the message downstream.
 Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 {
 
@@ -50,7 +50,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 Test(ParseHeaderTests, WhiteSpaceAfterColon)
 {
 
-	const std::string input = "User-Agent:       libcurl/7.16.3\r\n";
+	const std::string input = "User-Agent:       libcurl/7.16.3\r\n\r\n";
 	Request myRequest(input);
 
 	try
@@ -69,7 +69,7 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 {
 
-	const std::string input = "       User-Agent: libcurl/7.16.3\r\n";
+	const std::string input = "       User-Agent: libcurl/7.16.3\r\n\r\n";
 	Request myRequest(input);
 
 	try
@@ -87,7 +87,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 {
 
-	const std::string input = "User-Agent: libcurl/7.16.3    \r\n";
+	const std::string input = "User-Agent: libcurl/7.16.3    \r\n\r\n";
 	Request myRequest(input);
 
 	try
@@ -126,7 +126,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 Test(ParseHeaderTests, NoColon)
 {
 
-	const std::string input = "User-Agent  libcurl/7.16.3\r\n";
+	const std::string input = "User-Agent  libcurl/7.16.3\r\n\r\n";
 	Request myRequest(input);
 	try
 	{
@@ -145,7 +145,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 {
 
 	const std::string input = 	"User-Agent  libcurl/7.16.3\r\n"
-								"Host: www.example.com\r\n";
+								"Host: www.example.com\r\n\r\n";
 	Request myRequest(input);
 	try
 	{

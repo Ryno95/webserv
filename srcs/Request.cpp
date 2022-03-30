@@ -48,8 +48,16 @@ std::string	getTrimmedLine(std::string line)
 	return std::string(start, end + 1);
 }
 
+static bool	isTerminatorStr(const std::string str)
+{
+	const std::string	terminatorStr = "\r\n\r\n";
+
+	return (str.compare(terminatorStr) == 0);
+}
+
 void Request::parseHeaderFields()
 {
+	const int			endLen = _query.length() - TERMINATOR_LEN;
 	size_t				next = 0, last = 0;
 	std::string			trimmedLine;
 
@@ -57,6 +65,8 @@ void Request::parseHeaderFields()
 	{
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
 		addKeyValuePair(trimmedLine, next);
+		if (next == endLen && isTerminatorStr(&_query[next]))
+			break ;
 		last = next + CRLF_CHAR_COUNT;
 	}
 }
