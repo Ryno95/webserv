@@ -11,6 +11,8 @@
 
 #define MAX_TARGET_LEN 50
 #define BUFFER_SIZE 9
+#define HTTPVERSION_MAJOR 1
+#define HTTPVERSION_MINOR 1
 
 // End of region config file
 
