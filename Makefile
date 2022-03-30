@@ -21,7 +21,8 @@ CFLAGS		=	-Wall -Wextra -pedantic
 TEST_CFLAGS	=	$(CFLAGS)
 LINKING		=	-I $(INCL_DIR)
 
-TEST_SRC	=	$(TEST_DIR)test.cpp $(TEST_DIR)parseHeaderFieldsTests.cpp
+TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
+				$(TEST_DIR)parseRequestLineTests.cpp
 
 
 # Section Rules

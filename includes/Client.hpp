@@ -20,7 +20,7 @@ public:
 	Client(int fd);
 	~Client();
 
-	bool handleRequest(); // Ryno wilt geen boolean
+	bool handleRequest();
 	bool sendResponse();
 	state recvRequest();
 
