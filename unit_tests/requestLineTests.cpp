@@ -6,14 +6,14 @@ Test(simple, valid)
 	cr_expect(1 == 1);
 }
 
-// Test(requestLineTests, INVALID_METHOD)
-// {
-// 	std::string seed = "BLADIEBLA / HTTP/1.1\r\n";
-// 	Request request(seed);
+Test(requestLineTests, INVALID_METHOD)
+{
+	std::string seed = "BLADIEBLA / HTTP/1.1\r\n";
+	Request request(seed);
 
-// 	httpStatusCode status = request.parseRequestLine();
-// 	cr_expect(status == BAD_REQUEST);
-// }
+	httpStatusCode status = request.parseRequestLine();
+	cr_expect(status == BAD_REQUEST);
+}
 
 // Test(requestLineTests, GET_valid_request)
 // {
