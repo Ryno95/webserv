@@ -140,8 +140,8 @@ void Request::parseHeaderFields()
 void Request::parse()
 {
 	parseRequestLine();
-	// parseHeaderFields();
-	// parseBody();
+	parseHeaderFields();
+	parseBody();
 }
 
 void Request::throwError(httpStatusCode code)
