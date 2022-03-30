@@ -47,7 +47,7 @@ httpStatusCode Request::parseRequestLine()
 	if (_target.size() > MAX_TARGET_LEN)
 		return URI_TOO_LONG;
 
-// Get version
+// Check version
 	++pos2;
 	if (_query.substr(pos2, 5) != "HTTP/") // case insensitive?
 		return BAD_REQUEST;
@@ -80,11 +80,6 @@ httpStatusCode Request::parseRequestLine()
 	minor = std::atoi(tmp.c_str());
 	if (minor != HTTPVERSION_MINOR)
 		return BAD_REQUEST;
-
-	_version = "HTTP/";
-	_version += (major + '0');
-	_version += '.';
-	_version += (minor + '0');
 
 	return OK;
 }
