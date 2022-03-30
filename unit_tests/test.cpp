@@ -1,7 +1,6 @@
 #include <criterion/criterion.h>
 
-Test(SimpleTest, Basic)
+Test(Example, BasicExample)
 {
-    int a = 2, b = 2;
-    cr_expect(a + b == 4);
+    cr_assert(1);
 }

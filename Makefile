@@ -18,10 +18,10 @@ HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
 
 CC			=	clang++
 CFLAGS		=	-Wall -Wextra -pedantic
-TEST_CFLAGS	=	$(CFLAGS) -Werror
+TEST_CFLAGS	=	$(CFLAGS)
 LINKING		=	-I $(INCL_DIR)
 
-TEST_SRC	=	$(TEST_DIR)test.cpp
+TEST_SRC	=	$(TEST_DIR)test.cpp $(TEST_DIR)parseHeaderFieldsTests.cpp
 
 
 # Section Rules
@@ -31,11 +31,11 @@ all: $(NAME)
 $(NAME): $(OBJS) $(HPPS)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
-test: $(TEST_SRC)
-	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(TEST_CFLAGS) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
+test: $(TEST_SRC) $(OBJS)
+	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(TEST_CFLAGS) $(LINKING) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
 
-local_test: $(TEST_SRC)
-	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(TEST_CFLAGS) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11
+local_test: $(TEST_SRC) $(OBJS)
+	$(CC) -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(LINKING) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11
 	./$(TEST_NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
