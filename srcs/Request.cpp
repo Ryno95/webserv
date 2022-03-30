@@ -49,13 +49,16 @@ size_t Request::parseTarget(size_t pos)
 
 void Request::parseVersion(size_t pos)
 {
+	const std::string	versionPrefix = "HTTP/";
+	const int			versionPrefixLen = versionPrefix.size();
 	size_t pos2;
 	std::string tmp;
 	int major, minor;
 
-	if (_query.substr(pos, 5) != "HTTP/") // case insensitive?
+
+	if (_query.substr(pos, versionPrefixLen) != versionPrefix) // case insensitive?
 		throwError(BAD_REQUEST);
-	pos2 = pos + 5;
+	pos2 = pos + versionPrefixLen;
 
 	pos = _query.find('.', pos2);
 	if (pos == std::string::npos)
