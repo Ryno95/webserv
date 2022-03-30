@@ -50,3 +50,14 @@ Test(ParseHeaderTests, NoColon)
 
 	cr_expect(myRequest.parseHeaderFields() == BAD_REQUEST);
 }
+
+
+Test(ParseHeaderTests, MultiLineNoColon)
+{
+
+	const std::string input = 	"User-Agent  libcurl/7.16.3\r\n"
+								"Host: www.example.com\r\n";
+	Request myRequest(input);
+
+	cr_expect(myRequest.parseHeaderFields() == BAD_REQUEST);
+}

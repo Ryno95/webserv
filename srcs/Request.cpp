@@ -32,7 +32,7 @@ httpStatusCode	addKeyValuePair(const std::string &src, size_t newLinePos,
 		return BAD_REQUEST;
 
 	std::string key = src.substr(0, colonPos);
-	std::string value = src.substr(colonPos + CRLF_COUNT, newLinePos);
+	std::string value = src.substr(colonPos + CRLF_CHAR_COUNT, newLinePos);
 	headerFields->insert(std::pair<std::string, std::string>(key, value));
 	return OK;
 }
@@ -47,7 +47,7 @@ httpStatusCode Request::parseHeaderFields()
 		ret = addKeyValuePair(_query.substr(last, next - last), next, &_headerFields);
 		if (ret != OK)
 			return ret;
-		last = next + CRLF_COUNT;
+		last = next + CRLF_CHAR_COUNT;
 	}
 	return OK;
 }
