@@ -135,3 +135,20 @@ Test(ParseHeaderTests, MultiLineNoColon)
 	cr_expect(myRequest.getStatus() == BAD_REQUEST);
 	cr_expect(myRequest._headerFields.size() == 0);
 }
+
+Test(ParseHeaderTests, ColonInHeader)
+{
+
+	const std::string input = 	"Host: localhost:8080\r\n\r\n";
+	Request myRequest(input);
+	try
+	{
+		myRequest.parseHeaderFields(0);
+	}
+	catch(const std::exception& e) {}
+
+	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest._headerFields.size() == 1);
+	cr_expect(myRequest._headerFields["Host"] == "localhost:8080");
+
+}
