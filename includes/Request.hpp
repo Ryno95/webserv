@@ -24,6 +24,9 @@ private:
 	void parseHeaderFields();
 	void addKeyValuePair(const std::string &src, size_t newLinePos);
 
+	size_t parseMethod();
+	size_t parseTarget(size_t pos);
+	void parseVersion(size_t pos);
 
 	std::string	_query;
 
