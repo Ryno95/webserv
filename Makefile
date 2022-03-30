@@ -31,7 +31,7 @@ $(NAME): $(OBJS) $(HPPS)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC) $(OBJS)
-	$(CC) -D TEST=1 -o $(TEST_NAME) $(LINKING) $(OBJS) $(TEST_SRC) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
+	$(CC) -o $(TEST_NAME) $(LINKING) $(OBJS) $(TEST_SRC) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
 
 local_test: $(TEST_SRC) $(OBJS)
 	$(CC) -D TEST=1 -o $(TEST_NAME) $(LINKING) $(OBJS) $(TEST_SRC) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11
