@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cctype>
 
-Request::Request(std::string query) : _query(query)
+Request::Request(std::string query) : _query(query), _status(OK)
 {
 }
 
