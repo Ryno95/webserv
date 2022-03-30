@@ -1,3 +1,4 @@
+#include <defines.hpp>
 #include <Request.hpp>
 
 #include <iostream>
