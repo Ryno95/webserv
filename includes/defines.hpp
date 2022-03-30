@@ -3,7 +3,7 @@
 #define SYSTEM_ERR -1
 #define STD_TCP 0
 
-#ifndef TEST
+#ifdef TEST
 	#define private public
 #endif
 
