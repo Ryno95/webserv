@@ -14,11 +14,15 @@ public:
 	Request(std::string query);
 	~Request();
 
+	httpStatusCode getStatus() const;
+	void throwError(httpStatusCode code);
+
 private:
-	httpStatusCode parse();
-	httpStatusCode parseBody();
-	httpStatusCode parseRequestLine();
-	httpStatusCode parseHeaderFields();
+	void parse();
+	void parseBody();
+	void parseRequestLine();
+	void parseHeaderFields();
+	void addKeyValuePair(const std::string &src, size_t newLinePos);
 
 
 	std::string	_query;
@@ -28,6 +32,8 @@ private:
 	std::string	_version;
 	std::map<std::string, std::string>	_headerFields;
 	std::string	_body;
+
+	httpStatusCode _status;
 };
 
 

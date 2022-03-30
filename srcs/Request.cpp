@@ -13,32 +13,28 @@ Request::~Request()
 {
 }
 
-httpStatusCode Request::parseBody()
+void Request::parseBody()
 {
-	return OK;
 }
 
 // request-line = method SP request-target SP HTTP-version CRLF
-httpStatusCode Request::parseRequestLine()
+void Request::parseRequestLine()
 {
-	return OK;
 }
 
-httpStatusCode	addKeyValuePair(const std::string &src, size_t newLinePos,
-						std::map<std::string, std::string>*headerFields)
+void	Request::addKeyValuePair(const std::string &src, size_t newLinePos)
 {
 	const size_t 	colonPos = src.find(COLON);
 	int				i = 0;
 
 	if (colonPos == std::string::npos || std::isspace(src[colonPos - 1]))
-		return BAD_REQUEST;
+		throwError(BAD_REQUEST);
 	
 	std::string key = src.substr(i, colonPos);
 	while(std::isspace(src[colonPos + CRLF_CHAR_COUNT + i]))
 		++i;
 	std::string value = src.substr(colonPos + CRLF_CHAR_COUNT + i, newLinePos);
-	headerFields->insert(std::pair<std::string, std::string>(key, value));
-	return OK;
+	_headerFields.insert(std::pair<std::string, std::string>(key, value));
 }
 
 std::string	getTrimmedLine(std::string line)
@@ -54,27 +50,34 @@ std::string	getTrimmedLine(std::string line)
 	return std::string(start, end + 1);
 }
 
-httpStatusCode Request::parseHeaderFields()
+void Request::parseHeaderFields()
 {
 	size_t				next = 0, last = 0;
-	httpStatusCode		ret;
 	std::string			trimmedLine;
 
 	while ((next = _query.find(CRLF, last)) != std::string::npos)
 	{
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
-		ret = addKeyValuePair(trimmedLine, next, &_headerFields);
-		if (ret != OK)
-			return ret;
+		addKeyValuePair(trimmedLine, next);
 		last = next + CRLF_CHAR_COUNT;
 	}
-	return OK;
 }
 
-httpStatusCode Request::parse()
+void Request::parse()
 {
 	parseRequestLine();
 	parseHeaderFields();
 	parseBody();
-	return OK;
+}
+
+void Request::throwError(httpStatusCode code)
+{
+	_status = code;
+	throw std::runtime_error("Parse error");
+}
+
+
+httpStatusCode Request::getStatus() const
+{
+	return _status;
 }
