@@ -82,6 +82,23 @@ void	Webserv::handleClients()
 			}
 		}
 
+		// IMPORTANT this bit is set, that means we CAN write, not that we WANT to write!
+		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
+		{
+			std::cout << this->_fds[i].fd << " is ready to write." << std::endl;
+
+			/*
+				We can check a flag whether the client is done creating a response/ready to send
+				and call send if it's true?
+				Considering sending could be done in chunks:
+				if not done sending:
+					send()
+				else:
+					if not keep-alive:
+						removeClient()
+			*/
+		}
+
 		// if (BIT_ISSET(this->_fds[i].revents, POLLHUP_BIT))
 		// {
 		// 	std::cout << "Removing client\n";
@@ -104,7 +121,7 @@ void	Webserv::handleListener()
 		newClient.fd = accept(_listenFd, NULL, NULL);
 		if (newClient.fd != SYSTEM_ERR)
 		{
-			newClient.events = POLLIN;
+			newClient.events = POLLIN | POLLOUT;
 			_fds.push_back(newClient);
 			_clients.push_back(Client(newClient.fd));
 			std::cout << "Accepted client on fd: " << newClient.fd << std::endl;
