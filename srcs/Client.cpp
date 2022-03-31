@@ -54,8 +54,18 @@ bool Client::handleRequest()
 		if (_state == CHECK_HEADER)
 		{
 			_request = Request(_buffer);
-			_request.parse(); // try catch block
-			_state = _request.checkForBody() ? RECV_BODY : RESPOND;
+
+			try
+			{
+				_request.parse();
+				_state = _request.checkForBody() ? RECV_BODY : RESPOND;
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << e.what() << '\n';
+				_state = RESPOND;
+			}
+
 		}
 		if (_state == RESPOND)
 		{
