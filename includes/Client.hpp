@@ -22,8 +22,8 @@ public:
 	Client(int fd);
 	~Client();
 
-	bool handleRequest();
-	bool sendResponse();
+	bool	handleRequest();
+	bool	handleResponse();
 
 private:
 	int			_fd;
@@ -31,6 +31,7 @@ private:
 	Request		_request;
 	std::string	_buffer;
 
-	bool	isReceiving();
-	state 	recvRequest();
+	bool	isReceiving() const;
+	state	recvRequest();
+	bool	sendResponse();
 };
