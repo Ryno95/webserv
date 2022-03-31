@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cctype>
 
+Request::Request() : _status(OK) {}
+
 Request::Request(std::string query) : _query(query), _status(OK)
 {
 }
@@ -13,6 +15,11 @@ Request::~Request()
 
 void Request::parseBody()
 {
+}
+
+bool Request::checkForBody() const
+{
+	return false;
 }
 
 size_t Request::parseMethod()
