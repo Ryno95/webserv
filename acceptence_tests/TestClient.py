@@ -1,15 +1,19 @@
-import socket
-import sys
+import time
+import requests
 
-HOST = "127.0.0.1"  # The server's hostname or IP address
-PORT = 8080  # The port used by the server
 
-with socket.socket(socket.AF_INET6, socket.SOCK_STREAM) as client:
-    client.connect((HOST, PORT))
-    client.sendall(b"Wazuuuup")
-    data = client.recv(1024)
+ERROR = 1
+localhost = "http://localhost:4242"
+EXIT_CODE = 0
 
-print(f"Received {data!r}")
-print("PRINTING FROM THE CLIENT")
+r = requests.get(localhost)
 
-# client REQUEST -> server READ -> server ECHO BACK RESPONSE CODE AND MESSAGE  # Later echo back the body
+print(r.status_code)
+if r.status_code != '10':
+    EXIT_CODE = 123;
+print(r.text)
+print(r.headers['content-length'])
+
+time.sleep(3)
+exit(EXIT_CODE)
+# p10k
