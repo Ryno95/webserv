@@ -85,17 +85,13 @@ void	Webserv::handleClients()
 		// IMPORTANT this bit is set, that means we CAN write, not that we WANT to write!
 		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
 		{
-			// std::cout << this->_fds[i].fd << " is ready to write." << std::endl;
+			if (_clients[i - 1].handleResponse() == false)
+			{
+				removeClient(i);
+				--i;
+				--fdSize;
+			}
 		}
-
-		// if (BIT_ISSET(this->_fds[i].revents, POLLHUP_BIT))
-		// {
-		// 	std::cout << "Removing client\n";
-		// 	close(this->_fds[i].fd);
-		// 	this->_fds.erase(this->_fds.begin() + i);
-		// 	--i;
-		// 	--fdSize;
-		// }
 	}
 }
 

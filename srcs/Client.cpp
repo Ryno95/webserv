@@ -36,7 +36,7 @@ Client::state Client::recvRequest()
 	return RECV_HEADER;
 }
 
-bool Client::isReceiving()
+bool Client::isReceiving() const
 {
 	return _state == RECV_BODY || _state == RECV_HEADER;
 }
@@ -51,6 +51,7 @@ bool Client::handleRequest()
 			if (isReceiving())
 				return true;
 		}
+
 		if (_state == CHECK_HEADER)
 		{
 			_request = Request(_buffer);
@@ -67,15 +68,15 @@ bool Client::handleRequest()
 			}
 
 		}
-		if (_state == RESPOND)
-		{
-			sendResponse();
-			return false; // disconnect client
-		}
+
 		if (_state == DISCONNECTED)
 			return false;
+		else if (_state == RESPOND)
+			return true;
 	}
 }
+
+#pragma region Response
 
 bool Client::sendResponse()
 {
@@ -86,3 +87,13 @@ bool Client::sendResponse()
 	send(_fd, buffer.c_str(), buffer.size(), 0);
 	return true;
 }
+
+bool Client::handleResponse()
+{
+	if (_state != RESPOND)
+		return true;
+	sendResponse();
+	return false;
+}
+
+#pragma endregion
