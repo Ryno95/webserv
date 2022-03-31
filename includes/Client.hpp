@@ -13,8 +13,9 @@ typedef enum state
 {
 	RECV_HEADER,
 	RECV_BODY,
+	CHECK_HEADER,
 	DISCONNECTED,
-	PROCESS,
+	RESPOND
 } state;
 
 public:
@@ -23,10 +24,13 @@ public:
 
 	bool handleRequest();
 	bool sendResponse();
-	state recvRequest();
 
 private:
 	int			_fd;
+	state		_state;
+	Request		_request;
 	std::string	_buffer;
 
+	bool	isReceiving();
+	state 	recvRequest();
 };
