@@ -11,9 +11,10 @@ class Client
 
 typedef enum state
 {
-	CONTINUE,
+	RECV_HEADER,
+	RECV_BODY,
 	DISCONNECTED,
-	RECV_DONE
+	PROCESS,
 } state;
 
 public:
