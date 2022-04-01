@@ -30,6 +30,6 @@ jobs:
       run: make test && ./unit_test
 
     - name: install python and needed libraries
-      run: sudo apt-get install python && python3 -m pip install requests
+      run: sudo apt-get install python && python3 -m pip install requests && python3 --version
     - name: Run Acceptence Tests
       run: make acceptence

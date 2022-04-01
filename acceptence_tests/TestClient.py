@@ -22,7 +22,7 @@ EXIT_CODE = 0
 r = requests.get(localhost)
 
 
-if r.status_code == OK:
+if r.status_code != OK:
     print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:4242")
     EXIT_CODE = 1;
 else:
