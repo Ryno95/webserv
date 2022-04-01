@@ -29,7 +29,7 @@ else:
     print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:4242")
 
 # sleep so that the exit code is that of the python script and not the server
-time.sleep(2)
+time.sleep(1)
 exit(EXIT_CODE)
 # p10k
 

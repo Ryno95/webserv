@@ -7,7 +7,7 @@ PID=$!
 # sleep for 1 second to give the server time to start-up
 sleep 1
 # run the tests
-python3 acceptence_tests/TestClient.py
+python3 acceptence_tests/TestClient.py 
 # save the return val of the tests foor actions
 T1=$?
 
