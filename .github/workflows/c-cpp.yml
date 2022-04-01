@@ -28,3 +28,6 @@ jobs:
         sudo apt-get install criterion-dev
     - name: Run make in tests directory
       run: make test && ./unit_test
+
+      name: install python and needed libraries
+      run: sudo apt-get install python3.9.1 && python3 -m pip install requests

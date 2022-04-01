@@ -1,12 +1,15 @@
 #!/bin/bash
-# the & run a command/program in the background
+# the & runs a command/program in the background
 ./Webserver.out &
-# Get its PID
+
+# Save the PID to kill the webserv
 PID=$!
-sleep 2
+# sleep for 1 second to give the server time to start-up
+sleep 1
+# run the tests
 python3 acceptence_tests/TestClient.py
+# save the return val of the tests foor actions
 T1=$?
-# printf "Return number is %s\n" 
-sleep 2
+
 kill $PID
 exit $T1

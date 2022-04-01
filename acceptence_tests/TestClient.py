@@ -4,7 +4,7 @@ from enum import Enum
 
 class Colors:
     OKGREEN =   '\033[92m'
-    FAILRED =       '\033[91m'
+    FAILRED =   '\033[91m'
     NATURAL =   '\033[0m'
 
 OK				= 200
@@ -21,13 +21,15 @@ EXIT_CODE = 0
 
 r = requests.get(localhost)
 
-if r.status_code != 200:
+
+if r.status_code == OK:
     print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:4242")
     EXIT_CODE = 1;
 else:
     print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:4242")
 
-time.sleep(3)
+# sleep so that the exit code is that of the python script and not the server
+time.sleep(2)
 exit(EXIT_CODE)
 # p10k
 
