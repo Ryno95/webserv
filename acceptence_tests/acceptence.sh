@@ -1,10 +1,10 @@
 #!/bin/bash
 # the & run a command/program in the background
-./../Webserver.out &
+./Webserver.out &
 # Get its PID
 PID=$!
 sleep 2
-python3 TestClient.py
+python3 acceptence_tests/TestClient.py
 T1=$?
 # printf "Return number is %s\n" 
 sleep 2
