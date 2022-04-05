@@ -11,7 +11,7 @@ jobs:
           command: 'echo Building'
       - run:
           name: Install curl
-          commamnd: "apt install curl"
+          command: "apt install curl"
       - run:
           name: Unit-Test
           command: "make test && ./unit_test"
