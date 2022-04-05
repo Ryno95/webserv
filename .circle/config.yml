@@ -1,0 +1,17 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: "rynosaurusrex/ci_for_codam:webserv"
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: 'echo Building'
+      - run:
+          name: Unit-Test
+          command: "make test && ./unit_test"
+      # - run:
+      #     name: Acceptance-Test
+      #     command: make circleci-project-setup
