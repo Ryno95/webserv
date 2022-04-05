@@ -4,6 +4,7 @@
 #include <map>
 
 #include <defines.hpp>
+#include <HttpStatusCode.hpp>
 
 class Request
 {
@@ -17,8 +18,8 @@ public:
 	Request(std::string query);
 	~Request();
 
-	httpStatusCode getStatus() const;
-	void throwError(httpStatusCode code);
+	HttpStatusCode getStatus() const;
+	void throwError(HttpStatusCode code);
 	void parse();
 	bool checkForBody() const;
 
@@ -40,7 +41,7 @@ private:
 	std::map<std::string, std::string>	_headerFields;
 	std::string	_body;
 
-	httpStatusCode _status;
+	HttpStatusCode _status;
 };
 
 
