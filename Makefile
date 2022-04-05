@@ -40,6 +40,7 @@ local_test: $(TEST_SRC) $(OBJS)
 	./$(TEST_NAME)
 
 acceptence: $(NAME)
+	$(CC) acceptence_tests/client.cpp -o client.out
 	./acceptence_tests/acceptence.sh
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?

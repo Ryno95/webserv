@@ -8,7 +8,8 @@ PID=$!
 sleep 2
 # run the tests
 
-curl localhost:80
+./client.out "GET /test HTTP/1.1"
+# curl localhost:80
 # python3 acceptence_tests/TestClient.py 
 # # save the return val of the tests foor actions
 T1=$?
