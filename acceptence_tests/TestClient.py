@@ -21,7 +21,7 @@ EXIT_CODE = 0
 
 print("Connecting to server...")
 # get_from_api(session, path="http://localhost/test")
-r = requests.get(localhost)
+r = requests.get(localhost, timeout=2)
 print("Request send!")
 
 if r.status_code != OK:
