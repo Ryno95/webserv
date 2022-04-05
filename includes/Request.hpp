@@ -4,6 +4,7 @@
 #include <map>
 
 #include <defines.hpp>
+#include <Method.hpp>
 #include <HttpStatusCode.hpp>
 
 class Request
