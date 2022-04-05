@@ -84,7 +84,8 @@ bool Client::handleRequest()
 bool Client::sendResponse()
 {
 	std::string buffer = "HTTP/1.1 ";
-	buffer += std::to_string(_request.getStatus());
+	buffer += std::to_string(_request.getStatus().first) + " ";
+	buffer += _request.getStatus().second;
 	buffer += "\r\ncontent-length: 17\r\n\r\nSERVER GOES BRRRR";
 	std::cout << "Send to " << _fd << ": " << std::endl << buffer << std::endl;
 	send(_fd, buffer.c_str(), buffer.size(), 0);

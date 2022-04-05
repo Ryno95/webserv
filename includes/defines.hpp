@@ -18,7 +18,6 @@
 
 #pragma endregion
 
-
 #define BIT_ISSET(num, pos) ((num) & (1 << pos))
 #define POLLIN_BIT 0
 #define POLLOUT_BIT 2

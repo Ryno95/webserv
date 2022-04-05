@@ -1,11 +1,12 @@
 #pragma once
 
-enum HttpStatusCode
-{
-	OK				= 200,
-	BAD_REQUEST		= 400,
-	NOT_FOUND		= 404,
-	URI_TOO_LONG	= 414,
-	TEAPOT			= 418,
-	NOT_IMPLEMENTED	= 501
-};
+#include <string>
+
+typedef std::pair<int, std::string> HttpStatusCode;
+
+#define OK				HttpStatusCode(200, "OK")
+#define BAD_REQUEST		HttpStatusCode(400, "BAD_REQUEST")
+#define NOT_FOUND		HttpStatusCode(404, "NOT_FOUND")
+#define URI_TOO_LONG	HttpStatusCode(414, "URI_TOO_LONG")
+#define TEAPOT			HttpStatusCode(418, "TEAPOT")
+#define NOT_IMPLEMENTED	HttpStatusCode(501, "NOT_IMPLEMENTED")

@@ -10,14 +10,12 @@ public:
 	~Response();
 
 /*
-	std::string buffer = "HTTP/1.1 ";
-	buffer += std::to_string(_request.getStatus());
-	buffer += "\r\ncontent-length: 17\r\n\r\nSERVER GOES BRRRR";
-
 	Server response pattern:
 
-	version statuscode status\r\n
-	header_keys: header_values\r\n
+	[version] [statuscode] [status]\r\n
+	[header_key]: [header_value]\r\n
+	...
+	[header_key]: [header_value]\r\n
 	\r\n
 	body
 */
