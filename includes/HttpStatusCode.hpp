@@ -1,6 +1,6 @@
 #pragma once
 
-enum HttpStatusCode
+enum class HttpStatusCode
 {
 	OK				= 200,
 	BAD_REQUEST		= 400,
