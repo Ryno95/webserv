@@ -101,8 +101,8 @@ void	Webserv::handleListener()
 
 	if (_fds[0].revents == POLLIN)
 	{
-		std::cout << "Accepting new client..." << std::endl;
 
+		std::cout << "Accepting new client..." << std::endl;
 		newClient.fd = accept(_listenFd, NULL, NULL);
 		if (newClient.fd != SYSTEM_ERR)
 		{
