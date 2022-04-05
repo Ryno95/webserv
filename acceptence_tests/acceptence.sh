@@ -8,8 +8,8 @@ PID=$!
 sleep 2
 # run the tests
 
-# curl localhost:4242
-python3 acceptence_tests/TestClient.py 
+curl localhost:4242
+# python3 acceptence_tests/TestClient.py 
 # # save the return val of the tests foor actions
 T1=$?
 
