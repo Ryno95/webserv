@@ -15,7 +15,7 @@ jobs:
 # runs on ubuntu because it is WAYYY cheaper (setting up macos seems to take longer and the price is x10 for every second ran..)
 # runs on ubuntu 18.04 becuase there is no package available for ubuntu 20.04 and github does not support ubuntu 21.x (which does have a package.. criterion skipped ubuntu 20?)
     name: ubuntu 18.04
-    runs-on: ubuntu-18.04
+    container: rynosaurusrex/ci_for_codam
 
     steps:
     - uses: actions/checkout@v2

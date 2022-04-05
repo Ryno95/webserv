@@ -15,7 +15,7 @@ TEAPOT			= 418
 NOT_IMPLEMENTED	= 501
 
 ERROR = 1
-localhost = "http://localhost:4242"
+localhost = "http://localhost:80"
 EXIT_CODE = 0
 
 
@@ -23,10 +23,10 @@ r = requests.get(localhost)
 
 
 if r.status_code != OK:
-    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:4242")
+    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:80")
     EXIT_CODE = 1;
 else:
-    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:4242")
+    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:80")
 
 # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
