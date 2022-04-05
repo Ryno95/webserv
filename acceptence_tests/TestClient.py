@@ -25,10 +25,10 @@ r = requests.get(localhost)
 print("Request send!")
 
 if r.status_code != OK:
-    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:80")
+    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:8080")
     EXIT_CODE = 1;
 else:
-    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:80")
+    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:8080")
 
 # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
