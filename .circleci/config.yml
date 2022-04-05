@@ -9,6 +9,7 @@ jobs:
       - run:
           name: Build
           command: 'echo Building'
+      - run:
           name: Install curl
           commamnd: apt -y install curl
       - run:
