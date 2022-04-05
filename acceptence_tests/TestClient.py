@@ -1,5 +1,6 @@
 import time
 import requests
+from requests import Session
 from enum import Enum
 
 class Colors:
@@ -15,10 +16,11 @@ TEAPOT			= 418
 NOT_IMPLEMENTED	= 501
 
 ERROR = 1
-localhost = "http://127.0.0.1"
+localhost = "http://0.0.0.0"
 EXIT_CODE = 0
 
 print("Connecting to server...")
+# get_from_api(session, path="http://localhost/test")
 r = requests.get(localhost)
 print("Request send!")
 
