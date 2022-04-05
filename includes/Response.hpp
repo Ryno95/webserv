@@ -3,12 +3,6 @@
 #include <string>
 #include <HttpStatusCode.hpp>
 
-class Response
-{
-public:
-	Response(HttpStatusCode code);
-	~Response();
-
 /*
 	Server response pattern:
 
@@ -20,9 +14,21 @@ public:
 	body
 */
 
-private:
-	std::string body;
-	HttpStatusCode statusCode;
+class Response
+{
+public:
+	Response();
+	Response(HttpStatusCode code);
+	~Response();
 
-	void setBody();
+	void setBody(char* bytes);
+	void addHeaderField(std::pair<std::string, std::string> field);
+
+private:
+	char* _body;
+	bool _isReadyToSend;
+	std::string _rawBytesToSend;
+	std::map<std::string, std::string> _headerFields;
+	HttpStatusCode _statusCode;
+
 };

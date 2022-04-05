@@ -29,6 +29,7 @@ private:
 	int			_fd;
 	state		_state;
 	Request		_request;
+	Response	_response;
 	std::string	_buffer;
 
 	bool	isReceiving() const;
