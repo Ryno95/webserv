@@ -9,6 +9,8 @@ jobs:
       - run:
           name: Build
           command: 'echo Building'
+          name: Install curl
+          commamnd: apt -y install curl
       - run:
           name: Unit-Test
           command: "make test && ./unit_test"
