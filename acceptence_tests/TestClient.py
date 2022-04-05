@@ -18,9 +18,9 @@ ERROR = 1
 localhost = "http://localhost:80"
 EXIT_CODE = 0
 
-
+print("Connecting to server...")
 r = requests.get(localhost)
-
+print("Request send!")
 
 if r.status_code != OK:
     print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:80")
