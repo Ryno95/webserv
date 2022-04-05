@@ -3,7 +3,7 @@
 
 int main()
 {
-	Webserv test(80, "Testserver");
+	Webserv test(8080, "Testserver");
 
 	test.run();
 	return (0);

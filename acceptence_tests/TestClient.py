@@ -16,12 +16,12 @@ TEAPOT			= 418
 NOT_IMPLEMENTED	= 501
 
 ERROR = 1
-localhost = "http://localhost:80"
+localhost = "http://localhost:8080"
 EXIT_CODE = 0
 
 print("Connecting to server...")
 # get_from_api(session, path="http://localhost/test")
-r = requests.get(localhost, timeout=2)
+r = requests.get(localhost)
 print("Request send!")
 
 if r.status_code != OK:
