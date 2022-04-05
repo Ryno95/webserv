@@ -9,7 +9,7 @@ sleep 2
 # run the tests
 
 # curl -v localhost:8080
-curl -X GET \
+curl -X  -v GET \
   -H "Content-type: application/json" \
   -H "Accept: application/json" \
   -d '{"param0":"pradeep"}' \
