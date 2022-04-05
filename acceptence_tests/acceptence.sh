@@ -1,6 +1,6 @@
 #!/bin/bash
 # the & runs a command/program in the background
-./Webserver.out
+./Webserver.out &
 
 # Save the PID to kill the webserv
 PID=$!
@@ -8,7 +8,7 @@ PID=$!
 sleep 3
 # run the tests
 
-curl localhost:8080
+curl localhost:8080 &
 # python3 acceptence_tests/TestClient.py 
 # # save the return val of the tests foor actions
 T1=$?
