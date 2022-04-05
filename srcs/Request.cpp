@@ -167,14 +167,14 @@ void Request::parse()
 	parseBody();
 }
 
-void Request::throwError(httpStatusCode code)
+void Request::throwError(HttpStatusCode code)
 {
 	_status = code;
 	throw std::runtime_error("Parse error");
 }
 
 
-httpStatusCode Request::getStatus() const
+HttpStatusCode Request::getStatus() const
 {
 	return _status;
 }

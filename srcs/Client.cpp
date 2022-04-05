@@ -16,6 +16,8 @@ Client::~Client()
 {
 }
 
+#pragma region Request
+
 Client::state Client::recvRequest()
 {
 	int receivedBytes, prevSize;
@@ -66,7 +68,6 @@ bool Client::handleRequest()
 				std::cerr << e.what() << '\n';
 				_state = RESPOND;
 			}
-
 		}
 
 		if (_state == DISCONNECTED)
@@ -75,6 +76,8 @@ bool Client::handleRequest()
 			return true;
 	}
 }
+
+#pragma endregion
 
 #pragma region Response
 
