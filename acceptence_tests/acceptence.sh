@@ -5,7 +5,7 @@
 # Save the PID to kill the webserv
 PID=$!
 # sleep for 1 second to give the server time to start-up
-sleep 2
+sleep 3
 # run the tests
 
 curl localhost:80
