@@ -23,10 +23,3 @@
 #define POLLIN_BIT 0
 #define POLLOUT_BIT 2
 #define POLLHUP_BIT 4
-
-typedef enum method
-{
-	GET,
-	POST,
-	DELETE
-} method;
