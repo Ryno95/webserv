@@ -12,6 +12,6 @@ jobs:
       - run:
           name: Unit-Test
           command: "make test && ./unit_test"
-      - run:
-          name: Acceptance-Test
-          command: make acceptence
+      # - run:
+      #     name: Acceptance-Test
+      #     command: make acceptence
