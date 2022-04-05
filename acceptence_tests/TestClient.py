@@ -16,7 +16,7 @@ TEAPOT			= 418
 NOT_IMPLEMENTED	= 501
 
 ERROR = 1
-localhost = "https://localhost:80"
+localhost = "http://localhost:80"
 EXIT_CODE = 0
 
 print("Connecting to server...")
