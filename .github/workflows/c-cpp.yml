@@ -13,11 +13,11 @@ jobs:
   build:
 
     name: Preparing test environment
-    runs-on: ubuntu:latest
+    runs-on: rynosaurusrex/ci_for_codam:webserv
 
     steps:
     - name: checking out repo content
-    - uses: actions/checkout@v2
+      uses: actions/checkout@v2
 
     - name: Run make in tests directory
       run: make test && ./unit_test
