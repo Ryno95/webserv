@@ -11,6 +11,8 @@
 #pragma region CONFIG FILE
 
 #define MAX_TARGET_LEN 50
+
+#define HTTPVERSION "HTTP/1.1"
 #define HTTPVERSION_MAJOR 1
 #define HTTPVERSION_MINOR 1
 
