@@ -13,7 +13,7 @@ jobs:
   build:
 
     name: Preparing test environment
-    runs-on: rynosaurusrex/ci_for_codam:webserv
+    runs-on: ubuntu:latest
 
     steps:
     - name: checking out repo content
