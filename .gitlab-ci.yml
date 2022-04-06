@@ -1,0 +1,26 @@
+variables:
+  IMAGE: "lgutter/webserv_test"
+
+stages:
+  - 'test'
+
+.template:
+  stage: test
+  parallel:
+    matrix:
+      - VERSION: ["latest", "root"]
+  image: ${IMAGE}:${VERSION}
+  before_script:
+    - whoami
+    - env
+
+unit-test:
+  extends: .template
+  script:
+    - make test
+    - ./unit_test
+
+acceptance-test:
+  extends: .template
+  script:
+    - make acceptence
