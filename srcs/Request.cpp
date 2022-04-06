@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cctype>
 
-Request::Request(std::string query) : _query(query), _status(OK)
+Request::Request(std::string query) : _query(query), _status(HttpStatusCodes::OK)
 {
 }
 
@@ -21,7 +21,7 @@ size_t Request::parseMethod()
 
 	pos = _query.find(' ');
 	if (pos == std::string::npos)
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 	std::string method = _query.substr(0, pos);
 	if (method == "GET")
 		_method = GET;
@@ -30,7 +30,7 @@ size_t Request::parseMethod()
 	else if (method == "DELETE")
 		_method = DELETE;
 	else
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 	return pos;
 }
 
@@ -40,10 +40,10 @@ size_t Request::parseTarget(size_t pos)
 
 	pos2 = _query.find(' ', pos);
 	if (pos == std::string::npos || pos2 - pos == 0)
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 	_target = _query.substr(pos, (pos2 - pos));
 	if (_target.size() > MAX_TARGET_LEN)
-		throwError(URI_TOO_LONG);
+		throwError(HttpStatusCodes::URI_TOO_LONG);
 	return pos2;
 }
 
@@ -57,36 +57,36 @@ size_t Request::parseVersion(size_t pos)
 
 
 	if (_query.substr(pos, versionPrefixLen) != versionPrefix) // case insensitive?
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 	pos2 = pos + versionPrefixLen;
 
 	pos = _query.find('.', pos2);
 	if (pos == std::string::npos)
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 
 	tmp = _query.substr(pos2, pos - pos2);  // check if this section (major) ONLY contains digits
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
 		if (!std::isdigit(tmp[i]))
-			throwError(BAD_REQUEST);
+			throwError(HttpStatusCodes::BAD_REQUEST);
 	}
 	major = std::atoi(tmp.c_str());
 	if (major != HTTPVERSION_MAJOR)
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 
 	pos2 = _query.find('\r', 0);
 	if (_query.find('\n', 0) - pos2 != 1) // there's no \n somewhere in the line, only at \r\n
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 
 	tmp = _query.substr(pos + 1, pos2 - pos - 1); // check if this section (minor) ONLY contains digits
 	for (size_t i = 0; i < tmp.size(); i++)
 	{
 		if (!std::isdigit(tmp[i]))
-			throwError(BAD_REQUEST);
+			throwError(HttpStatusCodes::BAD_REQUEST);
 	}
 	minor = std::atoi(tmp.c_str());
 	if (minor != HTTPVERSION_MINOR)
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 	return pos2 + 2;
 }
 
@@ -108,7 +108,7 @@ void	Request::addKeyValuePair(const std::string &src, size_t newLinePos)
 	int				i = 0;
 
 	if (colonPos == std::string::npos || std::isspace(src[colonPos - 1]))
-		throwError(BAD_REQUEST);
+		throwError(HttpStatusCodes::BAD_REQUEST);
 	
 	std::string key = src.substr(i, colonPos);
 	while(std::isspace(src[colonPos + CRLF_CHAR_COUNT + i]))
@@ -160,14 +160,14 @@ void Request::parse()
 	parseBody();
 }
 
-void Request::throwError(httpStatusCode code)
+void Request::throwError(HttpStatusCode code)
 {
 	_status = code;
 	throw std::runtime_error("Parse error");
 }
 
 
-httpStatusCode Request::getStatus() const
+HttpStatusCode Request::getStatus() const
 {
 	return _status;
 }
