@@ -13,7 +13,8 @@ CLASSES		=	Webserv\
 				Client\
 				Request\
 				HttpStatusCode\
-				RequestReceiver
+				RequestReceiver\
+				ResponseSender
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)

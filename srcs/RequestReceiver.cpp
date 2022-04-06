@@ -8,14 +8,18 @@
 #include <stdexcept>
 #include <iostream>
 
-RequestReceiver::RequestReceiver(int fd) : _fd(fd), _state(RECV_HEADER), _bodyBytesReceived(0), _bodySize(0)
+RequestReceiver::RequestReceiver(int fd)
+	: _fd(fd), _state(RECV_HEADER), _bodyBytesReceived(0), _bodySize(0)
 {
 }
 
-RequestReceiver::~RequestReceiver() {}
+RequestReceiver::~RequestReceiver()
+{
+}
 
 Request RequestReceiver::getRequest()
 {
+	return _request;
 }
 
 void RequestReceiver::receive()

@@ -8,7 +8,7 @@
 #include <Request.hpp>
 #include <RequestReceiver.hpp>
 #include <Response.hpp>
-// #include <ResponseHandler.hpp>
+#include <ResponseSender.hpp>
 
 
 class Client
@@ -32,9 +32,9 @@ public:
 private:
 	int _fd;
 
-	std::deque<Request> _requests;
+	// std::deque<Request> _requests;
 	// std::deque<Response> _responses;
 
 	RequestReceiver _requestReceiver;
-	// ResponseHandler _responseHandler;
+	ResponseSender _responseSender;
 };
