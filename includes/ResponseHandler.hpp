@@ -1,7 +1,5 @@
 #pragma once
 
-#include <AHandler.hpp>
-
 /*
 	ResponseHandler will get a response object as argument.
 	It will use the object to determine how and how much to send.
@@ -22,4 +20,6 @@ private:
 		SEND,
 		FINISHED
 	};
+
+	state send();
 };

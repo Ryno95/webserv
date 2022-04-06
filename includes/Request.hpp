@@ -22,7 +22,7 @@ public:
 	HttpStatusCode getStatus() const;
 	void throwError(HttpStatusCode code);
 	void parse();
-	bool checkForBody() const;
+	bool hasBodyField() const;
 
 private:
 	void parseBody();

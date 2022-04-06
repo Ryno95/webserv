@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cctype>
 
+Request::Request() {}
+
 Request::Request(std::string query) : _query(query), _status(HttpStatusCodes::OK)
 {
 }
@@ -15,7 +17,7 @@ void Request::parseBody()
 {
 }
 
-bool Request::checkForBody() const
+bool Request::hasBodyField() const
 {
 	return false;
 }

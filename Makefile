@@ -12,7 +12,8 @@ MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Webserv\
 				Client\
 				Request\
-				HttpStatusCode
+				HttpStatusCode\
+				RequestReceiver
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
