@@ -31,7 +31,7 @@ public:
 private:
 	int _fd;
 
-	// std::deque<Request> _requests;
+	std::deque<Request> _requests;
 	// std::deque<Response> _responses;
 
 	Receiver _receiver;

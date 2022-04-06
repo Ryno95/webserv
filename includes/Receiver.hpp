@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Request.hpp>
+#include <deque>
 
 /*
 	Receiver will handle receiving bytes and store those in a buffer.
@@ -13,8 +14,8 @@ public:
 	Receiver(int fd);
 	~Receiver();
 
-	bool handle(); // Returns whether the action has finished and should be collected.
-	Request getRequest();
+	void handle(); // Returns whether the action has finished and should be collected.
+	std::deque<Request> const& getRequests();
 
 private:
 	typedef enum
@@ -22,7 +23,7 @@ private:
 		RECV_HEADER,
 		RECV_BODY,
 		CHECK_HEADER,
-		FINISHED
+		ADD_REQUEST
 	} state;
 
 	void receive();
@@ -30,7 +31,8 @@ private:
 	void processBodyRecv();
 
 	std::string _buffer;
-	Request _request;
+	Request _newRequest;
+	std::deque<Request> _readyRequests;
 	int _fd;
 	state _state;
 	int _bodyBytesReceived;

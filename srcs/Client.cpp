@@ -21,10 +21,16 @@ bool Client::handleRequest()
 {
 	try
 	{
-		if (_receiver.handle())
+		_receiver.handle();
+		std::deque<Request> const& newRequests = _receiver.getRequests();
+		if (newRequests.size() == 0)
+			return true;
+		std::deque<Request>::const_reverse_iterator first = newRequests.rbegin();
+		std::deque<Request>::const_reverse_iterator last = newRequests.rend();
+		while (first != last)
 		{
-			// add request to requests queue
-			_sender.handle(_receiver.getRequest()); // tmp function for program flow
+			_requests.push_back(*first);
+			++first;
 		}
 	}
 	catch(const DisconnectedException& e)
@@ -40,5 +46,14 @@ bool Client::handleRequest()
 */
 bool Client::handleResponse()
 {
+	if (_requests.size() < 2)
+		return true;
+	while (_requests.size() > 0)
+	{
+		std::cout << "Requests ready for us: " << _requests.size() << std::endl;
+		Request request = _requests.front();
+		_requests.pop_front();
+		_sender.handle(request);
+	}
 	return true;
 }

@@ -17,9 +17,9 @@ Receiver::~Receiver()
 {
 }
 
-Request Receiver::getRequest()
+std::deque<Request> const& Receiver::getRequests()
 {
-	return _request;
+	return _readyRequests;
 }
 
 void Receiver::receive()
@@ -47,18 +47,24 @@ void Receiver::processBodyRecv()
 {
 	if (_bodyBytesReceived >= _bodySize)
 	{
-		_state = FINISHED;
+		_state = ADD_REQUEST;
 	}
 }
 
 /*
 	Returns whether or not the handling is finished and ready to be collected.
 */
-bool Receiver::handle()
+void Receiver::handle()
 {
 	state prevState;
 
 	receive();
+
+	if (_state != RECV_HEADER && _state != RECV_BODY) // reset state
+	{
+		_state = RECV_HEADER;
+		std::cout << "Resetting state" << std::endl;
+	}
 
 	while (1)
 	{
@@ -74,35 +80,36 @@ bool Receiver::handle()
 				processBodyRecv();
 				break;
 
+			case ADD_REQUEST:
+				_readyRequests.push_back(_newRequest);
+				break;
+
 			case CHECK_HEADER:
-				_request = Request(_buffer);
+				_newRequest = Request(_buffer);
 
 				try
 				{
-					_request.parse();
-					if (_request.hasBodyField())
+					_newRequest.parse();
+					if (_newRequest.hasBodyField())
 					{
 						_state = RECV_BODY;
+						_bodyBytesReceived = 0;
 						// _bodySize = get from header field!
 						throw std::runtime_error("NOT IMPLEMENTED YET!");
 					}
 					else
-						_state = FINISHED;
+						_state = ADD_REQUEST;
 				}
 				catch(const std::exception& e) // only catch parse exceptions?
 				{
 					std::cerr << e.what() << '\n';
-					_state = FINISHED;
-					return true;
+					_state = ADD_REQUEST;
 				}
 
 				break;
-
-			case FINISHED:
-				return true;
 		}
 
 		if (prevState == _state)
-			return false;
+			break;
 	}
 }
