@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: "rynosaurusrex/ci_for_codam:webserv"
+      - image: "lgutter/webserv_test:latest"
     steps:
       - checkout
       - run:
