@@ -30,9 +30,10 @@ if r.status_code != OK:
 else:
     print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:8080")
 
-# sleep so that the exit code is that of the python script and not the server
+# # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
+# r = requests.post(localhost, "Some data that should be read until the end of days!")
 exit(EXIT_CODE)
-# p10k
+
 
 
