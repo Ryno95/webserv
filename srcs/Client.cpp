@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Client::Client(int fd) : _fd(fd), _requestReceiver(fd), _responseSender(fd)
+Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
 {
 }
 
@@ -21,10 +21,10 @@ bool Client::handleRequest()
 {
 	try
 	{
-		if (_requestReceiver.handle())
+		if (_receiver.handle())
 		{
 			// add request to requests queue
-			_responseSender.handle(_requestReceiver.getRequest()); // tmp function for program flow
+			_sender.handle(_receiver.getRequest()); // tmp function for program flow
 		}
 	}
 	catch(const DisconnectedException& e)

@@ -1,4 +1,4 @@
-#include <ResponseSender.hpp>
+#include <Sender.hpp>
 #include <defines.hpp>
 
 #include <iostream>
@@ -6,15 +6,15 @@
 
 #include <unistd.h>
 
-ResponseSender::ResponseSender(int fd) : _fd(fd)
+Sender::Sender(int fd) : _fd(fd)
 {
 }
 
-ResponseSender::~ResponseSender()
+Sender::~Sender()
 {
 }
 
-bool ResponseSender::handle(Request request)
+bool Sender::handle(Request request)
 {
 	std::string buffer = HTTPVERSION;
 	buffer += " ";

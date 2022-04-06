@@ -3,15 +3,15 @@
 #include <Request.hpp>
 
 /*
-	RequestReceiver will handle receiving bytes and store those in a buffer.
+	Receiver will handle receiving bytes and store those in a buffer.
 	When the request has been received, it will parse the headers and optionally receive the body.
 	When the whole request is received, it will signal with FINISHED that the request can be collected by the client handler.
  */
-class RequestReceiver
+class Receiver
 {
 public:
-	RequestReceiver(int fd);
-	~RequestReceiver();
+	Receiver(int fd);
+	~Receiver();
 
 	bool handle(); // Returns whether the action has finished and should be collected.
 	Request getRequest();

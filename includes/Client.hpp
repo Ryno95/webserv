@@ -6,9 +6,9 @@
 #include <vector>
 
 #include <Request.hpp>
-#include <RequestReceiver.hpp>
+#include <Receiver.hpp>
 #include <Response.hpp>
-#include <ResponseSender.hpp>
+#include <Sender.hpp>
 
 class Client
 {
@@ -34,6 +34,6 @@ private:
 	// std::deque<Request> _requests;
 	// std::deque<Response> _responses;
 
-	RequestReceiver _requestReceiver;
-	ResponseSender _responseSender;
+	Receiver _receiver;
+	Sender _sender;
 };

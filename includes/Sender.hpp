@@ -3,16 +3,16 @@
 #include <Request.hpp>
 
 /*
-	ResponseSender will get a response object as argument.
+	Sender will get a response object as argument.
 	It will use the object to determine how and how much to send.
 	It will keep on sending until finished and return FINISHED.
-	The client then knows that the ResponseSender is ready to send the next Response object.
+	The client then knows that the Sender is ready to send the next Response object.
  */
-class ResponseSender
+class Sender
 {
 public:
-	ResponseSender(int fd);
-	~ResponseSender();
+	Sender(int fd);
+	~Sender();
 
 	bool handle(Request request); // Returns whether the action has finished and should be collected.
 

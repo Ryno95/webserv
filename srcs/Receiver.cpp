@@ -1,4 +1,4 @@
-#include <RequestReceiver.hpp>
+#include <Receiver.hpp>
 #include <defines.hpp>
 #include <Client.hpp>
 
@@ -8,21 +8,21 @@
 #include <stdexcept>
 #include <iostream>
 
-RequestReceiver::RequestReceiver(int fd)
+Receiver::Receiver(int fd)
 	: _fd(fd), _state(RECV_HEADER), _bodyBytesReceived(0), _bodySize(0)
 {
 }
 
-RequestReceiver::~RequestReceiver()
+Receiver::~Receiver()
 {
 }
 
-Request RequestReceiver::getRequest()
+Request Receiver::getRequest()
 {
 	return _request;
 }
 
-void RequestReceiver::receive()
+void Receiver::receive()
 {
 	int receivedBytes, prevSize;
 
@@ -37,13 +37,13 @@ void RequestReceiver::receive()
 }
 
 
-void RequestReceiver::processHeaderRecv()
+void Receiver::processHeaderRecv()
 {
 	if (_buffer.size() >= 4 && _buffer.find("\r\n\r\n") != std::string::npos)
 		_state = CHECK_HEADER;
 }
 
-void RequestReceiver::processBodyRecv()
+void Receiver::processBodyRecv()
 {
 	if (_bodyBytesReceived >= _bodySize)
 	{
@@ -54,7 +54,7 @@ void RequestReceiver::processBodyRecv()
 /*
 	Returns whether or not the handling is finished and ready to be collected.
 */
-bool RequestReceiver::handle()
+bool Receiver::handle()
 {
 	state prevState;
 
