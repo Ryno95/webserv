@@ -18,7 +18,7 @@ Receiver::~Receiver()
 }
 
 /*
-	Returns the currently prepared requests and removes those returned from the storage.
+	Returns the currently prepared requests and removes those from the object's storage.
 */
 std::deque<Request> const Receiver::collectRequests()
 {
@@ -31,9 +31,10 @@ void Receiver::receive()
 {
 	int receivedBytes;
 
-	_buffer = std::string();
-	_buffer.resize(BUFFER_SIZE);
-	receivedBytes = recv(_fd, &_buffer.front(), BUFFER_SIZE - 1, 0);
+	_recvBuffer.assign(BUFFER_SIZE, 0);
+	// _recvBuffer.clear();
+	// _recvBuffer.resize(BUFFER_SIZE);
+	receivedBytes = recv(_fd, &_recvBuffer.front(), BUFFER_SIZE - 1, 0);
 
 	if (receivedBytes == 0)
 		throw Client::DisconnectedException();
@@ -41,17 +42,18 @@ void Receiver::receive()
 		perror("Read error");
 }
 
-
 void Receiver::processHeaderRecv()
 {
-	size_t pos = _buffer.find("\r\n\r\n");
+	size_t pos = _recvBuffer.find("\r\n\r\n");
 	if (pos == std::string::npos)
-		return;
-
-	_received += _buffer.substr(0, pos - 1);
-	pos += 3;
-	_buffer = _buffer.substr(pos, strlen(_buffer.c_str()) - pos);
-	_state = CHECK_HEADER;
+		_buffer += _recvBuffer;
+	else
+	{
+		_buffer += _recvBuffer.substr(0, pos);
+		pos += 4;
+		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
+		_state = CHECK_HEADER;
+	}
 }
 
 void Receiver::processBodyRecv()
@@ -65,6 +67,7 @@ void Receiver::processBodyRecv()
 void Receiver::checkHeader()
 {
 	_newRequest = Request(_buffer);
+	_buffer.clear();
 
 	try
 	{
@@ -101,7 +104,7 @@ void Receiver::handle()
 		std::cout << "Resetting state" << std::endl;
 	}
 
-	while (1)
+	while (_recvBuffer.size() > 0)
 	{
 		prevState = _state;
 
@@ -118,6 +121,7 @@ void Receiver::handle()
 			case ADD_REQUEST:
 				_readyRequests.push_back(_newRequest);
 				std::cout << "Added request to queue!" << std::endl;
+				_state = RECV_HEADER;
 				break;
 
 			case CHECK_HEADER:

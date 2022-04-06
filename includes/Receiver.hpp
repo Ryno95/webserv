@@ -32,8 +32,8 @@ private:
 	void checkHeader();
 
 	std::string _buffer;
+	std::string _recvBuffer;
 
-	std::string _received;
 	Request _newRequest;
 	std::deque<Request> _readyRequests;
 	int _fd;

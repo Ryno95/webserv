@@ -25,8 +25,8 @@ bool Client::handleRequest()
 		std::deque<Request> const& newRequests = _receiver.collectRequests();
 		if (newRequests.size() == 0)
 			return true;
-		std::deque<Request>::const_reverse_iterator first = newRequests.rbegin();
-		std::deque<Request>::const_reverse_iterator last = newRequests.rend();
+		std::deque<Request>::const_iterator first = newRequests.begin();
+		std::deque<Request>::const_iterator last = newRequests.end();
 		while (first != last)
 		{
 			_requests.push_back(*first);
