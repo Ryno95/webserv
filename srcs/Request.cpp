@@ -15,6 +15,11 @@ void Request::parseBody()
 {
 }
 
+bool Request::checkForBody() const
+{
+	return false;
+}
+
 size_t Request::parseMethod()
 {
 	size_t pos;

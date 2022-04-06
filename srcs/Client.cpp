@@ -16,6 +16,8 @@ Client::~Client()
 {
 }
 
+#pragma region Request
+
 Client::state Client::recvRequest()
 {
 	int receivedBytes, prevSize;
@@ -28,38 +30,76 @@ Client::state Client::recvRequest()
 		return DISCONNECTED;
 	if (receivedBytes != SYSTEM_ERR)
 	{
-			// This probably needs to be optimised
-			// for example only check the last 4 bytes read instead of the whole buffer
 		if (_buffer.size() >= 4 && _buffer.find("\r\n\r\n") != std::string::npos)
-			return RECV_DONE;
+			return CHECK_HEADER;
 	}
 	else
 		perror("Read error");
-	return CONTINUE;
+	return RECV_HEADER;
+}
+
+bool Client::isRecvState() const
+{
+	return _state == RECV_BODY || _state == RECV_HEADER;
 }
 
 bool Client::handleRequest()
 {
-	state st = recvRequest();
+	while (true)
+	{
+		if (isRecvState())
+		{
+			_state = recvRequest();
+			if (isRecvState())
+				return true;
+		}
 
-	if (st == CONTINUE)
-		return true;
-	else if (st == DISCONNECTED)
-		return false;
-	Request request(_buffer);
-	try
-	{
-		request.parse();
+		if (_state == CHECK_HEADER)
+		{
+			_request = Request(_buffer);
+
+			try
+			{
+				_request.parse();
+				_state = _request.checkForBody() ? RECV_BODY : RESPOND;
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << e.what() << '\n';
+				_state = RESPOND;
+			}
+		}
+
+		if (_state == DISCONNECTED)
+			return false;
+		else if (_state == RESPOND)
+			return true;
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	return true;
 }
+
+#pragma endregion
+
+#pragma region Response
 
 bool Client::sendResponse()
 {
+	std::string buffer = HTTPVERSION;
+	buffer += " ";
+	buffer += std::to_string(_request.getStatus().first);
+	buffer += " ";
+	buffer += _request.getStatus().second;
+	buffer += "\r\ncontent-length: 17\r\n\r\nSERVER GOES BRRRR";
+	std::cout << "Send to " << _fd << ": " << std::endl << buffer << std::endl;
+	send(_fd, buffer.c_str(), buffer.size(), 0);
 	return true;
 }
+
+bool Client::handleResponse()
+{
+	if (_state != RESPOND)
+		return true;
+	sendResponse();
+	return false;
+}
+
+#pragma endregion

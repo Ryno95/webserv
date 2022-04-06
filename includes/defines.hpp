@@ -11,11 +11,12 @@
 #pragma region CONFIG FILE
 
 #define MAX_TARGET_LEN 50
+
+#define HTTPVERSION "HTTP/1.1"
 #define HTTPVERSION_MAJOR 1
 #define HTTPVERSION_MINOR 1
 
 #pragma endregion
-
 
 #define BIT_ISSET(num, pos) ((num) & (1 << pos))
 #define POLLIN_BIT 0
