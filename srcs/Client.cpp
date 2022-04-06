@@ -38,7 +38,7 @@ Client::state Client::recvRequest()
 	return RECV_HEADER;
 }
 
-bool Client::isReceiving() const
+bool Client::isRecvState() const
 {
 	return _state == RECV_BODY || _state == RECV_HEADER;
 }
@@ -47,10 +47,10 @@ bool Client::handleRequest()
 {
 	while (true)
 	{
-		if (isReceiving())
+		if (isRecvState())
 		{
 			_state = recvRequest();
-			if (isReceiving())
+			if (isRecvState())
 				return true;
 		}
 

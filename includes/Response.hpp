@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include <HttpStatusCode.hpp>
 
 /*
@@ -22,12 +23,13 @@ public:
 	~Response();
 
 	void setBody(char* bytes);
-	void addHeaderField(std::pair<std::string, std::string> field);
+	void addHeaderField(std::string key, std::string value);
+	std::string getBytes() const;
 
 private:
-	char* _body;
-	bool _isReadyToSend;
 	std::string _rawBytesToSend;
+	bool _isReadyToSend;
+	char* _body;
 	std::map<std::string, std::string> _headerFields;
 	HttpStatusCode _statusCode;
 

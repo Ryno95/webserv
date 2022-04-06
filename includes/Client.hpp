@@ -31,8 +31,9 @@ private:
 	Request		_request;
 	Response	_response;
 	std::string	_buffer;
+	std::string	_sendBuffer;
 
-	bool	isReceiving() const;
+	bool	isRecvState() const;
 	state	recvRequest();
 	bool	sendResponse();
 };

@@ -16,7 +16,12 @@ void Response::setBody(char* bytes)
 	// 2. add header field appropriate to the body
 }
 
-void Response::addHeaderField(std::pair<std::string, std::string> field)
+void Response::addHeaderField(std::string key, std::string value)
 {
-	// 1. add header field to map
+	_headerFields.insert(std::pair(key, value));
+}
+
+std::string Response::getBytes() const
+{
+	return "";
 }
