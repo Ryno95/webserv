@@ -14,8 +14,6 @@ Client::~Client()
 {
 }
 
-#pragma region Request
-
 /*
 	Returns false when the client should be removed (disconnected)
 */
@@ -25,7 +23,8 @@ bool Client::handleRequest()
 	{
 		if (_requestReceiver.handle())
 		{
-			_responseSender.handle(_requestReceiver.getRequest());
+			// add request to requests queue
+			_responseSender.handle(_requestReceiver.getRequest()); // tmp function for program flow
 		}
 	}
 	catch(const DisconnectedException& e)
@@ -36,10 +35,6 @@ bool Client::handleRequest()
 	return true;
 }
 
-#pragma endregion
-
-#pragma region Response
-
 /*
 	Returns false when the client should be removed (disconnected)
 */
@@ -47,5 +42,3 @@ bool Client::handleResponse()
 {
 	return true;
 }
-
-#pragma endregion

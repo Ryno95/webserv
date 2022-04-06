@@ -10,7 +10,6 @@
 #include <Response.hpp>
 #include <ResponseSender.hpp>
 
-
 class Client
 {
 
