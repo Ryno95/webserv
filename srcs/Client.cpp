@@ -22,7 +22,7 @@ bool Client::handleRequest()
 	try
 	{
 		_receiver.handle();
-		std::deque<Request> const& newRequests = _receiver.getRequests();
+		std::deque<Request> const& newRequests = _receiver.collectRequests();
 		if (newRequests.size() == 0)
 			return true;
 		std::deque<Request>::const_reverse_iterator first = newRequests.rbegin();
@@ -31,6 +31,7 @@ bool Client::handleRequest()
 		{
 			_requests.push_back(*first);
 			++first;
+			std::cout << "PUSHED ON THE CLIENT QUEUE" << std::endl;
 		}
 	}
 	catch(const DisconnectedException& e)

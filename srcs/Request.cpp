@@ -178,3 +178,8 @@ HttpStatusCode Request::getStatus() const
 {
 	return _status;
 }
+
+std::string Request::getTarget() const
+{
+	return _target;
+}

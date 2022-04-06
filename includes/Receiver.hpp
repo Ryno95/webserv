@@ -15,7 +15,7 @@ public:
 	~Receiver();
 
 	void handle(); // Returns whether the action has finished and should be collected.
-	std::deque<Request> const& getRequests();
+	std::deque<Request> const collectRequests();
 
 private:
 	typedef enum
@@ -29,8 +29,11 @@ private:
 	void receive();
 	void processHeaderRecv();
 	void processBodyRecv();
+	void checkHeader();
 
 	std::string _buffer;
+
+	std::string _received;
 	Request _newRequest;
 	std::deque<Request> _readyRequests;
 	int _fd;

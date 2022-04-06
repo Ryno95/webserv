@@ -17,18 +17,23 @@ Receiver::~Receiver()
 {
 }
 
-std::deque<Request> const& Receiver::getRequests()
+/*
+	Returns the currently prepared requests and removes those returned from the storage.
+*/
+std::deque<Request> const Receiver::collectRequests()
 {
-	return _readyRequests;
+	std::deque<Request> current = _readyRequests;
+	_readyRequests.clear();
+	return current;
 }
 
 void Receiver::receive()
 {
-	int receivedBytes, prevSize;
+	int receivedBytes;
 
-	prevSize = _buffer.size();
-	_buffer.resize(_buffer.size() + BUFFER_SIZE);
-	receivedBytes = recv(_fd, &_buffer.front() + prevSize, BUFFER_SIZE, 0);
+	_buffer = std::string();
+	_buffer.resize(BUFFER_SIZE);
+	receivedBytes = recv(_fd, &_buffer.front(), BUFFER_SIZE - 1, 0);
 
 	if (receivedBytes == 0)
 		throw Client::DisconnectedException();
@@ -39,14 +44,44 @@ void Receiver::receive()
 
 void Receiver::processHeaderRecv()
 {
-	if (_buffer.size() >= 4 && _buffer.find("\r\n\r\n") != std::string::npos)
-		_state = CHECK_HEADER;
+	size_t pos = _buffer.find("\r\n\r\n");
+	if (pos == std::string::npos)
+		return;
+
+	_received += _buffer.substr(0, pos - 1);
+	pos += 3;
+	_buffer = _buffer.substr(pos, strlen(_buffer.c_str()) - pos);
+	_state = CHECK_HEADER;
 }
 
 void Receiver::processBodyRecv()
 {
 	if (_bodyBytesReceived >= _bodySize)
 	{
+		_state = ADD_REQUEST;
+	}
+}
+
+void Receiver::checkHeader()
+{
+	_newRequest = Request(_buffer);
+
+	try
+	{
+		_newRequest.parse();
+		if (_newRequest.hasBodyField())
+		{
+			_state = RECV_BODY;
+			_bodyBytesReceived = 0;
+			// _bodySize = get from header field!
+			throw std::runtime_error("NOT IMPLEMENTED YET!");
+		}
+		else
+			_state = ADD_REQUEST;
+	}
+	catch(const std::exception& e) // only catch parse exceptions?
+	{
+		std::cerr << e.what() << '\n';
 		_state = ADD_REQUEST;
 	}
 }
@@ -82,30 +117,11 @@ void Receiver::handle()
 
 			case ADD_REQUEST:
 				_readyRequests.push_back(_newRequest);
+				std::cout << "Added request to queue!" << std::endl;
 				break;
 
 			case CHECK_HEADER:
-				_newRequest = Request(_buffer);
-
-				try
-				{
-					_newRequest.parse();
-					if (_newRequest.hasBodyField())
-					{
-						_state = RECV_BODY;
-						_bodyBytesReceived = 0;
-						// _bodySize = get from header field!
-						throw std::runtime_error("NOT IMPLEMENTED YET!");
-					}
-					else
-						_state = ADD_REQUEST;
-				}
-				catch(const std::exception& e) // only catch parse exceptions?
-				{
-					std::cerr << e.what() << '\n';
-					_state = ADD_REQUEST;
-				}
-
+				checkHeader();
 				break;
 		}
 

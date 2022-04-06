@@ -21,9 +21,12 @@ bool Sender::handle(Request request)
 	buffer += std::to_string(request.getStatus().first);
 	buffer += " ";
 	buffer += request.getStatus().second;
-	buffer += "\r\ncontent-length: 17\r\n\r\nSERVER GOES BRRRR";
+	buffer += "\r\ncontent-length: ";
+	buffer += std::to_string(request.getTarget().size());
+	buffer += "\r\n\r\n";
+	buffer += request.getTarget();
 
-	std::cout << "Sending to " << _fd << ": " << std::endl << buffer << std::endl;
+	std::cout << "Sending to " << _fd << ": " << std::endl << buffer << std::endl << std::endl;
 
 	write(_fd, buffer.c_str(), buffer.size());
 	return true;

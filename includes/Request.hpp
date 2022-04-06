@@ -23,6 +23,7 @@ public:
 	void throwError(HttpStatusCode code);
 	void parse();
 	bool hasBodyField() const;
+	std::string getTarget() const;
 
 private:
 	void parseBody();
