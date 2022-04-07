@@ -20,7 +20,6 @@ localhost = "http://localhost:8080"
 EXIT_CODE = 0
 
 print("Connecting to server...")
-# get_from_api(session, path="http://localhost/test")
 r = requests.get(localhost)
 print("Request send!")
 
@@ -32,7 +31,7 @@ else:
 
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
-# r = requests.post(localhost, "Some data that should be read until the end of days!")
+
 exit(EXIT_CODE)
 
 

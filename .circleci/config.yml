@@ -9,9 +9,6 @@ jobs:
       - run:
           name: Build
           command: 'echo Building'
-      # - run:
-          # name: Install curl
-          # command: "apt -y install curl"
       - run:
           name: Unit-Test
           command: "make test && ./unit_test"
