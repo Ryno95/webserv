@@ -10,9 +10,8 @@
 
 int sockFd;
 
-void sendGetRequest(char const *target)
+std::string makeGetRequest(char const* target)
 {
-	int bytesRead;
 	std::string buffer;
 
 	buffer += "GET ";
@@ -20,9 +19,13 @@ void sendGetRequest(char const *target)
 	buffer += " HTTP/1.1\r\n";
 	buffer += "host: pipeline client\r\n";
 	buffer += "\r\n";
+	return buffer;
+}
 
-	send(sockFd, buffer.c_str(), buffer.size(), 0 );
-	std::cout << "Sent: " << buffer << std::endl;
+void sendRequest(std::string request)
+{
+	send(sockFd, request.c_str(), request.size(), 0);
+	std::cout << "Sent: " << request << std::endl;
 }
 
 void readRequests()
@@ -58,7 +61,8 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 
-	sendGetRequest("index");
-	sendGetRequest("hallo");
+	sendRequest(makeGetRequest("index"));
+	sendRequest(makeGetRequest("hallo"));
+	// sendRequest(makeGetRequest("index") + makeGetRequest("hallo"));
 	usleep(1000000);
 }
