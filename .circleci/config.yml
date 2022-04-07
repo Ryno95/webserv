@@ -14,5 +14,5 @@ jobs:
           command: "make test && ./unit_test"
       - run:
           name: Acceptance-Test
-          command: make acceptance | cat -e
+          command: make acceptance
 
