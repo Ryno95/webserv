@@ -12,6 +12,7 @@ MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Webserv\
 				Client\
 				Request\
+				Response\
 				HttpStatusCode\
 				Receiver\
 				Sender
