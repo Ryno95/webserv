@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 
 #include <iostream>
 
@@ -55,4 +56,9 @@ bool Client::handleResponse()
 		_sender.handle(request);
 	}
 	return true;
+}
+
+void Client::hasCommunicated()
+{
+	gettimeofday(&_lastCommunicated, nullptr);
 }

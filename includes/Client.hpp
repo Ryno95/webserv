@@ -29,7 +29,10 @@ public:
 	};
 
 private:
+	void hasCommunicated();
+
 	int _fd;
+	timeval _lastCommunicated;
 
 	std::deque<Request> _requests;
 	// std::deque<Response> _responses;
