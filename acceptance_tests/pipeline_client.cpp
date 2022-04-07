@@ -64,5 +64,5 @@ int main(int argc, char const *argv[])
 	sendRequest(makeGetRequest("index"));
 	sendRequest(makeGetRequest("hallo"));
 	// sendRequest(makeGetRequest("index") + makeGetRequest("hallo"));
-	usleep(1000000);
+	usleep(1200000);
 }
