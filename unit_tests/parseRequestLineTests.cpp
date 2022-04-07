@@ -18,7 +18,7 @@ Test(requestLineTests, INVALID_METHOD)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_valid_request)
@@ -35,7 +35,7 @@ Test(requestLineTests, GET_valid_request)
 
 	cr_expect(request._method == GET);
 	cr_expect(request._target == "/");
-	cr_expect(request.getStatus() == OK);
+	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 }
 
 Test(requestLineTests, GET_valid_request_large_path)
@@ -50,9 +50,9 @@ Test(requestLineTests, GET_valid_request_large_path)
 	{
 	}
 
-	if (request.getStatus() == URI_TOO_LONG)
+	if (request.getStatus() == HttpStatusCodes::URI_TOO_LONG)
 		return;
-	cr_expect(request.getStatus() == OK);
+	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 	cr_expect(request._method == GET);
 	cr_expect(request._target == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
 }
@@ -69,7 +69,7 @@ Test(requestLineTests, POST_valid_request)
 	{
 	}
 
-	cr_expect(request.getStatus() == OK);
+	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 	cr_expect(request._method == POST);
 	cr_expect(request._target == "/");
 }
@@ -86,7 +86,7 @@ Test(requestLineTests, DELETE_valid_request)
 	{
 	}
 
-	cr_expect(request.getStatus() == OK);
+	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 	cr_expect(request._method == DELETE);
 	cr_expect(request._target == "/");
 }
@@ -103,7 +103,7 @@ Test(requestLineTests, DELETE_no_target)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, DELETE_no_version)
@@ -118,7 +118,7 @@ Test(requestLineTests, DELETE_no_version)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, DELETE_no_version2)
@@ -133,7 +133,7 @@ Test(requestLineTests, DELETE_no_version2)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, DELETE_too_many_whitespace1)
@@ -148,7 +148,7 @@ Test(requestLineTests, DELETE_too_many_whitespace1)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, DELETE_too_many_whitespace2)
@@ -163,7 +163,7 @@ Test(requestLineTests, DELETE_too_many_whitespace2)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, empty_seed)
@@ -178,7 +178,7 @@ Test(requestLineTests, empty_seed)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, DELETE_leading_whitespace)
@@ -193,7 +193,7 @@ Test(requestLineTests, DELETE_leading_whitespace)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, DELETE_trailing_whitespace)
@@ -208,7 +208,7 @@ Test(requestLineTests, DELETE_trailing_whitespace)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, target_just_fits)
@@ -229,7 +229,7 @@ Test(requestLineTests, target_just_fits)
 	{
 	}
 
-	cr_expect(request.getStatus() == OK);
+	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 }
 
 
@@ -251,7 +251,7 @@ Test(requestLineTests, target_just_too_long)
 	{
 	}
 
-	cr_expect(request.getStatus() == URI_TOO_LONG);
+	cr_expect(request.getStatus() == HttpStatusCodes::URI_TOO_LONG);
 }
 
 Test(requestLineTests, GET_invalid_version1)
@@ -266,7 +266,7 @@ Test(requestLineTests, GET_invalid_version1)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_invalid_version2)
@@ -281,7 +281,7 @@ Test(requestLineTests, GET_invalid_version2)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_invalid_version3)
@@ -296,7 +296,7 @@ Test(requestLineTests, GET_invalid_version3)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_invalid_version4)
@@ -311,7 +311,7 @@ Test(requestLineTests, GET_invalid_version4)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_invalid_version5)
@@ -326,7 +326,7 @@ Test(requestLineTests, GET_invalid_version5)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_invalid_version6)
@@ -341,7 +341,7 @@ Test(requestLineTests, GET_invalid_version6)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_redundant_zeros)
@@ -356,7 +356,7 @@ Test(requestLineTests, GET_redundant_zeros)
 	{
 	}
 
-	cr_expect(request.getStatus() == OK);
+	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 }
 
 Test(requestLineTests, GET_CR_in_target)
@@ -371,7 +371,7 @@ Test(requestLineTests, GET_CR_in_target)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_LF_in_target)
@@ -386,7 +386,7 @@ Test(requestLineTests, GET_LF_in_target)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_CRLF_in_target)
@@ -401,7 +401,7 @@ Test(requestLineTests, GET_CRLF_in_target)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(requestLineTests, GET_LFCR_in_target)
@@ -416,5 +416,5 @@ Test(requestLineTests, GET_LFCR_in_target)
 	{
 	}
 
-	cr_expect(request.getStatus() == BAD_REQUEST);
+	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }

@@ -1,37 +1,39 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
+#include <deque>
 #include <vector>
 
 #include <Request.hpp>
+#include <Receiver.hpp>
 #include <Response.hpp>
+#include <Sender.hpp>
 
 class Client
 {
-
-typedef enum state
-{
-	RECV_HEADER,
-	RECV_BODY,
-	CHECK_HEADER,
-	DISCONNECTED,
-	RESPOND
-} state;
 
 public:
 	Client(int fd);
 	~Client();
 
-	bool	handleRequest();
-	bool	handleResponse();
+	bool handleRequest();
+	bool handleResponse();
+
+	struct DisconnectedException : std::exception
+	{
+		const char* what() const throw()
+		{
+			return "Client disconnected";
+		}
+	};
 
 private:
-	int			_fd;
-	state		_state;
-	Request		_request;
-	std::string	_buffer;
+	int _fd;
 
-	bool	isReceiving() const;
-	state	recvRequest();
-	bool	sendResponse();
+	std::deque<Request> _requests;
+	// std::deque<Response> _responses;
+
+	Receiver _receiver;
+	Sender _sender;
 };
