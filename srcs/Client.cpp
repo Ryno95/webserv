@@ -49,12 +49,12 @@ bool Client::handleRequest()
 */
 bool Client::handleResponse()
 {
-	while (_requests.size() > 0)
+	while (_responses.size() > 0)
 	{
-		std::cout << "Requests ready for us: " << _requests.size() << std::endl;
-		Request request = _requests.front();
-		_requests.pop_front();
-		_sender.handle(request);
+		std::cout << "Responses ready for us: " << _responses.size() << std::endl;
+		Response response = _responses.front();
+		_responses.pop_front();
+		_sender.handle(response);
 	}
 	return true;
 }
@@ -69,11 +69,11 @@ bool Client::handleExecution()
 		return (false);
 	// Check httpStatusCode after execution
 	response.setStatusCode(_requests.front().getStatus()); // using request status for now
-
-	
-	// response.addHeaderField("");
-
-	
-	_responses.push_back(response);
 	_requests.pop_front();
+	response.addHeaderFields();
+	response.setBody("Hello Mr. Server");
+
+	_responses.push_back(response);
+
+	return true;
 }
