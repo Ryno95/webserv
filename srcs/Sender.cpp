@@ -16,6 +16,7 @@ Sender::~Sender()
 
 bool Sender::handle(Response response)
 {
+	// Null bytes in body should be handled in executor
 	const std::string 	resp = response.getBytes();
 	const int 			size = resp.size();
 
