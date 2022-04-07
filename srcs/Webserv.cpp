@@ -68,7 +68,6 @@ void	Webserv::handleClients()
 	int fdSize;
 
 	fdSize = _fds.size();
-	// std::cout << "Handeling clients\n";
 	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
 	{
 		if (_fds[i].revents == 0)
@@ -134,7 +133,6 @@ void Webserv::handleTimeout()
 
 	for (size_t i = 0; i < _clients.size(); ++i)
 	{
-		// std::cout << "communication diff: " << _clients[i].getLastCommunicatedMs(now) << std::endl;
 		if (_clients[i].getLastCommunicatedMs(now) >= TIMEOUT_MS)
 		{
 			std::cout << "Client on fd " << _fds[i + 1].fd << " timed-out." << std::endl;
