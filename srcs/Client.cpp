@@ -47,8 +47,6 @@ bool Client::handleRequest()
 */
 bool Client::handleResponse()
 {
-	if (_requests.size() < 2)
-		return true;
 	while (_requests.size() > 0)
 	{
 		std::cout << "Requests ready for us: " << _requests.size() << std::endl;

@@ -49,13 +49,11 @@ void Receiver::processHeaderRecv()
 	size_t pos = _recvBuffer.find("\r\n\r\n");
 	if (pos == std::string::npos)
 	{
-		std::cout << "NO end of header found." << std::endl;
 		_buffer += _recvBuffer;
 		_recvBuffer.resize(0);
 	}
 	else
 	{
-		std::cout << "YES end of header found." << std::endl;
 		_buffer += _recvBuffer.substr(0, pos);
 		pos += 4;
 		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
