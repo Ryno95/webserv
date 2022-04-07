@@ -1,11 +1,9 @@
+#include <iostream>
 #include <Response.hpp>
+
 
 Response::Response() {}
 
-Response::Response(Request &request)
-{
-	
-}
 
 Response::Response(HttpStatusCode code) : _statusCode(code)
 {
@@ -20,10 +18,12 @@ void Response::setStatusCode(HttpStatusCode code)
 	this->_statusCode = code;
 }
 
-void Response::setBody(char* bytes)
+void Response::setBody(std::string bytes)
 {
-	// 1. add the body to the object
-	// 2. add header field appropriate to the body
+	const int sizeOfBytes = bytes.size();
+
+	_body = bytes;
+	_headerFields["Content-Length"] = std::to_string(sizeOfBytes);
 }
 
 void Response::setIsReadyToSend(bool isReadyToSend)
@@ -31,9 +31,11 @@ void Response::setIsReadyToSend(bool isReadyToSend)
 	this->_isReadyToSend = isReadyToSend;
 }
 
-void Response::addHeaderField(std::string key, std::string value)
+void Response::addHeaderFields()
 {
-	_headerFields.insert(std::pair<std::string, std::string>(key, value));
+	_headerFields.insert(std::pair<std::string, std::string>("Server", "The best"));
+	_headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
+	_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
 }
 
 std::string Response::getBytes() const
@@ -52,6 +54,7 @@ std::string Response::getBytes() const
 		buffer += cursor->first;
 		buffer += ": ";
 		buffer += cursor->second;
+		++cursor;
 	}
 	buffer += "\r\n\r\n";
 	buffer += _body;

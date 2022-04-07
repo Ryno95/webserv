@@ -20,15 +20,14 @@ class Response
 {
 public:
 	Response();
-	Response(Request &request);
 	Response(HttpStatusCode code);
 	~Response();
 
 	void	setStatusCode(HttpStatusCode code);
-	void	setBody(char* bytes);
+	void	setBody(std::string bytes);
 	void	setIsReadyToSend(bool isReadyToSend);
 
-	void	addHeaderField(std::string key, std::string value);
+	void	addHeaderFields(); // hard coded for now to get the flow going
 
 	std::string		getBytes() const;
 	bool			getIsReadyToSend() const;
@@ -42,6 +41,7 @@ private:
 	HttpStatusCode 						_statusCode;
 
 };
+
 
 
 
