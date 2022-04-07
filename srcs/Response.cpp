@@ -2,6 +2,11 @@
 
 Response::Response() {}
 
+Response::Response(Request &request)
+{
+	
+}
+
 Response::Response(HttpStatusCode code) : _statusCode(code)
 {
 }
@@ -10,18 +15,51 @@ Response::~Response()
 {
 }
 
+void Response::setStatusCode(HttpStatusCode code)
+{
+	this->_statusCode = code;
+}
+
 void Response::setBody(char* bytes)
 {
 	// 1. add the body to the object
 	// 2. add header field appropriate to the body
 }
 
-void Response::addHeaderField(std::string key, std::string value)
+void Response::setIsReadyToSend(bool isReadyToSend)
 {
-	_headerFields.insert(std::pair(key, value));
+	this->_isReadyToSend = isReadyToSend;
 }
 
-std::string Response::getBytes() const
+void Response::addHeaderField(std::string key, std::string value)
 {
-	return "";
+	_headerFields.insert(std::pair<std::string, std::string>(key, value));
+}
+
+std::string Response::getBytes()
+{
+	std::map<std::string, std::string>::iterator cursor = _headerFields.begin();
+	std::map<std::string, std::string>::iterator end = _headerFields.end();
+	
+	std::string buffer = HTTPVERSION;
+	buffer += " ";
+	buffer += std::to_string(_statusCode.first);
+	buffer += " ";
+	buffer += _statusCode.second;
+	while (cursor != end)
+	{
+		buffer += "\r\n";
+		buffer += cursor->first;
+		buffer += ": ";
+		buffer += cursor->second;
+	}
+	buffer += "\r\n\r\n";
+	buffer += _body;
+
+	return buffer;
+}
+
+bool Response::getIsReadyToSend() const
+{
+	return this->_isReadyToSend;
 }
