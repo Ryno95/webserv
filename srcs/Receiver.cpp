@@ -63,6 +63,8 @@ void Receiver::processHeaderRecv()
 		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
 		_state = CHECK_HEADER;
 	}
+
+	std::cout << "Recvbuffer: " << _recvBuffer << std::endl;
 	std::cout << "buffer: " << _buffer << std::endl;
 }
 
@@ -108,13 +110,11 @@ void Receiver::handle()
 
 	receive();
 
-	if (_state != RECV_HEADER && _state != RECV_BODY)
-		throw std::runtime_error("STATE SHOULD NOT OCCUR!");
+	// if (_state != RECV_HEADER && _state != RECV_BODY)
+	// 	throw std::runtime_error("STATE SHOULD NOT OCCUR!");
 
 	while (1)
 	{
-		prevState = _state;
-
 		switch (_state)
 		{
 			case RECV_HEADER:
@@ -129,16 +129,32 @@ void Receiver::handle()
 				_readyRequests.push_back(_newRequest);
 				_state = RECV_HEADER;
 				std::cout << "Added request to queue!" << std::endl;
-				if (_recvBuffer.size() == 0)
-					return;
 				break;
 
 			case CHECK_HEADER:
 				checkHeader();
 				break;
 		}
-
-		if (prevState == _state)
-			break;
+		if ((_state == RECV_HEADER || _state == RECV_BODY) && _buffer.size() == 0)
+			break ;
 	}
 }
+
+
+
+// void Receiver::handle()
+// {
+// 	state prevState;
+
+// 	receive();
+
+// 	if (_state != RECV_HEADER && _state != RECV_BODY)
+// 		throw std::runtime_error("STATE SHOULD NOT OCCUR!");
+	
+// 	while (1)
+// 	{
+// 		prevState = _state;
+
+
+// 	}
+// }
