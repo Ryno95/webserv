@@ -19,6 +19,7 @@ public:
 
 	bool handleRequest();
 	bool handleResponse();
+	size_t getLastCommunicatedMs(timeval now) const;
 
 	struct DisconnectedException : std::exception
 	{
