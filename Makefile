@@ -25,7 +25,8 @@ TEST_CFLAGS	=	$(CFLAGS)
 LINKING		=	-I $(INCL_DIR)
 
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
-				$(TEST_DIR)parseRequestLineTests.cpp
+				$(TEST_DIR)parseRequestLineTests.cpp\
+				$(TEST_DIR)timeoutTests.cpp
 
 
 # Section Rules
