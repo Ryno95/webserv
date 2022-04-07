@@ -1,6 +1,6 @@
 #!/bin/bash
 # the & runs a command/program in the background
-./Webserver.out  | cat -e &
+./Webserver.out
 
 # Save the PID to kill the webserv
 PID=$!
