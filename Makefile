@@ -11,7 +11,10 @@ TEST_DIR	=	unit_tests/
 MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Webserv\
 				Client\
-				Request
+				Request\
+				HttpStatusCode\
+				Receiver\
+				Sender
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)

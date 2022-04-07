@@ -18,7 +18,7 @@ Test(ParseHeaderTests, ValidHeader)
 	catch(const std::exception& e) {}
 	
 
-	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
 	cr_expect(myRequest._headerFields["Host"] == "www.example.com");
 	cr_expect(myRequest._headerFields["Accept-Language"] == "en, mi");
@@ -38,7 +38,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
-	cr_expect(myRequest.getStatus() == BAD_REQUEST);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
 Test(ParseHeaderTests, WhiteSpaceAfterColon)
@@ -53,7 +53,7 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 	}
 	catch(const std::exception& e) {}
 	
-	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
 }
 
@@ -68,7 +68,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 		myRequest.parseHeaderFields(0);
 	}
 	catch(const std::exception& e) {}
-	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
 }
 
@@ -84,7 +84,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 	}
 	catch(const std::exception& e) {}
 	
-	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
 	cr_expect(myRequest._headerFields.size() == 1);
 }
@@ -102,7 +102,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 	catch(const std::exception& e) {}
 	
 	cr_expect(myRequest._headerFields.size() == 0);
-	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 }
 
 Test(ParseHeaderTests, NoColon)
@@ -116,7 +116,7 @@ Test(ParseHeaderTests, NoColon)
 	}
 	catch(const std::exception& e) {}
 
-	cr_expect(myRequest.getStatus() == BAD_REQUEST);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::BAD_REQUEST);
 	cr_expect(myRequest._headerFields.size() == 0);
 }
 
@@ -132,7 +132,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 	}
 	catch(const std::exception& e) {}
 
-	cr_expect(myRequest.getStatus() == BAD_REQUEST);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::BAD_REQUEST);
 	cr_expect(myRequest._headerFields.size() == 0);
 }
 
@@ -147,7 +147,7 @@ Test(ParseHeaderTests, ColonInHeader)
 	}
 	catch(const std::exception& e) {}
 
-	cr_expect(myRequest.getStatus() == OK);
+	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 	cr_expect(myRequest._headerFields.size() == 1);
 	cr_expect(myRequest._headerFields["Host"] == "localhost:8080");
 
