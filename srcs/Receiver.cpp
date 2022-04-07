@@ -11,7 +11,6 @@
 Receiver::Receiver(int fd)
 	: _fd(fd), _state(RECV_HEADER), _bodyBytesReceived(0), _bodySize(0)
 {
-	// _recvBuffer.reserve(BUFFER_SIZE);
 }
 
 Receiver::~Receiver()
@@ -43,8 +42,6 @@ void Receiver::receive()
 		bytesRecv = 0;
 	}
 	_recvBuffer.resize(bytesRecv);
-	// std::cout << "Recv: " << bytesRecv << std::endl;
-	// std::cout << _recvBuffer << std::endl;
 }
 
 void Receiver::processHeaderRecv()
@@ -54,6 +51,7 @@ void Receiver::processHeaderRecv()
 	{
 		std::cout << "NO end of header found." << std::endl;
 		_buffer += _recvBuffer;
+		_recvBuffer.resize(0);
 	}
 	else
 	{
@@ -61,11 +59,8 @@ void Receiver::processHeaderRecv()
 		_buffer += _recvBuffer.substr(0, pos);
 		pos += 4;
 		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
-		_state = CHECK_HEADER;
+		checkHeader();
 	}
-
-	std::cout << "Recvbuffer: " << _recvBuffer << std::endl;
-	std::cout << "buffer: " << _buffer << std::endl;
 }
 
 void Receiver::processBodyRecv()
@@ -78,7 +73,6 @@ void Receiver::processBodyRecv()
 
 void Receiver::checkHeader()
 {
-	std::cout << "Check header" << std::endl;
 	_newRequest = Request(_buffer);
 	_buffer.clear();
 
@@ -106,12 +100,7 @@ void Receiver::checkHeader()
 */
 void Receiver::handle()
 {
-	state prevState;
-
 	receive();
-
-	// if (_state != RECV_HEADER && _state != RECV_BODY)
-	// 	throw std::runtime_error("STATE SHOULD NOT OCCUR!");
 
 	while (1)
 	{
@@ -130,31 +119,8 @@ void Receiver::handle()
 				_state = RECV_HEADER;
 				std::cout << "Added request to queue!" << std::endl;
 				break;
-
-			case CHECK_HEADER:
-				checkHeader();
-				break;
 		}
-		if ((_state == RECV_HEADER || _state == RECV_BODY) && _buffer.size() == 0)
+		if ((_state == RECV_HEADER || _state == RECV_BODY) && _recvBuffer.size() == 0)
 			break ;
 	}
 }
-
-
-
-// void Receiver::handle()
-// {
-// 	state prevState;
-
-// 	receive();
-
-// 	if (_state != RECV_HEADER && _state != RECV_BODY)
-// 		throw std::runtime_error("STATE SHOULD NOT OCCUR!");
-	
-// 	while (1)
-// 	{
-// 		prevState = _state;
-
-
-// 	}
-// }

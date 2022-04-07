@@ -22,7 +22,6 @@ private:
 	{
 		RECV_HEADER,
 		RECV_BODY,
-		CHECK_HEADER,
 		ADD_REQUEST
 	} state;
 
