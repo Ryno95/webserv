@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: "rynosaurusrex/ci_for_codam:webserv"
+      - image: "lgutter/webserv_test:latest"
     steps:
       - checkout
       - run:
@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Unit-Test
           command: "make test && ./unit_test"
-      # - run:
-      #     name: Acceptance-Test
-      #     command: make acceptence
+      - run:
+          name: Acceptance-Test
+          command: make acceptance
+
