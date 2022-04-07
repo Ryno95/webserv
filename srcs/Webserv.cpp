@@ -153,11 +153,6 @@ void	Webserv::run()
 		pollRet = poll(&_fds.front(), _fds.size(), - 1);
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
-		// else if (pollRet == 0)
-		// {
-		// 	perror("poll() timed out, program ends");
-		// 	break;
-		// }
 
 		handleListener();
 		handleClients();
