@@ -1,5 +1,6 @@
 import time
 import requests
+from requests import Session
 from enum import Enum
 
 class Colors:
@@ -15,22 +16,23 @@ TEAPOT			= 418
 NOT_IMPLEMENTED	= 501
 
 ERROR = 1
-localhost = "http://localhost:80"
+localhost = "http://localhost:8080"
 EXIT_CODE = 0
 
-
+print("Connecting to server...")
 r = requests.get(localhost)
-
+print("Request send!")
 
 if r.status_code != OK:
-    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:80")
+    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:8080")
     EXIT_CODE = 1;
 else:
-    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:80")
+    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:8080")
 
-# sleep so that the exit code is that of the python script and not the server
+# # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
+
 exit(EXIT_CODE)
-# p10k
+
 
 

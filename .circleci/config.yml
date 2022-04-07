@@ -1,0 +1,18 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: "lgutter/webserv_test:latest"
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: 'echo Building'
+      - run:
+          name: Unit-Test
+          command: "make test && ./unit_test"
+      - run:
+          name: Acceptance-Test
+          command: make acceptance
+
