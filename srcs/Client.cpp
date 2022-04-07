@@ -31,6 +31,7 @@ bool Client::handleRequest()
 		{
 			_requests.push_back(*first);
 			++first;
+
 			std::cout << "PUSHED ON THE CLIENT QUEUE" << std::endl;
 		}
 	}
@@ -39,6 +40,7 @@ bool Client::handleRequest()
 		std::cerr << e.what() << '\n';
 		return false;
 	}
+
 	return true;
 }
 
@@ -55,4 +57,23 @@ bool Client::handleResponse()
 		_sender.handle(request);
 	}
 	return true;
+}
+
+
+
+bool Client::handleExecution()
+{
+	Response response;
+
+	if (_requests.size() == 0)
+		return (false);
+	// Check httpStatusCode after execution
+	response.setStatusCode(_requests.front().getStatus()); // using request status for now
+
+	
+	// response.addHeaderField("");
+
+	
+	_responses.push_back(response);
+	_requests.pop_front();
 }

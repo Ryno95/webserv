@@ -19,6 +19,7 @@ public:
 
 	bool handleRequest();
 	bool handleResponse();
+	bool handleExecution();
 
 	struct DisconnectedException : std::exception
 	{
@@ -32,8 +33,9 @@ private:
 	int _fd;
 
 	std::deque<Request> _requests;
-	// std::deque<Response> _responses;
+	std::deque<Response> _responses;
 
 	Receiver _receiver;
 	Sender _sender;
 };
+
