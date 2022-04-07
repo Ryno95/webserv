@@ -11,21 +11,27 @@ class Client
 
 typedef enum state
 {
-	CONTINUE,
+	RECV_HEADER,
+	RECV_BODY,
+	CHECK_HEADER,
 	DISCONNECTED,
-	RECV_DONE
+	RESPOND
 } state;
 
 public:
 	Client(int fd);
 	~Client();
 
-	bool handleRequest();
-	bool sendResponse();
-	state recvRequest();
+	bool	handleRequest();
+	bool	handleResponse();
 
 private:
 	int			_fd;
+	state		_state;
+	Request		_request;
 	std::string	_buffer;
 
+	bool	isReceiving() const;
+	state	recvRequest();
+	bool	sendResponse();
 };

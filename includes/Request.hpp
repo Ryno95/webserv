@@ -13,12 +13,14 @@ class Request
 #define TERMINATOR_LEN	4
 
 public:
+	Request();
 	Request(std::string query);
 	~Request();
 
 	httpStatusCode getStatus() const;
 	void throwError(httpStatusCode code);
 	void parse();
+	bool checkForBody() const;
 
 private:
 	void parseBody();

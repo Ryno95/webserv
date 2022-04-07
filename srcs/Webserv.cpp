@@ -67,6 +67,7 @@ void	Webserv::handleClients()
 	int fdSize;
 
 	fdSize = _fds.size();
+	// std::cout << "Handeling clients\n";
 	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
 	{
 		if (_fds[i].revents == 0)
@@ -82,14 +83,16 @@ void	Webserv::handleClients()
 			}
 		}
 
-		// if (BIT_ISSET(this->_fds[i].revents, POLLHUP_BIT))
-		// {
-		// 	std::cout << "Removing client\n";
-		// 	close(this->_fds[i].fd);
-		// 	this->_fds.erase(this->_fds.begin() + i);
-		// 	--i;
-		// 	--fdSize;
-		// }
+		// IMPORTANT this bit is set, that means we CAN write, not that we WANT to write!
+		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
+		{
+			if (_clients[i - 1].handleResponse() == false)
+			{
+				removeClient(i);
+				--i;
+				--fdSize;
+			}
+		}
 	}
 }
 
@@ -99,12 +102,12 @@ void	Webserv::handleListener()
 
 	if (_fds[0].revents == POLLIN)
 	{
-		std::cout << "Accepting new client..." << std::endl;
 
+		std::cout << "Accepting new client..." << std::endl;
 		newClient.fd = accept(_listenFd, NULL, NULL);
 		if (newClient.fd != SYSTEM_ERR)
 		{
-			newClient.events = POLLIN;
+			newClient.events = POLLIN | POLLOUT;
 			_fds.push_back(newClient);
 			_clients.push_back(Client(newClient.fd));
 			std::cout << "Accepted client on fd: " << newClient.fd << std::endl;
