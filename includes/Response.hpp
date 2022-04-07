@@ -30,7 +30,7 @@ public:
 
 	void	addHeaderField(std::string key, std::string value);
 
-	std::string		getBytes();
+	std::string		getBytes() const;
 	bool			getIsReadyToSend() const;
 	HttpStatusCode	getStatusCode() const;
 

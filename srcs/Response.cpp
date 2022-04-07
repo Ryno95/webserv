@@ -36,10 +36,10 @@ void Response::addHeaderField(std::string key, std::string value)
 	_headerFields.insert(std::pair<std::string, std::string>(key, value));
 }
 
-std::string Response::getBytes()
+std::string Response::getBytes() const
 {
-	std::map<std::string, std::string>::iterator cursor = _headerFields.begin();
-	std::map<std::string, std::string>::iterator end = _headerFields.end();
+	std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();
+	std::map<std::string, std::string>::const_iterator end = _headerFields.end();
 	
 	std::string buffer = HTTPVERSION;
 	buffer += " ";
