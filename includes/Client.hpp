@@ -19,6 +19,7 @@ public:
 
 	bool handleRequest();
 	bool handleResponse();
+	size_t getLastCommunicatedMs(timeval now) const;
 
 	struct DisconnectedException : std::exception
 	{
@@ -29,7 +30,10 @@ public:
 	};
 
 private:
+	void hasCommunicated();
+
 	int _fd;
+	timeval _lastCommunicated;
 
 	std::deque<Request> _requests;
 	// std::deque<Response> _responses;

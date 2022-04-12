@@ -23,6 +23,7 @@ class Webserv
 		void setupSocket();
 		void handleListener();
 		void handleClients();
+		void handleTimeout();
 		void removeClient(int index);
 
 		uint				_port;
