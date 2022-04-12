@@ -33,11 +33,12 @@ void Response::setIsReadyToSend(bool isReadyToSend)
 
 void Response::addHeaderFields()
 {
-	_headerFields.insert(std::pair<std::string, std::string>("Server", "The best"));
+	_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
 	_headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
 	_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
 }
 
+// body should be ostream not buffer for conitnuos flow of big sends
 std::string Response::getBytes() const
 {
 	std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();

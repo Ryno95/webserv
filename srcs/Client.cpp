@@ -71,7 +71,7 @@ bool Client::handleExecution()
 	response.setStatusCode(_requests.front().getStatus()); // using request status for now
 	_requests.pop_front();
 	response.addHeaderFields();
-	response.setBody("Hello Mr. Server");
+	response.setBody("Hello Mr.Client");
 
 	_responses.push_back(response);
 
