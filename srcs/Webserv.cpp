@@ -7,6 +7,7 @@
 #include <strings.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include <defines.hpp>
@@ -127,6 +128,22 @@ void	Webserv::removeClient(int index)
 	_fds.erase(_fds.begin() + index);
 }
 
+void Webserv::handleTimeout()
+{
+	timeval now;
+	gettimeofday(&now, nullptr);
+
+	for (size_t i = 0; i < _clients.size(); ++i)
+	{
+		if (_clients[i].getLastCommunicatedMs(now) >= TIMEOUT_MS)
+		{
+			std::cout << "Client on fd " << _fds[i + 1].fd << " timed-out." << std::endl;
+			removeClient(i + 1);
+			--i;
+		}
+	}
+}
+
 void	Webserv::run()
 {
 	int pollRet;
@@ -136,13 +153,9 @@ void	Webserv::run()
 		pollRet = poll(&_fds.front(), _fds.size(), - 1);
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
-		else if (pollRet == 0)
-		{
-			perror("poll() timed out, program ends");
-			break;
-		}
 
 		handleListener();
 		handleClients();
+		handleTimeout();
 	}
 }

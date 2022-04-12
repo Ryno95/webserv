@@ -3,11 +3,13 @@
 
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 
 #include <iostream>
 
 Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
 {
+	hasCommunicated();
 }
 
 Client::~Client()
@@ -19,6 +21,7 @@ Client::~Client()
 */
 bool Client::handleRequest()
 {
+	hasCommunicated();
 	try
 	{
 		_receiver.handle();
@@ -76,4 +79,16 @@ bool Client::handleExecution()
 	_responses.push_back(response);
 
 	return true;
+/*
+	Maybe give this function a [timeval now] argument and gettimeofday() from Webserv.cpp instead,
+	so we don't call gettimeofday for each client in the iteration
+*/
+void Client::hasCommunicated()
+{
+	gettimeofday(&_lastCommunicated, nullptr);
+}
+
+size_t Client::getLastCommunicatedMs(timeval now) const
+{
+	return ((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000);
 }

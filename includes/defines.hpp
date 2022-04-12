@@ -12,6 +12,7 @@
 
 #define MAX_TARGET_LEN 50
 #define BUFFER_SIZE 50
+#define TIMEOUT_MS 1000
 
 #define HTTPVERSION "HTTP/1.1"
 #define HTTPVERSION_MAJOR 1
