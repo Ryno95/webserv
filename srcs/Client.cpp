@@ -79,6 +79,7 @@ bool Client::handleExecution()
 	_responses.push_back(response);
 
 	return true;
+}
 /*
 	Maybe give this function a [timeval now] argument and gettimeofday() from Webserv.cpp instead,
 	so we don't call gettimeofday for each client in the iteration
