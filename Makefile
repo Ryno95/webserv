@@ -46,6 +46,9 @@ local_test: $(TEST_SRC) $(OBJS)
 acceptance: $(NAME)
 	./acceptance_tests/acceptance.sh
 
+run: $(NAME)
+	./$(NAME)
+
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
 	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
 
@@ -63,4 +66,4 @@ fclean: clean
 	rm -f $(TEST_NAME)
 	rm -f $(NAME)
 
-.PHONY: all clean fclean re test local_test
+.PHONY: all clean fclean re test local_test run
