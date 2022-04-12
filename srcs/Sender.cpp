@@ -14,20 +14,12 @@ Sender::~Sender()
 {
 }
 
-bool Sender::handle(Request request)
+bool Sender::handle(Response response)
 {
-	std::string buffer = HTTPVERSION;
-	buffer += " ";
-	buffer += std::to_string(request.getStatus().first);
-	buffer += " ";
-	buffer += request.getStatus().second;
-	buffer += "\r\ncontent-length: ";
-	buffer += std::to_string(request.getTarget().size());
-	buffer += "\r\n\r\n";
-	buffer += request.getTarget();
+	// Null bytes in body should be handled in executor
+	const std::string 	resp = response.getBytes();
+	const int 			size = resp.size();
 
-	std::cout << "Sending to " << _fd << ": " << std::endl << buffer << std::endl << std::endl;
-
-	write(_fd, buffer.c_str(), buffer.size());
+	write(_fd, resp.c_str(), size);
 	return true;
 }

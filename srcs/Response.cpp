@@ -1,6 +1,9 @@
+#include <iostream>
 #include <Response.hpp>
 
+
 Response::Response() {}
+
 
 Response::Response(HttpStatusCode code) : _statusCode(code)
 {
@@ -10,18 +13,57 @@ Response::~Response()
 {
 }
 
-void Response::setBody(char* bytes)
+void Response::setStatusCode(HttpStatusCode code)
 {
-	// 1. add the body to the object
-	// 2. add header field appropriate to the body
+	this->_statusCode = code;
 }
 
-void Response::addHeaderField(std::string key, std::string value)
+void Response::setBody(std::string bytes)
 {
-	_headerFields.insert(std::pair(key, value));
+	const int sizeOfBytes = bytes.size();
+
+	_body = bytes;
+	_headerFields["Content-Length"] = std::to_string(sizeOfBytes);
 }
 
+void Response::setIsReadyToSend(bool isReadyToSend)
+{
+	this->_isReadyToSend = isReadyToSend;
+}
+
+void Response::addHeaderFields()
+{
+	_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
+	_headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
+	_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
+}
+
+// body should be ostream not buffer for conitnuos flow of big sends
 std::string Response::getBytes() const
 {
-	return "";
+	std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();
+	std::map<std::string, std::string>::const_iterator end = _headerFields.end();
+	
+	std::string buffer = HTTPVERSION;
+	buffer += " ";
+	buffer += std::to_string(_statusCode.first);
+	buffer += " ";
+	buffer += _statusCode.second;
+	while (cursor != end)
+	{
+		buffer += "\r\n";
+		buffer += cursor->first;
+		buffer += ": ";
+		buffer += cursor->second;
+		++cursor;
+	}
+	buffer += "\r\n\r\n";
+	buffer += _body;
+
+	return buffer;
+}
+
+bool Response::getIsReadyToSend() const
+{
+	return this->_isReadyToSend;
 }
