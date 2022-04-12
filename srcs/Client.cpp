@@ -34,6 +34,7 @@ bool Client::handleRequest()
 		{
 			_requests.push_back(*first);
 			++first;
+
 			std::cout << "PUSHED ON THE CLIENT QUEUE" << std::endl;
 		}
 	}
@@ -42,6 +43,7 @@ bool Client::handleRequest()
 		std::cerr << e.what() << '\n';
 		return false;
 	}
+
 	return true;
 }
 
@@ -50,16 +52,34 @@ bool Client::handleRequest()
 */
 bool Client::handleResponse()
 {
-	while (_requests.size() > 0)
+	while (_responses.size() > 0)
 	{
-		std::cout << "Requests ready for us: " << _requests.size() << std::endl;
-		Request request = _requests.front();
-		_requests.pop_front();
-		_sender.handle(request);
+		std::cout << "Responses ready for us: " << _responses.size() << std::endl;
+		Response response = _responses.front();
+		_responses.pop_front();
+		_sender.handle(response);
 	}
 	return true;
 }
 
+
+
+bool Client::handleExecution()
+{
+	Response response;
+
+	if (_requests.size() == 0)
+		return (false);
+	// Check httpStatusCode after execution
+	response.setStatusCode(_requests.front().getStatus()); // using request status for now
+	_requests.pop_front();
+	response.addHeaderFields();
+	response.setBody("Hello Mr.Client");
+
+	_responses.push_back(response);
+
+	return true;
+}
 /*
 	Maybe give this function a [timeval now] argument and gettimeofday() from Webserv.cpp instead,
 	so we don't call gettimeofday for each client in the iteration

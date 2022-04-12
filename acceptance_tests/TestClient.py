@@ -1,3 +1,4 @@
+
 import time
 import requests
 from requests import Session
@@ -16,18 +17,19 @@ TEAPOT			= 418
 NOT_IMPLEMENTED	= 501
 
 ERROR = 1
+SUCCESS = 0
 localhost = "http://localhost:8080"
 EXIT_CODE = 0
 
-print("Connecting to server...")
-r = requests.get(localhost)
-print("Request send!")
+def compareExpectedPositiveResult(response: requests):
+    if response.status_code != OK:
+        print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on {response.url}")
+        return ERROR
+    else:
+        print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on {response.url}")
+        return SUCCESS
 
-if r.status_code != OK:
-    print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on http://localhost:8080")
-    EXIT_CODE = 1;
-else:
-    print(f"{Colors.OKGREEN}[OK] {Colors.NATURAL} Get request on http://localhost:8080")
+EXIT_CODE += compareExpectedPositiveResult(requests.get(localhost))
 
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)

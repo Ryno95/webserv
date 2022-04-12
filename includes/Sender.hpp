@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Request.hpp>
+#include <Response.hpp>
 
 /*
 	Sender will get a response object as argument.
@@ -14,7 +14,7 @@ public:
 	Sender(int fd);
 	~Sender();
 
-	bool handle(Request request); // Returns whether the action has finished and should be collected.
+	bool handle(Response response); // Returns whether the action has finished and should be collected.
 
 private:
 	enum state

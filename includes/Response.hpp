@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <HttpStatusCode.hpp>
+#include <Request.hpp>
 
 /*
 	Server response pattern:
@@ -22,15 +23,32 @@ public:
 	Response(HttpStatusCode code);
 	~Response();
 
-	void setBody(char* bytes);
-	void addHeaderField(std::string key, std::string value);
-	std::string getBytes() const;
+	void	setStatusCode(HttpStatusCode code);
+	void	setBody(std::string bytes);
+	void	setIsReadyToSend(bool isReadyToSend);
+
+	void	addHeaderFields(); // hard coded for now to get the flow going
+
+	std::string		getBytes() const;
+	bool			getIsReadyToSend() const;
+	HttpStatusCode	getStatusCode() const;
 
 private:
-	std::string _rawBytesToSend;
-	bool _isReadyToSend;
-	char* _body;
-	std::map<std::string, std::string> _headerFields;
-	HttpStatusCode _statusCode;
+	std::string 						_rawBytesToSend;
+	bool								_isReadyToSend;
+	std::string							_body;
+	std::map<std::string, std::string>	_headerFields;
+	HttpStatusCode 						_statusCode;
 
 };
+
+
+
+
+
+
+
+
+
+
+

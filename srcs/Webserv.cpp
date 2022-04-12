@@ -68,6 +68,7 @@ void	Webserv::handleClients()
 	int fdSize;
 
 	fdSize = _fds.size();
+
 	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
 	{
 		if (_fds[i].revents == 0)
@@ -82,7 +83,8 @@ void	Webserv::handleClients()
 				--fdSize;
 			}
 		}
-
+		
+		_clients[i - 1].handleExecution();
 		// IMPORTANT this bit is set, that means we CAN write, not that we WANT to write!
 		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
 		{
