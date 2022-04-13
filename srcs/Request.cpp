@@ -183,3 +183,8 @@ std::string Request::getTarget() const
 {
 	return _target;
 }
+
+method Request::getMethod() const
+{
+	return _method;
+}
