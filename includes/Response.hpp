@@ -28,20 +28,20 @@ public:
 	~Response();
 
 	void	setStatusCode(HttpStatusCode code);
-	void	setBody(std::string bytes);
+	void	setBodyStream(std::string filePath);
 
 	Response			&operator=(const Response &rhs);
 
 	std::stringstream	*getHeaderStream();
 	void				addHeaderFields(); // hard coded for now to get the flow going
 
-	std::fstream		*getBodyStream();
+	std::ifstream		*getBodyStream();
 	HttpStatusCode		getStatusCode() const;
 
 private:
 
 	std::stringstream 					_headerStream;
-	std::fstream						_bodyStream;
+	std::ifstream						_bodyStream;
 	std::map<std::string, std::string>	_headerFields;
 	HttpStatusCode 						_statusCode;
 };
