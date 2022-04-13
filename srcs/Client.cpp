@@ -34,8 +34,6 @@ bool Client::handleRequest()
 		{
 			_requests.push_back(*first);
 			++first;
-
-			std::cout << "PUSHED ON THE CLIENT QUEUE" << std::endl;
 		}
 	}
 	catch(const DisconnectedException& e)
@@ -79,7 +77,6 @@ bool Client::handleExecution()
 	response.setStatusCode(_requests.front().getStatus()); // using request status for now
 	_requests.pop_front();
 	response.addHeaderFields();
-	response.setBody("Hello Mr.Client");
 
 	_responses.push_back(response);
 
