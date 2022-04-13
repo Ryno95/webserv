@@ -81,6 +81,7 @@ void	Webserv::handleClients()
 				removeClient(i);
 				--i;
 				--fdSize;
+				continue;
 			}
 		}
 		
@@ -93,6 +94,7 @@ void	Webserv::handleClients()
 				removeClient(i);
 				--i;
 				--fdSize;
+				continue;
 			}
 		}
 	}
@@ -124,8 +126,8 @@ void	Webserv::removeClient(int index)
 	std::cout << "Removing client: " << _fds[index].fd << std::endl;
 
 	close(_fds[index].fd);
-	_clients.erase(_clients.begin() + index - 1);
 	_fds.erase(_fds.begin() + index);
+	_clients.erase(_clients.begin() + index - 1);
 }
 
 void Webserv::handleTimeout()
