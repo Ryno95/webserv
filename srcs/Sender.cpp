@@ -10,9 +10,19 @@ Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _buffer(new char[BUFF
 {
 }
 
+Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _buffer(new char[BUFFER_SIZE])
+{
+	*this = rhs;
+}
+
 Sender::~Sender()
 {
-	delete[] _buffer;
+}
+
+Sender& Sender::operator=(Sender const& rhs)
+{
+	_fd = rhs._fd;
+	return *this;
 }
 
 void Sender::setDataStream()
@@ -33,8 +43,9 @@ void Sender::setDataStream()
 	}
 }
 
-long Sender::fillBuffer(long bufferSize)
+long Sender::fillBuffer(long bytesToRead)
 {
+	std::cout << "filling buffer" <<std::endl;
 	if (_dataStream == nullptr)
 	{
 		if (_currentState == SEND_BODY)
@@ -44,20 +55,23 @@ long Sender::fillBuffer(long bufferSize)
 		return 0;
 	}
 
-	_dataStream->read(_buffer + bufferSize, BUFFER_SIZE - bufferSize);
+	_dataStream->read(_buffer, bytesToRead);
+	std::cout << "Read: " << _dataStream->gcount() <<std::endl;
 	return _dataStream->gcount();
 }
 
 void Sender::handle()
 {
+	std::cout << "Handling!" << std::endl;
 	long bufferSize = 0;
 
 	while (bufferSize < BUFFER_SIZE && _currentState != FINISHED)
 	{
 		if (_dataStream == nullptr)
 			setDataStream();
-		bufferSize += fillBuffer(bufferSize);
+		bufferSize += fillBuffer(BUFFER_SIZE - bufferSize);
 		_currentState++;
+		std::cout << "State incremented to: " << _currentState << std::endl;
 	}
 
 	if (bufferSize == 0)
@@ -71,6 +85,8 @@ void Sender::handle()
 
 	ssize_t written;
 	written = write(_fd, _buffer, bufferSize);
+	std::cout << "Sent " << written << " bytes" <<std::endl;
+
 	if (written != bufferSize)
 	{
 		std::cout << "Actual bytes written is not equal to the amount requested to send." << std::endl; // DEBUG SECTION
@@ -87,5 +103,6 @@ bool Sender::hasResponse() const
 void Sender::setResponse(Response response)
 {
 	_response = response;
-	_currentState = START;
+	_currentState = SEND_HEADER;
+	_dataStream = nullptr;
 }

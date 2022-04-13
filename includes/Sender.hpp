@@ -12,7 +12,9 @@ class Sender
 {
 public:
 	Sender(int fd);
+	Sender(Sender const& rhs);
 	~Sender();
+	Sender& operator=(Sender const& rhs);
 
 	void handle();
 	bool hasResponse() const;
