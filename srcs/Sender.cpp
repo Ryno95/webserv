@@ -17,6 +17,7 @@ Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _buffer(new char[BU
 
 Sender::~Sender()
 {
+	delete[] _buffer;
 }
 
 Sender& Sender::operator=(Sender const& rhs)
@@ -70,7 +71,8 @@ void Sender::handle()
 		if (_dataStream == nullptr)
 			setDataStream();
 		bufferSize += fillBuffer(BUFFER_SIZE - bufferSize);
-		_currentState++;
+		if (bufferSize < BUFFER_SIZE)
+			_currentState++;
 		std::cout << "State incremented to: " << _currentState << std::endl;
 	}
 
