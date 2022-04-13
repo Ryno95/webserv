@@ -6,7 +6,7 @@
 
 #include <unistd.h>
 
-Sender::Sender(int fd) : _fd(fd), _buffer(new char[BUFFER_SIZE])
+Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _buffer(new char[BUFFER_SIZE])
 {
 }
 
