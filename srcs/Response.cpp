@@ -16,6 +16,8 @@ Response::Response(const Response &ref)
 
 Response::~Response()
 {
+	if (_bodyStream.is_open())
+		_bodyStream.close();
 }
 
 Response& Response::operator=(const Response &rhs)
@@ -30,12 +32,17 @@ void Response::setStatusCode(HttpStatusCode code)
 	this->_statusCode = code;
 }
 
-void Response::setBody(std::string bytes)
+void Response::setBodyStream(std::string filePath)
 {
-	const int sizeOfBytes = bytes.size();
+	_bodyStream.open(filePath);
+	if (_bodyStream.fail())
+	{
+		std::cout << "Failed to open the file" << std::endl;
+		return;
+	}
 
-	// _body = bytes;
-	_headerFields["Content-Length"] = std::to_string(sizeOfBytes);
+	_bodyStream.seekg(0, std::ios_base::end);
+	_headerFields["Content-Length"] = std::to_string(_bodyStream.gcount());
 }
 
 void Response::addHeaderFields()
@@ -70,12 +77,10 @@ std::stringstream	*Response::getHeaderStream()
 }
 
 
-std::fstream* Response::getBodyStream()
+std::ifstream* Response::getBodyStream()
 {
 	std::cout << "Body stream requested" << std::endl;
 	if (!_bodyStream.is_open())
 		return nullptr;
 	return (&_bodyStream);
 }
-
-
