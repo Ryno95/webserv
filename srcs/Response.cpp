@@ -39,11 +39,6 @@ void Response::setBody(std::string bytes)
 	_headerFields["Content-Length"] = std::to_string(sizeOfBytes);
 }
 
-void Response::setIsReadyToSend(bool isReadyToSend)
-{
-	// this->_isReadyToSend = isReadyToSend;
-}
-
 void Response::addHeaderFields()
 {
 	_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));

@@ -29,7 +29,6 @@ public:
 
 	void	setStatusCode(HttpStatusCode code);
 	void	setBody(std::string bytes);
-	void	setIsReadyToSend(bool isReadyToSend);
 
 	Response			&operator=(const Response &rhs);
 
