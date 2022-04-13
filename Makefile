@@ -1,6 +1,6 @@
 # Section Settings
 
-NAME		?=	Webserver.out
+NAME		=	Webserver.out
 TEST_NAME	=	unit_test
 
 OBJ_DIR		=	objs/
