@@ -14,7 +14,7 @@ public:
 	Sender(int fd);
 	~Sender();
 
-	bool handle(Response response); // Returns whether the action has finished and should be collected.
+	bool handle(Response response);
 
 private:
 	enum state

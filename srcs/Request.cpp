@@ -163,7 +163,6 @@ void Request::parse()
 {
 	std::cout << _query << std::endl;
 	size_t pos = parseRequestLine();
-	// std::cout << _query.substr(pos, _query.size() - pos) << std::endl;
 	parseHeaderFields(pos);
 	parseBody();
 }
