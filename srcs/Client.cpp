@@ -54,10 +54,16 @@ bool Client::handleResponse()
 {
 	if (!_sender.hasResponse())
 	{
-		_sender.setResponse(_responses.front());
-		_responses.pop_front();
+		if (_responses.size() > 0)
+		{
+			std::cout << "Response set!" << std::endl;
+			_sender.setResponse(_responses.front());
+			_responses.pop_front();
+		}
 	}
-	_sender.handle();
+
+	if (_sender.hasResponse())
+		_sender.handle();
 	return true;
 }
 
