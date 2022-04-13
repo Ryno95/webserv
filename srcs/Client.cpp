@@ -1,4 +1,5 @@
 #include <Client.hpp>
+#include <GETMethod.hpp>
 #include <defines.hpp>
 
 #include <unistd.h>
@@ -73,13 +74,18 @@ bool Client::handleExecution()
 
 	if (_requests.size() == 0)
 		return (false);
-	// Check httpStatusCode after execution
-	response.setStatusCode(_requests.front().getStatus()); // using request status for now
+
+	Request const& request = _requests.front();
+
+	switch (request.getMethod())
+	{
+		case GET:
+			response = GETMethod(request).process();
+			break;
+	}
+
 	_requests.pop_front();
-	response.addHeaderFields();
-
 	_responses.push_back(response);
-
 	return true;
 }
 /*
