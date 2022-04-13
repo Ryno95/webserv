@@ -44,22 +44,4 @@ private:
 	std::fstream						_bodyStream;
 	std::map<std::string, std::string>	_headerFields;
 	HttpStatusCode 						_statusCode;
-
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
