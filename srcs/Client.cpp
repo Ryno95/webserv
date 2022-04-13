@@ -52,13 +52,12 @@ bool Client::handleRequest()
 */
 bool Client::handleResponse()
 {
-	while (_responses.size() > 0)
+	if (!_sender.hasResponse())
 	{
-		std::cout << "Responses ready for us: " << _responses.size() << std::endl;
-		Response response = _responses.front();
+		_sender.setResponse(_responses.front());
 		_responses.pop_front();
-		_sender.handle(response);
 	}
+	_sender.handle();
 	return true;
 }
 
