@@ -35,10 +35,10 @@ public:
 	AMethod(Request const& request);
 	virtual Response process() = 0;
 
-	void readFile();
+	void setInputFile(std::string filePath);
 	void writeFile();
 
-private:
+protected:
 	Request const& _request;
 	Response _response;
 };
