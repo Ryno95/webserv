@@ -10,4 +10,6 @@ GETMethod::~GETMethod()
 
 Response GETMethod::process()
 {
+	setInputFile(_request.getTarget());
+	return _response;
 }
