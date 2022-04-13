@@ -1,0 +1,40 @@
+RelativeURI = <URI>			GET index.html HTTP/1.1
+AbsoluteURI = <host>:<uri>	GET example:index.html HTTP/1.1
+
+Section 9:
+	The Host request-header field (section 14.23) MUST accompany all
+	HTTP/1.1 requests.
+
+1. If Request-URI is an absoluteURI, the host is part of the
+	Request-URI. Any Host header field value in the request MUST be
+	ignored.
+
+2. If the Request-URI is not an absoluteURI, and the request includes
+	a Host header field, the host is determined by the Host header
+	field value.
+
+3. If the host as determined by rule 1 or 2 is not a valid host on
+	the server, the response MUST be a 400 (Bad Request) error message.
+
+
+
+RFC: Uniform Resource Identifiers (URI): Generic Syntax
+
+https://datatracker.ietf.org/doc/html/rfc2396
+	The URI syntax is dependent upon the scheme. In general, absolute
+	URI are written as follows:
+		<scheme>:<scheme-specific-part>
+
+
+If an origin server receives a request that does not include an
+Expect request-header field with the "100-continue" expectation,
+the request includes a request body, and the server responds
+with a final status code before reading the entire request body
+from the transport connection, then the server SHOULD NOT close
+the transport connection until it has read the entire request,
+or until the client closes the connection. Otherwise, the client
+might not reliably receive the response message. However, this
+requirement is not be construed as preventing a server from
+defending itself against denial-of-service attacks, or from
+badly broken client implementations.
+
