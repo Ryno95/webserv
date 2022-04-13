@@ -25,7 +25,6 @@ Response& Response::operator=(const Response &rhs)
 	return (*this);
 }
 
-
 void Response::setStatusCode(HttpStatusCode code)
 {
 	this->_statusCode = code;
@@ -48,6 +47,7 @@ void Response::addHeaderFields()
 
 std::stringstream	*Response::getHeaderStream()
 {
+	std::cout << "Header stream requested" << std::endl;
 	std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();
 	std::map<std::string, std::string>::const_iterator end = _headerFields.end();
 	
@@ -72,6 +72,9 @@ std::stringstream	*Response::getHeaderStream()
 
 std::fstream* Response::getBodyStream()
 {
+	std::cout << "Body stream requested" << std::endl;
+	if (!_bodyStream.is_open())
+		return nullptr;
 	return (&_bodyStream);
 }
 
