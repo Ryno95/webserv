@@ -2,28 +2,37 @@
 
 #include <Response.hpp>
 
+#include <iostream>
+
 /*
-	Sender will get a response object as argument.
-	It will use the object to determine how and how much to send.
-	It will keep on sending until finished and return FINISHED.
-	The client then knows that the Sender is ready to send the next Response object.
- */
+	Sender will send the currently assignd Response object.
+	Before calling handle, first make sure that a Response object is set using hasResponse and setResponse.
+*/
 class Sender
 {
 public:
 	Sender(int fd);
 	~Sender();
 
-	bool handle(Response response);
+	void handle();
+	bool hasResponse() const;
+	void setResponse(Response response);
 
 private:
 	enum state
 	{
-		SEND,
+		START,
+		SEND_HEADER,
+		SEND_BODY,
 		FINISHED
 	};
 
-	state send();
+	void setDataStream();
+	long fillBuffer(long bufferSize);
 
 	int _fd;
+	int _currentState;
+	Response _response;
+	std::istream *_dataStream;
+	char* _buffer;
 };
