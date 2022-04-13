@@ -44,7 +44,7 @@ void Sender::setDataStream()
 	}
 }
 
-long Sender::fillBuffer(long bytesToRead)
+long Sender::fillBuffer(long bufferSize)
 {
 	std::cout << "filling buffer" <<std::endl;
 	if (_dataStream == nullptr)
@@ -56,7 +56,7 @@ long Sender::fillBuffer(long bytesToRead)
 		return 0;
 	}
 
-	_dataStream->read(_buffer, bytesToRead);
+	_dataStream->read(_buffer + bufferSize, BUFFER_SIZE - bufferSize);
 	std::cout << "Read: " << _dataStream->gcount() <<std::endl;
 	return _dataStream->gcount();
 }
@@ -70,10 +70,13 @@ void Sender::handle()
 	{
 		if (_dataStream == nullptr)
 			setDataStream();
-		bufferSize += fillBuffer(BUFFER_SIZE - bufferSize);
+		bufferSize += fillBuffer(bufferSize);
 		if (bufferSize < BUFFER_SIZE)
+		{
 			_currentState++;
-		std::cout << "State incremented to: " << _currentState << std::endl;
+			_dataStream = nullptr;
+			std::cout << "State incremented to: " << _currentState << std::endl;
+		}
 	}
 
 	if (bufferSize == 0)
