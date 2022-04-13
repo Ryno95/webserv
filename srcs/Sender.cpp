@@ -60,10 +60,23 @@ void Sender::handle()
 		_currentState++;
 	}
 
+	if (bufferSize == 0)
+	{
+		std::cout << "[DEBUG] No bytes to send!" << std::endl; // DEBUG LINE
+		return;
+	}
+
 	if (bufferSize > BUFFER_SIZE)
 		throw std::runtime_error("UNEXPECTED AMOUNT OF BYTES STORED IN THE BUFFER! (Sender.cpp)"); // DEBUG LINE
 
-	write(_fd, _buffer, bufferSize);
+	ssize_t written;
+	written = write(_fd, _buffer, bufferSize);
+	if (written != bufferSize)
+	{
+		std::cout << "Actual bytes written is not equal to the amount requested to send." << std::endl; // DEBUG SECTION
+		std::cout << "There is no implementation to catch this issue yet." << std::endl;
+		std::cout << "Requested: " << bufferSize << " written: " << written << std::endl;
+	}
 }
 
 bool Sender::hasResponse() const
