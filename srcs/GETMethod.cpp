@@ -10,6 +10,7 @@ GETMethod::~GETMethod()
 
 Response* GETMethod::process()
 {
+	_response->setStatusCode(HttpStatusCodes::OK);
 	setInputFile(_request.getTarget());
 	return _response;
 }
