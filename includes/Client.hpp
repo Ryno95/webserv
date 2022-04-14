@@ -37,7 +37,7 @@ private:
 	timeval _lastCommunicated;
 
 	std::deque<Request> _requests;
-	std::deque<Response> _responses;
+	std::deque<Response *> _responses;
 
 	Receiver _receiver;
 	Sender _sender;

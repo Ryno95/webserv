@@ -33,12 +33,12 @@ class AMethod
 {
 public:
 	AMethod(Request const& request);
-	virtual Response process() = 0;
+	virtual Response* process() = 0;
 
 	void setInputFile(std::string filePath);
 	void writeFile();
 
 protected:
 	Request const& _request;
-	Response _response;
+	Response* _response;
 };

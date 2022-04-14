@@ -10,5 +10,5 @@ public:
 	GETMethod(Request const& request);
 	~GETMethod();
 
-	Response process();
+	Response* process();
 };

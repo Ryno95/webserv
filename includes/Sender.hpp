@@ -18,7 +18,7 @@ public:
 
 	void handle();
 	bool hasResponse() const;
-	void setResponse(Response response);
+	void setResponse(Response* response);
 
 private:
 	enum state
@@ -31,10 +31,11 @@ private:
 
 	void setDataStream();
 	long fillBuffer(long bufferSize);
+	void deleteResponse();
 
 	int _fd;
 	int _currentState;
-	Response _response;
+	Response* _response;
 	std::istream *_dataStream;
 	char* _buffer;
 };

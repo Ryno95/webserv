@@ -70,11 +70,10 @@ bool Client::handleResponse()
 
 bool Client::handleExecution()
 {
-	Response response;
-
 	if (_requests.size() == 0)
 		return (false);
 
+	Response *response;
 	Request const& request = _requests.front();
 
 	switch (request.getMethod())

@@ -8,7 +8,7 @@ GETMethod::~GETMethod()
 {
 }
 
-Response GETMethod::process()
+Response* GETMethod::process()
 {
 	setInputFile(_request.getTarget());
 	return _response;

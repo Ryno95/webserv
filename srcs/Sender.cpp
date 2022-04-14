@@ -8,11 +8,11 @@
 
 #include <stack>
 
-Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _buffer(new char[BUFFER_SIZE])
+Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFER_SIZE])
 {
 }
 
-Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _buffer(new char[BUFFER_SIZE])
+Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFER_SIZE])
 {
 	*this = rhs;
 }
@@ -20,6 +20,7 @@ Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _buffer(new char[BU
 Sender::~Sender()
 {
 	delete[] _buffer;
+	deleteResponse();
 }
 
 Sender& Sender::operator=(Sender const& rhs)
@@ -33,11 +34,11 @@ void Sender::setDataStream()
 	switch (_currentState)
 	{
 		case SEND_HEADER:
-			_dataStream = _response.getHeaderStream();
+			_dataStream = _response->getHeaderStream();
 			break;
 
 		case SEND_BODY:
-			_dataStream = _response.getBodyStream();
+			_dataStream = _response->getBodyStream();
 			break;
 
 		case FINISHED:
@@ -81,6 +82,9 @@ void Sender::handle()
 		}
 	}
 
+	if (_currentState == FINISHED)
+		deleteResponse();
+
 	if (bufferSize == 0)
 	{
 		std::cout << "[DEBUG] No bytes to send!" << std::endl; // DEBUG LINE
@@ -102,12 +106,21 @@ void Sender::handle()
 	}
 }
 
+void Sender::deleteResponse()
+{
+	if (_response != nullptr)
+	{
+		delete _response;
+		_response = nullptr;
+	}
+}
+
 bool Sender::hasResponse() const
 {
 	return _currentState != FINISHED;
 }
 
-void Sender::setResponse(Response response)
+void Sender::setResponse(Response* response)
 {
 	_response = response;
 	_currentState = SEND_HEADER;
