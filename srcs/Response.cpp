@@ -1,7 +1,6 @@
 #include <iostream>
 #include <Response.hpp>
 
-
 Response::Response() : _bodyStream(nullptr)
 {
 }
@@ -53,7 +52,6 @@ void Response::addHeaderFields()
 
 std::stringstream	*Response::getHeaderStream()
 {
-	std::cout << "Header stream requested" << std::endl;
 	std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();
 	std::map<std::string, std::string>::const_iterator end = _headerFields.end();
 	
@@ -77,7 +75,6 @@ std::stringstream	*Response::getHeaderStream()
 
 std::ifstream* Response::getBodyStream()
 {
-	std::cout << "Body stream requested" << std::endl;
 	if (_bodyStream == nullptr || !_bodyStream->is_open())
 		return nullptr;
 	_bodyStream->seekg(0, std::ios_base::beg);
