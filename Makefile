@@ -13,7 +13,6 @@ CLASSES		=	Webserv\
 				Client\
 				Request\
 				Response\
-				HttpStatusCode\
 				Receiver\
 				Sender\
 				AMethod\
