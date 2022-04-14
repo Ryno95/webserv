@@ -24,7 +24,7 @@ void PersonsByHeap()
 
 	std::cout << "Name: " << pascal->name << " age: " << pascal->age << std::endl;
 
-	delete pascal;
+	delete person;
 
 	// Person *heapUseAfterFree = persons.front();
 	// heapUseAfterFree->age = -1;
