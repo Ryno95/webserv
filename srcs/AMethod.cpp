@@ -6,11 +6,6 @@ AMethod::AMethod(Request const& request) : _request(request), _response(new Resp
 {
 }
 
-void AMethod::setInputFile(std::string filePath)
-{
-	_response->setBodyStream(filePath);
-}
-
 void AMethod::writeFile()
 {
 }
