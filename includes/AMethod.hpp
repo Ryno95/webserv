@@ -35,7 +35,6 @@ public:
 	AMethod(Request const& request);
 	virtual Response* process() = 0;
 
-	void setInputFile(std::string filePath);
 	void writeFile();
 
 protected:
