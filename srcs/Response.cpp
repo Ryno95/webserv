@@ -2,10 +2,11 @@
 #include <Response.hpp>
 
 
-Response::Response() {}
+Response::Response() : _bodyStream(nullptr)
+{
+}
 
-
-Response::Response(HttpStatusCode code) : _statusCode(code)
+Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr)
 {
 }
 
@@ -16,8 +17,8 @@ Response::Response(const Response &ref)
 
 Response::~Response()
 {
-	if (_bodyStream.is_open())
-		_bodyStream.close();
+	if (_bodyStream != nullptr)
+		delete _bodyStream;
 }
 
 Response& Response::operator=(const Response &rhs)
@@ -27,24 +28,16 @@ Response& Response::operator=(const Response &rhs)
 	return (*this);
 }
 
+void Response::setBodyStream(std::ifstream* stream)
+{
+	_bodyStream = stream;
+	stream->seekg(0, std::ios_base::end);
+	addHeaderField("Content-Length", std::to_string(stream->tellg()));
+}
+
 void Response::setStatusCode(HttpStatusCode code)
 {
 	this->_statusCode = code;
-}
-
-void Response::setBodyStream(std::string filePath)
-{
-	filePath.erase(0, 1);
-	std::cout << "Opening file: " << filePath << std::endl;
-	_bodyStream.open(filePath);
-	if (_bodyStream.fail())
-	{
-		std::cout << "Failed to open the file" << std::endl;
-		return;
-	}
-
-	_bodyStream.seekg(0, std::ios_base::end);
-	addHeaderField("Content-Length", std::to_string(_bodyStream.tellg()));
 }
 
 void Response::addHeaderField(std::string key, std::string value)
@@ -55,7 +48,6 @@ void Response::addHeaderField(std::string key, std::string value)
 void Response::addHeaderFields()
 {
 	_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
-	// _headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
 	_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
 }
 
@@ -83,12 +75,11 @@ std::stringstream	*Response::getHeaderStream()
 	return (&_headerStream);
 }
 
-
 std::ifstream* Response::getBodyStream()
 {
 	std::cout << "Body stream requested" << std::endl;
-	if (!_bodyStream.is_open())
+	if (_bodyStream == nullptr || !_bodyStream->is_open())
 		return nullptr;
-	_bodyStream.seekg(0, std::ios_base::beg);
-	return (&_bodyStream);
+	_bodyStream->seekg(0, std::ios_base::beg);
+	return _bodyStream;
 }
