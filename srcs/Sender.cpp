@@ -96,7 +96,13 @@ void Sender::handle()
 
 	ssize_t written;
 	written = write(_fd, _buffer, bufferSize);
+
 	std::cout << "Sent " << written << " bytes" <<std::endl;
+	for (long i = 0; i < bufferSize; i++)
+	{
+		std::cout << _buffer[i];
+	}
+	std::cout << std::endl;
 
 	if (written != bufferSize)
 	{
