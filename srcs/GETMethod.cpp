@@ -10,7 +10,7 @@ GETMethod::~GETMethod()
 
 std::string createFilePath(std::string path)
 {
-	path.erase(0, 1);
+	path.insert(0, "root");
 	return path;
 }
 
@@ -18,7 +18,11 @@ Response* GETMethod::process()
 {
 	std::ifstream* stream = new std::ifstream();
 
-	stream->open(createFilePath(_request.getTarget()));
+	std::string target = _request.getTarget();
+	if (target == "/")
+		target = "/index.html";
+
+	stream->open(createFilePath(target));
 	if (stream->fail())
 	{
 		delete stream;
