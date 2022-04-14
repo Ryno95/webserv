@@ -5,7 +5,8 @@
 
 Test(Timeout, xMinusxEqualsZero)
 {
-	Client client(-1);
+	pollfd fd;
+	Client client(&fd);
 	timeval now;
 	gettimeofday(&now, nullptr);
 	client._lastCommunicated = now;
@@ -14,7 +15,8 @@ Test(Timeout, xMinusxEqualsZero)
 
 Test(Timeout, OneSecondPlease)
 {
-	Client client(-1);
+	pollfd fd;
+	Client client(&fd);
 	timeval now;
 	gettimeofday(&now, nullptr);
 	client._lastCommunicated = now;
@@ -24,7 +26,8 @@ Test(Timeout, OneSecondPlease)
 
 Test(Timeout, OneMilliSecondPlease)
 {
-	Client client(-1);
+	pollfd fd;
+	Client client(&fd);
 	timeval now;
 	gettimeofday(&now, nullptr);
 	client._lastCommunicated = now;
