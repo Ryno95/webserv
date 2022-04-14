@@ -1,5 +1,7 @@
 #pragma once
 
+#include <poll.h>
+
 #include <stdexcept>
 #include <string>
 #include <deque>
@@ -14,12 +16,12 @@ class Client
 {
 
 public:
-	Client(int fd);
+	Client(pollfd* fd);
 	~Client();
 
 	bool handleRequest();
 	bool handleResponse();
-	bool handleExecution();
+	void handleProcessing();
 	size_t getLastCommunicatedMs(timeval now) const;
 
 	struct DisconnectedException : std::exception
@@ -33,7 +35,7 @@ public:
 private:
 	void hasCommunicated();
 
-	int _fd;
+	pollfd* _fd;
 	timeval _lastCommunicated;
 
 	std::deque<Request> _requests;
