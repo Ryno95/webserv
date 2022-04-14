@@ -4,12 +4,12 @@
 
 typedef std::pair<int, std::string> HttpStatusCode;
 
-struct HttpStatusCodes
+namespace HttpStatusCodes
 {
-	static const HttpStatusCode OK;
-	static const HttpStatusCode BAD_REQUEST;
-	static const HttpStatusCode NOT_FOUND;
-	static const HttpStatusCode URI_TOO_LONG;
-	static const HttpStatusCode TEAPOT;
-	static const HttpStatusCode NOT_IMPLEMENTED;
-};
+	const HttpStatusCode OK					= HttpStatusCode(200, "OK");
+	const HttpStatusCode BAD_REQUEST		= HttpStatusCode(400, "BAD_REQUEST");
+	const HttpStatusCode NOT_FOUND			= HttpStatusCode(404, "NOT_FOUND");
+	const HttpStatusCode URI_TOO_LONG		= HttpStatusCode(414, "URI_TOO_LONG");
+	const HttpStatusCode TEAPOT				= HttpStatusCode(418, "TEAPOT");
+	const HttpStatusCode NOT_IMPLEMENTED	= HttpStatusCode(501, "NOT_IMPLEMENTED");
+}
