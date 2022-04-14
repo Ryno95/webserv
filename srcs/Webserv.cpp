@@ -152,7 +152,7 @@ void Webserv::run()
 
 	while (true)
 	{
-		pollRet = poll(&_fds.front(), _fds.size(), -1);
+		pollRet = poll(&_fds.front(), _fds.size(), 100);
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
 
