@@ -34,6 +34,8 @@ void Response::setStatusCode(HttpStatusCode code)
 
 void Response::setBodyStream(std::string filePath)
 {
+	filePath.erase(0, 1);
+	std::cout << "Opening file: " << filePath << std::endl;
 	_bodyStream.open(filePath);
 	if (_bodyStream.fail())
 	{
@@ -42,13 +44,18 @@ void Response::setBodyStream(std::string filePath)
 	}
 
 	_bodyStream.seekg(0, std::ios_base::end);
-	_headerFields["Content-Length"] = std::to_string(_bodyStream.gcount());
+	addHeaderField("Content-Length", std::to_string(_bodyStream.tellg()));
+}
+
+void Response::addHeaderField(std::string key, std::string value)
+{
+	_headerFields.insert(std::pair<std::string, std::string>(key, value));
 }
 
 void Response::addHeaderFields()
 {
 	_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
-	_headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
+	// _headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
 	_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
 }
 
@@ -82,5 +89,6 @@ std::ifstream* Response::getBodyStream()
 	std::cout << "Body stream requested" << std::endl;
 	if (!_bodyStream.is_open())
 		return nullptr;
+	_bodyStream.seekg(0, std::ios_base::beg);
 	return (&_bodyStream);
 }
