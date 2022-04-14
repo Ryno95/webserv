@@ -25,18 +25,30 @@ void pointer(Person *person)
 	person = nullptr;
 }
 
+void pointer(Person const * person)
+{
+	person->age = 25;
+	person = nullptr;
+}
+
+void pointer(Person * const person)
+{
+	person->age = 25;
+	person = nullptr;
+}
+
 void protectedFunction(Person const& person)
 {
 	// person = Person("Nobody", 0); does not compile
-	// person.age++; does not compile
+	// person.age++;
 }
 
 int main()
 {
 	Person pascal("Pascal", 26);
 
-	pointer(&pascal);
+	// pointer(&pascal);
 	protectedFunction(pascal);
-	function(pascal);
+	// function(pascal);
 	std::cout << "Name: " << pascal.name << " age: " << pascal.age << std::endl;
 }
