@@ -28,7 +28,7 @@ public:
 	~Response();
 
 	void	setStatusCode(HttpStatusCode code);
-	void	setBodyStream(std::string filePath);
+	void	setBodyStream(std::ifstream* stream);
 
 	Response			&operator=(const Response &rhs);
 
@@ -41,8 +41,8 @@ public:
 
 private:
 
-	std::stringstream 					_headerStream;
-	std::ifstream						_bodyStream;
-	std::map<std::string, std::string>	_headerFields;
 	HttpStatusCode 						_statusCode;
+	std::stringstream 					_headerStream;
+	std::ifstream						*_bodyStream;
+	std::map<std::string, std::string>	_headerFields;
 };
