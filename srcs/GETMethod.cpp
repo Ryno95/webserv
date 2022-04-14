@@ -20,7 +20,7 @@ Response* GETMethod::process()
 
 	std::string target = _request.getTarget();
 	if (target == "/")
-		target = "/index.html";
+		target = "/index.html"; // home returned of redirect naar home
 
 	stream->open(createFilePath(target));
 	if (stream->fail())
