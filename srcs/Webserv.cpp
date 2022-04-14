@@ -86,7 +86,6 @@ void Webserv::handleClients()
 			}
 		}
 
-		// IMPORTANT this bit is set, that means we CAN write, not that we WANT to write!
 		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
 		{
 			_clients[i - 1].handleProcessing();
@@ -152,7 +151,7 @@ void Webserv::run()
 
 	while (true)
 	{
-		pollRet = poll(&_fds.front(), _fds.size(), 100);
+		pollRet = poll(&_fds.front(), _fds.size(), 100); // 100 ms is temporary
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
 
