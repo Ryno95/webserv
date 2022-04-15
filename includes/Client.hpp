@@ -19,10 +19,7 @@ public:
 	Client(pollfd* fd);
 	~Client();
 
-	bool handleRequest();
-	bool handleResponse();
-	void handleProcessing();
-	size_t getLastCommunicatedMs(timeval now) const;
+	bool handle();
 
 	struct DisconnectedException : std::exception
 	{
@@ -33,7 +30,11 @@ public:
 	};
 
 private:
+	bool checkTimeout() const;
 	void hasCommunicated();
+	void handleRequest();
+	void handleResponse();
+	void handleProcessing();
 
 	pollfd* _fd;
 	timeval _lastCommunicated;

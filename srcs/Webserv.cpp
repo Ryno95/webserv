@@ -66,36 +66,15 @@ void Webserv::setupSocket()
 
 void Webserv::handleClients()
 {
-	int fdSize;
+	int size = _clients.size();;
 
-	fdSize = _fds.size();
-
-	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
+	for (int i = 0; i < size; i++)
 	{
-		if (_fds[i].revents == 0)
-			continue;
-
-		if (BIT_ISSET(this->_fds[i].revents, POLLIN_BIT))
+		if (_clients[i].handle() == false)
 		{
-			if (_clients[i - 1].handleRequest() == false)
-			{
-				removeClient(i);
-				--i;
-				--fdSize;
-				continue;
-			}
-		}
-
-		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
-		{
-			_clients[i - 1].handleProcessing();
-			if (_clients[i - 1].handleResponse() == false)
-			{
-				removeClient(i);
-				--i;
-				--fdSize;
-				continue;
-			}
+			removeClient(i);
+			--i;
+			--size;
 		}
 	}
 }
@@ -124,26 +103,26 @@ void Webserv::removeClient(int index)
 {
 	std::cout << "Removing client: " << _fds[index].fd << std::endl;
 
-	close(_fds[index].fd);
-	_fds.erase(_fds.begin() + index);
-	_clients.erase(_clients.begin() + index - 1);
+	close(_fds[index + 1].fd);
+	_fds.erase(_fds.begin() + index + 1);
+	_clients.erase(_clients.begin() + index);
 }
 
-void Webserv::handleTimeout()
-{
-	timeval now;
-	gettimeofday(&now, nullptr);
+// void Webserv::handleTimeout()
+// {
+// 	timeval now;
+// 	gettimeofday(&now, nullptr);
 
-	for (size_t i = 0; i < _clients.size(); ++i)
-	{
-		if (_clients[i].getLastCommunicatedMs(now) >= TIMEOUT_MS)
-		{
-			std::cout << "Client on fd " << _fds[i + 1].fd << " timed-out." << std::endl;
-			removeClient(i + 1);
-			--i;
-		}
-	}
-}
+// 	for (size_t i = 0; i < _clients.size(); ++i)
+// 	{
+// 		if (_clients[i].getLastCommunicatedMs(now) >= TIMEOUT_MS)
+// 		{
+// 			std::cout << "Client on fd " << _fds[i + 1].fd << " timed-out." << std::endl;
+// 			removeClient(i + 1);
+// 			--i;
+// 		}
+// 	}
+// }
 
 void Webserv::run()
 {
@@ -157,6 +136,5 @@ void Webserv::run()
 
 		handleListener();
 		handleClients();
-		handleTimeout();
 	}
 }
