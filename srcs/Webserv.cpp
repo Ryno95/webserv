@@ -95,7 +95,7 @@ void Webserv::handleListener()
 			std::cout << "Accepted client on fd: " << newClient.fd << std::endl;
 		}
 		else
-			std::cout << "Nothing accepted." << std::endl;
+			std::cout << "Nothing accepted, that was weird! :p." << std::endl;
 	}
 }
 
@@ -107,22 +107,6 @@ void Webserv::removeClient(int index)
 	_fds.erase(_fds.begin() + index + 1);
 	_clients.erase(_clients.begin() + index);
 }
-
-// void Webserv::handleTimeout()
-// {
-// 	timeval now;
-// 	gettimeofday(&now, nullptr);
-
-// 	for (size_t i = 0; i < _clients.size(); ++i)
-// 	{
-// 		if (_clients[i].getLastCommunicatedMs(now) >= TIMEOUT_MS)
-// 		{
-// 			std::cout << "Client on fd " << _fds[i + 1].fd << " timed-out." << std::endl;
-// 			removeClient(i + 1);
-// 			--i;
-// 		}
-// 	}
-// }
 
 void Webserv::run()
 {
