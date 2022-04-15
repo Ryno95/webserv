@@ -14,7 +14,7 @@ public:
 	Receiver(int fd);
 	~Receiver();
 
-	void handle(); // Returns whether the action has finished and should be collected.
+	void handle();
 	std::deque<Request> const collectRequests();
 
 private:

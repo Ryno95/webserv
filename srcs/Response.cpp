@@ -1,16 +1,37 @@
 #include <iostream>
 #include <Response.hpp>
 
-
-Response::Response() {}
-
-
-Response::Response(HttpStatusCode code) : _statusCode(code)
+Response::Response() : _bodyStream(nullptr)
 {
+}
+
+Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr)
+{
+}
+
+Response::Response(const Response &ref)
+{
+	*this =	ref;
 }
 
 Response::~Response()
 {
+	if (_bodyStream != nullptr)
+		delete _bodyStream;
+}
+
+Response& Response::operator=(const Response &rhs)
+{
+	this->_headerFields = rhs._headerFields;
+	this->_statusCode = rhs._statusCode;
+	return (*this);
+}
+
+void Response::setBodyStream(std::ifstream* stream)
+{
+	_bodyStream = stream;
+	stream->seekg(0, std::ios_base::end);
+	addHeaderField("Content-Length", std::to_string(stream->tellg()));
 }
 
 void Response::setStatusCode(HttpStatusCode code)
@@ -18,52 +39,44 @@ void Response::setStatusCode(HttpStatusCode code)
 	this->_statusCode = code;
 }
 
-void Response::setBody(std::string bytes)
+void Response::addHeaderField(std::string key, std::string value)
 {
-	const int sizeOfBytes = bytes.size();
-
-	_body = bytes;
-	_headerFields["Content-Length"] = std::to_string(sizeOfBytes);
-}
-
-void Response::setIsReadyToSend(bool isReadyToSend)
-{
-	this->_isReadyToSend = isReadyToSend;
+	_headerFields.insert(std::pair<std::string, std::string>(key, value));
 }
 
 void Response::addHeaderFields()
 {
 	_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
-	_headerFields.insert(std::pair<std::string, std::string>("Content-Length", "0"));
 	_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
 }
 
-// body should be ostream not buffer for conitnuos flow of big sends
-std::string Response::getBytes() const
+std::stringstream	*Response::getHeaderStream()
 {
 	std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();
 	std::map<std::string, std::string>::const_iterator end = _headerFields.end();
 	
-	std::string buffer = HTTPVERSION;
-	buffer += " ";
-	buffer += std::to_string(_statusCode.first);
-	buffer += " ";
-	buffer += _statusCode.second;
+	std::string	header = HTTPVERSION;
+	header += " ";
+	header += std::to_string(_statusCode.first);
+	header += " ";
+	header += _statusCode.second;
 	while (cursor != end)
 	{
-		buffer += "\r\n";
-		buffer += cursor->first;
-		buffer += ": ";
-		buffer += cursor->second;
+		header += "\r\n";
+		header += cursor->first;
+		header += ": ";
+		header += cursor->second;
 		++cursor;
 	}
-	buffer += "\r\n\r\n";
-	buffer += _body;
-
-	return buffer;
+	header += "\r\n\r\n";
+	_headerStream << header;
+	return (&_headerStream);
 }
 
-bool Response::getIsReadyToSend() const
+std::ifstream* Response::getBodyStream()
 {
-	return this->_isReadyToSend;
+	if (_bodyStream == nullptr || !_bodyStream->is_open())
+		return nullptr;
+	_bodyStream->seekg(0, std::ios_base::beg);
+	return _bodyStream;
 }

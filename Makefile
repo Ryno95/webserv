@@ -1,6 +1,6 @@
 # Section Settings
 
-NAME		?=	Webserver.out
+NAME		=	Webserver.out
 TEST_NAME	=	unit_test
 
 OBJ_DIR		=	objs/
@@ -13,9 +13,10 @@ CLASSES		=	Webserv\
 				Client\
 				Request\
 				Response\
-				HttpStatusCode\
 				Receiver\
-				Sender
+				Sender\
+				AMethod\
+				GETMethod
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)

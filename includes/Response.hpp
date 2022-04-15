@@ -1,7 +1,10 @@
 #pragma once
 
-#include <string>
+#include <fstream>
 #include <map>
+#include <string>
+#include <sstream>
+
 #include <HttpStatusCode.hpp>
 #include <Request.hpp>
 
@@ -20,35 +23,26 @@ class Response
 {
 public:
 	Response();
+	Response(const Response &ref);
 	Response(HttpStatusCode code);
 	~Response();
 
 	void	setStatusCode(HttpStatusCode code);
-	void	setBody(std::string bytes);
-	void	setIsReadyToSend(bool isReadyToSend);
+	void	setBodyStream(std::ifstream* stream);
 
-	void	addHeaderFields(); // hard coded for now to get the flow going
+	Response			&operator=(const Response &rhs);
 
-	std::string		getBytes() const;
-	bool			getIsReadyToSend() const;
-	HttpStatusCode	getStatusCode() const;
+	std::stringstream	*getHeaderStream();
+	void				addHeaderFields(); // hard coded for now to get the flow going
+	void addHeaderField(std::string key, std::string value);
+
+	std::ifstream		*getBodyStream();
+	HttpStatusCode		getStatusCode() const;
 
 private:
-	std::string 						_rawBytesToSend;
-	bool								_isReadyToSend;
-	std::string							_body;
-	std::map<std::string, std::string>	_headerFields;
+
 	HttpStatusCode 						_statusCode;
-
+	std::stringstream 					_headerStream;
+	std::ifstream						*_bodyStream;
+	std::map<std::string, std::string>	_headerFields;
 };
-
-
-
-
-
-
-
-
-
-
-

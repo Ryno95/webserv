@@ -24,6 +24,7 @@ public:
 	void parse();
 	bool hasBodyField() const;
 	std::string getTarget() const;
+	method getMethod() const;
 
 private:
 	void parseBody();
