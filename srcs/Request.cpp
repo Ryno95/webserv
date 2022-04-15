@@ -13,12 +13,15 @@ Request::~Request()
 {
 }
 
-void Request::parseBody()
+void Request::parseBody(size_t pos)
 {
+	std::cout << "PARSING BODY " << _query << std::endl;
 }
 
 bool Request::hasBodyField() const
 {
+	if (_method == POST)
+		return true;
 	return false;
 }
 
@@ -144,7 +147,7 @@ static bool	isTerminatorStr(const std::string str)
 	return (str.compare(terminatorStr) == 0);
 }
 
-void Request::parseHeaderFields(size_t pos)
+size_t Request::parseHeaderFields(size_t pos)
 {
 	size_t				next = 0, last = pos;
 	std::string			trimmedLine;
@@ -154,17 +157,21 @@ void Request::parseHeaderFields(size_t pos)
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
 		addKeyValuePair(trimmedLine, next);
 		if (isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
+		{
+			last += 4;
 			break ;
+		}
 		last = next + CRLF_CHAR_COUNT;
 	}
+	return (last);
 }
 
 void Request::parse()
 {
 	std::cout << _query << std::endl;
 	size_t pos = parseRequestLine();
-	parseHeaderFields(pos);
-	parseBody();
+	pos = parseHeaderFields(pos);
+	parseBody(pos);
 }
 
 void Request::throwError(HttpStatusCode code)
@@ -187,4 +194,19 @@ std::string Request::getTarget() const
 method Request::getMethod() const
 {
 	return _method;
+}
+
+size_t Request::getBodySize() const
+{
+	std::map<std::string, std::string>::const_iterator it = _headerFields.cbegin();
+
+	std::cout << "MAP SIZE: " << _headerFields.size() << std::endl;
+	while (it != _headerFields.end())
+	{
+		std::cout << it->first  << ": " << it->second << std::endl;
+		++it;
+	}
+	if (it != _headerFields.end())
+		return std::atol(it->second.c_str());
+	return -1;
 }

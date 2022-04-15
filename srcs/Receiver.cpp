@@ -61,6 +61,8 @@ void Receiver::processHeaderRecv()
 	}
 }
 
+
+
 void Receiver::processBodyRecv()
 {
 	if (_bodyBytesReceived >= _bodySize)
@@ -81,9 +83,8 @@ void Receiver::checkHeader()
 		{
 			_state = RECV_BODY;
 			_bodyBytesReceived = 0;
-			// _bodySize = get from header field!
-			throw std::runtime_error("NOT IMPLEMENTED YET!"); // tmp throw till implemented
-			return;
+			_bodySize = _newRequest.getBodySize();
+			std::cout << "BODYSIZE: " << _bodySize << std::endl;
 		}
 	}
 	catch(const std::exception& e) // only catch parse exceptions?
