@@ -1,5 +1,6 @@
 #include <Client.hpp>
 #include <GETMethod.hpp>
+#include <POSTMethod.hpp>
 #include <defines.hpp>
 
 #include <unistd.h>
@@ -61,6 +62,9 @@ void Client::handleProcessing()
 	{
 		case GET:
 			response = GETMethod(request).process();
+			break;
+		case POST:
+			response = POSTMethod(request).process();
 			break;
 	}
 
