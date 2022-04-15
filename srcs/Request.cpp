@@ -15,7 +15,7 @@ Request::~Request()
 
 void Request::parseBody(size_t pos)
 {
-	std::cout << "PARSING BODY " << _query << std::endl;
+	std::cout << "PARSING BODY " << std::endl;
 }
 
 bool Request::hasBodyField() const
@@ -168,7 +168,7 @@ size_t Request::parseHeaderFields(size_t pos)
 
 void Request::parse()
 {
-	std::cout << _query << std::endl;
+	// std::cout << _query << std::endl;
 	size_t pos = parseRequestLine();
 	pos = parseHeaderFields(pos);
 	parseBody(pos);
@@ -206,6 +206,7 @@ size_t Request::getBodySize() const
 		std::cout << it->first  << ": " << it->second << std::endl;
 		++it;
 	}
+	std::cout << it->first  << ": " << it->second << std::endl;
 	if (it != _headerFields.end())
 		return std::atol(it->second.c_str());
 	return -1;
