@@ -54,8 +54,8 @@ void Receiver::processHeaderRecv()
 	}
 	else
 	{
-		_buffer += _recvBuffer.substr(0, pos);
 		pos += 4;
+		_buffer += _recvBuffer.substr(0, pos);
 		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
 		checkHeader();
 	}
@@ -65,6 +65,7 @@ void Receiver::processHeaderRecv()
 
 void Receiver::processBodyRecv()
 {
+	std::cout << "BYTES RECV: " << _bodyBytesReceived << std::endl;
 	if (_bodyBytesReceived >= _bodySize)
 	{
 		_state = ADD_REQUEST;
