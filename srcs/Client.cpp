@@ -20,25 +20,22 @@ Client::~Client()
 /*
 	Returns false when the client should be removed (disconnected)
 */
-bool Client::handleRequest()
+bool Client::handle()
 {
+	if (_fd->revents == 0)
+		return checkTimeout();
+
 	hasCommunicated();
+
 	try
 	{
-		_receiver.handle();
-		std::deque<Request> const& newRequests = _receiver.collectRequests();
-		if (newRequests.size() == 0)
-			return true;
+		if (BIT_ISSET(_fd->revents, POLLIN_BIT))
+			handleRequest();
 
-		_fd->events = POLLIN | POLLOUT;
+		handleProcessing();
 
-		std::deque<Request>::const_iterator first = newRequests.begin();
-		std::deque<Request>::const_iterator last = newRequests.end();
-		while (first != last)
-		{
-			_requests.push_back(*first);
-			++first;
-		}
+		if (BIT_ISSET(_fd->revents, POLLOUT_BIT))
+			handleResponse();
 	}
 	catch(const DisconnectedException& e)
 	{
@@ -47,6 +44,24 @@ bool Client::handleRequest()
 	}
 
 	return true;
+}
+
+void Client::handleRequest()
+{
+	_receiver.handle();
+	std::deque<Request> const& newRequests = _receiver.collectRequests();
+	if (newRequests.size() == 0)
+		return;
+
+	_fd->events = POLLIN | POLLOUT;
+
+	std::deque<Request>::const_iterator first = newRequests.begin();
+	std::deque<Request>::const_iterator last = newRequests.end();
+	while (first != last)
+	{
+		_requests.push_back(*first);
+		++first;
+	}
 }
 
 void Client::handleProcessing()
@@ -70,10 +85,7 @@ void Client::handleProcessing()
 	std::cout << "POLLOUT activated" << std::endl;
 }
 
-/*
-	Returns false when the client should be removed (disconnected)
-*/
-bool Client::handleResponse()
+void Client::handleResponse()
 {
 	if (!_sender.hasResponse()) // set new response object as current response to send
 	{
@@ -92,19 +104,21 @@ bool Client::handleResponse()
 		_fd->events = POLLIN;
 		std::cout << "POLLOUT deactivated" << std::endl;
 	}
-	return true;
 }
 
 /*
-	Maybe give this function a [timeval now] argument and gettimeofday() from Webserv.cpp instead,
-	so we don't call gettimeofday for each client in the iteration
+	For the time functions hasCommunicated() and checkTimeout():
+		We might set a "now" time in Webserv.cpp or somewhere else, after poll, and get that value.
+		It reduces the amount of system calls!
 */
 void Client::hasCommunicated()
 {
 	gettimeofday(&_lastCommunicated, nullptr);
 }
 
-size_t Client::getLastCommunicatedMs(timeval now) const
+bool Client::checkTimeout() const
 {
-	return ((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000);
+	timeval now;
+	gettimeofday(&now, NULL);
+	return ((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000) < TIMEOUT_MS;
 }
