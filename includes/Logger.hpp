@@ -4,10 +4,10 @@
 #include <string>
 #include <fstream>
 
-#define DEBUGGING		true
-#define LOG_DEBUGGING	true
-#define ENABLE_LOGGING	true
-#define LOGFILE			"warnings.log"
+#define ENABLE_DEBUGGING		true
+#define ENABLE_DEBUG_LOGGING	true
+#define ENABLE_LOGGING			true
+#define LOGFILE					"warnings.log"
 
 #define DEBUG(x) Logger::debug(std::stringstream() << x)
 #define WARN(x) Logger::warn(std::stringstream() << x)
@@ -21,9 +21,6 @@ public:
 	static void warn(const std::ostream& ss);
 
 private:
-	static const bool _debugEnabled = DEBUGGING;
-	static const bool _enableLogging = ENABLE_LOGGING;
-	static const bool _debugLoggingEnabled = LOG_DEBUGGING;
 	static std::ofstream _logFile;
 
 	static void log(const std::string& msg);

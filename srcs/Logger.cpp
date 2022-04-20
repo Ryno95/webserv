@@ -32,11 +32,9 @@ static void printDebug(const std::string& msg)
 	std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
 }
 
-
-
 void Logger::log(const std::string& msg)
 {
-	if (!_enableLogging)
+	if (!ENABLE_LOGGING)
 		return;
 
 	if (!_logFile.is_open())
@@ -61,11 +59,11 @@ void Logger::warn(const std::string& msg)
 
 void Logger::debug(const std::string& msg)
 {
-	if (!_debugEnabled)
+	if (!ENABLE_DEBUGGING)
 		return;
 	printDebug(msg);
 
-	if (_debugLoggingEnabled)
+	if (ENABLE_DEBUG_LOGGING)
 		log("[DEBUG] " + msg);
 }
 
