@@ -17,7 +17,8 @@ CLASSES		=	Webserv\
 				Sender\
 				AMethod\
 				GETMethod\
-				MimeTypes
+				MimeTypes\
+				Logger
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
