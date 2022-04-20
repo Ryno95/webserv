@@ -17,6 +17,8 @@ CLASSES		=	Webserv\
 				Sender\
 				AMethod\
 				GETMethod\
+				MimeTypes\
+				Logger\
 				POSTMethod
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
@@ -30,7 +32,7 @@ LINKING		=	-I $(INCL_DIR)
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
-				$(TEST_DIR)timeoutTests.cpp
+				$(TEST_DIR)parseMimeTypesTests.cpp
 
 
 # Section Rules
@@ -41,7 +43,10 @@ $(NAME): $(OBJS) $(HPPS)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC) $(OBJS)
-	$(CC) -D TEST=1 -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(TEST_CFLAGS) $(LINKING) -lcriterion -L /usr/local/lib -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
+	$(CC) -D TEST=1 -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(TEST_CFLAGS) $(LINKING) -L /usr/local/lib -lcriterion -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
+
+pascal_test: $(TEST_SRC) $(OBJS)
+	$(CC) -D TEST=1 -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(TEST_CFLAGS) $(LINKING) -lcriterion -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib64
 
 local_test: $(TEST_SRC) $(OBJS)
 	$(CC) -D TEST=1 -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(LINKING) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11

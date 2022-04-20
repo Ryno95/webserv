@@ -1,5 +1,6 @@
 #include <Sender.hpp>
 #include <defines.hpp>
+#include <Logger.hpp>
 
 #include <iostream>
 #include <string>
@@ -49,24 +50,20 @@ void Sender::setDataStream()
 
 long Sender::fillBuffer(long bufferSize)
 {
-	std::cout << "filling buffer" <<std::endl;
 	if (_dataStream == nullptr)
 	{
-		if (_currentState == SEND_BODY)
-			std::cout << "[DEBUG] " << "Data stream for Body is nullptr!" << std::endl;
-		else
-			std::cout << "[DEBUG] " << "THIS SHOULD NOT OCCUR!" << std::endl;
+		if (_currentState != SEND_BODY)
+			WARN("THIS SHOULD NOT OCCUR!");
 		return 0;
 	}
 
 	_dataStream->read(_buffer + bufferSize, BUFFER_SIZE - bufferSize);
-	std::cout << "Read: " << _dataStream->gcount() <<std::endl;
+	DEBUG("Read: " << _dataStream->gcount());
 	return _dataStream->gcount();
 }
 
 void Sender::handle()
 {
-	std::cout << "Handling!" << std::endl;
 	long bufferSize = 0;
 
 	while (bufferSize < BUFFER_SIZE && _currentState != FINISHED)
@@ -78,7 +75,6 @@ void Sender::handle()
 		{
 			_currentState++;
 			_dataStream = nullptr;
-			std::cout << "State incremented to: " << _currentState << std::endl;
 		}
 	}
 
@@ -87,7 +83,7 @@ void Sender::handle()
 
 	if (bufferSize == 0)
 	{
-		std::cout << "[DEBUG] No bytes to send!" << std::endl; // DEBUG LINE
+		DEBUG("No bytes to send!");
 		return;
 	}
 
@@ -97,7 +93,7 @@ void Sender::handle()
 	ssize_t written;
 	written = write(_fd, _buffer, bufferSize);
 
-	std::cout << "Sent " << written << " bytes" <<std::endl;
+	DEBUG("Sent " << written << " bytes");
 	for (long i = 0; i < bufferSize; i++)
 	{
 		std::cout << _buffer[i];
@@ -106,9 +102,9 @@ void Sender::handle()
 
 	if (written != bufferSize)
 	{
-		std::cout << "Actual bytes written is not equal to the amount requested to send." << std::endl; // DEBUG SECTION
-		std::cout << "There is no implementation to catch this issue yet." << std::endl;
-		std::cout << "Requested: " << bufferSize << " written: " << written << std::endl;
+		DEBUG("Actual bytes written is not equal to the amount requested to send." << std::endl <<
+				"There is no implementation to catch this issue yet." << std::endl <<
+				"Requested: " << bufferSize << " written: " << written << std::endl);
 	}
 }
 

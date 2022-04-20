@@ -11,25 +11,18 @@
 #include <unistd.h>
 
 #include <defines.hpp>
+#include "Logger.hpp"
 #include <Webserv.hpp>
 
 Webserv::Webserv(uint port, std::string name)
 	: _port(port), _name(name)
 {
-	try
-	{
-		setupSocket();
-	}
-	catch (std::exception &e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-	std::cout << "Creating Webserv instance with port: " << this->_port << std::endl;
+	setupSocket();
 }
 
 Webserv::~Webserv()
 {
-	std::cout << "Destroying Webserv instance with port : " << this->_port << std::endl;
+	DEBUG("Destroying Webserv instance with port: " << _port);
 }
 
 void Webserv::setupSocket()
@@ -66,36 +59,15 @@ void Webserv::setupSocket()
 
 void Webserv::handleClients()
 {
-	int fdSize;
+	int size = _clients.size();;
 
-	fdSize = _fds.size();
-
-	for (int i = 1; i < fdSize; ++i) // i = 1, because we don't need to check the listening socket
+	for (int i = 0; i < size; i++)
 	{
-		if (_fds[i].revents == 0)
-			continue;
-
-		if (BIT_ISSET(this->_fds[i].revents, POLLIN_BIT))
+		if (_clients[i].handle() == false)
 		{
-			if (_clients[i - 1].handleRequest() == false)
-			{
-				removeClient(i);
-				--i;
-				--fdSize;
-				continue;
-			}
-		}
-
-		if (BIT_ISSET(this->_fds[i].revents, POLLOUT_BIT))
-		{
-			_clients[i - 1].handleProcessing();
-			if (_clients[i - 1].handleResponse() == false)
-			{
-				removeClient(i);
-				--i;
-				--fdSize;
-				continue;
-			}
+			removeClient(i);
+			--i;
+			--size;
 		}
 	}
 }
@@ -106,49 +78,31 @@ void Webserv::handleListener()
 
 	if (_fds[0].revents == POLLIN)
 	{
-		std::cout << "Accepting new client..." << std::endl;
 		newClient.fd = accept(_listenFd, NULL, NULL);
 		if (newClient.fd != SYSTEM_ERR)
 		{
 			newClient.events = POLLIN;
 			_fds.push_back(newClient);
 			_clients.push_back(Client(&_fds.back()));
-			std::cout << "Accepted client on fd: " << newClient.fd << std::endl;
+			DEBUG("Accepted client on fd: " << newClient.fd);
 		}
-		else
-			std::cout << "Nothing accepted." << std::endl;
 	}
 }
 
 void Webserv::removeClient(int index)
 {
-	std::cout << "Removing client: " << _fds[index].fd << std::endl;
+	DEBUG("Removing client: " << _fds[index].fd);
 
-	close(_fds[index].fd);
-	_fds.erase(_fds.begin() + index);
-	_clients.erase(_clients.begin() + index - 1);
-}
-
-void Webserv::handleTimeout()
-{
-	timeval now;
-	gettimeofday(&now, nullptr);
-
-	for (size_t i = 0; i < _clients.size(); ++i)
-	{
-		if (_clients[i].getLastCommunicatedMs(now) >= TIMEOUT_MS)
-		{
-			std::cout << "Client on fd " << _fds[i + 1].fd << " timed-out." << std::endl;
-			removeClient(i + 1);
-			--i;
-		}
-	}
+	close(_fds[index + 1].fd);
+	_fds.erase(_fds.begin() + index + 1);
+	_clients.erase(_clients.begin() + index);
 }
 
 void Webserv::run()
 {
 	int pollRet;
 
+	DEBUG("Running webserver on port: " << _port);
 	while (true)
 	{
 		pollRet = poll(&_fds.front(), _fds.size(), 100); // 100 ms is temporary
@@ -157,6 +111,5 @@ void Webserv::run()
 
 		handleListener();
 		handleClients();
-		handleTimeout();
 	}
 }
