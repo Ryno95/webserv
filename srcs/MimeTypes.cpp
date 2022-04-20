@@ -1,5 +1,7 @@
 #include <MimeTypes.hpp>
 
+#include <Logger.hpp>
+
 MimeTypes::MimeTypes() : _filePath("config/mime.config")
 {
 	parse();
@@ -31,7 +33,7 @@ void MimeTypes::parse()
 		pos = line.find(' ');
 		if (pos == std::string::npos || pos == 0)
 		{
-			std::cout << "Invalid MIME field: " << line << std::endl;
+			DEBUG("Invalid MIME field: " << line);
 			continue;
 		}
 
@@ -44,7 +46,7 @@ void MimeTypes::parse()
 		// If there's no extension after the MIME field
 		if (pos == line.size())
 		{
-			std::cout << "Invalid MIME field: " << line << std::endl;
+			DEBUG("Invalid MIME field: " << line);
 			continue;
 		}
 
@@ -74,6 +76,6 @@ const std::string& MimeTypes::getMIMEType(const std::string& extension) const
 {
 	std::map<const std::string, const std::string>::const_iterator result = _types.find(extension);
 	if (result == _types.end())
-		throw std::runtime_error("MIME types for this file extension is not contained");
+		throw std::runtime_error("MIME type for this file extension is not contained");
 	return result->second;
 }
