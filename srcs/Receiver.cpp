@@ -54,19 +54,22 @@ void Receiver::processHeaderRecv()
 	}
 	else
 	{
-		_buffer += _recvBuffer.substr(0, pos);
 		pos += 4;
+		_buffer += _recvBuffer.substr(0, pos);
 		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
 		checkHeader();
 	}
 }
 
+
+
 void Receiver::processBodyRecv()
 {
+	_bodyBytesReceived += _recvBuffer.length();
+	_newRequest.appendBody(_recvBuffer);
+	_recvBuffer.resize(0);
 	if (_bodyBytesReceived >= _bodySize)
-	{
 		_state = ADD_REQUEST;
-	}
 }
 
 void Receiver::checkHeader()
@@ -81,9 +84,8 @@ void Receiver::checkHeader()
 		{
 			_state = RECV_BODY;
 			_bodyBytesReceived = 0;
-			// _bodySize = get from header field!
-			throw std::runtime_error("NOT IMPLEMENTED YET!"); // tmp throw till implemented
-			return;
+			_bodySize = _newRequest.getBodySize();
+			return ;
 		}
 	}
 	catch(const std::exception& e) // only catch parse exceptions?

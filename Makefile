@@ -18,7 +18,8 @@ CLASSES		=	Webserv\
 				AMethod\
 				GETMethod\
 				MimeTypes\
-				Logger
+				Logger\
+				POSTMethod
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -31,7 +32,6 @@ LINKING		=	-I $(INCL_DIR)
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
-				$(TEST_DIR)timeoutTests.cpp\
 				$(TEST_DIR)parseMimeTypesTests.cpp
 
 

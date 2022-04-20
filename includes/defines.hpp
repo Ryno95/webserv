@@ -11,7 +11,7 @@
 #pragma region CONFIG FILE
 
 #define MAX_TARGET_LEN 50
-#define BUFFER_SIZE 50
+#define BUFFER_SIZE 500
 #define TIMEOUT_MS 1000
 
 #define HTTPVERSION "HTTP/1.1"
