@@ -6,16 +6,23 @@
 
 #define DEBUGGING		true
 #define LOG_DEBUGGING	true
+#define ENABLE_LOGGING	true
 #define LOGFILE			"warnings.log"
+
+#define DEBUG(x) Logger::debug(std::stringstream() << x)
+#define WARN(x) Logger::warn(std::stringstream() << x)
 
 class Logger
 {
 public:
 	static void debug(const std::string& msg);
+	static void debug(const std::ostream& ss);
 	static void warn(const std::string& msg);
+	static void warn(const std::ostream& ss);
 
 private:
 	static const bool _debugEnabled = DEBUGGING;
+	static const bool _enableLogging = ENABLE_LOGGING;
 	static const bool _debugLoggingEnabled = LOG_DEBUGGING;
 	static std::ofstream _logFile;
 
