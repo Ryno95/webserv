@@ -33,6 +33,7 @@ bool Request::hasBodyField() const
 void Request::appendBody(const std::string &body)
 {
 	_body += body;
+	std::cout << "BODY: " << _body << std::endl;
 }
 
 size_t Request::parseMethod()
