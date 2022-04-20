@@ -4,7 +4,7 @@
 #include <ctime>
 #include <sstream>
 
-std::ofstream Logger::_logFile = std::ofstream(LOGFILE);
+std::ofstream Logger::_logFile(LOGFILE);
 
 static std::string getTimeStamp()
 {

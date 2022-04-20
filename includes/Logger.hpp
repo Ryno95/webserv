@@ -9,8 +9,11 @@
 #define ENABLE_LOGGING			true
 #define LOGFILE					"warnings.log"
 
-#define DEBUG(x) Logger::debug(std::stringstream() << x)
-#define WARN(x) Logger::warn(std::stringstream() << x)
+#define DEBUG(x) { std::stringstream stream; Logger::debug(stream << x); }
+#define WARN(x) { std::stringstream stream; Logger::warn(stream << x); }
+
+// #define DEBUG(x) Logger::debug(std::stringstream() << x)
+// #define WARN(x) Logger::warn(std::stringstream() << x)
 
 class Logger
 {
