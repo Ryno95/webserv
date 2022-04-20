@@ -33,7 +33,7 @@ void MimeTypes::parse()
 		pos = line.find(' ');
 		if (pos == std::string::npos || pos == 0)
 		{
-			DEBUG("Invalid MIME field: " << line);
+			WARN("Invalid MIME field: " << line);
 			continue;
 		}
 
@@ -46,7 +46,7 @@ void MimeTypes::parse()
 		// If there's no extension after the MIME field
 		if (pos == line.size())
 		{
-			DEBUG("Invalid MIME field: " << line);
+			WARN("Invalid MIME field: " << line);
 			continue;
 		}
 
