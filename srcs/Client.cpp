@@ -61,9 +61,11 @@ void Client::handleProcessing()
 	switch (request.getMethod())
 	{
 		case GET:
+			std::cout << "Entering GET method!\n";
 			response = GETMethod(request).process();
 			break;
 		case POST:
+			std::cout << "Entering POST method!\n";
 			response = POSTMethod(request).process();
 			break;
 	}

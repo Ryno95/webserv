@@ -65,11 +65,14 @@ void Receiver::processHeaderRecv()
 
 void Receiver::processBodyRecv()
 {
-	std::cout << "BYTES RECV: " << _bodyBytesReceived << std::endl;
+	// std::cout << "Body size: " << _bodySize << std::endl;
+
+	// std::cout << "ENTERING PROCESS BODY: " << _recvBuffer << std::endl;
+	_bodyBytesReceived += _recvBuffer.length();
+	_newRequest.appendBody(_recvBuffer);
+	// std::cout << "ENTERING PROCESS BODY: " << _bodyBytesReceived << std::endl;
 	if (_bodyBytesReceived >= _bodySize)
-	{
 		_state = ADD_REQUEST;
-	}
 }
 
 void Receiver::checkHeader()
@@ -85,7 +88,9 @@ void Receiver::checkHeader()
 			_state = RECV_BODY;
 			_bodyBytesReceived = 0;
 			_bodySize = _newRequest.getBodySize();
-			std::cout << "BODYSIZE: " << _bodySize << std::endl;
+			// std::cout << "BODYSIZE: " << _bodySize << std::endl;
+			// std::cout << "BODYContent: " << _recvBuffer << std::endl;
+			return ;
 		}
 	}
 	catch(const std::exception& e) // only catch parse exceptions?
@@ -104,6 +109,9 @@ void Receiver::handle()
 
 	while (1)
 	{
+		std::cout << "INFINITY!\n";
+		std::cout << "State: " << _state <<std::endl;
+		std::cout << "Size : " << _recvBuffer.size() <<std::endl;
 		switch (_state)
 		{
 			case RECV_HEADER:
@@ -117,10 +125,14 @@ void Receiver::handle()
 			case ADD_REQUEST:
 				_readyRequests.push_back(_newRequest);
 				_state = RECV_HEADER;
+				_recvBuffer.resize(0);
 				std::cout << "Added request to queue!" << std::endl;
 				break;
 		}
 		if ((_state == RECV_HEADER || _state == RECV_BODY) && _recvBuffer.size() == 0)
+		{
+			std::cout << "Breaking outta this place!\n";
 			break ;
+		}
 	}
 }

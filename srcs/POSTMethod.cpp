@@ -8,15 +8,19 @@ POSTMethod::~POSTMethod() {}
 
 Response* POSTMethod::process()
 {
-	const std::string   &fileName = _request.getTarget();
+	std::string   		target = _request.getTarget();
+	std::string			fileName;
 	std::ofstream       *outfile = new std::ofstream();
 	std::string         root("root/");
+	std::string         index("index.html");
 
-	if (fileName == "/")
-		outfile->open(root + "index.html", std::ios_base::app);
+	std::cout << "TARGET: " << target << std::endl;
+	if (target == "/")
+		root += index;
 	else
-		outfile->open(root + fileName, std::ios_base::app);
-		
+		root += target;
+	std::cout << "OPENING FILE: " << root << std::endl;
+	outfile->open("root/test", std::ios_base::app);
 	if (!outfile->is_open())
 	{
 		std::cout << "[DEBUG] POSTMethod file creation failed\n";

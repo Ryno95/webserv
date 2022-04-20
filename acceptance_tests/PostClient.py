@@ -37,7 +37,7 @@ url = "http://localhost:8080/"
 _headers = CaseInsensitiveDict()
 _headers["Accept"] = "text/plain"
 _headers["Content-Type"] = "text/plain"
-_headers["Content-Length"] = "25"
+# _headers["Content-Length"] = "24\"
 
 _data = "What is up vanilla face!"
 

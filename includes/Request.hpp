@@ -26,6 +26,7 @@ public:
 	std::string 	getTarget() const;
 	method 			getMethod() const;
 	size_t 			getBodySize() const;
+	void			appendBody(const std::string &body);
 
 private:
 	void 	parseBody(size_t pos);
@@ -47,6 +48,8 @@ private:
 
 	HttpStatusCode _status;
 };
+
+
 
 
 
