@@ -19,18 +19,21 @@ public:
 	Request(std::string query);
 	~Request();
 
-	HttpStatusCode getStatus() const;
-	void throwError(HttpStatusCode code);
-	void parse();
-	bool hasBodyField() const;
-	std::string getTarget() const;
-	method getMethod() const;
+	HttpStatusCode	getStatus() const;
+	void 			throwError(HttpStatusCode code);
+	void			parse();
+	bool 			hasBodyField() const;
+	std::string 	getTarget() const;
+	method 			getMethod() const;
+	size_t 			getBodySize() const;
+
+	const std::string	&getBody() const;
+	void				appendBody(const std::string &body);
 
 private:
-	void parseBody();
-	size_t parseRequestLine();
-	void parseHeaderFields(size_t pos);
-	void addKeyValuePair(const std::string &src, size_t newLinePos);
+	size_t 	parseRequestLine();
+	void 	parseHeaderFields(size_t pos);
+	void 	addKeyValuePair(const std::string &src, size_t newLinePos);
 
 	size_t parseMethod();
 	size_t parseTarget(size_t pos);
@@ -46,5 +49,10 @@ private:
 
 	HttpStatusCode _status;
 };
+
+
+
+
+
 
 

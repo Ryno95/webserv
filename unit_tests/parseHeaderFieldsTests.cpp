@@ -55,6 +55,7 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 	
 	cr_expect(myRequest.getStatus() == HttpStatusCodes::OK);
 	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(myRequest._headerFields.size() == 1);
 }
 
 Test(ParseHeaderTests, WhiteSpaceBeforeKey)

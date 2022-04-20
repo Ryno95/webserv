@@ -13,13 +13,24 @@ Request::~Request()
 {
 }
 
-void Request::parseBody()
-{
-}
-
 bool Request::hasBodyField() const
 {
+	if (_method == POST)
+	{
+		std::cout << "POST METHOD\n";
+		return true;
+	}
 	return false;
+}
+
+void Request::appendBody(const std::string &body)
+{
+	_body += body;
+}
+
+const std::string &Request::getBody() const
+{
+	return (_body);
 }
 
 size_t Request::parseMethod()
@@ -148,7 +159,6 @@ void Request::parseHeaderFields(size_t pos)
 {
 	size_t				next = 0, last = pos;
 	std::string			trimmedLine;
-
 	while ((next = _query.find(CRLF, last)) != std::string::npos)
 	{
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
@@ -161,10 +171,8 @@ void Request::parseHeaderFields(size_t pos)
 
 void Request::parse()
 {
-	std::cout << _query << std::endl;
 	size_t pos = parseRequestLine();
 	parseHeaderFields(pos);
-	parseBody();
 }
 
 void Request::throwError(HttpStatusCode code)
@@ -187,4 +195,13 @@ std::string Request::getTarget() const
 method Request::getMethod() const
 {
 	return _method;
+}
+
+size_t Request::getBodySize() const
+{
+	std::map<std::string, std::string>::const_iterator it = _headerFields.find("Content-Length");
+
+	if (it != _headerFields.end())
+		return std::atol(it->second.c_str());
+	return -1;
 }

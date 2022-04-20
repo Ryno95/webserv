@@ -16,7 +16,8 @@ CLASSES		=	Webserv\
 				Receiver\
 				Sender\
 				AMethod\
-				GETMethod
+				GETMethod\
+				POSTMethod
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
