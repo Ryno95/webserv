@@ -3,8 +3,15 @@
 
 int main()
 {
-	Webserv test(8080, "Testserver");
+	try
+	{
+		Webserv test(8080, "Testserver");
+		test.run();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 
-	test.run();
 	return (0);
 }
