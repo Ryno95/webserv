@@ -26,12 +26,13 @@ public:
 	std::string 	getTarget() const;
 	method 			getMethod() const;
 	size_t 			getBodySize() const;
-	void			appendBody(const std::string &body);
+
+	const std::string	&getBody() const;
+	void				appendBody(const std::string &body);
 
 private:
-	void 	parseBody(size_t pos);
 	size_t 	parseRequestLine();
-	size_t 	parseHeaderFields(size_t pos);
+	void 	parseHeaderFields(size_t pos);
 	void 	addKeyValuePair(const std::string &src, size_t newLinePos);
 
 	size_t parseMethod();
@@ -48,6 +49,7 @@ private:
 
 	HttpStatusCode _status;
 };
+
 
 
 

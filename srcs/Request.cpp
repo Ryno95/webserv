@@ -13,13 +13,6 @@ Request::~Request()
 {
 }
 
-void Request::parseBody(size_t pos)
-{
-	std::cout << "PARSING BODY " << std::endl;
-	std::cout << "BODY>>>\n" << &_query[pos] << "<<<\n";
-
-}
-
 bool Request::hasBodyField() const
 {
 	if (_method == POST)
@@ -33,7 +26,11 @@ bool Request::hasBodyField() const
 void Request::appendBody(const std::string &body)
 {
 	_body += body;
-	std::cout << "BODY: " << _body << std::endl;
+}
+
+const std::string &Request::getBody() const
+{
+	return (_body);
 }
 
 size_t Request::parseMethod()
@@ -158,7 +155,7 @@ static bool	isTerminatorStr(const std::string str)
 	return (str.compare(terminatorStr) == 0);
 }
 
-size_t Request::parseHeaderFields(size_t pos)
+void Request::parseHeaderFields(size_t pos)
 {
 	size_t				next = 0, last = pos;
 	std::string			trimmedLine;
@@ -167,23 +164,15 @@ size_t Request::parseHeaderFields(size_t pos)
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
 		addKeyValuePair(trimmedLine, next);
 		if (isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
-		{	
-			// std::cout << "END REACHED" << std::endl;
-			last = next + 4;
 			break ;
-		}
 		last = next + CRLF_CHAR_COUNT;
 	}
-	// std::cout << "WHATS LEFT: " << _query.substr(last, _query.length()) << std::endl;
-	return (last);
 }
 
 void Request::parse()
 {
-	// std::cout << "FULL REQUEST>>>" << _query << "<<<" << std::endl;
 	size_t pos = parseRequestLine();
-	pos = parseHeaderFields(pos);
-	// parseBody(pos);
+	parseHeaderFields(pos);
 }
 
 void Request::throwError(HttpStatusCode code)
