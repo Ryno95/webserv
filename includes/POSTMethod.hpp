@@ -8,6 +8,4 @@ class POSTMethod : public AMethod
         POSTMethod(const Request &request);
         ~POSTMethod();
         Response *process();
-    private:
-        Request _request;
 };

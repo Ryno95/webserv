@@ -1,5 +1,6 @@
 #include <POSTMethod.hpp>
 #include <fstream>
+#include <iostream>
 
 
 POSTMethod::POSTMethod(const Request &request) : AMethod(request) {}
@@ -14,6 +15,7 @@ Response* POSTMethod::process()
 	std::string         root("root/");
 	std::string         index("index.html");
 
+	std::cout << "Req inside POST: " << _request.getStatus().first << std::endl;
 	std::cout << "TARGET: " << target << std::endl;
 	if (target == "/")
 		root += index;
@@ -27,10 +29,6 @@ Response* POSTMethod::process()
 		delete outfile;
 		return _response;
 	}
-
-	
-	// parse the body first
-	// read body into file from request
 
 	return _response;
 }
