@@ -16,7 +16,8 @@ CLASSES		=	Webserv\
 				Receiver\
 				Sender\
 				AMethod\
-				GETMethod
+				GETMethod\
+				MimeTypes
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -29,7 +30,8 @@ LINKING		=	-I $(INCL_DIR)
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
-				$(TEST_DIR)timeoutTests.cpp
+				$(TEST_DIR)timeoutTests.cpp\
+				$(TEST_DIR)parseMimeTypesTests.cpp
 
 
 # Section Rules
