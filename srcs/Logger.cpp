@@ -5,6 +5,7 @@
 #include <sstream>
 
 std::ofstream Logger::_logFile(LOGFILE);
+std::stringstream Logger::inputStream;
 
 static std::string getTimeStamp()
 {
@@ -51,30 +52,22 @@ void Logger::log(const std::string& msg)
 	_logFile.flush();
 }
 
-void Logger::warn(const std::string& msg)
+void Logger::warn()
 {
-	printWarning(msg);
-	log("[WARNING] " + msg);
+	std::string str = inputStream.str();
+	inputStream.clear();
+	printWarning(str);
+	log("[WARNING] " + str);
 }
 
-void Logger::debug(const std::string& msg)
+void Logger::debug()
 {
 	if (!ENABLE_DEBUGGING)
 		return;
-	printDebug(msg);
+	std::string str = inputStream.str();
+	inputStream.clear();
+	printDebug(str);
 
 	if (ENABLE_DEBUG_LOGGING)
-		log("[DEBUG] " + msg);
-}
-
-void Logger::warn(const std::ostream& s)
-{
-	const std::stringstream& ss = static_cast<const std::stringstream&>(s);
-	Logger::warn(ss.str());
-}
-
-void Logger::debug(const std::ostream& s)
-{
-	const std::stringstream& ss = static_cast<const std::stringstream&>(s);
-	Logger::debug(ss.str());
+		log("[DEBUG] " + str);
 }
