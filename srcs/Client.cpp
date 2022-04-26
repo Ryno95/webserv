@@ -2,6 +2,7 @@
 #include <GETMethod.hpp>
 #include <POSTMethod.hpp>
 #include <defines.hpp>
+#include <Logger.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -75,13 +76,16 @@ void Client::handleProcessing()
 
 	switch (request.getMethod())
 	{
-		case GET:
-			std::cout << "Entering GET method!\n";
+		case Method::GET:
+			DEBUG("Entering GET method!");
 			response = GETMethod(request).process();
 			break;
-		case POST:
-			std::cout << "Entering POST method!\n";
+		case Method::POST:
+			DEBUG("Entering POST method!");
 			response = POSTMethod(request).process();
+			break;
+		case Method::DELETE:
+			WARN("DELETE is not yet implemented!");
 			break;
 	}
 
