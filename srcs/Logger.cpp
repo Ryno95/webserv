@@ -55,7 +55,7 @@ void Logger::log(const std::string& msg)
 void Logger::warn()
 {
 	std::string str = inputStream.str();
-	inputStream.clear();
+	inputStream.str("");
 	printWarning(str);
 	log("[WARNING] " + str);
 }
@@ -65,7 +65,7 @@ void Logger::debug()
 	if (!ENABLE_DEBUGGING)
 		return;
 	std::string str = inputStream.str();
-	inputStream.clear();
+	inputStream.str("");
 	printDebug(str);
 
 	if (ENABLE_DEBUG_LOGGING)
