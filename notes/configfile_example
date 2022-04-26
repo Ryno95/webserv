@@ -1,0 +1,40 @@
+
+Inspiration: https://www.nginx.com/resources/wiki/start/topics/examples/full/
+
+universal
+{
+	// fields applying to all servers
+
+
+}
+
+server
+{
+	listen_port
+	mime_config_file
+	? [cgi_config_file] do we need this?
+	backlog_amount
+	buffer_size
+
+	host
+	{
+		name [unique_name]
+		root [path]
+		methods [GET] [POST] [DELETE]
+		default_index_file [path]
+		default_error_file [path]
+		? do we want [location] config to search for the necessary host?
+	}
+
+	host
+	{
+		...
+	}
+	...
+}
+
+server
+{
+	...
+}
+...
