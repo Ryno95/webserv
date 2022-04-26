@@ -28,8 +28,8 @@ server
 	listen_port
 	mime_config_file
 	? [cgi_config_file] do we need this?
-	backlog_amount
-	buffer_size
+	? [backlog_amount] here or universal variable?
+	? [buffer_size] here or universal variable?
 
 	host
 	{
