@@ -9,7 +9,6 @@
 #include <Client.hpp>
 
 #define BACKLOG_AMOUNT 42
-#define DISCONNECT 17
 
 class Webserv
 {
