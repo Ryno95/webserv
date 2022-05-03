@@ -43,13 +43,17 @@ Response* POSTMethod::process()
 	std::ofstream       *outfile = new std::ofstream();
 	
 	outfile->open(fileName, std::ios_base::app);
+	std::cout << fileName << std::endl;
 	if (!outfile->is_open())
 	{
 		std::cout << "[DEBUG] POSTMethod file creation failed\n";
+		_response->setStatusCode(HttpStatusCodes::BAD_REQUEST);
 		delete outfile;
 		return _response;
 	}
+
 	*outfile << _request.getBody() << std::endl;
+	outfile->close();
 	setPostResponseHeaders();
 	_response->setStatusCode(HttpStatusCodes::CREATED);
 
