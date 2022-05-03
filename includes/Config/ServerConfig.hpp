@@ -2,19 +2,15 @@
 
 #include <vector>
 
-#include <HostConfig.hpp>
+#include <config/HostConfig.hpp>
 
 typedef unsigned int uint;
 
-class ServerConfig
+struct ServerConfig
 {
-public:
-	ServerConfig();
-	~ServerConfig();
-
-private:
-	uint _port;
-	uint _backlog;
-	std::vector<const HostConfig> _hosts;
-
+	uint							port;
+	uint							buffer_size;
+	uint							listen_backlog;
+	std::string						mimeTypesFile;
+	std::vector<const HostConfig>	hosts;
 };
