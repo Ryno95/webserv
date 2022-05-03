@@ -23,6 +23,11 @@ static std::string getTimeStamp()
 	return timestamp;
 }
 
+static void printError(const std::string& msg)
+{
+	std::cout << C_RED << "[ERROR] " << C_RESET << msg << std::endl;
+}
+
 static void printWarning(const std::string& msg)
 {
 	std::cout << C_YELLOW << "[WARNING] " << C_RESET << msg << std::endl;
@@ -32,6 +37,9 @@ static void printDebug(const std::string& msg)
 {
 	std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
 }
+
+
+
 
 void Logger::log(const std::string& msg)
 {
@@ -50,6 +58,14 @@ void Logger::log(const std::string& msg)
 	_logFile.write(msg.c_str(), msg.size());
 	_logFile.write("\n", 1);
 	_logFile.flush();
+}
+
+void Logger::error()
+{
+	std::string str = inputStream.str();
+	inputStream.str("");
+	printError(str);
+	log("[ERROR] " + str);
 }
 
 void Logger::warn()

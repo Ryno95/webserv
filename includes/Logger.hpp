@@ -11,12 +11,14 @@
 
 #define DEBUG(x) Logger::inputStream << x; Logger::debug()
 #define WARN(x) Logger::inputStream << x; Logger::warn()
+#define ERROR(x) Logger::inputStream << x; Logger::error()
 
 class Logger
 {
 public:
 	static void debug();
 	static void warn();
+	static void error();
 
 	static std::stringstream inputStream;
 
