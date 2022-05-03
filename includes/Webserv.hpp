@@ -25,6 +25,7 @@ class Webserv
 		void handleTimeout();
 		void removeClient(int index);
 
+		// const ServerConfig _config;
 		uint				_port;
 		int					_listenFd;
 		std::vector<pollfd>	_fds;
