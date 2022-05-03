@@ -11,6 +11,7 @@ class Colors:
     NATURAL =   '\033[0m'
 
 OK				= 200
+CREATED			= 201
 BAD_REQUEST		= 400
 NOT_FOUND		= 404
 URI_TOO_LONG	= 414
@@ -24,7 +25,7 @@ EXIT_CODE = 0
 
 
 def compareExpectedPositiveResult(response: requests):
-    if response.status_code != OK:
+    if response.status_code != CREATED:
         print(f"{Colors.FAILRED}[KO] {Colors.NATURAL} Get request on {response.url}")
         return ERROR
     else:
@@ -33,11 +34,11 @@ def compareExpectedPositiveResult(response: requests):
 
 
 
-url = "http://localhost:8080/"
+url = "http://localhost:8080/testies.txt"
 _headers = CaseInsensitiveDict()
 _headers["Accept"] = "text/plain"
 _headers["Content-Type"] = "text/plain"
-# _headers["Content-Length"] = "24\"
+# _headers["Content-Length"] = "24"
 
 _data = "What is up vanilla face!"
 
@@ -49,6 +50,3 @@ EXIT_CODE += compareExpectedPositiveResult(requests.post(url, headers=_headers, 
 # time.sleep(1)
 
 exit(EXIT_CODE)
-
-
-
