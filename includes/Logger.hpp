@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #define ENABLE_DEBUGGING		true
 #define ENABLE_DEBUG_LOGGING	true
