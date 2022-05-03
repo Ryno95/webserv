@@ -7,6 +7,10 @@
 
 class HostConfig
 {
+public:
+	HostConfig();
+	~HostConfig();
+
 private:
 	std::string _name;
 	std::string _root;
