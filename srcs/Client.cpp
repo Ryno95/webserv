@@ -3,6 +3,7 @@
 #include <POSTMethod.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
+#include <ServerHandler.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -10,13 +11,21 @@
 
 #include <iostream>
 
-Client::Client(pollfd* fd) : _fd(fd), _receiver(fd->fd), _sender(fd->fd)
+Client::Client(int fd) : _receiver(fd), _sender(fd), _pollfd(ServerHandler::addPollfd())
 {
+	_pollfd.fd = fd;
+	_pollfd.events = POLLIN;
 	hasCommunicated();
+
+	DEBUG("Accepted client on fd: " << fd);
 }
 
 Client::~Client()
 {
+	close(_pollfd.fd);
+	ServerHandler::removePollfd(_pollfd);
+
+	DEBUG("Client disconnected: " << _pollfd.fd);
 }
 
 /*
@@ -24,19 +33,19 @@ Client::~Client()
 */
 bool Client::handle()
 {
-	if (_fd->revents == 0)
+	if (_pollfd.revents == 0)
 		return checkTimeout();
 
 	hasCommunicated();
 
 	try
 	{
-		if (BIT_ISSET(_fd->revents, POLLIN_BIT))
+		if (BIT_ISSET(_pollfd.revents, POLLIN_BIT))
 			handleRequest();
 
 		handleProcessing();
 
-		if (BIT_ISSET(_fd->revents, POLLOUT_BIT))
+		if (BIT_ISSET(_pollfd.revents, POLLOUT_BIT))
 			handleResponse();
 	}
 	catch(const DisconnectedException& e)
@@ -55,7 +64,7 @@ void Client::handleRequest()
 	if (newRequests.size() == 0)
 		return;
 
-	_fd->events = POLLIN | POLLOUT;
+	_pollfd.events = POLLIN | POLLOUT;
 
 	std::deque<Request>::const_iterator first = newRequests.begin();
 	std::deque<Request>::const_iterator last = newRequests.end();
@@ -111,7 +120,7 @@ void Client::handleResponse()
 		_sender.handle();
 	else
 	{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-		_fd->events = POLLIN;
+		_pollfd.events = POLLIN;
 		std::cout << "POLLOUT deactivated" << std::endl;
 	}
 }
