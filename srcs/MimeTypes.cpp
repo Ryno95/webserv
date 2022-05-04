@@ -2,7 +2,7 @@
 
 #include <Logger.hpp>
 
-MimeTypes::MimeTypes() : _filePath("config/mime.config")
+MimeTypes::MimeTypes() : _filePath("config/default.mime")
 {
 	parse();
 }
