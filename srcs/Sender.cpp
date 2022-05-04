@@ -9,11 +9,11 @@
 
 #include <stack>
 
-Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFER_SIZE])
+Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFERSIZE])
 {
 }
 
-Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFER_SIZE])
+Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFERSIZE])
 {
 	*this = rhs;
 }
@@ -57,7 +57,7 @@ long Sender::fillBuffer(long bufferSize)
 		return 0;
 	}
 
-	_dataStream->read(_buffer + bufferSize, BUFFER_SIZE - bufferSize);
+	_dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
 	DEBUG("Read: " << _dataStream->gcount());
 	return _dataStream->gcount();
 }
@@ -66,12 +66,12 @@ void Sender::handle()
 {
 	long bufferSize = 0;
 
-	while (bufferSize < BUFFER_SIZE && _currentState != FINISHED)
+	while (bufferSize < BUFFERSIZE && _currentState != FINISHED)
 	{
 		if (_dataStream == nullptr)
 			setDataStream();
 		bufferSize += fillBuffer(bufferSize);
-		if (bufferSize < BUFFER_SIZE)
+		if (bufferSize < BUFFERSIZE)
 		{
 			_currentState++;
 			_dataStream = nullptr;
@@ -87,7 +87,7 @@ void Sender::handle()
 		return;
 	}
 
-	if (bufferSize > BUFFER_SIZE)
+	if (bufferSize > BUFFERSIZE)
 		throw std::runtime_error("UNEXPECTED AMOUNT OF BYTES STORED IN THE BUFFER! (Sender.cpp)"); // DEBUG LINE
 
 	ssize_t written;

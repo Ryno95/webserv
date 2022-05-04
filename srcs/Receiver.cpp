@@ -31,8 +31,8 @@ void Receiver::receive()
 {
 	int bytesRecv;
 
-	_recvBuffer.resize(BUFFER_SIZE);
-	bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFER_SIZE, 0);
+	_recvBuffer.resize(BUFFERSIZE);
+	bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFERSIZE, 0);
 
 	if (bytesRecv == 0)
 		throw Client::DisconnectedException();
