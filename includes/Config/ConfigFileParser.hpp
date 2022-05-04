@@ -10,6 +10,9 @@
 
 namespace ServerVariables
 {
+// Still needs to be implemented in config file:
+	// #define MAX_TARGET_LEN 50
+	// #define TIMEOUT_MS 1000
 	enum vars
 	{
 		LISTEN_PORT,
@@ -37,7 +40,7 @@ public:
 	ConfigFileParser(const std::string& filePath);
 	~ConfigFileParser();
 
-	std::vector<ServerConfig> parse();
+	std::vector<ServerConfig>& parse();
 
 private:
 	typedef enum
@@ -46,7 +49,7 @@ private:
 		PRE_SERVER_BLOCK,
 		IN_SERVER_BLOCK,
 		PRE_HOST_BLOCK,
-		IN_HOST_BLOCK,
+		IN_HOST_BLOCK
 	} state;
 
 	template<class T>

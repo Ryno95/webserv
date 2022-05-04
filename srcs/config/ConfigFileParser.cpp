@@ -59,7 +59,7 @@ ConfigFileParser::~ConfigFileParser()
 	On success, returns a vector containing all parsed server configurations.
 	If the parser encounters an error, this function will not return and throw an exception instead.
 */
-std::vector<ServerConfig> ConfigFileParser::parse()
+std::vector<ServerConfig>& ConfigFileParser::parse()
 {
 	std::ifstream fstream(_filePath);
 	std::string line;
