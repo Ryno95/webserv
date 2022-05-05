@@ -1,7 +1,7 @@
 #include <iostream>
 #include <Webserv.hpp>
 #include <Logger.hpp>
-#include <config/ConfigFileParser.hpp>
+#include <ConfigFileParser.hpp>
 
 int main(int argc, char **argv)
 {

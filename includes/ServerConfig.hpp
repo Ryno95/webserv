@@ -18,5 +18,5 @@ struct ServerConfig
 	uint							buffer_size;
 	uint							listen_backlog;
 	std::string						mimeTypesFile;
-	std::vector<const HostConfig>	hosts;
+	std::vector<HostConfig>	hosts;
 };
