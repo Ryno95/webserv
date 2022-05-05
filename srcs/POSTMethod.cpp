@@ -14,10 +14,10 @@ POSTMethod::~POSTMethod() {}
 std::string POSTMethod::createFileName(const std::string &target)
 {
 	const std::string	timestamp_s = std::to_string(time(nullptr));
-	const std::string	root("root/uploads/");
+	const std::string	root("root/uploads/"); // Will be replaced by config file
 	std::string			fileName;
+	
 	fileName =  root;
-
 	if (target == "/")
 		fileName += timestamp_s;
 	else
@@ -43,17 +43,15 @@ Response* POSTMethod::process()
 	std::ofstream       *outfile = new std::ofstream();
 	
 	outfile->open(fileName, std::ios_base::app);
-	std::cout << fileName << std::endl;
 	if (!outfile->is_open())
 	{
-		std::cout << "[DEBUG] POSTMethod file creation failed\n";
 		_response->setStatusCode(HttpStatusCodes::BAD_REQUEST);
 		delete outfile;
 		return _response;
 	}
-
+	// Writing process will be in chunks
 	*outfile << _request.getBody() << std::endl;
-	outfile->close();
+	delete outfile;
 	setPostResponseHeaders();
 	_response->setStatusCode(HttpStatusCodes::CREATED);
 
