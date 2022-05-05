@@ -74,7 +74,6 @@ void Webserv::handleClients()
 
 void Webserv::handleListener()
 {
-	// if (BIT_ISSET(_listener.revents, POLLIN_BIT))
 	if (ServerHandler::isPollInSet(_listenerFd))
 	{
 		int fd = accept(_listenerFd, NULL, NULL);
