@@ -35,3 +35,6 @@
 .vscode
 unit_test
 *.log
+
+# Server data
+root/images
