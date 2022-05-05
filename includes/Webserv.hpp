@@ -26,6 +26,6 @@ class Webserv
 
 		const ServerConfig& _config;
 
-		pollfd&					_listener;
+		int						_listenerFd;
 		std::vector<Client*>	_clients;
 };

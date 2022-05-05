@@ -15,16 +15,17 @@
 #include <Webserv.hpp>
 
 Webserv::Webserv(const ServerConfig& config)
-	: _config(config), _listener(ServerHandler::addPollfd())
+	: _config(config)
 {
 	setup();
+	ServerHandler::addPollfd(_listenerFd);
 	DEBUG("Created server instance on port: " << _config.port);
 }
 
 Webserv::~Webserv()
 {
-	close(_listener.fd);
-	ServerHandler::removePollfd(_listener);
+	close(_listenerFd);
+	ServerHandler::removePollfd(_listenerFd);
 
 	DEBUG("Destroyed server instance on port: " << _config.port);
 }
@@ -38,24 +39,22 @@ void Webserv::setup()
 	servAddr.sin_port = htons(_config.port);
 	servAddr.sin_addr.s_addr = INADDR_ANY;
 
-	_listener.fd = socket(AF_INET, SOCK_STREAM, STD_TCP);
-	if (_listener.fd == SYSTEM_ERR)
+	_listenerFd = socket(AF_INET, SOCK_STREAM, STD_TCP);
+	if (_listenerFd == SYSTEM_ERR)
 		throw std::runtime_error("Socket() failed");
 
-	if (setsockopt(_listener.fd, SOL_SOCKET, SO_REUSEADDR,
+	if (setsockopt(_listenerFd, SOL_SOCKET, SO_REUSEADDR,
 				   (char *)&socketSwitch, sizeof(socketSwitch)) == SYSTEM_ERR)
 		throw std::runtime_error("setsockopt() failed");
 
-	if (bind(_listener.fd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == SYSTEM_ERR)
+	if (bind(_listenerFd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == SYSTEM_ERR)
 		throw std::runtime_error("Bind() failed");
 
-	if (fcntl(_listener.fd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+	if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 		throw std::runtime_error("fcntl() failed");
 
-	if (listen(_listener.fd, _config.listen_backlog) == SYSTEM_ERR)
+	if (listen(_listenerFd, _config.listen_backlog) == SYSTEM_ERR)
 		throw std::runtime_error("listen() failed");
-
-	_listener.events = POLLIN;
 }
 
 void Webserv::handleClients()
@@ -75,17 +74,14 @@ void Webserv::handleClients()
 
 void Webserv::handleListener()
 {
-	if (BIT_ISSET(_listener.revents, POLLIN_BIT))
+	// if (BIT_ISSET(_listener.revents, POLLIN_BIT))
+	if (ServerHandler::isPollInSet(_listenerFd))
 	{
-		int fd = accept(_listener.fd, NULL, NULL);
-		if (fd == SYSTEM_ERR)
-		{
-			WARN("This is not an expected accept-result in the listener.");
-		}
-		else
-		{
+		int fd = accept(_listenerFd, NULL, NULL);
+		if (fd != SYSTEM_ERR)
 			_clients.push_back(new Client(fd));
-		}
+		else
+			WARN("Accept in our listener was blocking, so we continue");
 	}
 }
 
