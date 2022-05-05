@@ -1,10 +1,11 @@
-
-import time
-import requests
+from requests import Session
 from requests.structures import CaseInsensitiveDict
 from defines import HttpResponseStatus
 from defines import Methods
 from defines import HttpResponseStatus
+
+import time
+import requests
 import Request
 
 EXIT_CODE = 0
@@ -21,7 +22,7 @@ PostRequest = Request.POSTRequest(Methods.POST);
 
 response = requests.post(url, headers=_headers, data=_data)
 
-EXIT_CODE += PostRequest.compareExpectedPositiveResult(HttpResponseStatus.CREATED, response)
+EXIT_CODE += PostRequest.checkCreated(response)
 
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
