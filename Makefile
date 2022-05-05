@@ -41,7 +41,7 @@ TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HPPS)
+$(NAME): $(OBJS) $(HPPS) $(MAIN)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC) $(OBJS)
