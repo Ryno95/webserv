@@ -4,31 +4,76 @@
 std::vector<Webserv*>	ServerHandler::_servers;
 std::vector<pollfd>		ServerHandler::_fds;
 
-pollfd& ServerHandler::addPollfd()
+void ServerHandler::addPollfd(int fd)
 {
-	_fds.push_back(pollfd());
-	return _fds.back();
+	pollfd pfd;
+	pfd.fd = fd;
+	pfd.events = POLLIN;
+	_fds.push_back(pfd);
 }
 
-/*
-	If parameter fd is currently in the poll array, fd is removed.
-	Otherwise nothing happens.
-*/
-void ServerHandler::removePollfd(const pollfd& fd)
+pollfd* ServerHandler::findPollfd(int fd)
 {
 	std::vector<pollfd>::iterator start = _fds.begin();
 	std::vector<pollfd>::iterator end = _fds.end();
 
 	while (start != end)
 	{
-		if (&(*start) == &fd)
+		if (start->fd == fd)
+			return &(*start);
+		start++;
+	}
+	throw std::runtime_error("WHUT THE FUUUUCK");
+}
+
+void ServerHandler::setPollOut(int fd, bool enabled)
+{
+	pollfd* pfd = findPollfd(fd);
+	if (enabled)
+		pfd->events = POLLIN | POLLOUT;
+	else
+		pfd->events = POLLIN;
+}
+
+bool ServerHandler::isPollSet(int fd)
+{
+	pollfd* pfd = findPollfd(fd);
+	return pfd->revents != 0;
+}
+
+bool ServerHandler::isPollInSet(int fd)
+{
+	pollfd* pfd = findPollfd(fd);
+	return BIT_ISSET(pfd->revents, POLLIN_BIT);
+}
+
+bool ServerHandler::isPollOutSet(int fd)
+{
+	pollfd* pfd = findPollfd(fd);
+	return BIT_ISSET(pfd->revents, POLLOUT_BIT);
+}
+
+/*
+	If parameter fd is currently in the poll array, fd is removed.
+	Otherwise nothing happens.
+*/
+void ServerHandler::removePollfd(int fd)
+{
+	std::vector<pollfd>::iterator start = _fds.begin();
+	std::vector<pollfd>::iterator end = _fds.end();
+
+	while (start != end)
+	{
+		if (start->fd == fd)
 		{
 			_fds.erase(start);
 			return;
 		}
 		start++;
 	}
-	WARN("Tried to remove pollfd " << fd.fd << ", but we were not polling for that.");
+	_fds.erase(start);
+
+	WARN("Tried to remove pollfd " << fd << ", but we were not polling for that.");
 }
 
 void ServerHandler::run()
@@ -37,7 +82,6 @@ void ServerHandler::run()
 
 	while (true)
 	{
-		DEBUG("Polling for " << _fds.size() << " fds");
 		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
