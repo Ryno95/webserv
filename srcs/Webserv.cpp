@@ -61,9 +61,9 @@ void Webserv::setup()
 
 void Webserv::handleClients()
 {
-	int size = _clients.size();
+	size_t size = _clients.size();
 
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
 		if (_clients[i]->handle() == false)
 		{
@@ -81,16 +81,14 @@ void Webserv::handleListener()
 		int fd = accept(_listener.fd, NULL, NULL);
 		if (fd != SYSTEM_ERR)
 		{
-			Client* newClient = new Client(fd);
-			_clients.push_back(newClient);
+			_clients.push_back(new Client(fd));
 		}
 	}
 }
 
 void Webserv::removeClient(int index)
 {
-	Client* client = _clients[index];
-	delete client;
+	delete _clients[index];
 	_clients.erase(_clients.begin() + index);
 }
 
