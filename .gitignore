@@ -35,3 +35,4 @@
 .vscode
 unit_test
 *.log
+__pycache__
