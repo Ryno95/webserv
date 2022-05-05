@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <Client.hpp>
-#include <config/ServerConfig.hpp>
+#include <ServerConfig.hpp>
 #include <ServerHandler.hpp>
 
 class Webserv

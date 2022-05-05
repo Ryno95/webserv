@@ -20,7 +20,7 @@ CLASSES		=	Webserv\
 				MimeTypes\
 				Logger\
 				POSTMethod\
-				config/ConfigFileParser\
+				ConfigFileParser\
 				ServerHandler
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
@@ -67,7 +67,6 @@ $(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
-	mkdir -p $(OBJ_DIR)config
 
 re: fclean all
 

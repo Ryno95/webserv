@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <config/HostConfig.hpp>
+#include <HostConfig.hpp>
 
 typedef unsigned int uint;
 

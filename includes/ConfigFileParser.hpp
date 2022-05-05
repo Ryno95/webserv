@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-#include <config/ServerConfig.hpp>
+#include <ServerConfig.hpp>
 #include <Logger.hpp>
 
 namespace ServerVariables

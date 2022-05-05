@@ -2,7 +2,7 @@
 #include <sstream>
 #include <map>
 
-#include <config/ConfigFileParser.hpp>
+#include <ConfigFileParser.hpp>
 #include <Logger.hpp>
 
 std::string removeLeadingWhitespace(const std::string &str)

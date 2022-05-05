@@ -5,7 +5,7 @@
 class Webserv;
 
 #include <Webserv.hpp>
-#include <config/ServerConfig.hpp>
+#include <ServerConfig.hpp>
 
 class ServerHandler
 {
