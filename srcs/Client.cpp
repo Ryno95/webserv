@@ -117,6 +117,7 @@ void Client::handleResponse()
 	else
 	{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
 		_pollfd.events = POLLIN;
+		DEBUG("deactivated pollout");
 	}
 }
 

@@ -76,9 +76,13 @@ void Webserv::handleClients()
 
 void Webserv::handleListener()
 {
-	if (_listener.revents == POLLIN)
+	if (BIT_ISSET(_listener.revents, POLLIN_BIT))
 	{
 		int fd = accept(_listener.fd, NULL, NULL);
+		if (fd == SYSTEM_ERR)
+		{
+			perror("ERROR!");
+		}
 		if (fd != SYSTEM_ERR)
 		{
 			_clients.push_back(new Client(fd));

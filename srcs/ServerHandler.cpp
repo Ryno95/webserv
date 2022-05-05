@@ -24,9 +24,11 @@ void ServerHandler::removePollfd(const pollfd& fd)
 		if (&(*start) == &fd)
 		{
 			_fds.erase(start);
+			return;
 		}
 		start++;
 	}
+	WARN("Tried to remove pollfd " << fd.fd << ", but we were not polling for that.");
 }
 
 void ServerHandler::run()
@@ -35,7 +37,8 @@ void ServerHandler::run()
 
 	while (true)
 	{
-		pollRet = poll(&_fds.front(), _fds.size(), 100); // 100 ms is temporary
+		DEBUG("Polling for " << _fds.size() << " fds");
+		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
 		if (pollRet == SYSTEM_ERR)
 			throw std::runtime_error("poll() failed");
 
