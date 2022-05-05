@@ -50,7 +50,6 @@ bool Client::handle()
 	}
 	catch(const DisconnectedException& e)
 	{
-		std::cerr << e.what() << '\n';
 		return false;
 	}
 
