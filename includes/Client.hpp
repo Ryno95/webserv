@@ -41,7 +41,7 @@ private:
 	std::deque<Request> _requests;
 	std::deque<Response *> _responses;
 
+	int _fd;
 	Receiver _receiver;
 	Sender _sender;
-	pollfd& _pollfd;
 };

@@ -11,21 +11,20 @@
 
 #include <iostream>
 
-Client::Client(int fd) : _receiver(fd), _sender(fd), _pollfd(ServerHandler::addPollfd())
+Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
 {
-	_pollfd.fd = fd;
-	_pollfd.events = POLLIN;
+	ServerHandler::addPollfd(fd);
 	hasCommunicated();
 
-	DEBUG("Accepted client on fd: " << fd);
+	DEBUG("Accepted client on fd: " << _fd);
 }
 
 Client::~Client()
 {
-	close(_pollfd.fd);
-	ServerHandler::removePollfd(_pollfd);
+	close(_fd);
+	ServerHandler::removePollfd(_fd);
 
-	DEBUG("Client disconnected: " << _pollfd.fd);
+	DEBUG("Client disconnected: " << _fd);
 }
 
 /*
@@ -33,19 +32,19 @@ Client::~Client()
 */
 bool Client::handle()
 {
-	if (_pollfd.revents == 0)
+	if (!ServerHandler::isPollSet(_fd))
 		return checkTimeout();
 
 	hasCommunicated();
 
 	try
 	{
-		if (BIT_ISSET(_pollfd.revents, POLLIN_BIT))
+		if (ServerHandler::isPollInSet(_fd))
 			handleRequest();
 
 		handleProcessing();
 
-		if (BIT_ISSET(_pollfd.revents, POLLOUT_BIT))
+		if (ServerHandler::isPollOutSet(_fd))
 			handleResponse();
 	}
 	catch(const DisconnectedException& e)
@@ -63,7 +62,7 @@ void Client::handleRequest()
 	if (newRequests.size() == 0)
 		return;
 
-	_pollfd.events = POLLIN | POLLOUT;
+	ServerHandler::setPollOut(_fd, true);
 
 	std::deque<Request>::const_iterator first = newRequests.begin();
 	std::deque<Request>::const_iterator last = newRequests.end();
@@ -116,8 +115,7 @@ void Client::handleResponse()
 		_sender.handle();
 	else
 	{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-		_pollfd.events = POLLIN;
-		DEBUG("deactivated pollout");
+		ServerHandler::setPollOut(_fd, false);
 	}
 }
 
