@@ -13,22 +13,11 @@ Sender::Sender(int fd) : _fd(fd), _currentState(FINISHED), _response(nullptr), _
 {
 }
 
-// Sender::Sender(Sender const& rhs) : _currentState(FINISHED), _response(nullptr), _buffer(new char[BUFFERSIZE])
-// {
-// 	*this = rhs;
-// }
-
 Sender::~Sender()
 {
 	delete[] _buffer;
 	deleteResponse();
 }
-
-// Sender& Sender::operator=(Sender const& rhs)
-// {
-// 	_fd = rhs._fd;
-// 	return *this;
-// }
 
 void Sender::setDataStream()
 {
