@@ -117,7 +117,6 @@ void Receiver::handle()
 			case ADD_REQUEST:
 				_readyRequests.push_back(_newRequest);
 				_state = RECV_HEADER;
-				std::cout << "Added request to queue!" << std::endl;
 				break;
 		}
 		if ((_state == RECV_HEADER || _state == RECV_BODY) && _recvBuffer.size() == 0)

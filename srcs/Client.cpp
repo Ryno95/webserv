@@ -100,8 +100,6 @@ void Client::handleProcessing()
 
 	_requests.pop_front();
 	_responses.push_back(response);
-
-	std::cout << "POLLOUT activated" << std::endl;
 }
 
 void Client::handleResponse()
@@ -110,7 +108,6 @@ void Client::handleResponse()
 	{
 		if (_responses.size() > 0)
 		{
-			std::cout << "Response set!" << std::endl;
 			_sender.setResponse(_responses.front());
 			_responses.pop_front();
 		}
@@ -121,7 +118,6 @@ void Client::handleResponse()
 	else
 	{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
 		_pollfd.events = POLLIN;
-		std::cout << "POLLOUT deactivated" << std::endl;
 	}
 }
 

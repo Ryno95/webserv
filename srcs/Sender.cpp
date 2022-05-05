@@ -58,7 +58,6 @@ long Sender::fillBuffer(long bufferSize)
 	}
 
 	_dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
-	DEBUG("Read: " << _dataStream->gcount());
 	return _dataStream->gcount();
 }
 
@@ -93,16 +92,11 @@ void Sender::handle()
 	ssize_t written;
 	written = write(_fd, _buffer, bufferSize);
 
-	DEBUG("Sent " << written << " bytes");
-	for (long i = 0; i < bufferSize; i++)
-	{
-		std::cout << _buffer[i];
-	}
-	std::cout << std::endl;
+	DEBUG("Sent " << written << " bytes to " << _fd);
 
 	if (written != bufferSize)
 	{
-		DEBUG("Actual bytes written is not equal to the amount requested to send." << std::endl <<
+		WARN("Actual bytes written is not equal to the amount requested to send." << std::endl <<
 				"There is no implementation to catch this issue yet." << std::endl <<
 				"Requested: " << bufferSize << " written: " << written << std::endl);
 	}
