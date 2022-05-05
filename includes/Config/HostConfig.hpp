@@ -7,6 +7,12 @@
 
 struct HostConfig
 {
+	HostConfig& operator=(const HostConfig& ref)
+	{
+		(void)ref;
+		return *this;
+	}
+
 	std::vector<std::string>	names;
 	std::string					root;
 	std::string					defaultIndex;

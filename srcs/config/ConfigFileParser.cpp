@@ -105,7 +105,7 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 			if (line == "}")
 			{
 				_serverConfigs.push_back(currentServerConfig);
-				std::memset(&currentServerConfig, 0, sizeof(ServerConfig));
+				currentServerConfig = ServerConfig();
 				currentState = NONE;
 			}
 			else if (line == "host")
@@ -128,7 +128,7 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 			if (line == "}")
 			{
 				currentServerConfig.hosts.push_back(currentHostConfig);
-				std::memset(&currentHostConfig, 0, sizeof(HostConfig));
+				currentHostConfig = HostConfig();
 				currentState = IN_SERVER_BLOCK;
 			}
 			else
@@ -142,7 +142,6 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 		ERROR("Unclosed section encountered");
 		throw std::runtime_error("Parse error");
 	}
-
 	return _serverConfigs;
 }
 
