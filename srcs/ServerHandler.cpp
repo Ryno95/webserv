@@ -51,5 +51,5 @@ void ServerHandler::run()
 
 void ServerHandler::addServer(const ServerConfig& config)
 {
-	_servers.push_back(new Webserv(config));
+	_servers.push_back(new Webserv(config)); // no delete of this heap yet
 }

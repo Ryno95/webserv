@@ -18,7 +18,6 @@ Webserv::Webserv(const ServerConfig& config)
 	: _config(config), _listener(ServerHandler::addPollfd())
 {
 	setup();
-
 	DEBUG("Created server instance on port: " << _config.port);
 }
 
@@ -81,9 +80,9 @@ void Webserv::handleListener()
 		int fd = accept(_listener.fd, NULL, NULL);
 		if (fd == SYSTEM_ERR)
 		{
-			perror("ERROR!");
+			WARN("This is not an expected accept-result in the listener.");
 		}
-		if (fd != SYSTEM_ERR)
+		else
 		{
 			_clients.push_back(new Client(fd));
 		}

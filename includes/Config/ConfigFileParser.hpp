@@ -82,7 +82,7 @@ inline void ConfigFileParser::parseVariable(const std::string& value, std::strin
 	*dest = value;
 }
 
-std::string removeLeadingWhitespace(const std::string &str);
+std::string removeLeadingWhitespace(const std::string &str); // prototype temporary, move to utils class
 
 template<>
 inline void ConfigFileParser::parseVariable(const std::string& value, std::vector<std::string>* dest) const
