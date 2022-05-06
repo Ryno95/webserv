@@ -42,10 +42,11 @@ Response* POSTMethod::process()
 	const std::string	fileName  = createFileName(_request.getTarget());
 	std::ofstream       *outfile = new std::ofstream();
 	
+	std::cout << "Filename: " << fileName << " Target: " << _request.getTarget() << std::endl;
 	outfile->open(fileName, std::ios_base::app);
 	if (!outfile->is_open())
 	{
-		_response->setStatusCode(HttpStatusCodes::BAD_REQUEST);
+		_response->setStatusCode(HttpStatusCodes::NOT_FOUND);
 		delete outfile;
 		return _response;
 	}
