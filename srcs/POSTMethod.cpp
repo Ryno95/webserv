@@ -44,7 +44,7 @@ Response* POSTMethod::process()
 	std::ofstream       *outfile = new std::ofstream();
 	
 	outfile->open(fileName, std::ios_base::app);
-	system("cwd");
+	system("pwd");
 	system("ls -la");
 	std::cout << "Opening file: " << fileName << std::endl;
 	if (!outfile->is_open())
