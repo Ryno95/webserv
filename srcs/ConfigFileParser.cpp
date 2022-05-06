@@ -5,46 +5,6 @@
 #include <ConfigFileParser.hpp>
 #include <Logger.hpp>
 
-std::string removeLeadingWhitespace(const std::string &str)
-{
-	std::string out = str;
-	std::string::const_iterator iter = str.begin();
-	std::string::const_iterator end = str.end();
-	size_t count = 0;
-
-	while (iter != end)
-	{
-		if (*iter == ' ' || *iter == '\t')
-			count++;
-		else
-			break;
-		iter++;
-	}
-
-	out.erase(0, count);
-	return out;
-}
-
-std::string removeTrailingWhitespace(const std::string &str)
-{
-	std::string out = str;
-	std::string::const_reverse_iterator iter = str.rbegin();
-	std::string::const_reverse_iterator end = str.rend();
-	size_t count = 0;
-
-	while (iter != end)
-	{
-		if (*iter == ' ' || *iter == '\t')
-			count++;
-		else
-			break;
-		iter++;
-	}
-
-	out.erase(out.size() - count, count);
-	return out;
-}
-
 ConfigFileParser::ConfigFileParser(const std::string &filePath) : _filePath(filePath), _lineCount(0)
 {
 	fillHostVariablesMap();
@@ -73,8 +33,8 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 	while (std::getline(fstream, line))
 	{
 		_lineCount++;
-		line = removeLeadingWhitespace(line);
-		line = removeTrailingWhitespace(line);
+		line = Util::removeLeadingWhitespace(line);
+		line = Util::removeTrailingWhitespace(line);
 
 		if (line.size() == 0 || line.front() == '#')
 			continue;
@@ -172,7 +132,7 @@ void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig
 	}
 	std::string key = line.substr(0, pos);
 	std::string value = line.substr(pos + 1, line.size() - pos);
-	value = removeLeadingWhitespace(value);
+	value = Util::removeLeadingWhitespace(value);
 
 	std::map<std::string, int>::const_iterator result = _serverVariables.find(key);
 	if (result == _serverVariables.end())
@@ -208,7 +168,7 @@ void ConfigFileParser::parseHostVariable(const std::string &line, HostConfig &co
 	}
 	std::string key = line.substr(0, pos);
 	std::string value = line.substr(pos + 1, line.size() - pos);
-	value = removeLeadingWhitespace(value);
+	value = Util::removeLeadingWhitespace(value);
 
 	std::map<std::string, int>::const_iterator result = _hostVariables.find(key);
 	if (result == _hostVariables.end())

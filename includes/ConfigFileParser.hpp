@@ -7,6 +7,7 @@
 
 #include <ServerConfig.hpp>
 #include <Logger.hpp>
+#include <Utility.hpp>
 
 namespace ServerVariables
 {
@@ -82,8 +83,6 @@ inline void ConfigFileParser::parseVariable(const std::string& value, std::strin
 	*dest = value;
 }
 
-std::string removeLeadingWhitespace(const std::string &str); // prototype temporary, move to utils class
-
 template<>
 inline void ConfigFileParser::parseVariable(const std::string& value, std::vector<std::string>* dest) const
 {
@@ -98,7 +97,7 @@ inline void ConfigFileParser::parseVariable(const std::string& value, std::vecto
 			return;
 
 		str = str.substr(end, str.size() - end);
-		str = removeLeadingWhitespace(str);
+		str = Util::removeLeadingWhitespace(str);
 	}
 }
 
@@ -129,6 +128,6 @@ inline void ConfigFileParser::parseVariable(const std::string& value, std::vecto
 			return;
 
 		str = str.substr(end, str.size() - end);
-		str = removeLeadingWhitespace(str);
+		str = Util::removeLeadingWhitespace(str);
 	}
 }
