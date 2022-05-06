@@ -10,7 +10,7 @@
 #ifdef CI_ACCEPTANCE
 	#define ROOT "/home/test_user/project/"
 #else 
-	#define ROOT "root/uploads/"
+	#define ROOT "./root/uploads/"
 #endif
 
 
