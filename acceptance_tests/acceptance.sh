@@ -12,10 +12,12 @@ sleep 2
 ExitCode=0
 
 # run the tests
-python3 acceptance_tests/PyTests/GETTests.py
+cd acceptance_tests/PyTests/
+python3 GETTests.py
 ExitCode+=$?
 
-python3 acceptance_tests/PyTests/POSTTests.py
+cd acceptance_tests/PyTests/
+python3 POSTTests.py
 ExitCode+=$?
 
 
