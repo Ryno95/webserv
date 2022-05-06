@@ -51,6 +51,8 @@ class POSTRequest(Request):
         self._uri = LOCAL_HOST + "/" + fileName
 
     def checkCreatedFile(self):
+        if not self._response.headers['Created-file']:
+            print("HEADER DOES NOT EXIST")
         createdFile = self._response.headers['Created-file']
         filename = "../../" + createdFile
         fd = open(filename, 'r')
