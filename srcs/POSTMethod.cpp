@@ -50,6 +50,7 @@ Response* POSTMethod::process()
 		return _response;
 	}
 	// Writing process will be in chunks
+	std::cout << "Body: "<< _request.getBody() << std::endl;
 	*outfile << _request.getBody() << std::endl;
 	delete outfile;
 	setPostResponseHeaders();

@@ -16,7 +16,7 @@ cd acceptance_tests/PyTests/
 python3 GETTests.py
 ExitCode+=$?
 
-python3 POSTTests.py
+python3 POSTTests.py | grep Body
 ExitCode+=$?
 
 
