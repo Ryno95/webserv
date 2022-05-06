@@ -46,6 +46,7 @@ Response* POSTMethod::process()
 	outfile->open(fileName, std::ios_base::app);
 	if (!outfile->is_open())
 	{
+		perror("File creation error: ");
 		_response->setStatusCode(HttpStatusCodes::NOT_FOUND);
 		delete outfile;
 		return _response;
