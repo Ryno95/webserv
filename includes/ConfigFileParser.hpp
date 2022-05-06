@@ -74,6 +74,8 @@ private:
 template<>
 inline void ConfigFileParser::parseVariable(const std::string& value, uint* dest) const
 {
+	if (value.find_first_not_of("0123456789") != std::string::npos)
+		throw std::runtime_error("Invalid value");
 	*dest = atoi(value.c_str());
 }
 
@@ -81,6 +83,17 @@ template<>
 inline void ConfigFileParser::parseVariable(const std::string& value, std::string* dest) const
 {
 	*dest = value;
+}
+
+template<>
+inline void ConfigFileParser::parseVariable(const std::string& value, bool* dest) const
+{
+	if (value == "true")
+		*dest = true;
+	else if (value == "false")
+		*dest = false;
+	else
+		throw std::runtime_error("Invalid value");
 }
 
 template<>
