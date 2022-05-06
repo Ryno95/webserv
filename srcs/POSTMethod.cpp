@@ -14,7 +14,7 @@ POSTMethod::~POSTMethod() {}
 std::string POSTMethod::createFileName(const std::string &target)
 {
 	const std::string	timestamp_s = std::to_string(time(nullptr));
-	const std::string	root("root/uploads/"); // Will be replaced by config file
+	const std::string	root("./root/uploads/"); // Will be replaced by config file
 	std::string			fileName;
 	
 	fileName =  root;
@@ -43,7 +43,8 @@ Response* POSTMethod::process()
 	std::ofstream       *outfile = new std::ofstream();
 	
 	std::cout << "Filename: " << fileName << " Target: " << _request.getTarget() << std::endl;
-	std::cout << "CWD: " << system("echo $PWD");
+	std::cout << "CWD: " << std::endl;
+	system("pwd");
 	outfile->open(fileName, std::ios_base::app);
 	if (!outfile->is_open())
 	{
