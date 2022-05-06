@@ -43,10 +43,10 @@ Response* POSTMethod::process()
 	const std::string	fileName  = createFileName(_request.getTarget());
 	std::ofstream       *outfile = new std::ofstream();
 	
-	outfile->open(fileName, std::ios_base::app);
+	std::cout << "Opening file: " << fileName << std::endl;
+	outfile->open(fileName);
 	system("pwd");
 	system("ls -la");
-	std::cout << "Opening file: " << fileName << std::endl;
 	if (!outfile->is_open())
 	{
 		perror("");
