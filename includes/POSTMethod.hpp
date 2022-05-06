@@ -14,6 +14,7 @@ class POSTMethod : public AMethod
 
 		private:
 			std::string _location;
+			std::string _absPathForCreatedFile;
 };
 
 

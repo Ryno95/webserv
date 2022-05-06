@@ -19,7 +19,7 @@ class Colors:
     NATURAL     =   '\033[0m'
     BLUE        =   '\033[1;36m'
 
-class Methods:
+class Methods(Enum):
     GET     = 1
     POST    = 2
     DELETE  = 3

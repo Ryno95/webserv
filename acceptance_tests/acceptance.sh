@@ -19,6 +19,7 @@ ExitCode+=$?
 python3 POSTTests.py
 ExitCode+=$?
 
+rm -rf ./root/uploads/*.txt
 
 kill $PID
 exit $ExitCode

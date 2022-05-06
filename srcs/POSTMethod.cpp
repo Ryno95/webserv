@@ -35,6 +35,7 @@ void POSTMethod::setPostResponseHeaders()
 {
 	_response->addHeaderField("Location", _location);
 	_response->addHeaderField("Content-Length", std::to_string(_request.getBodySize()));
+	_response->addHeaderField("Created-file", _absPathForCreatedFile);
 }
 
 Response* POSTMethod::process()
@@ -50,8 +51,8 @@ Response* POSTMethod::process()
 		return _response;
 	}
 	// Writing process will be in chunks
-	std::cout << "Body: "<< _request.getBody() << std::endl;
-	*outfile << _request.getBody() << std::endl;
+	_absPathForCreatedFile = fileName;
+	*outfile << _request.getBody();
 	delete outfile;
 	setPostResponseHeaders();
 	_response->setStatusCode(HttpStatusCodes::CREATED);

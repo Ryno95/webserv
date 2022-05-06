@@ -11,7 +11,7 @@ from defines import HttpResponseStatus
 EXIT_CODE = 0
 
 localhost = "http://localhost:8080"
-GetRequest = Request.GETRequest(Methods.GET)
+GetRequest = Request.GETRequest()
 response  = requests.get(localhost)
 EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, response)
 

@@ -1,4 +1,6 @@
 import requests
+import os
+
 # Multi import from the same module
 from defines import Colors, returnStatus, Methods, HttpResponseStatus, LOCAL_HOST
 
@@ -11,11 +13,11 @@ class Request:
          print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL}")
 
     def printError(self, expected, actual):
-        print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL} Expected: {expected} Actual: {actual}")
+        print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL}\nExpected: {repr(expected)}Actual  : {repr(actual)}")
         return returnStatus.ERROR
 
-    def checkHttpCode(self, expected, actual):
-        if expected != actual:
+    def compareActualToExpected(self, expected, actual):
+        if not actual.__eq__(expected):
             return self.printError(expected, actual)
         else:
             return returnStatus.SUCCESS
@@ -23,8 +25,8 @@ class Request:
     def compareExpectedPositiveResult(self, expectedHttpResponse, response: requests):
         testStatus = 0
 
-        print(f"POST request on {response.url}")
-        testStatus += self.checkHttpCode(expectedHttpResponse, response.status_code)
+        print(f"{self._method.name} request on {response.url}")
+        testStatus += self.compareActualToExpected(expectedHttpResponse, response.status_code)
 
         if testStatus == returnStatus.SUCCESS:
             self.printSucces()
@@ -36,15 +38,25 @@ class Request:
 
 
 class GETRequest(Request):
-    pass
+    def __init__(self):
+        self._method = Methods.GET
 
 class POSTRequest(Request):
     def __init__(self, fileName):
+        self._method = Methods.POST
         self._fileName = fileName
         self._fd = 0
         self._body = ""
         self._response = []
         self._uri = LOCAL_HOST + "/" + fileName
+
+    def checkCreatedFile(self):
+        filename = "../../" + self._response.headers['Created-file']
+        fd = open(filename, 'r')
+        self.compareActualToExpected(fd.read(), self._body)
+        print(f"Removing file: {filename}")
+        if os.path.exists(filename):
+            os.remove(filename)
 
     def checkCreated(self, response: requests):
        return Request.compareExpectedPositiveResult(self, HttpResponseStatus.CREATED, response)
@@ -56,7 +68,6 @@ class POSTRequest(Request):
     def doRequest(self):
         self._body = self.getBodyFromFile()
         self._response = requests.post(self._uri, data=self._body)
-        # pass
     
 class DELETERequest(Request):
     pass
