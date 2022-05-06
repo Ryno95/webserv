@@ -19,15 +19,14 @@ PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
 time.sleep(0.5)
 
-PostRequest = POSTRequest(bigFile)
-PostRequest.doRequest()
-EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
-time.sleep(0.5)
+# PostRequest = POSTRequest(bigFile)
+# PostRequest.doRequest()
+# EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
+# time.sleep(0.5)
 
-PostRequest = POSTRequest(emptyFile)
-PostRequest.doRequest()
-EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
-time.sleep(0.5)
+# PostRequest = POSTRequest(emptyFile)
+# PostRequest.doRequest()
+# EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
 
