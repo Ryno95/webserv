@@ -7,7 +7,7 @@
 	#define private public
 #endif
 
-#ifdef TEST
+#ifdef CI_ACCEPTANCE
 	#define ROOT "/home/test_user/project/"
 #else 
 	#define ROOT "root/uploads"

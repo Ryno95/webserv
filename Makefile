@@ -56,7 +56,7 @@ local_acceptance: $(NAME)
 	./acceptance_tests/acceptance.sh
 
 acceptance: $(OBJS) $(HPPS)
-	$(CC) -D TEST=1 -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
+	$(CC) -D CI_ACCEPTANCE=1 -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 	./acceptance_tests/acceptance.sh
 
 run: $(NAME)
