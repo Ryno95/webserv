@@ -45,6 +45,7 @@ Response* POSTMethod::process()
 	std::cout << "Filename: " << fileName << " Target: " << _request.getTarget() << std::endl;
 	std::cout << "CWD: " << std::endl;
 	system("pwd");
+	system("ls -la");
 	outfile->open(fileName, std::ios_base::app);
 	if (!outfile->is_open())
 	{
