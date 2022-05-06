@@ -16,7 +16,6 @@ cd acceptance_tests/PyTests/
 python3 GETTests.py
 ExitCode+=$?
 
-cd acceptance_tests/PyTests/
 python3 POSTTests.py
 ExitCode+=$?
 
