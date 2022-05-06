@@ -51,7 +51,7 @@ class POSTRequest(Request):
         self._uri = LOCAL_HOST + "/" + fileName
 
     def checkCreatedFile(self):
-        filename = "../../" + self._response.headers['Created-file']
+        filename = "".join(("../../", self._response.headers['Created-file']))
         fd = open(filename, 'r')
         self.compareActualToExpected(fd.read(), self._body)
         print(f"Removing file: {filename}")
