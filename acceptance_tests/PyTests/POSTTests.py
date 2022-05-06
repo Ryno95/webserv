@@ -13,6 +13,7 @@ emptyFile = "emptyPost.txt"
 
 EXIT_CODE = 0
 
+time.sleep(0.5)
 PostRequest = POSTRequest(basicFile)
 PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
@@ -20,6 +21,7 @@ PostRequest.checkCreatedFile()
 # PostRequest.cleanUp()
 time.sleep(0.5)
 
+time.sleep(0.5)
 PostRequest = POSTRequest(bigFile)
 PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
@@ -28,6 +30,7 @@ PostRequest.checkCreatedFile()
 time.sleep(0.5)
 
 
+time.sleep(0.5)
 PostRequest = POSTRequest(emptyFile)
 PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
