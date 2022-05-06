@@ -51,12 +51,12 @@ class POSTRequest(Request):
         self._uri = LOCAL_HOST + "/" + fileName
 
     def checkCreatedFile(self):
-        print(type(self._response.headers.get('Created-file')))
         createdFile = self._response.headers.get('Created-file')
+        if createdFile is None:
+            self.printError(self._body, createdFile)
         filename = "".join(("../../", str(createdFile)))
         fd = open(filename, 'r')
         self.compareActualToExpected(fd.read(), self._body)
-        print(f"Removing file: {filename}")
         if os.path.exists(filename):
             os.remove(filename)
 

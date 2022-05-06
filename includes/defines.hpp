@@ -7,11 +7,8 @@
 	#define private public
 #endif
 
-#ifdef CI_ACCEPTANCE
-	#define ROOT "/home/test_user/project/"
-#else 
-	#define ROOT "./root/uploads/"
-#endif
+
+#define ROOT "./root/uploads/"
 
 
 #pragma region CONFIG FILE

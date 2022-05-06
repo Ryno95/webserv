@@ -43,10 +43,7 @@ Response* POSTMethod::process()
 	const std::string	fileName  = createFileName(_request.getTarget());
 	std::ofstream       *outfile = new std::ofstream();
 	
-	std::cout << "Opening file: " << fileName << std::endl;
 	outfile->open(fileName);
-	system("pwd");
-	system("ls -la");
 	if (!outfile->is_open())
 	{
 		perror("");
