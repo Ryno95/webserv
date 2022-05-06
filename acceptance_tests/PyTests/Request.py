@@ -54,13 +54,13 @@ class POSTRequest(Request):
         # if not self._response.headers['Created-file']:
         #     print("HEADER DOES NOT EXIST")
         print(self._response.headers)
-        createdFile = self._response.headers.get('Created-file')
-        filename = "".join(("../../", str(createdFile)))
-        fd = open(filename, 'r')
-        self.compareActualToExpected(fd.read(), self._body)
-        print(f"Removing file: {filename}")
-        if os.path.exists(filename):
-            os.remove(filename)
+        # createdFile = self._response.headers.get('Created-file')
+        # filename = "".join(("../../", str(createdFile)))
+        # fd = open(filename, 'r')
+        # self.compareActualToExpected(fd.read(), self._body)
+        # print(f"Removing file: {filename}")
+        # if os.path.exists(filename):
+        #     os.remove(filename)
 
     def checkCreated(self, response: requests):
        return Request.compareExpectedPositiveResult(self, HttpResponseStatus.CREATED, response)
