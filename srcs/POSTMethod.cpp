@@ -43,6 +43,7 @@ Response* POSTMethod::process()
 	std::ofstream       *outfile = new std::ofstream();
 	
 	std::cout << "Filename: " << fileName << " Target: " << _request.getTarget() << std::endl;
+	std::cout << "CWD: " << system("pwd");
 	outfile->open(fileName, std::ios_base::app);
 	if (!outfile->is_open())
 	{
