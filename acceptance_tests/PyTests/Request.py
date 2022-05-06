@@ -54,8 +54,8 @@ class POSTRequest(Request):
         # if not self._response.headers['Created-file']:
         #     print("HEADER DOES NOT EXIST")
         print(self._response.headers)
-        createdFile = str(self._response.headers.get('Created-file'))
-        filename = "".join(("../../", createdFile))
+        createdFile = self._response.headers.get('Created-file')
+        filename = "".join(("../../", str(createdFile)))
         fd = open(filename, 'r')
         self.compareActualToExpected(fd.read(), self._body)
         print(f"Removing file: {filename}")
