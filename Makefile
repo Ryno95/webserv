@@ -52,7 +52,11 @@ local_test: $(TEST_SRC) $(OBJS)
 	$(CC) -D TEST=1 -o $(TEST_NAME) $(TEST_SRC) $(OBJS) $(LINKING) -lcriterion -L ~/.brew/lib -I ~/.brew/include -std=c++11
 	./$(TEST_NAME)
 
-acceptance: $(NAME)
+local_acceptance: $(NAME)
+	./acceptance_tests/acceptance.sh
+
+acceptance: $(OBJS) $(HPPS)
+	$(CC) -D TEST=1 -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 	./acceptance_tests/acceptance.sh
 
 run: $(NAME)

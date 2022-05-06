@@ -14,7 +14,7 @@ POSTMethod::~POSTMethod() {}
 std::string POSTMethod::createFileName(const std::string &target)
 {
 	const std::string	timestamp_s = std::to_string(time(nullptr));
-	const std::string	root("/home/test_user/project/"); // Will be replaced by config file
+	const std::string	root(ROOT); // Will be replaced by config file
 	std::string			fileName;
 	
 	fileName =  root;
