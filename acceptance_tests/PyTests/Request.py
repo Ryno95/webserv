@@ -53,6 +53,7 @@ class POSTRequest(Request):
     def checkCreatedFile(self):
         if not self._response.headers['Created-file']:
             print("HEADER DOES NOT EXIST")
+        print(self._response.headers)
         createdFile = self._response.headers['Created-file']
         filename = "../../" + createdFile
         fd = open(filename, 'r')
