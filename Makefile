@@ -20,9 +20,12 @@ CLASSES		=	Webserv\
 				MimeTypes\
 				Logger\
 				POSTMethod\
-				ConfigFileParser\
 				ServerHandler\
-				Utility
+				Utility\
+				ConfigFileParser\
+				AConfig\
+				HostConfig\
+				ServerConfig
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
