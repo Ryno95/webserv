@@ -1,11 +1,10 @@
 #include <HostConfig.hpp>
 
-HostConfig::HostConfig()
+HostConfig::HostConfig() : AConfig::AConfig(fillVariablesMap())
 {
-	fillVariablesMap();
 }
 
-HostConfig::HostConfig(const HostConfig& ref)
+HostConfig::HostConfig(const HostConfig& ref) : AConfig::AConfig(fillVariablesMap())
 {
 	*this = ref;
 }
@@ -34,7 +33,7 @@ AConfig::map_type HostConfig::fillVariablesMap()
 	map["methods"]			= var_data(var_methods, &acceptedMethods);
 	map["default_index"]	= var_data(var_string, &defaultIndex);
 	map["default_error"]	= var_data(var_string, &defaultError);
-	map["locations"]		= var_data(var_strings, &locations);
+	map["location"]			= var_data(var_strings, &locations);
 	map["autoindex"]		= var_data(var_bool, &autoIndexEnabled);
 	return map;
 }
