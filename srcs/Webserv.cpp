@@ -13,6 +13,7 @@
 #include <defines.hpp>
 #include "Logger.hpp"
 #include <Webserv.hpp>
+#include <GlobalConfig.hpp>
 
 Webserv::Webserv(const ServerConfig& config)
 	: _config(config)
@@ -53,7 +54,7 @@ void Webserv::setup()
 	if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 		throw std::runtime_error("fcntl() failed");
 
-	if (listen(_listenerFd, _config.listenBacklog) == SYSTEM_ERR)
+	if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // TMP, store GlobalConfig as a member of this class?
 		throw std::runtime_error("listen() failed");
 }
 
