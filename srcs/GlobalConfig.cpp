@@ -1,12 +1,32 @@
 #include <GlobalConfig.hpp>
 
-GlobalConfig::GlobalConfig() : AConfig::AConfig()
+
+
+#pragma region Static
+
+GlobalConfig GlobalConfig::_current;
+
+const GlobalConfig& GlobalConfig::get()
 {
-	fillVariablesMap();
+	return _current;
 }
 
-GlobalConfig::GlobalConfig(const GlobalConfig& rhs)
+void GlobalConfig::set(const GlobalConfig& config)
 {
+	_current = config;
+}
+
+#pragma endregion
+
+
+
+GlobalConfig::GlobalConfig() : AConfig::AConfig(fillVariablesMap())
+{
+}
+
+GlobalConfig::GlobalConfig(const GlobalConfig& ref) : AConfig::AConfig(fillVariablesMap())
+{
+	*this = ref;
 }
 
 GlobalConfig::~GlobalConfig()
@@ -26,10 +46,10 @@ GlobalConfig& GlobalConfig::operator=(const GlobalConfig& rhs)
 AConfig::map_type GlobalConfig::fillVariablesMap()
 {
 	map_type map;
-	map["listen_backlog"] = var_data(var_uint, &listenBacklog);
-	map["buffer_size"] = var_data(var_uint, &bufferSize);
-	map["mime_config"] = var_data(var_string, &mimeFilePath);
-	map["debug_mode"] = var_data(var_bool, &debugEnabled);
-	map["debug_logging"] = var_data(var_bool, &loggingEnabled);
+	map["listen_backlog"]	= var_data(var_uint, &listenBacklog);
+	map["buffer_size"]		= var_data(var_uint, &bufferSize);
+	map["mime_config"]		= var_data(var_string, &mimeFilePath);
+	map["debug_mode"]		= var_data(var_bool, &debugEnabled);
+	map["debug_logging"]	= var_data(var_bool, &loggingEnabled);
 	return map;
 }

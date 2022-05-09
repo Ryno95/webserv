@@ -120,11 +120,24 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 		ERROR("Unclosed section encountered");
 		throw std::runtime_error("Parse error");
 	}
+
+	GlobalConfig::set(currentGlobalConfig);
 	return _serverConfigs;
 }
 
-void ConfigFileParser::parseGlobalVariable(const std::string &line, GlobalConfig &config) const
+void ConfigFileParser::parseGlobalVariable(const std::string &line, GlobalConfig& config) const
 {
+	size_t pos = std::min(line.find('\t'), line.find(' '));
+	if (pos == std::string::npos)
+	{
+		ERROR("No value assigned to variable on line [" << _lineCount << "]: " << line);
+		throw std::runtime_error("No value for variable");
+	}
+	std::string key = line.substr(0, pos);
+	std::string value = line.substr(pos + 1, line.size() - pos);
+	value = Util::removeLeadingWhitespace(value);
+
+	config.parseVariable(key, value);
 }
 
 void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig &config) const

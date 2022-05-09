@@ -11,7 +11,7 @@
 
 struct GlobalConfig : public AConfig
 {
-	GlobalConfig();
+	GlobalConfig(); 
 	GlobalConfig(const GlobalConfig& rhs);
 	~GlobalConfig();
 	GlobalConfig& operator=(const GlobalConfig& rhs);
@@ -24,7 +24,12 @@ struct GlobalConfig : public AConfig
 	bool		debugEnabled;
 	bool		loggingEnabled;
 
+	static const GlobalConfig& get();
+	static void set(const GlobalConfig& config);
+
 private:
 	map_type fillVariablesMap();
+
+	static GlobalConfig _current;
 
 };
