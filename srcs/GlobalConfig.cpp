@@ -1,18 +1,19 @@
-#include <Config.hpp>
+#include <GlobalConfig.hpp>
 
-Config::Config() : AConfig::AConfig()
+GlobalConfig::GlobalConfig() : AConfig::AConfig()
+{
+	fillVariablesMap();
+}
+
+GlobalConfig::GlobalConfig(const GlobalConfig& rhs)
 {
 }
 
-Config::Config(const Config& rhs)
+GlobalConfig::~GlobalConfig()
 {
 }
 
-Config::~Config()
-{
-}
-
-Config& Config::operator=(const Config& rhs)
+GlobalConfig& GlobalConfig::operator=(const GlobalConfig& rhs)
 {
 	listenBacklog = rhs.listenBacklog;
 	bufferSize = rhs.bufferSize;
@@ -22,7 +23,7 @@ Config& Config::operator=(const Config& rhs)
 	return *this;
 }
 
-AConfig::map_type Config::fillVariablesMap()
+AConfig::map_type GlobalConfig::fillVariablesMap()
 {
 	map_type map;
 	map["listen_backlog"] = var_data(var_uint, &listenBacklog);

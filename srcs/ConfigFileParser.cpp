@@ -20,13 +20,14 @@ ConfigFileParser::~ConfigFileParser()
 std::vector<ServerConfig>& ConfigFileParser::parse()
 {
 	std::ifstream fstream(_filePath);
+	if (fstream.fail())
+		throw std::runtime_error("Error opening config file");
+
 	std::string line;
 	state currentState = NONE;
 	ServerConfig currentServerConfig;
 	HostConfig currentHostConfig;
-
-	if (fstream.fail())
-		throw std::runtime_error("Error opening config file");
+	GlobalConfig currentGlobalConfig;
 
 	while (std::getline(fstream, line))
 	{
@@ -108,6 +109,8 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 		case IN_APPLICATION_BLOCK:
 			if (line == "}")
 				currentState = NONE;
+			else
+				parseGlobalVariable(line, currentGlobalConfig);
 			break;
 		}
 	}
@@ -118,6 +121,10 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 		throw std::runtime_error("Parse error");
 	}
 	return _serverConfigs;
+}
+
+void ConfigFileParser::parseGlobalVariable(const std::string &line, GlobalConfig &config) const
+{
 }
 
 void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig &config) const

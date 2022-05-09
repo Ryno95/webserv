@@ -9,12 +9,12 @@
 #include <MimeTypes.hpp>
 #include <AConfig.hpp>
 
-struct Config : public AConfig
+struct GlobalConfig : public AConfig
 {
-	Config();
-	Config(const Config& rhs);
-	~Config();
-	Config& operator=(const Config& rhs);
+	GlobalConfig();
+	GlobalConfig(const GlobalConfig& rhs);
+	~GlobalConfig();
+	GlobalConfig& operator=(const GlobalConfig& rhs);
 
 	MimeTypes	mimeTypes;
 

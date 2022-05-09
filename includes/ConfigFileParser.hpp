@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include <ServerConfig.hpp>
+#include <GlobalConfig.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
 
@@ -35,6 +36,7 @@ private:
 	template<class T>
 	void parseVariable(const std::string& value, T* dest) const;
 
+	void parseGlobalVariable(const std::string& line, GlobalConfig& config) const;
 	void parseHostVariable(const std::string& line, HostConfig& config) const;
 	void parseServerVariable(const std::string& line, ServerConfig& config) const;
 
