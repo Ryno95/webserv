@@ -4,29 +4,24 @@
 #include <vector>
 
 #include <Method.hpp>
+#include <AConfig.hpp>
 
-struct HostConfig
+struct HostConfig : public AConfig
 {
-	HostConfig() {}
-
-	HostConfig(const HostConfig& rhs)
-	{
-		*this = rhs;
-	}
-
-	HostConfig& operator=(const HostConfig& ref)
-	{
-		names = ref.names;
-		root = ref.root;
-		defaultIndex = ref.defaultIndex;
-		defaultError = ref.defaultError;
-		acceptedMethods = ref.acceptedMethods;
-		return *this;
-	}
+	HostConfig();
+	HostConfig(const HostConfig& ref);
+	~HostConfig();
+	HostConfig& operator=(const HostConfig& ref);
 
 	std::vector<std::string>	names;
+	std::vector<std::string>	locations;
+	bool						autoIndexEnabled;
 	std::string					root;
 	std::string					defaultIndex;
 	std::string					defaultError;
 	std::vector<Method::method>	acceptedMethods;
+
+private:
+	map_type fillVariablesMap();
+
 };

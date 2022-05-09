@@ -7,8 +7,6 @@
 
 ConfigFileParser::ConfigFileParser(const std::string &filePath) : _filePath(filePath), _lineCount(0)
 {
-	fillHostVariablesMap();
-	fillServerVariablesMap();
 }
 
 ConfigFileParser::~ConfigFileParser()
@@ -44,6 +42,8 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 		case NONE:
 			if (line == "server")
 				currentState = PRE_SERVER_BLOCK;
+			else if (line == "application")
+				currentState = PRE_APPLICATION_BLOCK;
 			else
 			{
 				ERROR("Invalid input on line [" << _lineCount << "]: " << line);
@@ -94,6 +94,21 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 			else
 				parseHostVariable(line, currentHostConfig);
 			break;
+		
+		case PRE_APPLICATION_BLOCK:
+			if (line == "{")
+				currentState = IN_APPLICATION_BLOCK;
+			else
+			{
+				ERROR("Expected '{' on line [" << _lineCount << "]: " << line);
+				throw std::runtime_error("Parse error");
+			}
+			break;
+
+		case IN_APPLICATION_BLOCK:
+			if (line == "}")
+				currentState = NONE;
+			break;
 		}
 	}
 
@@ -103,23 +118,6 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 		throw std::runtime_error("Parse error");
 	}
 	return _serverConfigs;
-}
-
-void ConfigFileParser::fillHostVariablesMap()
-{
-	_hostVariables["name"] = HostVariables::NAME;
-	_hostVariables["root"] = HostVariables::ROOT;
-	_hostVariables["methods"] = HostVariables::METHODS;
-	_hostVariables["default_index"] = HostVariables::DEFAULT_INDEX;
-	_hostVariables["default_error"] = HostVariables::DEFAULT_ERROR;
-}
-
-void ConfigFileParser::fillServerVariablesMap()
-{
-	_serverVariables["listen_port"] = ServerVariables::LISTEN_PORT;
-	_serverVariables["buffer_size"] = ServerVariables::BUFFER_SIZE;
-	_serverVariables["mime_config"] = ServerVariables::MIME_CONFIG;
-	_serverVariables["listen_backlog"] = ServerVariables::LISTEN_BACKLOG;
 }
 
 void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig &config) const
@@ -134,28 +132,7 @@ void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig
 	std::string value = line.substr(pos + 1, line.size() - pos);
 	value = Util::removeLeadingWhitespace(value);
 
-	std::map<std::string, int>::const_iterator result = _serverVariables.find(key);
-	if (result == _serverVariables.end())
-	{
-		ERROR("Invalid server-variable encountered on line [" << _lineCount << "]: " << line);
-		throw std::runtime_error("Invalid variable encountered");
-	}
-
-	switch (result->second)
-	{
-	case ServerVariables::LISTEN_PORT:
-		parseVariable(value, &config.port);
-		break;
-	case ServerVariables::BUFFER_SIZE:
-		parseVariable(value, &config.buffer_size);
-		break;
-	case ServerVariables::MIME_CONFIG:
-		parseVariable(value, &config.mimeTypesFile);
-		break;
-	case ServerVariables::LISTEN_BACKLOG:
-		parseVariable(value, &config.listen_backlog);
-		break;
-	}
+	config.parseVariable(key, value);
 }
 
 void ConfigFileParser::parseHostVariable(const std::string &line, HostConfig &config) const
@@ -170,29 +147,5 @@ void ConfigFileParser::parseHostVariable(const std::string &line, HostConfig &co
 	std::string value = line.substr(pos + 1, line.size() - pos);
 	value = Util::removeLeadingWhitespace(value);
 
-	std::map<std::string, int>::const_iterator result = _hostVariables.find(key);
-	if (result == _hostVariables.end())
-	{
-		ERROR("Invalid host-variable encountered on line [" << _lineCount << "]: " << line);
-		throw std::runtime_error("Invalid variable encountered");
-	}
-
-	switch (result->second)
-	{
-	case HostVariables::NAME:
-		parseVariable(value, &config.names);
-		break;
-	case HostVariables::ROOT:
-		parseVariable(value, &config.root);
-		break;
-	case HostVariables::METHODS:
-		parseVariable(value, &config.acceptedMethods);
-		break;
-	case HostVariables::DEFAULT_INDEX:
-		parseVariable(value, &config.defaultIndex);
-		break;
-	case HostVariables::DEFAULT_ERROR:
-		parseVariable(value, &config.defaultError);
-		break;
-	}
+	config.parseVariable(key, value);
 }

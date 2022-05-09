@@ -3,31 +3,24 @@
 #include <vector>
 
 #include <HostConfig.hpp>
+#include <AConfig.hpp>
 
 typedef unsigned int uint;
 
-struct ServerConfig
+struct ServerConfig : public AConfig
 {
-	ServerConfig() {}
+	ServerConfig();
+	ServerConfig(const ServerConfig& ref);
+	~ServerConfig();
+	ServerConfig& operator=(const ServerConfig& ref);
 
-	ServerConfig(const ServerConfig& rhs)
-	{
-		*this = rhs;
-	}
-
-	ServerConfig& operator=(const ServerConfig& ref)
-	{
-		port = ref.port;
-		buffer_size = ref.buffer_size;
-		listen_backlog = ref.listen_backlog;
-		mimeTypesFile = ref.mimeTypesFile;
-		hosts = ref.hosts;
-		return *this;
-	}
-
-	uint							port;
-	uint							buffer_size;
-	uint							listen_backlog;
-	std::string						mimeTypesFile;
+	uint					port;
+	uint					bufferSize;
+	uint					listenBacklog;
+	std::string				mimeTypesFile;
 	std::vector<HostConfig>	hosts;
+
+private:
+	map_type fillVariablesMap();
+
 };
