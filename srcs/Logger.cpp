@@ -83,7 +83,5 @@ void Logger::debug()
 	std::string str = inputStream.str();
 	inputStream.str("");
 	printDebug(str);
-
-	if (ENABLE_DEBUG_LOGGING)
-		log("[DEBUG] " + str);
+	log("[DEBUG] " + str);
 }
