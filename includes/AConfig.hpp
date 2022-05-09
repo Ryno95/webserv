@@ -25,7 +25,7 @@ protected:
 	typedef std::pair<int, void*>			var_data;
 	typedef std::map<std::string, var_data>	map_type;
 
-	AConfig();
+	AConfig(const map_type& map);
 	virtual ~AConfig();
 
 	virtual map_type fillVariablesMap() = 0;
@@ -33,10 +33,11 @@ protected:
 	template<class T>
 	T parse(const std::string& value) const;
 
+
 private:
+	const map_type _vars;
 	map_type::const_iterator getElement(const std::string& varName);
 
-	const map_type _vars;
 
 };
 
