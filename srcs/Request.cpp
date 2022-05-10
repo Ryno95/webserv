@@ -41,9 +41,11 @@ size_t Request::parseRequestMethod()
 	pos = _query.find(' ');
 	if (pos == std::string::npos)
 		throwError(HttpStatusCodes::BAD_REQUEST);
-	Method::method method = Util::parseMethod(_query.substr(0, pos));
-	if (method == Method::INVALID)
+
+	_method = Util::parseMethod(_query.substr(0, pos));
+	if (_method == Method::INVALID)
 		throwError(HttpStatusCodes::BAD_REQUEST);
+
 	return pos;
 }
 
