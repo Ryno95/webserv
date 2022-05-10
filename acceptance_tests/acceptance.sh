@@ -8,11 +8,18 @@ PID=$!
 # sleep for 1 second to give the server time to start-up
 sleep 2
 
-# run the tests
-python3 acceptance_tests/TestClient.py
-
 # save the return val of the tests for actions
-T1=$?
+ExitCode=0
+
+# run the tests
+cd acceptance_tests/PyTests/
+python3 GETTests.py
+ExitCode+=$?
+
+python3 POSTTests.py
+ExitCode+=$?
+
+rm -rf ./root/uploads/*.txt
 
 kill $PID
-exit $T1
+exit $ExitCode
