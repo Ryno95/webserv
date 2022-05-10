@@ -126,7 +126,7 @@ void Client::handleResponse()
 */
 void Client::hasCommunicated()
 {
-	gettimeofday(&_lastCommunicated, nullptr);
+	gettimeofday(&_lastCommunicated, NULL);
 }
 
 bool Client::checkTimeout() const
