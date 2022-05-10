@@ -2,7 +2,6 @@
 
 ServerConfig::ServerConfig() : AConfig::AConfig(fillVariablesMap())
 {
-	fillVariablesMap();
 }
 
 ServerConfig::ServerConfig(const ServerConfig& ref) : AConfig::AConfig(fillVariablesMap())
