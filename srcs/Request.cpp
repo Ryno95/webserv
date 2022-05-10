@@ -1,4 +1,5 @@
 #include <Request.hpp>
+#include <Utility.hpp>
 
 #include <iostream>
 #include <cctype>
@@ -33,22 +34,18 @@ const std::string &Request::getBody() const
 	return (_body);
 }
 
-size_t Request::parseMethod()
+size_t Request::parseRequestMethod()
 {
 	size_t pos;
 
 	pos = _query.find(' ');
 	if (pos == std::string::npos)
 		throwError(HttpStatusCodes::BAD_REQUEST);
-	std::string method = _query.substr(0, pos);
-	if (method == "GET")
-		_method = Method::GET;
-	else if (method == "POST")
-		_method = Method::POST;
-	else if (method == "DELETE")
-		_method = Method::DELETE;
-	else
+
+	_method = Util::parseMethod(_query.substr(0, pos));
+	if (_method == Method::INVALID)
 		throwError(HttpStatusCodes::BAD_REQUEST);
+
 	return pos;
 }
 
@@ -113,7 +110,7 @@ size_t Request::parseRequestLine()
 {
 	size_t pos;
 
-	pos = parseMethod();
+	pos = parseRequestMethod();
 	pos = parseTarget(pos + 1);
 	pos = parseVersion(pos + 1);
 	
@@ -148,13 +145,6 @@ std::string	getTrimmedLine(std::string line)
 	return std::string(start, end + 1);
 }
 
-static bool	isTerminatorStr(const std::string str)
-{
-	const std::string	terminatorStr = "\r\n\r\n";
-
-	return (str.compare(terminatorStr) == 0);
-}
-
 void Request::parseHeaderFields(size_t pos)
 {
 	size_t				next = 0, last = pos;
@@ -163,7 +153,7 @@ void Request::parseHeaderFields(size_t pos)
 	{
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
 		addKeyValuePair(trimmedLine, next);
-		if (isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
+		if (Util::isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
 			break ;
 		last = next + CRLF_CHAR_COUNT;
 	}

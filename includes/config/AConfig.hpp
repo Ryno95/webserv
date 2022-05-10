@@ -92,25 +92,20 @@ template<>
 inline std::vector<Method::method> AConfig::parse(const std::string& value) const
 {
 	std::string str = value;
-	std::string method;
+	std::string methodStr;
 	std::vector<Method::method> values;
 
 	while (true)
 	{
 		size_t end = std::min(std::min(str.find(' '), str.find('\t')), str.size());
-		method = str.substr(0, end);
 
-		if (method == "GET")
-			values.push_back(Method::GET);
-		else if (method == "POST")
-			values.push_back(Method::POST);
-		else if (method == "DELETE")
-			values.push_back(Method::DELETE);
-		else
+		Method::method methodId = Util::parseMethod(str.substr(0, end));
+		if (methodId == Method::INVALID)
 		{
-			ERROR("Unhandled method supplied: " << method);
+			ERROR("Unhandled method supplied: " << methodId);
 			throw std::runtime_error("Unhandled method supplied");
 		}
+		values.push_back(methodId);
 
 		if (end == str.size())
 			break;
