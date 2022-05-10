@@ -5,8 +5,8 @@
 #include <vector>
 #include <iostream>
 
-#include <ServerConfig.hpp>
-#include <GlobalConfig.hpp>
+#include <config/ServerConfig.hpp>
+#include <config/GlobalConfig.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
 

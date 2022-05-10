@@ -11,9 +11,9 @@
 #include <unistd.h>
 
 #include <defines.hpp>
-#include "Logger.hpp"
+#include <Logger.hpp>
 #include <Webserv.hpp>
-#include <GlobalConfig.hpp>
+#include <config/GlobalConfig.hpp>
 
 Webserv::Webserv(const ServerConfig& config)
 	: _config(config)

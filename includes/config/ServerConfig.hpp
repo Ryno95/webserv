@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <HostConfig.hpp>
-#include <AConfig.hpp>
+#include <config/HostConfig.hpp>
+#include <config/AConfig.hpp>
 
 typedef unsigned int uint;
 

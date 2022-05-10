@@ -1,4 +1,4 @@
-#include <ServerConfig.hpp>
+#include <config/ServerConfig.hpp>
 
 ServerConfig::ServerConfig() : AConfig::AConfig(fillVariablesMap())
 {

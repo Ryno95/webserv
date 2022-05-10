@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <Method.hpp>
-#include <AConfig.hpp>
+#include <config/AConfig.hpp>
 
 struct HostConfig : public AConfig
 {

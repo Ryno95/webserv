@@ -7,7 +7,7 @@
 #include <Method.hpp>
 #include <Logger.hpp>
 #include <MimeTypes.hpp>
-#include <AConfig.hpp>
+#include <config/AConfig.hpp>
 
 struct GlobalConfig : public AConfig
 {

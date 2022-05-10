@@ -2,7 +2,7 @@
 #include <sstream>
 #include <map>
 
-#include <ConfigFileParser.hpp>
+#include <config/ConfigFileParser.hpp>
 #include <Logger.hpp>
 
 ConfigFileParser::ConfigFileParser(const std::string &filePath) : _filePath(filePath), _lineCount(0)

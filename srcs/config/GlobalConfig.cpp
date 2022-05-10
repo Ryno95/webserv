@@ -1,4 +1,4 @@
-#include <GlobalConfig.hpp>
+#include <config/GlobalConfig.hpp>
 
 
 

@@ -1,4 +1,4 @@
-#include <HostConfig.hpp>
+#include <config/HostConfig.hpp>
 
 HostConfig::HostConfig() : AConfig::AConfig(fillVariablesMap())
 {
