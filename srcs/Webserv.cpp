@@ -19,14 +19,14 @@ Webserv::Webserv(const ServerConfig& config)
 	: _config(config)
 {
 	setup();
-	ServerHandler::addPollfd(_listenerFd);
+	PollHandler::addPollfd(_listenerFd);
 	DEBUG("Created server instance on port: " << _config.port);
 }
 
 Webserv::~Webserv()
 {
 	close(_listenerFd);
-	ServerHandler::removePollfd(_listenerFd);
+	PollHandler::removePollfd(_listenerFd);
 
 	DEBUG("Destroyed server instance on port: " << _config.port);
 }
@@ -75,7 +75,7 @@ void Webserv::handleClients()
 
 void Webserv::handleListener()
 {
-	if (ServerHandler::isPollInSet(_listenerFd))
+	if (PollHandler::isPollInSet(_listenerFd))
 	{
 		int fd = accept(_listenerFd, NULL, NULL);
 		if (fd != SYSTEM_ERR)

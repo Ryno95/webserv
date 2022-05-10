@@ -19,9 +19,9 @@ int main(int argc, char **argv)
 
 	for (size_t i = 0; i < configs.size(); i++)
 	{
-		ServerHandler::addServer(configs[i]);
+		PollHandler::addServer(configs[i]);
 	}
-	ServerHandler::run();
+	PollHandler::run();
 
 	return 0;
 }

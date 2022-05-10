@@ -7,7 +7,7 @@ class Webserv;
 #include <Webserv.hpp>
 #include <config/ServerConfig.hpp>
 
-class ServerHandler
+class PollHandler
 {
 public:
 	static void run();

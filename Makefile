@@ -20,7 +20,7 @@ CLASSES		=	Webserv\
 				MimeTypes\
 				Logger\
 				POSTMethod\
-				ServerHandler\
+				PollHandler\
 				Utility\
 				config/ConfigFileParser\
 				config/AConfig\

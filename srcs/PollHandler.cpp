@@ -1,10 +1,10 @@
-#include <ServerHandler.hpp>
+#include <PollHandler.hpp>
 #include <Logger.hpp>
 
-std::vector<Webserv*>	ServerHandler::_servers;
-std::vector<pollfd>		ServerHandler::_fds;
+std::vector<Webserv*>	PollHandler::_servers;
+std::vector<pollfd>		PollHandler::_fds;
 
-void ServerHandler::addPollfd(int fd)
+void PollHandler::addPollfd(int fd)
 {
 	pollfd pfd;
 	pfd.fd = fd;
@@ -12,7 +12,7 @@ void ServerHandler::addPollfd(int fd)
 	_fds.push_back(pfd);
 }
 
-pollfd* ServerHandler::findPollfd(int fd)
+pollfd* PollHandler::findPollfd(int fd)
 {
 	std::vector<pollfd>::iterator start = _fds.begin();
 	std::vector<pollfd>::iterator end = _fds.end();
@@ -26,7 +26,7 @@ pollfd* ServerHandler::findPollfd(int fd)
 	throw std::runtime_error("WHUT THE FUUUUCK");
 }
 
-void ServerHandler::setPollOut(int fd, bool enabled)
+void PollHandler::setPollOut(int fd, bool enabled)
 {
 	pollfd* pfd = findPollfd(fd);
 	if (enabled)
@@ -35,19 +35,19 @@ void ServerHandler::setPollOut(int fd, bool enabled)
 		pfd->events = POLLIN;
 }
 
-bool ServerHandler::isPollSet(int fd)
+bool PollHandler::isPollSet(int fd)
 {
 	pollfd* pfd = findPollfd(fd);
 	return pfd->revents != 0;
 }
 
-bool ServerHandler::isPollInSet(int fd)
+bool PollHandler::isPollInSet(int fd)
 {
 	pollfd* pfd = findPollfd(fd);
 	return BIT_ISSET(pfd->revents, POLLIN_BIT);
 }
 
-bool ServerHandler::isPollOutSet(int fd)
+bool PollHandler::isPollOutSet(int fd)
 {
 	pollfd* pfd = findPollfd(fd);
 	return BIT_ISSET(pfd->revents, POLLOUT_BIT);
@@ -57,7 +57,7 @@ bool ServerHandler::isPollOutSet(int fd)
 	If parameter fd is currently in the poll array, fd is removed.
 	Otherwise nothing happens.
 */
-void ServerHandler::removePollfd(int fd)
+void PollHandler::removePollfd(int fd)
 {
 	std::vector<pollfd>::iterator start = _fds.begin();
 	std::vector<pollfd>::iterator end = _fds.end();
@@ -76,7 +76,7 @@ void ServerHandler::removePollfd(int fd)
 	WARN("Tried to remove pollfd " << fd << ", but we were not polling for that.");
 }
 
-void ServerHandler::run()
+void PollHandler::run()
 {
 	int pollRet;
 
@@ -93,7 +93,7 @@ void ServerHandler::run()
 	}
 }
 
-void ServerHandler::addServer(const ServerConfig& config)
+void PollHandler::addServer(const ServerConfig& config)
 {
 	_servers.push_back(new Webserv(config)); // no delete of this heap yet
 }

@@ -8,7 +8,7 @@
 
 #include <Client.hpp>
 #include <config/ServerConfig.hpp>
-#include <ServerHandler.hpp>
+#include <PollHandler.hpp>
 
 class Webserv
 {

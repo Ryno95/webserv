@@ -3,7 +3,7 @@
 #include <POSTMethod.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
-#include <ServerHandler.hpp>
+#include <PollHandler.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -13,7 +13,7 @@
 
 Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
 {
-	ServerHandler::addPollfd(fd);
+	PollHandler::addPollfd(fd);
 	hasCommunicated();
 
 	DEBUG("Accepted client on fd: " << _fd);
@@ -22,7 +22,7 @@ Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
 Client::~Client()
 {
 	close(_fd);
-	ServerHandler::removePollfd(_fd);
+	PollHandler::removePollfd(_fd);
 
 	DEBUG("Client disconnected: " << _fd);
 }
@@ -32,19 +32,19 @@ Client::~Client()
 */
 bool Client::handle()
 {
-	if (!ServerHandler::isPollSet(_fd))
+	if (!PollHandler::isPollSet(_fd))
 		return checkTimeout();
 
 	hasCommunicated();
 
 	try
 	{
-		if (ServerHandler::isPollInSet(_fd))
+		if (PollHandler::isPollInSet(_fd))
 			handleRequest();
 
 		handleProcessing();
 
-		if (ServerHandler::isPollOutSet(_fd))
+		if (PollHandler::isPollOutSet(_fd))
 			handleResponse();
 	}
 	catch(const DisconnectedException& e)
@@ -62,7 +62,7 @@ void Client::handleRequest()
 	if (newRequests.size() == 0)
 		return;
 
-	ServerHandler::setPollOut(_fd, true);
+	PollHandler::setPollOut(_fd, true);
 
 	std::deque<Request>::const_iterator first = newRequests.begin();
 	std::deque<Request>::const_iterator last = newRequests.end();
@@ -115,7 +115,7 @@ void Client::handleResponse()
 		_sender.handle();
 	else
 	{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-		ServerHandler::setPollOut(_fd, false);
+		PollHandler::setPollOut(_fd, false);
 	}
 }
 
