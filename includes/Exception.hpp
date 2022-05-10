@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <cstring>
+
 #include <Utility.hpp>
 
 struct FileNotFoundException : std::runtime_error
@@ -36,5 +38,5 @@ struct InvalidValueException : std::runtime_error
 
 struct SystemCallFailedException : std::runtime_error
 {
-	SystemCallFailedException(const std::string& call) : std::runtime_error("System call '" + call + "' failed: " + strerror(errno)) {}
+	SystemCallFailedException(const std::string& call) : std::runtime_error("System call '" + call + "' failed: " + std::strerror(errno)) {}
 };
