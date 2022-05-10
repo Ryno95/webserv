@@ -39,18 +39,15 @@ Methods:
 			file if URI is target
 			entry if URI is CGI
 */
-namespace Webserver
+class AMethod
 {
-	class AMethod
-	{
-	public:
-		AMethod(Request const& request);
-		virtual Response* process() = 0;
+public:
+	AMethod(Request const& request);
+	virtual Response* process() = 0;
 
-		void writeFile();
+	void writeFile();
 
-	protected:
-		Request const& _request;
-		Response* _response;
-	};
-}
+protected:
+	Request const& _request;
+	Response* _response;
+};
