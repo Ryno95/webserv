@@ -1,7 +1,14 @@
 #include <config/HostConfig.hpp>
 
-HostConfig::HostConfig() : AConfig::AConfig(fillVariablesMap())
+HostConfig::HostConfig() 
+:	AConfig::AConfig(fillVariablesMap()),
+	autoIndexEnabled(false),
+	root("root"),
+	defaultIndex("index.html"),
+	defaultError("error.html"),
+	acceptedMethods(Method::GET)
 {
+	names.push_back("default");
 }
 
 HostConfig::HostConfig(const HostConfig& ref) : AConfig::AConfig(fillVariablesMap())
