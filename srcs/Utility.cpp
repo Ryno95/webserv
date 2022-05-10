@@ -1,3 +1,4 @@
+#include <Method.hpp>
 #include <Utility.hpp>
 
 namespace Util
@@ -65,5 +66,18 @@ namespace Util
 
 		return (str.compare(terminatorStr) == 0);
 	}
+
+	Method::method	parseMethod(const std::string &method)
+	{
+		if (method == "GET")
+			return Method::GET;
+		else if (method == "POST")
+			return Method::POST;
+		else if (method == "DELETE")
+			return Method::DELETE;
+		else
+			return Method::INVALID;
+	}
+
 
 }

@@ -34,21 +34,15 @@ const std::string &Request::getBody() const
 	return (_body);
 }
 
-size_t Request::parseMethod()
+size_t Request::parseRequestMethod()
 {
 	size_t pos;
 
 	pos = _query.find(' ');
 	if (pos == std::string::npos)
 		throwError(HttpStatusCodes::BAD_REQUEST);
-	std::string method = _query.substr(0, pos);
-	if (method == "GET")
-		_method = Method::GET;
-	else if (method == "POST")
-		_method = Method::POST;
-	else if (method == "DELETE")
-		_method = Method::DELETE;
-	else
+	Method::method method = Util::parseMethod(_query.substr(0, pos));
+	if (method == Method::INVALID)
 		throwError(HttpStatusCodes::BAD_REQUEST);
 	return pos;
 }
@@ -114,7 +108,7 @@ size_t Request::parseRequestLine()
 {
 	size_t pos;
 
-	pos = parseMethod();
+	pos = parseRequestMethod();
 	pos = parseTarget(pos + 1);
 	pos = parseVersion(pos + 1);
 	
