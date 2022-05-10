@@ -15,7 +15,7 @@ AConfig::map_type::const_iterator AConfig::getElement(const std::string& varName
 	map_type::const_iterator it = _vars.find(varName);
 
 	if (it == _vars.end())
-		throw NotContainedException(varName);
+		throw ValueDoesNotExistException(varName);
 	return it;
 }
 

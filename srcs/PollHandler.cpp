@@ -26,7 +26,7 @@ pollfd* PollHandler::findPollfd(int fd)
 		start++;
 	}
 	ERROR("fd '" << fd << "' is not added to the poll handler. This could be a serious bug.");
-	throw NotContainedException(Util::toString(fd));
+	throw ValueDoesNotExistException(Util::toString(fd));
 }
 
 void PollHandler::setPollOut(int fd, bool enabled)

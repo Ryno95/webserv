@@ -26,9 +26,9 @@ struct ConfigParseUnexpectedTokenException : ParseException
 	ConfigParseUnexpectedTokenException(const std::string& expected, int lineNum, const std::string& line) : ParseException("Expected '" + expected + "' on line [" + Util::toString(lineNum) + "]: " + line) {}
 };
 
-struct NotContainedException : std::runtime_error
+struct ValueDoesNotExistException : std::runtime_error
 {
-	NotContainedException(const std::string& val) : std::runtime_error("Value is not contained: " + val) {}
+	ValueDoesNotExistException(const std::string& val) : std::runtime_error("Value is not contained: " + val) {}
 };
 
 struct InvalidValueException : std::runtime_error
