@@ -32,7 +32,7 @@ OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
 
 CC			=	clang++
-CFLAGS		=	-Wall -Wextra -pedantic
+CFLAGS		=	-Wall -Wextra -pedantic -std=c++98
 TEST_CFLAGS	=	$(CFLAGS)
 LINKING		=	-I $(INCL_DIR)
 
