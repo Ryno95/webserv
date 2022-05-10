@@ -1,8 +1,10 @@
 #include <Request.hpp>
 #include <Utility.hpp>
+#include <Exception.hpp>
 
 #include <iostream>
 #include <cctype>
+#include <cstdlib>
 
 Request::Request() {}
 
@@ -168,7 +170,7 @@ void Request::parse()
 void Request::throwError(HttpStatusCode code)
 {
 	_status = code;
-	throw std::runtime_error("Parse error");
+	throw ParseException("request was not formatted correctly");
 }
 
 

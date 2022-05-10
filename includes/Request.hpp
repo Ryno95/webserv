@@ -49,11 +49,5 @@ private:
 	std::string	_body;
 
 	HttpStatusCode _status;
+
 };
-
-
-
-
-
-
-

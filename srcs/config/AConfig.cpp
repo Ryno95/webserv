@@ -1,5 +1,6 @@
 #include <config/AConfig.hpp>
 #include <Logger.hpp>
+#include <Exception.hpp>
 
 AConfig::AConfig(const map_type& map) : _vars(map)
 {
@@ -14,10 +15,7 @@ AConfig::map_type::const_iterator AConfig::getElement(const std::string& varName
 	map_type::const_iterator it = _vars.find(varName);
 
 	if (it == _vars.end())
-	{
-		ERROR("Variable '" << varName << "' is not supported.");
-		throw std::runtime_error("Variable not contained");
-	}
+		throw ValueDoesNotExistException(varName);
 	return it;
 }
 

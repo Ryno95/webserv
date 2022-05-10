@@ -1,3 +1,4 @@
+#include <iostream>
 #include <Method.hpp>
 #include <Utility.hpp>
 

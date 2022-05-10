@@ -76,7 +76,7 @@ void Sender::handle()
 	}
 
 	if (bufferSize > BUFFERSIZE)
-		throw std::runtime_error("UNEXPECTED AMOUNT OF BYTES STORED IN THE BUFFER! (Sender.cpp)"); // DEBUG LINE
+		WARN("UNEXPECTED AMOUNT OF BYTES STORED IN THE BUFFER! (Sender.cpp)"); // DEBUG LINE
 
 	ssize_t written;
 	written = write(_fd, _buffer, bufferSize);

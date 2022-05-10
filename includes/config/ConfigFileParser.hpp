@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
 #include <map>
 #include <vector>
@@ -9,6 +10,7 @@
 #include <config/GlobalConfig.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
+#include <Exception.hpp>
 
 class ConfigFileParser
 {

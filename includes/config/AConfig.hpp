@@ -2,10 +2,12 @@
 
 #include <map>
 #include <vector>
+#include <cstdlib>
 
 #include <Utility.hpp>
 #include <Method.hpp>
 #include <Logger.hpp>
+#include <Exception.hpp>
 
 class AConfig
 {
@@ -38,7 +40,6 @@ private:
 	const map_type _vars;
 	map_type::const_iterator getElement(const std::string& varName);
 
-
 };
 
 
@@ -47,8 +48,8 @@ template<>
 inline uint AConfig::parse(const std::string& value) const
 {
 	if (value.find_first_not_of("0123456789") != std::string::npos)
-		throw std::runtime_error("Invalid value");
-	return atoi(value.c_str());
+		throw InvalidValueException(value);
+	return std::atoi(value.c_str());
 }
 
 template<>
@@ -65,7 +66,7 @@ inline bool AConfig::parse(const std::string& value) const
 	else if (value == "false")
 		return false;
 	else
-		throw std::runtime_error("Invalid value");
+		throw InvalidValueException(value);
 }
 
 template<>
@@ -101,10 +102,8 @@ inline std::vector<Method::method> AConfig::parse(const std::string& value) cons
 
 		Method::method methodId = Util::parseMethod(str.substr(0, end));
 		if (methodId == Method::INVALID)
-		{
-			ERROR("Unhandled method supplied: " << methodId);
-			throw std::runtime_error("Unhandled method supplied");
-		}
+			throw InvalidValueException(value);
+
 		values.push_back(methodId);
 
 		if (end == str.size())

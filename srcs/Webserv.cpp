@@ -14,6 +14,7 @@
 #include <Logger.hpp>
 #include <Webserv.hpp>
 #include <config/GlobalConfig.hpp>
+#include <Exception.hpp>
 
 Webserv::Webserv(const ServerConfig& config)
 	: _config(config)
@@ -42,20 +43,20 @@ void Webserv::setup()
 
 	_listenerFd = socket(AF_INET, SOCK_STREAM, STD_TCP);
 	if (_listenerFd == SYSTEM_ERR)
-		throw std::runtime_error("Socket() failed");
+		throw SystemCallFailedException("Socket");
 
 	if (setsockopt(_listenerFd, SOL_SOCKET, SO_REUSEADDR,
-				   (char *)&socketSwitch, sizeof(socketSwitch)) == SYSTEM_ERR)
-		throw std::runtime_error("setsockopt() failed");
+				(char *)&socketSwitch, sizeof(socketSwitch)) == SYSTEM_ERR)
+		throw SystemCallFailedException("setsockopt");
 
 	if (bind(_listenerFd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == SYSTEM_ERR)
-		throw std::runtime_error("Bind() failed");
+		throw SystemCallFailedException("Bind");
 
 	if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
-		throw std::runtime_error("fcntl() failed");
+		throw SystemCallFailedException("fcntl");
 
 	if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // TMP, store GlobalConfig as a member of this class?
-		throw std::runtime_error("listen() failed");
+		throw SystemCallFailedException("listen");
 }
 
 void Webserv::handleClients()
@@ -78,10 +79,12 @@ void Webserv::handleListener()
 	if (PollHandler::isPollInSet(_listenerFd))
 	{
 		int fd = accept(_listenerFd, NULL, NULL);
-		if (fd != SYSTEM_ERR)
-			_clients.push_back(new Client(fd));
-		else
+		if (fd == SYSTEM_ERR)
+		{
 			WARN("Accept in our listener was blocking, so we continue");
+		}
+		else
+			_clients.push_back(new Client(fd));
 	}
 }
 

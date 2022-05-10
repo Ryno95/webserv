@@ -1,6 +1,7 @@
 #include <MimeTypes.hpp>
 
 #include <Logger.hpp>
+#include <Exception.hpp>
 
 MimeTypes::MimeTypes() : _filePath("config/default.mime")
 {
@@ -20,7 +21,7 @@ void MimeTypes::parse()
 {
 	std::ifstream stream(_filePath);
 	if (stream.fail())
-		throw std::runtime_error("Failed to open MIME types file");
+		throw FileNotFoundException(_filePath);
 	
 	std::string line;
 	while (getline(stream, line))
@@ -76,6 +77,6 @@ const std::string& MimeTypes::getMIMEType(const std::string& extension) const
 {
 	std::map<const std::string, const std::string>::const_iterator result = _types.find(extension);
 	if (result == _types.end())
-		throw std::runtime_error("MIME type for this file extension is not contained");
+		throw ValueDoesNotExistException(extension);
 	return result->second;
 }

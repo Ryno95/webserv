@@ -1,7 +1,9 @@
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <map>
 
+#include <Utility.hpp>
 #include <config/ConfigFileParser.hpp>
 #include <Logger.hpp>
 
@@ -21,7 +23,7 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 {
 	std::ifstream fstream(_filePath);
 	if (fstream.fail())
-		throw std::runtime_error("Error opening config file");
+		throw FileNotFoundException(_filePath);
 
 	std::string line;
 	state currentState = NONE;
@@ -46,20 +48,14 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 			else if (line == "application")
 				currentState = PRE_APPLICATION_BLOCK;
 			else
-			{
-				ERROR("Invalid input on line [" << _lineCount << "]: " << line);
-				throw std::runtime_error("Parse error");
-			}
+				throw ConfigParseUnexpectedTokenException("[server] or [application]", _lineCount, line);
 			break;
 
 		case PRE_SERVER_BLOCK:
 			if (line == "{")
 				currentState = IN_SERVER_BLOCK;
 			else
-			{
-				ERROR("Expected '{' on line [" << _lineCount << "]: " << line);
-				throw std::runtime_error("Parse error");
-			}
+				throw ConfigParseUnexpectedTokenException("{", _lineCount, line);
 			break;
 
 		case IN_SERVER_BLOCK:
@@ -79,10 +75,7 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 			if (line == "{")
 				currentState = IN_HOST_BLOCK;
 			else
-			{
-				ERROR("Expected '{' on line [" << _lineCount << "]: " << line);
-				throw std::runtime_error("Parse error");
-			}
+				throw ConfigParseUnexpectedTokenException("{", _lineCount, line);
 			break;
 
 		case IN_HOST_BLOCK:
@@ -100,10 +93,7 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 			if (line == "{")
 				currentState = IN_APPLICATION_BLOCK;
 			else
-			{
-				ERROR("Expected '{' on line [" << _lineCount << "]: " << line);
-				throw std::runtime_error("Parse error");
-			}
+				throw ConfigParseUnexpectedTokenException("{", _lineCount, line);
 			break;
 
 		case IN_APPLICATION_BLOCK:
@@ -116,10 +106,7 @@ std::vector<ServerConfig>& ConfigFileParser::parse()
 	}
 
 	if (currentState != NONE)
-	{
-		ERROR("Unclosed section encountered");
-		throw std::runtime_error("Parse error");
-	}
+		throw ConfigParseUnexpectedTokenException("}", _lineCount, line);
 
 	GlobalConfig::set(currentGlobalConfig);
 	return _serverConfigs;
@@ -129,10 +116,8 @@ void ConfigFileParser::parseGlobalVariable(const std::string &line, GlobalConfig
 {
 	size_t pos = std::min(line.find('\t'), line.find(' '));
 	if (pos == std::string::npos)
-	{
-		ERROR("No value assigned to variable on line [" << _lineCount << "]: " << line);
-		throw std::runtime_error("No value for variable");
-	}
+		throw ConfigParseException(_lineCount, line);
+
 	std::string key = line.substr(0, pos);
 	std::string value = line.substr(pos + 1, line.size() - pos);
 	value = Util::removeLeadingWhitespace(value);
@@ -144,10 +129,8 @@ void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig
 {
 	size_t pos = std::min(line.find('\t'), line.find(' '));
 	if (pos == std::string::npos)
-	{
-		ERROR("No value assigned to variable on line [" << _lineCount << "]: " << line);
-		throw std::runtime_error("No value for variable");
-	}
+		throw ConfigParseException(_lineCount, line);
+
 	std::string key = line.substr(0, pos);
 	std::string value = line.substr(pos + 1, line.size() - pos);
 	value = Util::removeLeadingWhitespace(value);
@@ -159,10 +142,8 @@ void ConfigFileParser::parseHostVariable(const std::string &line, HostConfig &co
 {
 	size_t pos = std::min(line.find('\t'), line.find(' '));
 	if (pos == std::string::npos)
-	{
-		ERROR("No value assigned to variable on line [" << _lineCount << "]: " << line);
-		throw std::runtime_error("No value for variable");
-	}
+		throw ConfigParseException(_lineCount, line);
+
 	std::string key = line.substr(0, pos);
 	std::string value = line.substr(pos + 1, line.size() - pos);
 	value = Util::removeLeadingWhitespace(value);
