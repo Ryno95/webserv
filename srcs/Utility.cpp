@@ -59,4 +59,11 @@ namespace Util
 		return timestamp;
 	}
 
+	bool	isTerminatorStr(const std::string &str)
+	{
+		const std::string	terminatorStr = "\r\n\r\n";
+
+		return (str.compare(terminatorStr) == 0);
+	}
+
 }

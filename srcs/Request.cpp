@@ -1,4 +1,5 @@
 #include <Request.hpp>
+#include <Utility.hpp>
 
 #include <iostream>
 #include <cctype>
@@ -148,13 +149,6 @@ std::string	getTrimmedLine(std::string line)
 	return std::string(start, end + 1);
 }
 
-static bool	isTerminatorStr(const std::string str)
-{
-	const std::string	terminatorStr = "\r\n\r\n";
-
-	return (str.compare(terminatorStr) == 0);
-}
-
 void Request::parseHeaderFields(size_t pos)
 {
 	size_t				next = 0, last = pos;
@@ -163,7 +157,7 @@ void Request::parseHeaderFields(size_t pos)
 	{
 		trimmedLine = getTrimmedLine(_query.substr(last, next - last));
 		addKeyValuePair(trimmedLine, next);
-		if (isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
+		if (Util::isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
 			break ;
 		last = next + CRLF_CHAR_COUNT;
 	}
