@@ -48,7 +48,7 @@ inline uint AConfig::parse(const std::string& value) const
 {
 	if (value.find_first_not_of("0123456789") != std::string::npos)
 		throw InvalidValueException(value);
-	return atoi(value.c_str());
+	return std::atoi(value.c_str());
 }
 
 template<>
