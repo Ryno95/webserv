@@ -48,11 +48,14 @@ private:
 	std::string	_body;
 
 	HttpStatusCode _status;
+
+public:
+	struct RequestParseException : std::exception
+	{
+		const char* what() const throw()
+		{
+			return "Parse error";
+		}
+	};
+
 };
-
-
-
-
-
-
-

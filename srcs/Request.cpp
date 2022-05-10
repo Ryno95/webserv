@@ -178,7 +178,7 @@ void Request::parse()
 void Request::throwError(HttpStatusCode code)
 {
 	_status = code;
-	throw std::runtime_error("Parse error");
+	throw RequestParseException();
 }
 
 

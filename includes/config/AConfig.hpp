@@ -6,6 +6,7 @@
 #include <Utility.hpp>
 #include <Method.hpp>
 #include <Logger.hpp>
+#include <Exception.hpp>
 
 class AConfig
 {
@@ -38,7 +39,6 @@ private:
 	const map_type _vars;
 	map_type::const_iterator getElement(const std::string& varName);
 
-
 };
 
 
@@ -47,7 +47,7 @@ template<>
 inline uint AConfig::parse(const std::string& value) const
 {
 	if (value.find_first_not_of("0123456789") != std::string::npos)
-		throw std::runtime_error("Invalid value");
+		throw InvalidValueException(value);
 	return atoi(value.c_str());
 }
 
@@ -65,7 +65,7 @@ inline bool AConfig::parse(const std::string& value) const
 	else if (value == "false")
 		return false;
 	else
-		throw std::runtime_error("Invalid value");
+		throw InvalidValueException(value);
 }
 
 template<>
@@ -107,10 +107,7 @@ inline std::vector<Method::method> AConfig::parse(const std::string& value) cons
 		else if (method == "DELETE")
 			values.push_back(Method::DELETE);
 		else
-		{
-			ERROR("Unhandled method supplied: " << method);
-			throw std::runtime_error("Unhandled method supplied");
-		}
+			throw InvalidValueException(value);
 
 		if (end == str.size())
 			break;

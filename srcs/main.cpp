@@ -1,27 +1,33 @@
 #include <iostream>
+
 #include <Webserv.hpp>
 #include <Logger.hpp>
 #include <config/ConfigFileParser.hpp>
 
 int main(int argc, char **argv)
 {
-	std::string path;
-	if (argc > 1)
+	try
 	{
-		WARN("Using custom config files is not yet tested.");
-		path = argv[1];
+		std::string path;
+		if (argc > 1)
+			path = argv[1];
+		else
+			path = "config/default.config";
+
+		ConfigFileParser parser(path);
+		std::vector<ServerConfig>& configs = parser.parse();
+
+		for (size_t i = 0; i < configs.size(); i++)
+		{
+			PollHandler::addServer(configs[i]);
+		}
+		PollHandler::run();
 	}
-	else
-		path = "config/default.config";
-
-	ConfigFileParser parser(path);
-	std::vector<ServerConfig>& configs = parser.parse();
-
-	for (size_t i = 0; i < configs.size(); i++)
+	catch(const std::exception& e)
 	{
-		PollHandler::addServer(configs[i]);
+		ERROR(e.what());
+		return 1;
 	}
-	PollHandler::run();
 
 	return 0;
 }

@@ -1,5 +1,7 @@
 #include <PollHandler.hpp>
 #include <Logger.hpp>
+#include <Exception.hpp>
+#include <Utility.hpp>
 
 std::vector<Webserv*>	PollHandler::_servers;
 std::vector<pollfd>		PollHandler::_fds;
@@ -23,7 +25,8 @@ pollfd* PollHandler::findPollfd(int fd)
 			return &(*start);
 		start++;
 	}
-	throw std::runtime_error("WHUT THE FUUUUCK");
+	ERROR("fd '" << fd << "' is not added to the poll handler. This could be a serious bug.");
+	throw NotContainedException(Util::toString(fd));
 }
 
 void PollHandler::setPollOut(int fd, bool enabled)
@@ -84,7 +87,7 @@ void PollHandler::run()
 	{
 		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
 		if (pollRet == SYSTEM_ERR)
-			throw std::runtime_error("poll() failed");
+			throw SystemCallFailedException("Poll");
 
 		for (size_t i = 0; i < _servers.size(); i++)
 		{
