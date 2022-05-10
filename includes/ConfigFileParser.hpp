@@ -30,7 +30,7 @@ private:
 		IN_HOST_BLOCK,
 
 		PRE_APPLICATION_BLOCK,
-		IN_APPLICATION_BLOCK,
+		IN_APPLICATION_BLOCK
 	} state;
 
 	template<class T>

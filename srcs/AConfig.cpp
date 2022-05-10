@@ -40,11 +40,11 @@ void AConfig::parseVariable(const std::string& varName, const std::string& value
 			break;
 
 		case var_strings:
-			*((std::vector<std::string>*)it->second.second) = parse<std::vector<std::string>>(value);
+			*((std::vector<std::string>*)it->second.second) = parse<std::vector<std::string> >(value);
 			break;
 
 		case var_methods:
-			*((std::vector<Method::method>*)it->second.second) = parse<std::vector<Method::method>>(value);
+			*((std::vector<Method::method>*)it->second.second) = parse<std::vector<Method::method> >(value);
 			break;
 	}
 }
