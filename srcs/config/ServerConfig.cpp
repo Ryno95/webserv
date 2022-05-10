@@ -1,8 +1,9 @@
 #include <config/ServerConfig.hpp>
 
-ServerConfig::ServerConfig() : AConfig::AConfig(fillVariablesMap())
+ServerConfig::ServerConfig() 
+:	AConfig::AConfig(fillVariablesMap()),
+	port(80)
 {
-	fillVariablesMap();
 }
 
 ServerConfig::ServerConfig(const ServerConfig& ref) : AConfig::AConfig(fillVariablesMap())

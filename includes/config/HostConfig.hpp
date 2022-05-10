@@ -23,5 +23,4 @@ struct HostConfig : public AConfig
 
 private:
 	map_type fillVariablesMap();
-
 };
