@@ -19,15 +19,16 @@ public:
 	Request(std::string query);
 	~Request();
 
-	HttpStatusCode	getStatus() const;
 	void 			throwError(HttpStatusCode code);
 	void			parse();
 	bool 			hasBodyField() const;
-	std::string 	getTarget() const;
-	Method::method 			getMethod() const;
-	size_t 			getBodySize() const;
 
+	HttpStatusCode		getStatus() const;
+	Method::method 		getMethod() const;
+	std::string 		getTarget() const;
+	size_t 				getBodySize() const;
 	const std::string	&getBody() const;
+
 	void				appendBody(const std::string &body);
 
 private:
@@ -35,7 +36,7 @@ private:
 	void 	parseHeaderFields(size_t pos);
 	void 	addKeyValuePair(const std::string &src, size_t newLinePos);
 
-	size_t parseMethod();
+	size_t parseRequestMethod();
 	size_t parseTarget(size_t pos);
 	size_t parseVersion(size_t pos);
 

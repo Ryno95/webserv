@@ -2,12 +2,11 @@
 
 namespace Method
 {
-
-	typedef enum method
+	enum method
 	{
 		GET,
 		POST,
-		DELETE
-	} method;
-
+		DELETE,
+		INVALID
+	};
 }
