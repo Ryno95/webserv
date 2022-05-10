@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <stdlib.h>
 
 #include <Utility.hpp>
 #include <Method.hpp>
