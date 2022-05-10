@@ -33,7 +33,7 @@ Test(requestLineTests, GET_valid_request)
 	{
 	}
 
-	cr_expect(request._method == GET);
+	cr_expect(request._method == Method::GET);
 	cr_expect(request._target == "/");
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 }
@@ -53,7 +53,7 @@ Test(requestLineTests, GET_valid_request_large_path)
 	if (request.getStatus() == HttpStatusCodes::URI_TOO_LONG)
 		return;
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-	cr_expect(request._method == GET);
+	cr_expect(request._method == Method::GET);
 	cr_expect(request._target == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
 }
 
@@ -70,7 +70,7 @@ Test(requestLineTests, POST_valid_request)
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-	cr_expect(request._method == POST);
+	cr_expect(request._method == Method::POST);
 	cr_expect(request._target == "/");
 }
 
@@ -87,7 +87,7 @@ Test(requestLineTests, DELETE_valid_request)
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-	cr_expect(request._method == DELETE);
+	cr_expect(request._method == Method::DELETE);
 	cr_expect(request._target == "/");
 }
 

@@ -15,7 +15,7 @@ Request::~Request()
 
 bool Request::hasBodyField() const
 {
-	if (_method == POST)
+	if (_method == Method::POST)
 	{
 		std::cout << "POST METHOD\n";
 		return true;
@@ -42,11 +42,11 @@ size_t Request::parseMethod()
 		throwError(HttpStatusCodes::BAD_REQUEST);
 	std::string method = _query.substr(0, pos);
 	if (method == "GET")
-		_method = GET;
+		_method = Method::GET;
 	else if (method == "POST")
-		_method = POST;
+		_method = Method::POST;
 	else if (method == "DELETE")
-		_method = DELETE;
+		_method = Method::DELETE;
 	else
 		throwError(HttpStatusCodes::BAD_REQUEST);
 	return pos;
@@ -192,7 +192,7 @@ std::string Request::getTarget() const
 	return _target;
 }
 
-method Request::getMethod() const
+Method::method Request::getMethod() const
 {
 	return _method;
 }

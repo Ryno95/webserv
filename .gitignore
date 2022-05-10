@@ -36,3 +36,6 @@
 unit_test
 *.log
 __pycache__
+
+# Server data
+root/images

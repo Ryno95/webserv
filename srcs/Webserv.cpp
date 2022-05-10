@@ -11,59 +11,60 @@
 #include <unistd.h>
 
 #include <defines.hpp>
-#include "Logger.hpp"
+#include <Logger.hpp>
 #include <Webserv.hpp>
+#include <config/GlobalConfig.hpp>
 
-Webserv::Webserv(uint port, std::string name)
-	: _port(port), _name(name)
+Webserv::Webserv(const ServerConfig& config)
+	: _config(config)
 {
-	setupSocket();
+	setup();
+	PollHandler::addPollfd(_listenerFd);
+	DEBUG("Created server instance on port: " << _config.port);
 }
 
 Webserv::~Webserv()
 {
-	DEBUG("Destroying Webserv instance with port: " << _port);
+	close(_listenerFd);
+	PollHandler::removePollfd(_listenerFd);
+
+	DEBUG("Destroyed server instance on port: " << _config.port);
 }
 
-void Webserv::setupSocket()
+void Webserv::setup()
 {
 	const int socketSwitch = 1;
-	pollfd listenSocket;
 	struct sockaddr_in servAddr;
 
 	servAddr.sin_family = AF_INET;
-	servAddr.sin_port = htons(this->_port);
+	servAddr.sin_port = htons(_config.port);
 	servAddr.sin_addr.s_addr = INADDR_ANY;
 
-	listenSocket.fd = socket(AF_INET, SOCK_STREAM, STD_TCP);
-	if (listenSocket.fd == SYSTEM_ERR)
+	_listenerFd = socket(AF_INET, SOCK_STREAM, STD_TCP);
+	if (_listenerFd == SYSTEM_ERR)
 		throw std::runtime_error("Socket() failed");
 
-	if (setsockopt(listenSocket.fd, SOL_SOCKET, SO_REUSEADDR,
+	if (setsockopt(_listenerFd, SOL_SOCKET, SO_REUSEADDR,
 				   (char *)&socketSwitch, sizeof(socketSwitch)) == SYSTEM_ERR)
 		throw std::runtime_error("setsockopt() failed");
 
-	if (bind(listenSocket.fd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == SYSTEM_ERR)
+	if (bind(_listenerFd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == SYSTEM_ERR)
 		throw std::runtime_error("Bind() failed");
 
-	if (fcntl(listenSocket.fd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+	if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 		throw std::runtime_error("fcntl() failed");
 
-	if (listen(listenSocket.fd, BACKLOG_AMOUNT) == SYSTEM_ERR)
+	if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // TMP, store GlobalConfig as a member of this class?
 		throw std::runtime_error("listen() failed");
-
-	listenSocket.events = POLLIN;
-	this->_fds.push_back(listenSocket);
-	this->_listenFd = listenSocket.fd;
 }
 
 void Webserv::handleClients()
 {
-	int size = _clients.size();;
+	size_t size = _clients.size();
 
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
-		if (_clients[i].handle() == false)
+		if (_clients[i]->handle() == false)
 		{
 			removeClient(i);
 			--i;
@@ -74,42 +75,24 @@ void Webserv::handleClients()
 
 void Webserv::handleListener()
 {
-	pollfd newClient;
-
-	if (_fds[0].revents == POLLIN)
+	if (PollHandler::isPollInSet(_listenerFd))
 	{
-		newClient.fd = accept(_listenFd, NULL, NULL);
-		if (newClient.fd != SYSTEM_ERR)
-		{
-			newClient.events = POLLIN;
-			_fds.push_back(newClient);
-			_clients.push_back(Client(&_fds.back()));
-			DEBUG("Accepted client on fd: " << newClient.fd);
-		}
+		int fd = accept(_listenerFd, NULL, NULL);
+		if (fd != SYSTEM_ERR)
+			_clients.push_back(new Client(fd));
+		else
+			WARN("Accept in our listener was blocking, so we continue");
 	}
 }
 
 void Webserv::removeClient(int index)
 {
-	DEBUG("Removing client: " << _fds[index].fd);
-
-	close(_fds[index + 1].fd);
-	_fds.erase(_fds.begin() + index + 1);
+	delete _clients[index];
 	_clients.erase(_clients.begin() + index);
 }
 
-void Webserv::run()
+void Webserv::handle()
 {
-	int pollRet;
-
-	DEBUG("Running webserver on port: " << _port);
-	while (true)
-	{
-		pollRet = poll(&_fds.front(), _fds.size(), 100); // 100 ms is temporary
-		if (pollRet == SYSTEM_ERR)
-			throw std::runtime_error("poll() failed");
-
-		handleListener();
-		handleClients();
-	}
+	handleListener();
+	handleClients();
 }

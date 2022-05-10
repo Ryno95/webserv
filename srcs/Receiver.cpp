@@ -31,8 +31,8 @@ void Receiver::receive()
 {
 	int bytesRecv;
 
-	_recvBuffer.resize(BUFFER_SIZE);
-	bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFER_SIZE, 0);
+	_recvBuffer.resize(BUFFERSIZE);
+	bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFERSIZE, 0);
 
 	if (bytesRecv == 0)
 		throw Client::DisconnectedException();
@@ -117,7 +117,6 @@ void Receiver::handle()
 			case ADD_REQUEST:
 				_readyRequests.push_back(_newRequest);
 				_state = RECV_HEADER;
-				std::cout << "Added request to queue!" << std::endl;
 				break;
 		}
 		if ((_state == RECV_HEADER || _state == RECV_BODY) && _recvBuffer.size() == 0)

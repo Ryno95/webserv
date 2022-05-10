@@ -24,7 +24,7 @@ public:
 	void			parse();
 	bool 			hasBodyField() const;
 	std::string 	getTarget() const;
-	method 			getMethod() const;
+	Method::method 			getMethod() const;
 	size_t 			getBodySize() const;
 
 	const std::string	&getBody() const;
@@ -41,7 +41,7 @@ private:
 
 	std::string	_query;
 
-	method		_method;
+	Method::method		_method;
 	std::string	_target;
 	std::string	_version;
 	std::map<std::string, std::string>	_headerFields;

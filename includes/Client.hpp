@@ -16,7 +16,7 @@ class Client
 {
 
 public:
-	Client(pollfd* fd);
+	Client(int fd);
 	~Client();
 
 	bool handle();
@@ -36,13 +36,12 @@ private:
 	void handleResponse();
 	void handleProcessing();
 
-	pollfd* _fd;
 	timeval _lastCommunicated;
 
 	std::deque<Request> _requests;
 	std::deque<Response *> _responses;
 
+	int _fd;
 	Receiver _receiver;
 	Sender _sender;
 };
-
