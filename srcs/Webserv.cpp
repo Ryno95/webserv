@@ -45,7 +45,7 @@ void Webserv::setup()
 		throw std::runtime_error("Socket() failed");
 
 	if (setsockopt(_listenerFd, SOL_SOCKET, SO_REUSEADDR,
-				   (char *)&socketSwitch, sizeof(socketSwitch)) == SYSTEM_ERR)
+				(char *)&socketSwitch, sizeof(socketSwitch)) == SYSTEM_ERR)
 		throw std::runtime_error("setsockopt() failed");
 
 	if (bind(_listenerFd, (struct sockaddr *)&servAddr, sizeof(servAddr)) == SYSTEM_ERR)
@@ -78,10 +78,12 @@ void Webserv::handleListener()
 	if (PollHandler::isPollInSet(_listenerFd))
 	{
 		int fd = accept(_listenerFd, NULL, NULL);
-		if (fd != SYSTEM_ERR)
-			_clients.push_back(new Client(fd));
-		else
+		if (fd == SYSTEM_ERR)
+		{
 			WARN("Accept in our listener was blocking, so we continue");
+		}
+		else
+			_clients.push_back(new Client(fd));
 	}
 }
 
