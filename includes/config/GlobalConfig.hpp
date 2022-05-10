@@ -9,27 +9,30 @@
 #include <MimeTypes.hpp>
 #include <config/AConfig.hpp>
 
-struct GlobalConfig : public AConfig
+namespace Webserver
 {
-	GlobalConfig(); 
-	GlobalConfig(const GlobalConfig& rhs);
-	~GlobalConfig();
-	GlobalConfig& operator=(const GlobalConfig& rhs);
+	struct GlobalConfig : public AConfig
+	{
+		GlobalConfig(); 
+		GlobalConfig(const GlobalConfig& rhs);
+		~GlobalConfig();
+		GlobalConfig& operator=(const GlobalConfig& rhs);
 
-	MimeTypes	mimeTypes;
+		MimeTypes	mimeTypes;
 
-	int			listenBacklog;
-	int			bufferSize;
-	std::string	mimeFilePath;
-	bool		debugEnabled;
-	bool		loggingEnabled;
+		int			listenBacklog;
+		int			bufferSize;
+		std::string	mimeFilePath;
+		bool		debugEnabled;
+		bool		loggingEnabled;
 
-	static const GlobalConfig& get();
-	static void set(const GlobalConfig& config);
+		static const GlobalConfig& get();
+		static void set(const GlobalConfig& config);
 
-private:
-	map_type fillVariablesMap();
+	private:
+		map_type fillVariablesMap();
 
-	static GlobalConfig _current;
+		static GlobalConfig _current;
 
-};
+	};
+}

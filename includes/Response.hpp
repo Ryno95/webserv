@@ -8,41 +8,33 @@
 #include <HttpStatusCode.hpp>
 #include <Request.hpp>
 
-/*
-	Server response pattern:
-
-	[version] [statuscode] [status]\r\n
-	[header_key]: [header_value]\r\n
-	...
-	[header_key]: [header_value]\r\n
-	\r\n
-	body
-*/
-
-class Response
+namespace Webserver
 {
-public:
-	Response();
-	Response(const Response &ref);
-	Response(HttpStatusCode code);
-	~Response();
+	class Response
+	{
+	public:
+		Response();
+		Response(const Response &ref);
+		Response(HttpStatusCode code);
+		~Response();
 
-	void	setStatusCode(HttpStatusCode code);
-	void	setBodyStream(std::ifstream* stream);
+		void	setStatusCode(HttpStatusCode code);
+		void	setBodyStream(std::ifstream* stream);
 
-	Response			&operator=(const Response &rhs);
+		Response			&operator=(const Response &rhs);
 
-	std::stringstream	*getHeaderStream();
-	void				addHeaderFields(); // hard coded for now to get the flow going
-	void addHeaderField(std::string key, std::string value);
+		std::stringstream	*getHeaderStream();
+		void				addHeaderFields(); // hard coded for now to get the flow going
+		void addHeaderField(std::string key, std::string value);
 
-	std::ifstream		*getBodyStream();
-	HttpStatusCode		getStatusCode() const;
+		std::ifstream		*getBodyStream();
+		HttpStatusCode		getStatusCode() const;
 
-private:
+	private:
 
-	HttpStatusCode 						_statusCode;
-	std::stringstream 					_headerStream;
-	std::ifstream						*_bodyStream;
-	std::map<std::string, std::string>	_headerFields;
-};
+		HttpStatusCode 						_statusCode;
+		std::stringstream 					_headerStream;
+		std::ifstream						*_bodyStream;
+		std::map<std::string, std::string>	_headerFields;
+	};
+}

@@ -5,65 +5,68 @@
 #include <ctime>
 #include <sstream>
 
-std::ofstream Logger::_logFile(LOGFILE);
-std::stringstream Logger::inputStream;
-
-static void printError(const std::string& msg)
+namespace Webserver
 {
-	std::cout << C_RED << "[ERROR] " << C_RESET << msg << std::endl;
-}
+	std::ofstream Logger::_logFile(LOGFILE);
+	std::stringstream Logger::inputStream;
 
-static void printWarning(const std::string& msg)
-{
-	std::cout << C_YELLOW << "[WARNING] " << C_RESET << msg << std::endl;
-}
-
-static void printDebug(const std::string& msg)
-{
-	std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
-}
-
-void Logger::log(const std::string& msg)
-{
-	if (!ENABLE_LOGGING)
-		return;
-
-	if (!_logFile.is_open())
+	static void printError(const std::string& msg)
 	{
-		printWarning("There's no logfile, no logs will be saved.");
-		return;
+		std::cout << C_RED << "[ERROR] " << C_RESET << msg << std::endl;
 	}
 
-	std::string timestamp = Util::getTimeStamp();
+	static void printWarning(const std::string& msg)
+	{
+		std::cout << C_YELLOW << "[WARNING] " << C_RESET << msg << std::endl;
+	}
 
-	_logFile.write(timestamp.c_str(), timestamp.size());
-	_logFile.write(msg.c_str(), msg.size());
-	_logFile.write("\n", 1);
-	_logFile.flush();
-}
+	static void printDebug(const std::string& msg)
+	{
+		std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
+	}
 
-void Logger::error()
-{
-	std::string str = inputStream.str();
-	inputStream.str("");
-	printError(str);
-	log("[ERROR] " + str);
-}
+	void Logger::log(const std::string& msg)
+	{
+		if (!ENABLE_LOGGING)
+			return;
 
-void Logger::warn()
-{
-	std::string str = inputStream.str();
-	inputStream.str("");
-	printWarning(str);
-	log("[WARNING] " + str);
-}
+		if (!_logFile.is_open())
+		{
+			printWarning("There's no logfile, no logs will be saved.");
+			return;
+		}
 
-void Logger::debug()
-{
-	if (!ENABLE_DEBUGGING)
-		return;
-	std::string str = inputStream.str();
-	inputStream.str("");
-	printDebug(str);
-	log("[DEBUG] " + str);
+		std::string timestamp = getTimeStamp();
+
+		_logFile.write(timestamp.c_str(), timestamp.size());
+		_logFile.write(msg.c_str(), msg.size());
+		_logFile.write("\n", 1);
+		_logFile.flush();
+	}
+
+	void Logger::error()
+	{
+		std::string str = inputStream.str();
+		inputStream.str("");
+		printError(str);
+		log("[ERROR] " + str);
+	}
+
+	void Logger::warn()
+	{
+		std::string str = inputStream.str();
+		inputStream.str("");
+		printWarning(str);
+		log("[WARNING] " + str);
+	}
+
+	void Logger::debug()
+	{
+		if (!ENABLE_DEBUGGING)
+			return;
+		std::string str = inputStream.str();
+		inputStream.str("");
+		printDebug(str);
+		log("[DEBUG] " + str);
+	}
 }

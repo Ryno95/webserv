@@ -1,30 +1,33 @@
 #include <config/ServerConfig.hpp>
 
-ServerConfig::ServerConfig() : AConfig::AConfig(fillVariablesMap())
+namespace Webserver
 {
-}
+	ServerConfig::ServerConfig() : AConfig::AConfig(fillVariablesMap())
+	{
+	}
 
-ServerConfig::ServerConfig(const ServerConfig& ref) : AConfig::AConfig(fillVariablesMap())
-{
-	*this = ref;
-}
+	ServerConfig::ServerConfig(const ServerConfig& ref) : AConfig::AConfig(fillVariablesMap())
+	{
+		*this = ref;
+	}
 
-ServerConfig::~ServerConfig()
-{
-}
+	ServerConfig::~ServerConfig()
+	{
+	}
 
-ServerConfig& ServerConfig::operator=(const ServerConfig& ref)
-{
-	port = ref.port;
-	hosts = ref.hosts;
-	return *this;
-}
+	ServerConfig& ServerConfig::operator=(const ServerConfig& ref)
+	{
+		port = ref.port;
+		hosts = ref.hosts;
+		return *this;
+	}
 
-AConfig::map_type ServerConfig::fillVariablesMap()
-{
-	map_type map;
+	AConfig::map_type ServerConfig::fillVariablesMap()
+	{
+		map_type map;
 
-	map["listen_port"]		= var_data(var_uint, &port);
+		map["listen_port"]		= var_data(var_uint, &port);
 
-	return map;
+		return map;
+	}
 }
