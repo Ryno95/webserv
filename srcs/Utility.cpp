@@ -2,6 +2,7 @@
 
 namespace Util
 {
+
 std::string removeLeadingWhitespace(const std::string &str)
 {
 	std::string out = str;
@@ -41,4 +42,5 @@ std::string removeTrailingWhitespace(const std::string &str)
 	out.erase(out.size() - count, count);
 	return out;
 }
+
 }
