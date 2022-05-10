@@ -14,7 +14,7 @@ POSTMethod::~POSTMethod() {}
 std::string POSTMethod::createFileName(const std::string &target)
 {
 	const std::string	timestamp_s = std::to_string(time(nullptr));
-	const std::string	root("root/uploads/"); // Will be replaced by config file
+	const std::string	root(ROOT); // Will be replaced by config file
 	std::string			fileName;
 	
 	fileName =  root;
@@ -35,6 +35,7 @@ void POSTMethod::setPostResponseHeaders()
 {
 	_response->addHeaderField("Location", _location);
 	_response->addHeaderField("Content-Length", std::to_string(_request.getBodySize()));
+	_response->addHeaderField("Created-file", _absPathForCreatedFile);
 }
 
 Response* POSTMethod::process()
@@ -42,15 +43,17 @@ Response* POSTMethod::process()
 	const std::string	fileName  = createFileName(_request.getTarget());
 	std::ofstream       *outfile = new std::ofstream();
 	
-	outfile->open(fileName, std::ios_base::app);
+	outfile->open(fileName);
 	if (!outfile->is_open())
 	{
-		_response->setStatusCode(HttpStatusCodes::BAD_REQUEST);
+		perror("");
+		_response->setStatusCode(HttpStatusCodes::NOT_FOUND);
 		delete outfile;
 		return _response;
 	}
 	// Writing process will be in chunks
-	*outfile << _request.getBody() << std::endl;
+	_absPathForCreatedFile = fileName;
+	*outfile << _request.getBody();
 	delete outfile;
 	setPostResponseHeaders();
 	_response->setStatusCode(HttpStatusCodes::CREATED);

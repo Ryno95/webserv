@@ -8,6 +8,9 @@
 #endif
 
 
+#define ROOT "./root/uploads/"
+
+
 #pragma region CONFIG FILE
 
 #define MAX_TARGET_LEN 50

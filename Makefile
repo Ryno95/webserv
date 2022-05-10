@@ -73,6 +73,7 @@ re: fclean all
 
 clean:
 	rm -rf $(OBJ_DIR)
+	rm -rf root/uploads/*.txt
 
 fclean: clean
 	rm -f $(TEST_NAME)
