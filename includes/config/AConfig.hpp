@@ -2,7 +2,7 @@
 
 #include <map>
 #include <vector>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <Utility.hpp>
 #include <Method.hpp>

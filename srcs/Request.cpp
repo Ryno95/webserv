@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cctype>
+#include <cstdlib>
 
 Request::Request() {}
 
