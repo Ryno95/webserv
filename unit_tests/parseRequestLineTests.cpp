@@ -1,6 +1,8 @@
 #include <criterion/criterion.h>
 #include <Request.hpp>
 
+using namespace Webserver;
+
 Test(simple, valid)
 {
 	cr_expect(1 == 1);
