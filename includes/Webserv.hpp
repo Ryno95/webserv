@@ -7,28 +7,25 @@
 #include <vector>
 
 #include <Client.hpp>
-
-#define BACKLOG_AMOUNT 42
-#define DISCONNECT 17
+#include <config/ServerConfig.hpp>
+#include <PollHandler.hpp>
 
 class Webserv
 {
 	public:
-		Webserv(uint port, std::string name);
+		Webserv(const ServerConfig& config);
 		~Webserv();
 
-		void run();
+		void handle();
 
 	private:
-		void setupSocket();
+		void setup();
 		void handleListener();
 		void handleClients();
-		void handleTimeout();
 		void removeClient(int index);
 
-		uint				_port;
-		int					_listenFd;
-		std::vector<pollfd>	_fds;
-		std::vector<Client>	_clients;
-		std::string			_name;
+		const ServerConfig& _config;
+
+		int						_listenerFd;
+		std::vector<Client*>	_clients;
 };

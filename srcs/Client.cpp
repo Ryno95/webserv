@@ -2,6 +2,8 @@
 #include <GETMethod.hpp>
 #include <POSTMethod.hpp>
 #include <defines.hpp>
+#include <Logger.hpp>
+#include <PollHandler.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -9,13 +11,20 @@
 
 #include <iostream>
 
-Client::Client(pollfd* fd) : _fd(fd), _receiver(fd->fd), _sender(fd->fd)
+Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
 {
+	PollHandler::addPollfd(fd);
 	hasCommunicated();
+
+	DEBUG("Accepted client on fd: " << _fd);
 }
 
 Client::~Client()
 {
+	close(_fd);
+	PollHandler::removePollfd(_fd);
+
+	DEBUG("Client disconnected: " << _fd);
 }
 
 /*
@@ -23,24 +32,23 @@ Client::~Client()
 */
 bool Client::handle()
 {
-	if (_fd->revents == 0)
+	if (!PollHandler::isPollSet(_fd))
 		return checkTimeout();
 
 	hasCommunicated();
 
 	try
 	{
-		if (BIT_ISSET(_fd->revents, POLLIN_BIT))
+		if (PollHandler::isPollInSet(_fd))
 			handleRequest();
 
 		handleProcessing();
 
-		if (BIT_ISSET(_fd->revents, POLLOUT_BIT))
+		if (PollHandler::isPollOutSet(_fd))
 			handleResponse();
 	}
 	catch(const DisconnectedException& e)
 	{
-		std::cerr << e.what() << '\n';
 		return false;
 	}
 
@@ -54,7 +62,7 @@ void Client::handleRequest()
 	if (newRequests.size() == 0)
 		return;
 
-	_fd->events = POLLIN | POLLOUT;
+	PollHandler::setPollOut(_fd, true);
 
 	std::deque<Request>::const_iterator first = newRequests.begin();
 	std::deque<Request>::const_iterator last = newRequests.end();
@@ -75,20 +83,21 @@ void Client::handleProcessing()
 
 	switch (request.getMethod())
 	{
-		case GET:
-			std::cout << "Entering GET method!\n";
+		case Method::GET:
+			DEBUG("Entering GET method!");
 			response = GETMethod(request).process();
 			break;
-		case POST:
-			std::cout << "Entering POST method!\n";
+		case Method::POST:
+			DEBUG("Entering POST method!");
 			response = POSTMethod(request).process();
+			break;
+		case Method::DELETE:
+			WARN("DELETE is not yet implemented!");
 			break;
 	}
 
 	_requests.pop_front();
 	_responses.push_back(response);
-
-	std::cout << "POLLOUT activated" << std::endl;
 }
 
 void Client::handleResponse()
@@ -97,7 +106,6 @@ void Client::handleResponse()
 	{
 		if (_responses.size() > 0)
 		{
-			std::cout << "Response set!" << std::endl;
 			_sender.setResponse(_responses.front());
 			_responses.pop_front();
 		}
@@ -107,8 +115,7 @@ void Client::handleResponse()
 		_sender.handle();
 	else
 	{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-		_fd->events = POLLIN;
-		std::cout << "POLLOUT deactivated" << std::endl;
+		PollHandler::setPollOut(_fd, false);
 	}
 }
 

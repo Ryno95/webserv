@@ -3,7 +3,7 @@
 
 Test(Mimes, valid)
 {
-	MimeTypes mimes("config/TESTmime.config");
+	MimeTypes mimes("config/test.mime");
 
 	cr_expect(mimes.getMIMEType("html") == "text/html");
 	cr_expect(mimes.getMIMEType("htm") == "text/html");
@@ -13,7 +13,7 @@ Test(Mimes, valid)
 
 Test(Mimes, invalid)
 {
-	MimeTypes mimes("config/TESTmime.config");
+	MimeTypes mimes("config/test.mime");
 
 	bool boolean;
 	try

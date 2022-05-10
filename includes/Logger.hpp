@@ -3,25 +3,25 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #define ENABLE_DEBUGGING		true
 #define ENABLE_DEBUG_LOGGING	true
 #define ENABLE_LOGGING			true
-#define LOGFILE					"warnings.log"
+#define LOGFILE					"logs.log"
 
-#define DEBUG(x) { std::stringstream stream; Logger::debug(stream << x); }
-#define WARN(x) { std::stringstream stream; Logger::warn(stream << x); }
-
-// #define DEBUG(x) Logger::debug(std::stringstream() << x)
-// #define WARN(x) Logger::warn(std::stringstream() << x)
+#define DEBUG(x) Logger::inputStream << x; Logger::debug()
+#define WARN(x) Logger::inputStream << x; Logger::warn()
+#define ERROR(x) Logger::inputStream << x; Logger::error()
 
 class Logger
 {
 public:
-	static void debug(const std::string& msg);
-	static void debug(const std::ostream& ss);
-	static void warn(const std::string& msg);
-	static void warn(const std::ostream& ss);
+	static void debug();
+	static void warn();
+	static void error();
+
+	static std::stringstream inputStream;
 
 private:
 	static std::ofstream _logFile;

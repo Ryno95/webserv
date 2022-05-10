@@ -19,7 +19,14 @@ CLASSES		=	Webserv\
 				GETMethod\
 				MimeTypes\
 				Logger\
-				POSTMethod
+				POSTMethod\
+				PollHandler\
+				Utility\
+				config/ConfigFileParser\
+				config/AConfig\
+				config/HostConfig\
+				config/ServerConfig\
+				config/GlobalConfig
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -39,7 +46,7 @@ TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HPPS)
+$(NAME): $(OBJS) $(HPPS) $(MAIN)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC) $(OBJS)
@@ -59,12 +66,8 @@ run: $(NAME)
 	./$(NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
+	@mkdir -p $(OBJ_DIR) $(@D)
 	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
-
-$(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
 
 re: fclean all
 

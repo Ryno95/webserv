@@ -5,6 +5,7 @@
 #include <sstream>
 
 std::ofstream Logger::_logFile(LOGFILE);
+std::stringstream Logger::inputStream;
 
 static std::string getTimeStamp()
 {
@@ -22,6 +23,11 @@ static std::string getTimeStamp()
 	return timestamp;
 }
 
+static void printError(const std::string& msg)
+{
+	std::cout << C_RED << "[ERROR] " << C_RESET << msg << std::endl;
+}
+
 static void printWarning(const std::string& msg)
 {
 	std::cout << C_YELLOW << "[WARNING] " << C_RESET << msg << std::endl;
@@ -31,6 +37,9 @@ static void printDebug(const std::string& msg)
 {
 	std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
 }
+
+
+
 
 void Logger::log(const std::string& msg)
 {
@@ -51,30 +60,28 @@ void Logger::log(const std::string& msg)
 	_logFile.flush();
 }
 
-void Logger::warn(const std::string& msg)
+void Logger::error()
 {
-	printWarning(msg);
-	log("[WARNING] " + msg);
+	std::string str = inputStream.str();
+	inputStream.str("");
+	printError(str);
+	log("[ERROR] " + str);
 }
 
-void Logger::debug(const std::string& msg)
+void Logger::warn()
+{
+	std::string str = inputStream.str();
+	inputStream.str("");
+	printWarning(str);
+	log("[WARNING] " + str);
+}
+
+void Logger::debug()
 {
 	if (!ENABLE_DEBUGGING)
 		return;
-	printDebug(msg);
-
-	if (ENABLE_DEBUG_LOGGING)
-		log("[DEBUG] " + msg);
-}
-
-void Logger::warn(const std::ostream& s)
-{
-	const std::stringstream& ss = static_cast<const std::stringstream&>(s);
-	Logger::warn(ss.str());
-}
-
-void Logger::debug(const std::ostream& s)
-{
-	const std::stringstream& ss = static_cast<const std::stringstream&>(s);
-	Logger::debug(ss.str());
+	std::string str = inputStream.str();
+	inputStream.str("");
+	printDebug(str);
+	log("[DEBUG] " + str);
 }
