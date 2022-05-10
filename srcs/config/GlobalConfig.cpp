@@ -20,9 +20,14 @@ void GlobalConfig::set(const GlobalConfig& config)
 
 
 
-GlobalConfig::GlobalConfig() : AConfig::AConfig(fillVariablesMap())
-{
-}
+GlobalConfig::GlobalConfig()
+:	AConfig::AConfig(fillVariablesMap()),
+	listenBacklog(42),
+	bufferSize(2048),
+	mimeFilePath("mime.config"),
+	debugEnabled(false),
+	loggingEnabled(false)
+{}
 
 GlobalConfig::GlobalConfig(const GlobalConfig& ref) : AConfig::AConfig(fillVariablesMap())
 {
