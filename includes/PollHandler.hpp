@@ -1,11 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <poll.h>
 
-class Webserv;
-
-#include <Webserv.hpp>
 #include <config/ServerConfig.hpp>
+#include <defines.hpp>
 
 namespace Webserver
 {
@@ -24,7 +23,7 @@ namespace Webserver
 	private:
 		static pollfd* findPollfd(int fd);
 
-		static std::vector<pollfd>		_fds;
+		static std::vector<pollfd> _fds;
 
 	};
 }
