@@ -44,7 +44,9 @@ namespace Webserver
 		if (_dataStream == nullptr)
 		{
 			if (_currentState != SEND_BODY)
+			{
 				WARN("THIS SHOULD NOT OCCUR!");
+			}
 			return 0;
 		}
 
@@ -78,7 +80,9 @@ namespace Webserver
 		}
 
 		if (bufferSize > BUFFERSIZE)
+		{
 			WARN("UNEXPECTED AMOUNT OF BYTES STORED IN THE BUFFER! (Sender.cpp)"); // DEBUG LINE
+		}
 
 		ssize_t written;
 		written = write(_fd, _buffer, bufferSize);

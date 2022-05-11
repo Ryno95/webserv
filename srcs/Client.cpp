@@ -96,6 +96,9 @@ namespace Webserver
 			case Method::DELETE:
 				WARN("DELETE is not yet implemented!");
 				break;
+			case Method::INVALID:
+				WARN("INVALID method still continued processing, which is not expected.");
+				break;
 		}
 
 		_requests.pop_front();
