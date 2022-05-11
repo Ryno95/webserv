@@ -21,4 +21,18 @@ namespace Webserver
 			}
 		}
 	}
+
+	const std::vector<Webserv*>& ServerHandler::getServers()
+	{
+		return _servers;
+	}
+
+	void ServerHandler::stop()
+	{
+		for (size_t i = 0; i < _servers.size(); i++)
+		{
+			delete _servers[i];
+		}
+		DEBUG("All servers have been stopped.");
+	}
 }
