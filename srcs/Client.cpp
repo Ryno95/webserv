@@ -13,7 +13,7 @@
 
 namespace Webserver
 {
-	Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
+	Client::Client(const Router& router, int fd) : _fd(fd), _receiver(fd), _sender(fd), _router(router)
 	{
 		PollHandler::addPollfd(fd);
 		hasCommunicated();
@@ -85,11 +85,11 @@ namespace Webserver
 
 		switch (request.getMethod())
 		{
-			case Method::GET:
+			case Method::GET: // set response stream
 				DEBUG("Entering GET method!");
 				response = GETMethod(request).process();
 				break;
-			case Method::POST:
+			case Method::POST: // writes to file
 				DEBUG("Entering POST method!");
 				response = POSTMethod(request).process();
 				break;

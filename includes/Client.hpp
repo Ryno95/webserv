@@ -11,6 +11,7 @@
 #include <Receiver.hpp>
 #include <Response.hpp>
 #include <Sender.hpp>
+#include <Router.hpp>
 
 namespace Webserver
 {
@@ -18,7 +19,7 @@ namespace Webserver
 	{
 
 	public:
-		Client(int fd);
+		Client(const Router& router, int fd);
 		~Client();
 
 		bool handle();
@@ -46,5 +47,6 @@ namespace Webserver
 		int _fd;
 		Receiver _receiver;
 		Sender _sender;
+		const Router& _router;
 	};
 }
