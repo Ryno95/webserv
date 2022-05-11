@@ -44,6 +44,9 @@ namespace Webserver
 		void parseHostVariable(const std::string& line, HostConfig& config) const;
 		void parseServerVariable(const std::string& line, ServerConfig& config) const;
 
+		void validateAllConfigs() const;
+	
+
 		std::vector<ServerConfig> _serverConfigs;
 		std::string _filePath;
 		size_t _lineCount;

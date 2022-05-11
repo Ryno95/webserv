@@ -2,9 +2,17 @@
 
 namespace Webserver
 {
-	HostConfig::HostConfig() : AConfig::AConfig(fillVariablesMap())
+	HostConfig::HostConfig()
+	:	AConfig::AConfig(fillVariablesMap()),
+		autoIndexEnabled(false),
+		root("root"),
+		defaultIndex("index.html"),
+		defaultError("error.html"),
+		acceptedMethods(Method::GET)
 	{
+		names.push_back("default");
 	}
+
 
 	HostConfig::HostConfig(const HostConfig& ref) : AConfig::AConfig(fillVariablesMap())
 	{
@@ -38,5 +46,10 @@ namespace Webserver
 		map["location"]			= var_data(var_strings, &locations);
 		map["autoindex"]		= var_data(var_bool, &autoIndexEnabled);
 		return map;
+	}
+
+	void HostConfig::validate() const
+	{
+		return ;
 	}
 }

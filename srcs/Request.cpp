@@ -21,10 +21,7 @@ namespace Webserver
 	bool Request::hasBodyField() const
 	{
 		if (_method == Method::POST)
-		{
-			std::cout << "POST METHOD\n";
 			return true;
-		}
 		return false;
 	}
 

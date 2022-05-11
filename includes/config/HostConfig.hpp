@@ -15,6 +15,8 @@ namespace Webserver
 		~HostConfig();
 		HostConfig& operator=(const HostConfig& ref);
 
+		void	validate() const;
+
 		std::vector<std::string>	names;
 		std::vector<std::string>	locations;
 		bool						autoIndexEnabled;

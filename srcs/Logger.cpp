@@ -1,13 +1,14 @@
 #include <Colors.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
+#include <config/GlobalConfig.hpp>
 
 #include <ctime>
 #include <sstream>
 
 namespace Webserver
 {
-	std::ofstream Logger::_logFile(LOGFILE);
+	std::ofstream Logger::_logFile;
 	std::stringstream Logger::inputStream;
 
 	static void printError(const std::string& msg)
@@ -22,18 +23,23 @@ namespace Webserver
 
 	static void printDebug(const std::string& msg)
 	{
-		std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
+		if (GlobalConfig::get().debugEnabled)
+			std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
 	}
 
 	void Logger::log(const std::string& msg)
 	{
-		if (!ENABLE_LOGGING)
+		if (!GlobalConfig::get().loggingEnabled)
 			return;
 
 		if (!_logFile.is_open())
 		{
-			printWarning("There's no logfile, no logs will be saved.");
-			return;
+			_logFile.open(LOGFILE);
+			if (!_logFile.is_open())
+				{
+					printWarning("There's no logfile, no logs will be saved.");
+					return;
+				}
 		}
 
 		std::string timestamp = getTimeStamp();
@@ -62,8 +68,6 @@ namespace Webserver
 
 	void Logger::debug()
 	{
-		if (!ENABLE_DEBUGGING)
-			return;
 		std::string str = inputStream.str();
 		inputStream.str("");
 		printDebug(str);

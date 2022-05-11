@@ -25,9 +25,11 @@ namespace Webserver
 		std::string	mimeFilePath;
 		bool		debugEnabled;
 		bool		loggingEnabled;
+		std::string	logFile;
 
 		static const GlobalConfig& get();
 		static void set(const GlobalConfig& config);
+		void validate() const;
 
 	private:
 		map_type fillVariablesMap();
@@ -35,4 +37,5 @@ namespace Webserver
 		static GlobalConfig _current;
 
 	};
+	
 }
