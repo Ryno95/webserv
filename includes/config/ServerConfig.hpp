@@ -5,19 +5,22 @@
 #include <config/HostConfig.hpp>
 #include <config/AConfig.hpp>
 
-typedef unsigned int uint;
-
-struct ServerConfig : public AConfig
+namespace Webserver
 {
-	ServerConfig();
-	ServerConfig(const ServerConfig& ref);
-	~ServerConfig();
-	ServerConfig& operator=(const ServerConfig& ref);
+	typedef unsigned int uint;
 
-	uint					port;
-	std::vector<HostConfig>	hosts;
+	struct ServerConfig : public AConfig
+	{
+		ServerConfig();
+		ServerConfig(const ServerConfig& ref);
+		~ServerConfig();
+		ServerConfig& operator=(const ServerConfig& ref);
 
-private:
-	map_type fillVariablesMap();
+		uint					port;
+		std::vector<HostConfig>	hosts;
 
-};
+	private:
+		map_type fillVariablesMap();
+
+	};
+}

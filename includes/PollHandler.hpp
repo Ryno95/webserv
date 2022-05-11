@@ -7,23 +7,26 @@ class Webserv;
 #include <Webserv.hpp>
 #include <config/ServerConfig.hpp>
 
-class PollHandler
+namespace Webserver
 {
-public:
-	static void run();
-	static void addPollfd(int fd);
-	static void removePollfd(int fd);
+	class PollHandler
+	{
+	public:
+		static void run();
+		static void addPollfd(int fd);
+		static void removePollfd(int fd);
 
-	static bool isPollSet(int fd);
-	static bool isPollOutSet(int fd);
-	static bool isPollInSet(int fd);
-	static void setPollOut(int fd, bool enabled);
-	static void addServer(const ServerConfig& config);
+		static bool isPollSet(int fd);
+		static bool isPollOutSet(int fd);
+		static bool isPollInSet(int fd);
+		static void setPollOut(int fd, bool enabled);
+		static void addServer(const ServerConfig& config);
 
-private:
-	static pollfd* findPollfd(int fd);
+	private:
+		static pollfd* findPollfd(int fd);
 
-	static std::vector<Webserv*>	_servers;
-	static std::vector<pollfd>		_fds;
+		static std::vector<Webserv*>	_servers;
+		static std::vector<pollfd>		_fds;
 
-};
+	};
+}

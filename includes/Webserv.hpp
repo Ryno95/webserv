@@ -10,22 +10,25 @@
 #include <config/ServerConfig.hpp>
 #include <PollHandler.hpp>
 
-class Webserv
+namespace Webserver
 {
-	public:
-		Webserv(const ServerConfig& config);
-		~Webserv();
+	class Webserv
+	{
+		public:
+			Webserv(const ServerConfig& config);
+			~Webserv();
 
-		void handle();
+			void handle();
 
-	private:
-		void setup();
-		void handleListener();
-		void handleClients();
-		void removeClient(int index);
+		private:
+			void setup();
+			void handleListener();
+			void handleClients();
+			void removeClient(int index);
 
-		const ServerConfig& _config;
+			const ServerConfig& _config;
 
-		int						_listenerFd;
-		std::vector<Client*>	_clients;
-};
+			int						_listenerFd;
+			std::vector<Client*>	_clients;
+	};
+}

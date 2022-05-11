@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <string>
 #include <map>
 #include <vector>
@@ -9,41 +10,45 @@
 #include <config/GlobalConfig.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
+#include <Exception.hpp>
 
-class ConfigFileParser
+namespace Webserver
 {
-public:
-	ConfigFileParser(const std::string& filePath);
-	~ConfigFileParser();
-
-	std::vector<ServerConfig>& parse();
-
-private:
-	typedef enum
+	class ConfigFileParser
 	{
-		NONE,
+	public:
+		ConfigFileParser(const std::string& filePath);
+		~ConfigFileParser();
 
-		PRE_SERVER_BLOCK,
-		IN_SERVER_BLOCK,
+		std::vector<ServerConfig>& parse();
 
-		PRE_HOST_BLOCK,
-		IN_HOST_BLOCK,
+	private:
+		typedef enum
+		{
+			NONE,
 
-		PRE_APPLICATION_BLOCK,
-		IN_APPLICATION_BLOCK
-	} state;
+			PRE_SERVER_BLOCK,
+			IN_SERVER_BLOCK,
 
-	template<class T>
-	void parseVariable(const std::string& value, T* dest) const;
+			PRE_HOST_BLOCK,
+			IN_HOST_BLOCK,
 
-	void parseGlobalVariable(const std::string& line, GlobalConfig& config) const;
-	void parseHostVariable(const std::string& line, HostConfig& config) const;
-	void parseServerVariable(const std::string& line, ServerConfig& config) const;
+			PRE_APPLICATION_BLOCK,
+			IN_APPLICATION_BLOCK
+		} state;
 
-	std::vector<ServerConfig> _serverConfigs;
-	std::string _filePath;
-	size_t _lineCount;
-	std::map<std::string, int> _hostVariables;
-	std::map<std::string, int> _serverVariables;
+		template<class T>
+		void parseVariable(const std::string& value, T* dest) const;
 
-};
+		void parseGlobalVariable(const std::string& line, GlobalConfig& config) const;
+		void parseHostVariable(const std::string& line, HostConfig& config) const;
+		void parseServerVariable(const std::string& line, ServerConfig& config) const;
+
+		std::vector<ServerConfig> _serverConfigs;
+		std::string _filePath;
+		size_t _lineCount;
+		std::map<std::string, int> _hostVariables;
+		std::map<std::string, int> _serverVariables;
+
+	};
+}

@@ -7,53 +7,50 @@
 #include <HttpStatusCode.hpp>
 #include <Method.hpp>
 
-class Request
+namespace Webserver
 {
-#define COLON 			":"
-#define CRLF			"\r\n"
-#define CRLF_CHAR_COUNT	2
-#define TERMINATOR_LEN	4
+	class Request
+	{
+	#define COLON 			":"
+	#define CRLF			"\r\n"
+	#define CRLF_CHAR_COUNT	2
+	#define TERMINATOR_LEN	4
 
-public:
-	Request();
-	Request(std::string query);
-	~Request();
+	public:
+		Request();
+		Request(std::string query);
+		~Request();
 
-	void 			throwError(HttpStatusCode code);
-	void			parse();
-	bool 			hasBodyField() const;
+		void 			throwError(HttpStatusCode code);
+		void			parse();
+		bool 			hasBodyField() const;
 
-	HttpStatusCode		getStatus() const;
-	Method::method 		getMethod() const;
-	std::string 		getTarget() const;
-	size_t 				getBodySize() const;
-	const std::string	&getBody() const;
+		HttpStatusCode		getStatus() const;
+		Method::method 		getMethod() const;
+		std::string 		getTarget() const;
+		size_t 				getBodySize() const;
+		const std::string	&getBody() const;
 
-	void				appendBody(const std::string &body);
+		void				appendBody(const std::string &body);
 
-private:
-	size_t 	parseRequestLine();
-	void 	parseHeaderFields(size_t pos);
-	void 	addKeyValuePair(const std::string &src, size_t newLinePos);
+	private:
+		size_t 	parseRequestLine();
+		void 	parseHeaderFields(size_t pos);
+		void 	addKeyValuePair(const std::string &src, size_t newLinePos);
 
-	size_t parseRequestMethod();
-	size_t parseTarget(size_t pos);
-	size_t parseVersion(size_t pos);
+		size_t parseRequestMethod();
+		size_t parseTarget(size_t pos);
+		size_t parseVersion(size_t pos);
 
-	std::string	_query;
+		std::string	_query;
 
-	Method::method		_method;
-	std::string	_target;
-	std::string	_version;
-	std::map<std::string, std::string>	_headerFields;
-	std::string	_body;
+		Method::method		_method;
+		std::string	_target;
+		std::string	_version;
+		std::map<std::string, std::string>	_headerFields;
+		std::string	_body;
 
-	HttpStatusCode _status;
-};
+		HttpStatusCode _status;
 
-
-
-
-
-
-
+	};
+}

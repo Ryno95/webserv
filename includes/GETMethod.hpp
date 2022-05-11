@@ -4,11 +4,14 @@
 
 #include <string>
 
-class GETMethod : public AMethod
+namespace Webserver
 {
-public:
-	GETMethod(Request const& request);
-	~GETMethod();
+	class GETMethod : public AMethod
+	{
+	public:
+		GETMethod(Request const& request);
+		~GETMethod();
 
-	Response* process();
-};
+		Response* process();
+	};
+}

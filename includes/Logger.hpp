@@ -14,17 +14,20 @@
 #define WARN(x) Logger::inputStream << x; Logger::warn()
 #define ERROR(x) Logger::inputStream << x; Logger::error()
 
-class Logger
+namespace Webserver
 {
-public:
-	static void debug();
-	static void warn();
-	static void error();
+	class Logger
+	{
+	public:
+		static void debug();
+		static void warn();
+		static void error();
 
-	static std::stringstream inputStream;
+		static std::stringstream inputStream;
 
-private:
-	static std::ofstream _logFile;
+	private:
+		static std::ofstream _logFile;
 
-	static void log(const std::string& msg);
-};
+		static void log(const std::string& msg);
+	};
+}

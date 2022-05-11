@@ -4,6 +4,8 @@
 #include <iostream>
 #include <../includes/Request.hpp>
 
+using namespace Webserver;
+
 Test(ParseHeaderTests, ValidHeader)
 {
 	const std::string input =	"User-Agent: libcurl/7.16.3\r\n"
