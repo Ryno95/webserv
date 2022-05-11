@@ -1,7 +1,5 @@
 #pragma once
 
-#include <poll.h>
-
 #include <stdexcept>
 #include <string>
 #include <deque>
@@ -17,7 +15,6 @@ namespace Webserver
 {
 	class Client
 	{
-
 	public:
 		Client(const Router& router, int fd);
 		~Client();
@@ -35,9 +32,9 @@ namespace Webserver
 	private:
 		bool checkTimeout() const;
 		void hasCommunicated();
-		void handleRequest();
-		void handleResponse();
-		void handleProcessing();
+		void recvRequests();
+		void sendResponses();
+		void processRequests();
 
 		timeval _lastCommunicated;
 
