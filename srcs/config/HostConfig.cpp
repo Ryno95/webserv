@@ -47,4 +47,9 @@ namespace Webserver
 		map["autoindex"]		= var_data(var_bool, &autoIndexEnabled);
 		return map;
 	}
+
+	void HostConfig::validateHostConfig()
+	{
+		return ;
+	}
 }
