@@ -86,13 +86,13 @@ namespace Webserver
 			{
 				_state = RECV_BODY;
 				_bodyBytesReceived = 0;
-				_bodySize = _newRequest.getBodySize();
+				_bodySize = _newRequest.getBodySize(); // body size < max body size?
 				return ;
 			}
 		}
-		catch(const std::exception& e) // only catch parse exceptions?
+		catch(const InvalidRequestException& e)
 		{
-			std::cerr << e.what() << '\n';
+			_newRequest.setStatus(e.getStatus());
 		}
 		_state = ADD_REQUEST;
 	}
