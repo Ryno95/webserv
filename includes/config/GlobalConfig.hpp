@@ -25,6 +25,7 @@ namespace Webserver
 		std::string	mimeFilePath;
 		bool		debugEnabled;
 		bool		loggingEnabled;
+		std::string	defaultLogFile;
 
 		static const GlobalConfig& get();
 		static void set(const GlobalConfig& config);

@@ -27,7 +27,8 @@ namespace Webserver
 		bufferSize(2048),
 		mimeFilePath("mime.config"),
 		debugEnabled(false),
-		loggingEnabled(false)
+		loggingEnabled(false),
+		defaultLogFile("logs.log")
 	{
 	}
 
@@ -47,6 +48,7 @@ namespace Webserver
 		mimeTypes = rhs.mimeTypes;
 		debugEnabled = rhs.debugEnabled;
 		loggingEnabled = rhs.loggingEnabled;
+		defaultLogFile = rhs.defaultLogFile;
 		return *this;
 	}
 
@@ -58,6 +60,7 @@ namespace Webserver
 		map["mime_config"]		= var_data(var_string, &mimeFilePath);
 		map["debug_mode"]		= var_data(var_bool, &debugEnabled);
 		map["debug_logging"]	= var_data(var_bool, &loggingEnabled);
+		map["default_log"]		= var_data(var_bool, &defaultLogFile);
 		return map;
 	}
 }
