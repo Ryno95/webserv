@@ -23,6 +23,7 @@ CLASSES		=	Webserv\
 				PollHandler\
 				ServerHandler\
 				Utility\
+				Router\
 				config/ConfigFileParser\
 				config/AConfig\
 				config/HostConfig\
