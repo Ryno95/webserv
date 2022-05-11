@@ -1,4 +1,5 @@
 #include <config/GlobalConfig.hpp>
+#include <defines.hpp>
 
 namespace Webserver
 {
@@ -63,4 +64,13 @@ namespace Webserver
 		map["default_log"]		= var_data(var_string, &defaultLogFile);
 		return map;
 	}
+
+	void GlobalConfig::validateGlobalConfig() const
+	{
+		if (listenBacklog <= 0)
+			throw InvalidValueException("application, listen_backlog should be bigger than 0");
+		else if (bufferSize <= 0|| bufferSize >= BODY_SIZE_LIMIT)
+			throw InvalidValueException("application, buffer_size should be between 1 and body_size_limit");
+	}
 }
+

@@ -29,6 +29,7 @@ namespace Webserver
 
 		static const GlobalConfig& get();
 		static void set(const GlobalConfig& config);
+		void validateGlobalConfig() const;
 
 	private:
 		map_type fillVariablesMap();
@@ -36,4 +37,5 @@ namespace Webserver
 		static GlobalConfig _current;
 
 	};
+	
 }
