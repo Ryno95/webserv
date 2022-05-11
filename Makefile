@@ -21,6 +21,7 @@ CLASSES		=	Webserv\
 				Logger\
 				POSTMethod\
 				PollHandler\
+				ServerHandler\
 				Utility\
 				config/ConfigFileParser\
 				config/AConfig\
