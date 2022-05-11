@@ -19,8 +19,11 @@ namespace Webserver
 		uint					port;
 		std::vector<HostConfig>	hosts;
 
-	private:
-		map_type fillVariablesMap();
+		void		validateServerConfig();
 
+	private:
+		map_type 	fillVariablesMap();
+
+		static const int	_maxPortNumber = 65535;
 	};
 }
