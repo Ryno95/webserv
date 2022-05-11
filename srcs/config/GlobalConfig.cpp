@@ -60,7 +60,7 @@ namespace Webserver
 		map["mime_config"]		= var_data(var_string, &mimeFilePath);
 		map["debug_mode"]		= var_data(var_bool, &debugEnabled);
 		map["debug_logging"]	= var_data(var_bool, &loggingEnabled);
-		map["default_log"]		= var_data(var_bool, &defaultLogFile);
+		map["default_log"]		= var_data(var_string, &defaultLogFile);
 		return map;
 	}
 }
