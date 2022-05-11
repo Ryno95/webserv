@@ -19,7 +19,7 @@ namespace Webserver
 		uint					port;
 		std::vector<HostConfig>	hosts;
 
-		void		validateServerConfig();
+		void		validate() const;
 
 	private:
 		map_type 	fillVariablesMap();

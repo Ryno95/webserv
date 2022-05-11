@@ -17,15 +17,15 @@ namespace Webserver
 	{
 	}
 
-	void ConfigFileParser::validateConfigs()
+	void ConfigFileParser::validateAllConfigs() const
 	{
-		GlobalConfig::get().validateGlobalConfig();
+		GlobalConfig::get().validate();
 		
 		for (size_t i = 0; i < _serverConfigs.size(); ++i)
 		{
-			_serverConfigs[i].validateServerConfig();
+			_serverConfigs[i].validate();
 			for (size_t j = 0; j < _serverConfigs[i].hosts.size(); j++)
-				_serverConfigs[i].hosts[j].validateHostConfig();
+				_serverConfigs[i].hosts[j].validate();
 		}	
 	}
 
@@ -122,9 +122,9 @@ namespace Webserver
 		if (currentState != NONE)
 			throw ConfigParseUnexpectedTokenException("}", _lineCount, line);
 
+		validateAllConfigs();
+
 		GlobalConfig::set(currentGlobalConfig);
-		// void validateConfigs(std::vector<ServerConfig>	&configs)
-		validateConfigs();
 		return _serverConfigs;
 	}
 

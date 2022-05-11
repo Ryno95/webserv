@@ -48,7 +48,7 @@ namespace Webserver
 		return map;
 	}
 
-	void HostConfig::validateHostConfig()
+	void HostConfig::validate() const
 	{
 		return ;
 	}

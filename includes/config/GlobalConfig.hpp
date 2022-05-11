@@ -25,11 +25,11 @@ namespace Webserver
 		std::string	mimeFilePath;
 		bool		debugEnabled;
 		bool		loggingEnabled;
-		std::string	defaultLogFile;
+		std::string	logFile;
 
 		static const GlobalConfig& get();
 		static void set(const GlobalConfig& config);
-		void validateGlobalConfig() const;
+		void validate() const;
 
 	private:
 		map_type fillVariablesMap();

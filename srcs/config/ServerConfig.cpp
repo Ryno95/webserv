@@ -33,7 +33,7 @@ namespace Webserver
 		return map;
 	}
 
-	void ServerConfig::validateServerConfig()
+	void ServerConfig::validate() const
 	{
 		if (port > _maxPortNumber || port <= 0)
 			throw InvalidValueException("server, port should be between 1 and 65535");

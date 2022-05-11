@@ -29,7 +29,7 @@ namespace Webserver
 		mimeFilePath("mime.config"),
 		debugEnabled(false),
 		loggingEnabled(false),
-		defaultLogFile("logs.log")
+		logFile("logs.log")
 	{
 	}
 
@@ -49,7 +49,7 @@ namespace Webserver
 		mimeTypes = rhs.mimeTypes;
 		debugEnabled = rhs.debugEnabled;
 		loggingEnabled = rhs.loggingEnabled;
-		defaultLogFile = rhs.defaultLogFile;
+		logFile = rhs.logFile;
 		return *this;
 	}
 
@@ -61,11 +61,11 @@ namespace Webserver
 		map["mime_config"]		= var_data(var_string, &mimeFilePath);
 		map["debug_mode"]		= var_data(var_bool, &debugEnabled);
 		map["debug_logging"]	= var_data(var_bool, &loggingEnabled);
-		map["default_log"]		= var_data(var_string, &defaultLogFile);
+		map["log_file"]			= var_data(var_string, &logFile);
 		return map;
 	}
 
-	void GlobalConfig::validateGlobalConfig() const
+	void GlobalConfig::validate() const
 	{
 		if (listenBacklog <= 0)
 			throw InvalidValueException("application, listen_backlog should be bigger than 0");
