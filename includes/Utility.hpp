@@ -4,7 +4,7 @@
 #include <sstream>
 #include <Method.hpp>
 
-namespace Util
+namespace Webserver
 {
 	std::string 	removeTrailingWhitespace(const std::string &str);
 	std::string 	removeLeadingWhitespace(const std::string &str);

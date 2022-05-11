@@ -5,6 +5,8 @@
 #include <Request.hpp>
 #include <Response.hpp>
 
+using namespace Webserver;
+
 Test(ResponseTests, BasicGETRequest)
 {
     const std::string seed =    "GET / HTTP/1.1\r\n"

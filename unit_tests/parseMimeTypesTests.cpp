@@ -1,6 +1,8 @@
 #include <criterion/criterion.h>
 #include <MimeTypes.hpp>
 
+using namespace Webserver;
+
 Test(Mimes, valid)
 {
 	MimeTypes mimes("config/test.mime");

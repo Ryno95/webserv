@@ -12,36 +12,39 @@
 #include <Response.hpp>
 #include <Sender.hpp>
 
-class Client
+namespace Webserver
 {
-
-public:
-	Client(int fd);
-	~Client();
-
-	bool handle();
-
-	struct DisconnectedException : std::exception
+	class Client
 	{
-		const char* what() const throw()
+
+	public:
+		Client(int fd);
+		~Client();
+
+		bool handle();
+
+		struct DisconnectedException : std::exception
 		{
-			return "Client disconnected";
-		}
+			const char* what() const throw()
+			{
+				return "Client disconnected";
+			}
+		};
+
+	private:
+		bool checkTimeout() const;
+		void hasCommunicated();
+		void handleRequest();
+		void handleResponse();
+		void handleProcessing();
+
+		timeval _lastCommunicated;
+
+		std::deque<Request> _requests;
+		std::deque<Response *> _responses;
+
+		int _fd;
+		Receiver _receiver;
+		Sender _sender;
 	};
-
-private:
-	bool checkTimeout() const;
-	void hasCommunicated();
-	void handleRequest();
-	void handleResponse();
-	void handleProcessing();
-
-	timeval _lastCommunicated;
-
-	std::deque<Request> _requests;
-	std::deque<Response *> _responses;
-
-	int _fd;
-	Receiver _receiver;
-	Sender _sender;
-};
+}

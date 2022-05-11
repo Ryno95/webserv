@@ -2,9 +2,8 @@
 #include <Method.hpp>
 #include <Utility.hpp>
 
-namespace Util
+namespace Webserver
 {
-
 	std::string removeLeadingWhitespace(const std::string &str)
 	{
 		std::string out = str;

@@ -2,19 +2,20 @@
 #include <Request.hpp>
 #include <Response.hpp>
 
-class POSTMethod : public AMethod
+namespace Webserver
 {
-	public:
-		POSTMethod(const Request &request);
-		~POSTMethod();
+	class POSTMethod : public AMethod
+	{
+		public:
+			POSTMethod(const Request &request);
+			~POSTMethod();
 
-		std::string createFileName(const std::string &target);
-		void		setPostResponseHeaders();
-		Response	*process();
+			std::string createFileName(const std::string &target);
+			void		setPostResponseHeaders();
+			Response	*process();
 
-		private:
-			std::string _location;
-			std::string _absPathForCreatedFile;
-};
-
-
+			private:
+				std::string _location;
+				std::string _absPathForCreatedFile;
+	};
+}
