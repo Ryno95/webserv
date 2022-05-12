@@ -5,6 +5,7 @@
 
 #ifdef TEST
 	#define private public
+	#define protected public
 #endif
 
 
