@@ -11,28 +11,28 @@ namespace Webserver
 	{
 	}
 
-	HostConfig Router::getHost(const std::string& uri) const
+	HostConfig Router::getHost(const std::string& hostName, const std::string& target) const
 	{
-		HostConfig host = matchHost(uri);
-		return matchLocation(host);
+		HostConfig hostConfig = matchHost(hostName);
+		return matchLocation(hostConfig, target);
 	}
 
-	const HostConfig& Router::matchHost(const std::string& uri) const
+	const HostConfig& Router::matchHost(const std::string& hostName) const
 	{
 		const std::vector<HostConfig>& hosts = _config.hosts;
 		for (size_t i = 0; i < hosts.size(); i++)
 		{
 			for (size_t j = 0; j < hosts[i].names.size(); j++)
 			{
-				if (uri == hosts[i].names[j])
+				if (stringToLower(hostName) == stringToLower(hosts[i].names[j]))
 					return hosts[i];
 			}
 		}
 		return hosts[0];
 	}
 
-	HostConfig Router::matchLocation(HostConfig host) const
+	HostConfig Router::matchLocation(HostConfig hostConfig, const std::string& target) const
 	{
-		return host;
+		return hostConfig;
 	}
 }

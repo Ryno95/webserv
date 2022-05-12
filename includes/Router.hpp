@@ -13,11 +13,11 @@ namespace Webserver
 		Router(const ServerConfig& config);
 		~Router();
 
-		HostConfig getHost(const std::string& uri) const;
+		HostConfig getHost(const std::string& hostName, const std::string& target) const;
 
 	private:
-		const HostConfig& matchHost(const std::string& uri) const;
-		HostConfig matchLocation(HostConfig host) const;
+		const HostConfig& matchHost(const std::string& hostName) const;
+		HostConfig matchLocation(HostConfig host, const std::string& target) const;
 
 		const ServerConfig& _config;
 	};
