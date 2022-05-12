@@ -2,28 +2,45 @@
 
 #include <string>
 
-#include <AConfig.hpp>
+#include <config/AConfig.hpp>
+
+namespace MatchType
+{
+	enum MatchType
+	{
+		PREFIX,
+		SUFFIX
+	};
+}
+
+namespace TargetType
+{
+	enum TargetType
+	{
+		SET_ROOT,
+		REDIRECT
+	};
+}
 
 namespace Webserver
 {
 	struct LocationConfig : public AConfig
 	{
-		enum MatchType
-		{
-			prefix,
-			suffix
-		};
+		LocationConfig(); 
+		LocationConfig(const LocationConfig& rhs);
+		~LocationConfig();
+		LocationConfig& operator=(const LocationConfig& rhs);
 
-		enum HandleType
-		{
-			root,
-			redirect
-		};
+		map_type fillVariablesMap();
+		void validate() const;
+		TargetType::TargetType getTargetType() const;
+		MatchType::MatchType getMatchType() const;
 
 		std::string	pattern;
-		std::string	handle;
+		std::string	root;
+		std::string	redirect;
 
-		MatchType	matchType;
-		HandleType	handleType;
+		MatchType::MatchType	matchType;
+		TargetType::TargetType	targetType;
 	};
 }
