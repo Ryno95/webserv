@@ -28,7 +28,8 @@ CLASSES		=	Webserv\
 				config/AConfig\
 				config/HostConfig\
 				config/ServerConfig\
-				config/GlobalConfig
+				config/GlobalConfig\
+				config/LocationConfig
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
