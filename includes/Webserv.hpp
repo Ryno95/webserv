@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include <Router.hpp>
 #include <Client.hpp>
 #include <config/ServerConfig.hpp>
 #include <PollHandler.hpp>
@@ -19,6 +20,8 @@ namespace Webserver
 			~Webserv();
 
 			void handle();
+			const ServerConfig& getConfig() const;
+			const Router& getRouter() const;
 
 		private:
 			void setup();
@@ -27,6 +30,7 @@ namespace Webserver
 			void removeClient(int index);
 
 			const ServerConfig& _config;
+			const Router _router;
 
 			int						_listenerFd;
 			std::vector<Client*>	_clients;

@@ -41,11 +41,11 @@ namespace Webserver
 
 		pos = _query.find(' ');
 		if (pos == std::string::npos)
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 
 		_method = parseMethod(_query.substr(0, pos));
 		if (_method == Method::INVALID)
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 
 		return pos;
 	}
@@ -56,10 +56,10 @@ namespace Webserver
 
 		pos2 = _query.find(' ', pos);
 		if (pos == std::string::npos || pos2 - pos == 0)
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 		_target = _query.substr(pos, (pos2 - pos));
 		if (_target.size() > MAX_TARGET_LEN)
-			throwError(HttpStatusCodes::URI_TOO_LONG);
+			throw InvalidRequestException(HttpStatusCodes::URI_TOO_LONG);
 		return pos2;
 	}
 
@@ -73,36 +73,36 @@ namespace Webserver
 
 
 		if (_query.substr(pos, versionPrefixLen) != versionPrefix) // case insensitive?
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 		pos2 = pos + versionPrefixLen;
 
 		pos = _query.find('.', pos2);
 		if (pos == std::string::npos)
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 
 		tmp = _query.substr(pos2, pos - pos2);  // check if this section (major) ONLY contains digits
 		for (size_t i = 0; i < tmp.size(); i++)
 		{
 			if (!std::isdigit(tmp[i]))
-				throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 		}
 		major = std::atoi(tmp.c_str());
 		if (major != HTTPVERSION_MAJOR)
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 
 		pos2 = _query.find('\r', 0);
 		if (_query.find('\n', 0) - pos2 != 1) // there's no \n somewhere in the line, only at \r\n
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 
 		tmp = _query.substr(pos + 1, pos2 - pos - 1); // check if this section (minor) ONLY contains digits
 		for (size_t i = 0; i < tmp.size(); i++)
 		{
 			if (!std::isdigit(tmp[i]))
-				throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 		}
 		minor = std::atoi(tmp.c_str());
 		if (minor != HTTPVERSION_MINOR)
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 		return pos2 + 2;
 	}
 
@@ -124,7 +124,7 @@ namespace Webserver
 		int				i = 0;
 
 		if (colonPos == std::string::npos || std::isspace(src[colonPos - 1]))
-			throwError(HttpStatusCodes::BAD_REQUEST);
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 		
 		std::string key = src.substr(i, colonPos);
 		while(std::isspace(src[colonPos + CRLF_CHAR_COUNT + i]))
@@ -166,13 +166,6 @@ namespace Webserver
 		parseHeaderFields(pos);
 	}
 
-	void Request::throwError(HttpStatusCode code)
-	{
-		_status = code;
-		throw ParseException("request was not formatted correctly");
-	}
-
-
 	HttpStatusCode Request::getStatus() const
 	{
 		return _status;
@@ -195,5 +188,13 @@ namespace Webserver
 		if (it != _headerFields.end())
 			return std::atol(it->second.c_str());
 		return -1;
+	}
+
+	/*
+		Set the status of this request, so it will not be executed and send the corresponding error to the client instead.
+	*/
+	void	Request::setStatus(HttpStatusCode status)
+	{
+		_status = status;
 	}
 }

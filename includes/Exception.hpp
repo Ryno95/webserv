@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include <Utility.hpp>
+#include <HttpStatusCode.hpp>
 
 namespace Webserver
 {
@@ -41,5 +42,19 @@ namespace Webserver
 	struct SystemCallFailedException : std::runtime_error
 	{
 		SystemCallFailedException(const std::string& call) : std::runtime_error("System call '" + call + "' failed: " + std::strerror(errno)) {}
+	};
+
+	struct InvalidRequestException : std::runtime_error
+	{
+		InvalidRequestException(HttpStatusCode status) : std::runtime_error("Invalid request received. Status: " + status.second), _status(status) {}
+		~InvalidRequestException() throw() {}
+
+		HttpStatusCode getStatus() const
+		{
+			return _status;
+		}
+
+	private:
+		HttpStatusCode _status;
 	};
 }
