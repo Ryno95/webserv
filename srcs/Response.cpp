@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Response.hpp>
+#include <Logger.hpp>
 
 namespace Webserver
 {
@@ -32,8 +33,6 @@ namespace Webserver
 	void Response::setBodyStream(std::ifstream* stream)
 	{
 		_bodyStream = stream;
-		stream->seekg(0, std::ios_base::end);
-		addHeaderField("Content-Length", std::to_string(stream->tellg()));
 	}
 
 	void Response::setStatusCode(HttpStatusCode code)
@@ -70,6 +69,7 @@ namespace Webserver
 			header += cursor->second;
 			++cursor;
 		}
+		DEBUG("\n" + header);
 		header += "\r\n\r\n";
 		_headerStream << header;
 		return (&_headerStream);

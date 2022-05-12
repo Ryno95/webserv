@@ -22,6 +22,7 @@
 #define HTTPVERSION_MINOR 1
 
 #define BODY_SIZE_LIMIT 10240
+#define SERVER_NAME "Webserv"
 
 #pragma endregion
 

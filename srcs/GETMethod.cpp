@@ -1,4 +1,5 @@
 #include <GETMethod.hpp>
+#include <OKResponse.hpp>
 
 namespace Webserver
 {
@@ -31,9 +32,7 @@ namespace Webserver
 			_response->setStatusCode(HttpStatusCodes::NOT_FOUND);
 			return _response;
 		}
-
-		_response->setBodyStream(stream);
-		_response->setStatusCode(HttpStatusCodes::OK);
+		*_response = OKResponse(stream);
 
 		return _response;
 	}

@@ -23,14 +23,15 @@ namespace Webserver
 
 		Response			&operator=(const Response &rhs);
 
+		void				buildHeader();
 		std::stringstream	*getHeaderStream();
 		void				addHeaderFields(); // hard coded for now to get the flow going
-		void addHeaderField(std::string key, std::string value);
+		void				addHeaderField(std::string key, std::string value);
 
 		std::ifstream		*getBodyStream();
 		HttpStatusCode		getStatusCode() const;
 
-	private:
+	protected:
 
 		HttpStatusCode 						_statusCode;
 		std::stringstream 					_headerStream;
