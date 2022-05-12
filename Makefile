@@ -22,6 +22,8 @@ CLASSES		=	Webserv\
 				POSTMethod\
 				PollHandler\
 				Utility\
+				OkStatusResponse\
+				BadStatusResponse\
 				config/ConfigFileParser\
 				config/AConfig\
 				config/HostConfig\
