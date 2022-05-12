@@ -11,6 +11,7 @@ namespace Webserver
 	std::string 	getTimeStamp();
 	Method::method	parseMethod(const std::string &method);
 	bool			isTerminatorStr(const std::string &str);
+	std::string		stringToLower(std::string str);
 
 	template <typename T>
 	std::string toString (T val)

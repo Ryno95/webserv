@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Method.hpp>
 #include <Utility.hpp>
+#include <cctype>
 
 namespace Webserver
 {
@@ -79,5 +80,13 @@ namespace Webserver
 			return Method::INVALID;
 	}
 
-
+	std::string stringToLower(std::string str)
+	{
+		size_t size = str.size();
+		for (size_t i = 0; i < size; i++)
+		{
+			str[i] = tolower(str[i]);
+		}
+		return str;
+	}
 }
