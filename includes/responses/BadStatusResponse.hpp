@@ -6,15 +6,13 @@ namespace Webserver
 {
 	class BadStatusResponse: public Response
 	{
-		#define NotFoundErrorPage "NotFoundErrorPage.html"
-
 		public:
 			BadStatusResponse();
-			BadStatusResponse(HttpStatusCode code);
+			BadStatusResponse(HttpStatusCode code, const std::string &errorPage);
 			~BadStatusResponse();
 
 		private:
-		   void buildHeader();
+		   void buildHeader(const std::string &errorPage);
 	};
 }
 

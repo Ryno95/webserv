@@ -8,10 +8,10 @@ namespace Webserver
 	{
 		public:
 			OkStatusResponse();
-			OkStatusResponse(std::ifstream* stream);
+			OkStatusResponse(std::ifstream* stream, const std::string &fileName);
 			~OkStatusResponse();
 
 		private:
-		   void buildHeader();
+		   void buildHeader(const std::string &fileName);
 	};
 }

@@ -1,6 +1,6 @@
 #include <GETMethod.hpp>
-#include <OkStatusResponse.hpp>
-#include <BadStatusResponse.hpp>
+#include <responses/OkStatusResponse.hpp>
+#include <responses/BadStatusResponse.hpp>
 
 namespace Webserver
 {
@@ -29,10 +29,10 @@ namespace Webserver
 		stream->open(createFilePath(target));
 		if (stream->fail())
 		{
-			_response = new BadStatusResponse(HttpStatusCodes::NOT_FOUND);
+			_response = new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 			return _response;
 		}
-		_response = new OkStatusResponse(stream);
+		_response = new OkStatusResponse(stream, target);
 
 		return _response;
 	}
