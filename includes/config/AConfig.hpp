@@ -33,6 +33,7 @@ namespace Webserver
 		virtual ~AConfig();
 
 		virtual map_type fillVariablesMap() = 0;
+		virtual void	 validate() const = 0;
 
 		template<class T>
 		T parse(const std::string& value) const;

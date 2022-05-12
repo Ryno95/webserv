@@ -21,6 +21,8 @@
 #define HTTPVERSION_MAJOR 1
 #define HTTPVERSION_MINOR 1
 
+#define BODY_SIZE_LIMIT 10240
+
 #pragma endregion
 
 #define BIT_ISSET(num, pos) ((num) & (1 << pos))

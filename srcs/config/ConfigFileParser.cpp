@@ -17,6 +17,18 @@ namespace Webserver
 	{
 	}
 
+	void ConfigFileParser::validateAllConfigs() const
+	{
+		GlobalConfig::get().validate();
+		
+		for (size_t i = 0; i < _serverConfigs.size(); ++i)
+		{
+			_serverConfigs[i].validate();
+			for (size_t j = 0; j < _serverConfigs[i].hosts.size(); j++)
+				_serverConfigs[i].hosts[j].validate();
+		}	
+	}
+
 	/*
 		On success, returns a vector containing all parsed server configurations.
 		If the parser encounters an error, this function will not return and throw an exception instead.
@@ -109,6 +121,8 @@ namespace Webserver
 
 		if (currentState != NONE)
 			throw ConfigParseUnexpectedTokenException("}", _lineCount, line);
+
+		validateAllConfigs();
 
 		GlobalConfig::set(currentGlobalConfig);
 		return _serverConfigs;
