@@ -23,6 +23,8 @@
 
 #define BODY_SIZE_LIMIT 10240
 #define SERVER_NAME "Webserv"
+#define DEFAULT_ERROR_PAGE "root/error.html"
+
 
 #pragma endregion
 
