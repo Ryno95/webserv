@@ -24,6 +24,7 @@ CLASSES		=	Webserv\
 				ServerHandler\
 				Utility\
 				Router\
+				Uri\
 				config/ConfigFileParser\
 				config/AConfig\
 				config/HostConfig\
