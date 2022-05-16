@@ -57,9 +57,7 @@ namespace Webserver
 		pos2 = _query.find(' ', pos);
 		if (pos == std::string::npos || pos2 - pos == 0)
 			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
-		_target = _query.substr(pos, (pos2 - pos));
-		if (_target.size() > MAX_TARGET_LEN)
-			throw InvalidRequestException(HttpStatusCodes::URI_TOO_LONG);
+		_uri = Uri(_query.substr(pos, (pos2 - pos)));
 		return pos2;
 	}
 
@@ -173,7 +171,7 @@ namespace Webserver
 
 	std::string Request::getTarget() const
 	{
-		return _target;
+		return "";
 	}
 
 	Method::method Request::getMethod() const

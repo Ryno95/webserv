@@ -6,6 +6,7 @@
 #include <defines.hpp>
 #include <HttpStatusCode.hpp>
 #include <Method.hpp>
+#include <Uri.hpp>
 
 namespace Webserver
 {
@@ -46,7 +47,8 @@ namespace Webserver
 		std::string	_query;
 
 		Method::method		_method;
-		std::string	_target;
+		Uri _uri;
+		// std::string	_target;
 		std::string	_version;
 		std::map<std::string, std::string>	_headerFields;
 		std::string	_body;
