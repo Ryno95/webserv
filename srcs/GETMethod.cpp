@@ -29,11 +29,9 @@ namespace Webserver
 		stream->open(createFilePath(target));
 		if (stream->fail())
 		{
-			_response = new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
-			return _response;
+			delete stream;
+			return (new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage));
 		}
-		_response = new OkStatusResponse(stream, target);
-
-		return _response;
+		return (new OkStatusResponse(stream, target, HttpStatusCodes::OK));
 	}
 }
