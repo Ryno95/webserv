@@ -13,12 +13,13 @@ namespace MatchType
 	};
 }
 
-namespace TargetType
+namespace RouteType
 {
-	enum TargetType
+	enum RouteType
 	{
-		SET_ROOT,
-		REDIRECT
+		CHANGE_ROOT,
+		REDIRECT,
+		UPLOAD
 	};
 }
 
@@ -26,21 +27,25 @@ namespace Webserver
 {
 	struct LocationConfig : public AConfig
 	{
-		LocationConfig(); 
+		LocationConfig();
+		LocationConfig(const std::string& value);
 		LocationConfig(const LocationConfig& rhs);
 		~LocationConfig();
 		LocationConfig& operator=(const LocationConfig& rhs);
 
 		map_type fillVariablesMap();
 		void validate() const;
-		TargetType::TargetType getTargetType() const;
 		MatchType::MatchType getMatchType() const;
 
-		std::string	pattern;
-		std::string	root;
-		std::string	redirect;
+		bool isRedirect() const;
+		bool isUpload() const;
+		bool isChangeRoot() const;
 
-		MatchType::MatchType	matchType;
-		TargetType::TargetType	targetType;
+		std::string	pattern;
+		std::string route;
+		RouteType::RouteType routeType;
+
+	private:
+		void parseRouteType(const std::string& value);
 	};
 }
