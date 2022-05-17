@@ -21,6 +21,8 @@ GetRequest = Request.GETRequest()
 response  = requests.get(localhost)
 print(f"{response.headers}")
 EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.NOT_FOUND, response)
+
+
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(1)
 
