@@ -109,8 +109,7 @@ namespace Webserver
 				}
 				else if (line.find("location") != std::string::npos)
 				{
-					DEBUG("GOING IN LOCATION!");
-					parseVariableIntoConfig(line, currentLocationConfig);
+					currentLocationConfig = LocationConfig(line);
 					currentState = PRE_LOCATION_BLOCK;
 				}
 				else
@@ -128,7 +127,6 @@ namespace Webserver
 				if (line == "}")
 				{
 					currentHostConfig.locations.push_back(currentLocationConfig);
-					currentLocationConfig = LocationConfig();
 					currentState = IN_HOST_BLOCK;
 				}
 				else

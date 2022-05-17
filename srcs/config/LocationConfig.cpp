@@ -4,7 +4,12 @@ namespace Webserver
 {
 	LocationConfig::LocationConfig() : AConfig::AConfig(fillVariablesMap())
 	{
-	} 
+	}
+
+	LocationConfig::LocationConfig(const std::string& value) : AConfig::AConfig(fillVariablesMap())
+	{
+		parseRouteType(value);
+	}
 
 	LocationConfig::LocationConfig(const LocationConfig& ref) : AConfig::AConfig(fillVariablesMap())
 	{
@@ -18,28 +23,32 @@ namespace Webserver
 	LocationConfig& LocationConfig::operator=(const LocationConfig& ref)
 	{
 		pattern = ref.pattern;
-		root = ref.root;
-		redirect = ref.redirect;
-		targetType = ref.targetType;
-		matchType = ref.matchType;
+		route = ref.route;
+		routeType = ref.routeType;
 		return *this;
 	}
 
 	AConfig::map_type LocationConfig::fillVariablesMap()
 	{
 		map_type map;
-		map["location"]	= var_data(var_string, &pattern);
-		map["root"]		= var_data(var_string, &root);
-		map["redirect"]	= var_data(var_string, &redirect);
+		map["pattern"]	= var_data(var_string, &pattern);
+		map["route"]	= var_data(var_string, &route);
 		return map;
 	}
 
-	TargetType::TargetType LocationConfig::getTargetType() const
+	bool LocationConfig::isRedirect() const
 	{
-		if (root.size() != 0)
-			return TargetType::SET_ROOT;
-		else
-			return TargetType::REDIRECT;
+		return routeType == RouteType::REDIRECT;
+	}
+
+	bool LocationConfig::isUpload() const
+	{
+		return routeType == RouteType::UPLOAD;
+	}
+
+	bool LocationConfig::isChangeRoot() const
+	{
+		return routeType == RouteType::CHANGE_ROOT;
 	}
 
 	/*
@@ -57,7 +66,23 @@ namespace Webserver
 
 	void LocationConfig::validate() const
 	{
-		if ((root.size() == 0 && redirect.size() == 0) || (root.size() != 0 && redirect.size() != 0))
-			throw InvalidValueException("Either root or redirect should be set for a location");
+		if (route.size() == 0)
+			throw InvalidValueException("A route destination should be set for a location");
+	}
+
+	void LocationConfig::parseRouteType(const std::string& value)
+	{
+		std::string type = value.substr(std::min(value.find(' '), value.find('\t')), std::string::npos);
+		type = removeLeadingWhitespace(type);
+		ERROR(type);
+
+		if (type == "root")
+			routeType = RouteType::CHANGE_ROOT;
+		else if (type == "redirect")
+			routeType = RouteType::REDIRECT;
+		else if (type == "upload")
+			routeType = RouteType::UPLOAD;
+		else
+			throw InvalidValueException("Either root, redirect or upload should be set for a location");
 	}
 }
