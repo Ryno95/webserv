@@ -70,17 +70,17 @@ namespace Webserver
 		std::deque<Request>::const_iterator last = newRequests.end();
 		while (first != last)
 		{
-			_requests.push_back(*first);
+			_requestQueue.push_back(*first);
 			++first;
 		}
 	}
 
 	void Client::processRequests()
 	{
-		while (_requests.size() > 0)
+		while (_requestQueue.size() > 0)
 		{
 			Response *response;
-			Request const& request = _requests.front();
+			Request const& request = _requestQueue.front();
 
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
@@ -108,8 +108,8 @@ namespace Webserver
 				}
 			}
 
-			_requests.pop_front();
-			_responses.push_back(response);
+			_requestQueue.pop_front();
+			_responseQueue.push_back(response);
 		}
 	}
 
@@ -117,10 +117,10 @@ namespace Webserver
 	{
 		if (!_sender.hasResponse()) // set new response object as current response to send
 		{
-			if (_responses.size() > 0)
+			if (_responseQueue.size() > 0)
 			{
-				_sender.setResponse(_responses.front());
-				_responses.pop_front();
+				_sender.setResponse(_responseQueue.front());
+				_responseQueue.pop_front();
 			}
 		}
 
