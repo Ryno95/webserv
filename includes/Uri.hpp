@@ -41,6 +41,7 @@ namespace Webserver
 	private:
 		void normalize();
 		void parse();
+		void parseAbsolute();
 
 		std::string _raw;
 		std::string _host; // also named authority

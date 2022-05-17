@@ -1,4 +1,6 @@
 #include <Uri.hpp>
+#include <Utility.hpp>
+#include <Exception.hpp>
 
 namespace Webserver
 {
@@ -29,10 +31,33 @@ namespace Webserver
 	{
 	}
 
+	void Uri::parseAbsolute()
+	{
+		static const size_t schemeLen = 7; // [http://]
+		// For absolute uri, we need AT LEAST:
+		// [http://] [/] = http:/// = 8 bytes
+
+		if (_raw.size() <= schemeLen)
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
+
+		if (stringToLower(_raw.substr(0, schemeLen)) != "http://")
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
+
+		size_t end = _raw.find('/', schemeLen);
+		if (end == std::string::npos)
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
+
+		_host = _raw.substr(schemeLen, end - schemeLen);
+		_path = _raw.substr(end, std::string::npos);
+	}
+
 	void Uri::parse()
 	{
-		size_t pos = _raw.find(':');
-		// if (pos != std::string::npos)
+		// parse host if it's an absolute uri (determined with ':')
+		if (_raw.find(':') != std::string::npos)
+			parseAbsolute();
+		else
+			_path = _raw;
 	}
 
 	std::string Uri::getResourcePath() const
