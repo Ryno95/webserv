@@ -74,7 +74,6 @@ namespace Webserver
 	{
 		std::string type = value.substr(std::min(value.find(' '), value.find('\t')), std::string::npos);
 		type = removeLeadingWhitespace(type);
-		ERROR(type);
 
 		if (type == "root")
 			routeType = RouteType::CHANGE_ROOT;
