@@ -48,7 +48,6 @@ namespace Webserver
 
 		Method::method		_method;
 		Uri _uri;
-		// std::string	_target;
 		std::string	_version;
 		std::map<std::string, std::string>	_headerFields;
 		std::string	_body;
