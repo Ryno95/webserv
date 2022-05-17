@@ -17,7 +17,7 @@ Test(ResponseTests, BasicGETRequest)
 
 	request.parse();
     Response response(request._status);
-	response.addHeaderFields();
+	response.addConstantHeaderFields();
 	// response.setBody("Hello Mr.Client");
 	
 	cr_expect(response._statusCode == HttpStatusCodes::OK);

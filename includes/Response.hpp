@@ -27,7 +27,6 @@ namespace Webserver
 
 		void				buildHeader();
 		std::stringstream	*getHeaderStream();
-		void				addHeaderFields(); // hard coded for now to get the flow going
 		void				addHeaderField(std::string key, std::string value);
 		void				createContentHeaders(const std::string &fileName);
 
@@ -40,5 +39,7 @@ namespace Webserver
 		std::stringstream 					_headerStream;
 		std::ifstream						*_bodyStream;
 		std::map<std::string, std::string>	_headerFields;
+
+		void				addConstantHeaderFields(); // hard coded for now to get the flow going
 	};
 }

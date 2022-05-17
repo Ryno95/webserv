@@ -13,7 +13,7 @@ namespace Webserver
 
 	Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr)
 	{
-		addHeaderFields();
+		addConstantHeaderFields();
 	}
 
 	Response::Response(const Response &ref)
@@ -49,7 +49,7 @@ namespace Webserver
 		_headerFields.insert(std::pair<std::string, std::string>(key, value));
 	}
 
-	void Response::addHeaderFields()
+	void Response::addConstantHeaderFields()
 	{
 		addHeaderField("Server", SERVER_NAME);
 		addHeaderField("Accept-Ranges", "bytes");
