@@ -34,19 +34,19 @@ namespace Webserver
 	*/
 	bool Client::handle()
 	{
-		if (!PollHandler::isPollSet(_fd))
+		if (!PollHandler::canReadOrWrite(_fd))
 			return checkTimeout();
 
 		hasCommunicated();
 
 		try
 		{
-			if (PollHandler::isPollInSet(_fd))
+			if (PollHandler::canRead(_fd))
 				recvRequests();
 
 			processRequests();
 
-			if (PollHandler::isPollOutSet(_fd))
+			if (PollHandler::canWrite(_fd))
 				sendResponses();
 		}
 		catch(const DisconnectedException& e)
@@ -64,7 +64,7 @@ namespace Webserver
 		if (newRequests.size() == 0)
 			return;
 
-		PollHandler::setPollOut(_fd, true);
+		PollHandler::setWriteFlag(_fd, true);
 
 		std::deque<Request>::const_iterator first = newRequests.begin();
 		std::deque<Request>::const_iterator last = newRequests.end();
@@ -128,7 +128,7 @@ namespace Webserver
 			_sender.handle();
 		else
 		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::setPollOut(_fd, false);
+			PollHandler::setWriteFlag(_fd, false);
 		}
 	}
 

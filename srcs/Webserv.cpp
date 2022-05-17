@@ -79,7 +79,7 @@ namespace Webserver
 
 	void Webserv::handleListener()
 	{
-		if (PollHandler::isPollInSet(_listenerFd))
+		if (PollHandler::canRead(_listenerFd))
 		{
 			int fd = accept(_listenerFd, NULL, NULL);
 			if (fd == SYSTEM_ERR)
