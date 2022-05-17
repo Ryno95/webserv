@@ -22,7 +22,7 @@ namespace Webserver
 		authority	= [userinfo "@"] host [":" port]
 
 		Example:
-			http://127.0.0.1:80/homepage.html
+			http://127.0.0.1/homepage.html
 
 		If Request-URI is an absoluteURI, the host is part of the Request-URI. Any Host header field value in the request MUST be ignored.
 	*/
