@@ -29,6 +29,7 @@ namespace Webserver
 		std::stringstream	*getHeaderStream();
 		void				addHeaderFields(); // hard coded for now to get the flow going
 		void				addHeaderField(std::string key, std::string value);
+		void				createContentHeaders(const std::string &fileName);
 
 		std::ifstream		*getBodyStream();
 		HttpStatusCode		getStatusCode() const;

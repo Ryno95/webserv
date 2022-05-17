@@ -1,6 +1,9 @@
 #include <iostream>
-#include <Response.hpp>
 #include <Logger.hpp>
+#include <Response.hpp>
+#include <Utility.hpp>
+#include <Exception.hpp>
+#include <config/GlobalConfig.hpp>
 
 namespace Webserver
 {
@@ -10,6 +13,7 @@ namespace Webserver
 
 	Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr)
 	{
+		addHeaderFields();
 	}
 
 	Response::Response(const Response &ref)
@@ -47,8 +51,33 @@ namespace Webserver
 
 	void Response::addHeaderFields()
 	{
-		_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
-		_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
+		addHeaderField("Server", SERVER_NAME);
+		addHeaderField("Accept-Ranges", "bytes");
+		addHeaderField("Date", getTimeStamp());
+	}
+
+	static std::string getContentTypeHeader(const std::string &fileName)
+	{
+		const size_t	extensionIndex = fileName.find_last_of(".") + 1;
+		std::string		fileExtensionWithoutDot;
+		std::string 	mimeType;
+
+		if (extensionIndex == std::string::npos)
+			throw (ValueDoesNotExistException("No file extension"));
+
+		fileExtensionWithoutDot = fileName.substr(extensionIndex, fileName.size());
+		mimeType = GlobalConfig::get().mimeTypes.getMIMEType(fileExtensionWithoutDot);
+
+		return mimeType;
+	}
+
+	void Response::createContentHeaders(const std::string &fileName)
+	{
+		if (!_bodyStream->is_open()) // throw execption
+			throw SystemCallFailedException("Response file not opened");
+		getBodyStream()->seekg(0, std::ios_base::end);
+		addHeaderField("Content-Length", std::to_string(_bodyStream->tellg()));
+		addHeaderField("Content-Type", getContentTypeHeader(fileName));
 	}
 
 	std::stringstream	*Response::getHeaderStream()
