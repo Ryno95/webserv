@@ -1,10 +1,11 @@
-#include <Request.hpp>
-#include <Utility.hpp>
-#include <Exception.hpp>
-
 #include <iostream>
 #include <cctype>
 #include <cstdlib>
+
+#include <Request.hpp>
+#include <Utility.hpp>
+#include <Exception.hpp>
+#include <Logger.hpp>
 
 namespace Webserver
 {
@@ -171,7 +172,7 @@ namespace Webserver
 
 	std::string Request::getTarget() const
 	{
-		return "";
+		return _uri.getResourcePath();
 	}
 
 	Method::method Request::getMethod() const
