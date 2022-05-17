@@ -7,11 +7,10 @@ namespace Webserver
 	class OkStatusResponse: public Response
 	{
 		public:
-			OkStatusResponse();
-			OkStatusResponse(std::ifstream* stream, const std::string &fileName);
+			OkStatusResponse(HttpStatusCode code);
+			OkStatusResponse(std::ifstream* stream, const std::string &fileName, HttpStatusCode code);
 			~OkStatusResponse();
 
 		private:
-		   void buildHeader(const std::string &fileName);
 	};
 }
