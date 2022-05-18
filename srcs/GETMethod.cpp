@@ -1,4 +1,6 @@
 #include <GETMethod.hpp>
+#include <responses/OkStatusResponse.hpp>
+#include <responses/BadStatusResponse.hpp>
 
 namespace Webserver
 {
@@ -28,13 +30,8 @@ namespace Webserver
 		if (stream->fail())
 		{
 			delete stream;
-			_response->setStatusCode(HttpStatusCodes::NOT_FOUND);
-			return _response;
+			return (new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage));
 		}
-
-		_response->setBodyStream(stream);
-		_response->setStatusCode(HttpStatusCodes::OK);
-
-		return _response;
+		return (new OkStatusResponse(stream, target, HttpStatusCodes::OK));
 	}
 }

@@ -42,7 +42,7 @@ namespace Webserver
 				}
 		}
 
-		std::string timestamp = getTimeStamp();
+		std::string timestamp = "[ " + getTimeStamp() + " ] ";
 
 		_logFile.write(timestamp.c_str(), timestamp.size());
 		_logFile.write(msg.c_str(), msg.size());

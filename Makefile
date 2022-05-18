@@ -23,6 +23,8 @@ CLASSES		=	Webserv\
 				PollHandler\
 				ServerHandler\
 				Utility\
+				responses/OkStatusResponse\
+				responses/BadStatusResponse\
 				Router\
 				config/ConfigFileParser\
 				config/AConfig\
