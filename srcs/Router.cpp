@@ -1,5 +1,6 @@
 #include <Router.hpp>
 #include <ServerHandler.hpp>
+#include <config/LocationConfig.hpp>
 
 namespace Webserver
 {
@@ -33,6 +34,14 @@ namespace Webserver
 
 	HostConfig Router::matchLocation(HostConfig hostConfig, const std::string& target) const
 	{
+		for (size_t i = 0; i < hostConfig.locations.size(); i++)
+		{
+			if (wildcard(target, hostConfig.locations[i].pattern) == true)
+			{
+				hostConfig.root = hostConfig.locations[i].route;
+				break;
+			}
+		}
 		return hostConfig;
 	}
 }
