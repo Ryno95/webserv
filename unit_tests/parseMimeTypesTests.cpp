@@ -5,7 +5,7 @@ using namespace Webserver;
 
 Test(Mimes, valid)
 {
-	MimeTypes mimes("config/test.mime");
+	MimeTypes mimes("unit_tests/test.mime");
 
 	cr_expect(mimes.getMIMEType("html") == "text/html");
 	cr_expect(mimes.getMIMEType("htm") == "text/html");
@@ -15,7 +15,7 @@ Test(Mimes, valid)
 
 Test(Mimes, invalid)
 {
-	MimeTypes mimes("config/test.mime");
+	MimeTypes mimes("unit_tests/test.mime");
 
 	cr_expect(mimes.getMIMEType("doenstExists") == "application/octet-stream");
 	cr_expect(mimes.getMIMEType(".") == "application/octet-stream");
