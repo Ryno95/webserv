@@ -36,8 +36,17 @@ void readRequests()
 
 int main(int argc, char const *argv[])
 {
+	if (argc != 2)
+	{
+		std::cout << "Supply one int as argument: the amount of connections to make in the pipeline." << std::endl;
+		return 1;
+	}
+
+	int CONNECTION_COUNT = atoi(argv[1]);
+
 	int valread;
 	struct sockaddr_in serv_addr;
+
 
 	if ((sockFd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
@@ -61,8 +70,9 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 
-	sendRequest(makeGetRequest("index"));
-	sendRequest(makeGetRequest("hallo"));
-	// sendRequest(makeGetRequest("index") + makeGetRequest("hallo"));
-	usleep(1200000);
+	for (size_t i = 0; i < CONNECTION_COUNT; i++)
+	{
+		sendRequest(makeGetRequest(std::to_string(i).c_str()));
+	}
+	usleep(std::min(std::max(100000 * CONNECTION_COUNT, 1000000), 2000000));
 }

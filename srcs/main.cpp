@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <Webserv.hpp>
+#include <ServerHandler.hpp>
 #include <Logger.hpp>
 #include <config/ConfigFileParser.hpp>
 
@@ -21,9 +22,9 @@ namespace Webserver
 
 			for (size_t i = 0; i < configs.size(); i++)
 			{
-				PollHandler::addServer(configs[i]);
+				ServerHandler::addServer(configs[i]);
 			}
-			PollHandler::run();
+			ServerHandler::run();
 		}
 		catch(const std::exception& e)
 		{

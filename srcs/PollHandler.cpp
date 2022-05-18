@@ -5,8 +5,7 @@
 
 namespace Webserver
 {
-	std::vector<Webserv*>	PollHandler::_servers;
-	std::vector<pollfd>		PollHandler::_fds;
+	std::vector<pollfd> PollHandler::_fds;
 
 	void PollHandler::addPollfd(int fd)
 	{
@@ -81,25 +80,15 @@ namespace Webserver
 		WARN("Tried to remove pollfd " << fd << ", but we were not polling for that.");
 	}
 
-	void PollHandler::run()
+	bool PollHandler::checkPoll()
 	{
 		int pollRet;
 
-		while (true)
-		{
-			pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
-			if (pollRet == SYSTEM_ERR)
-				throw SystemCallFailedException("Poll");
-
-			for (size_t i = 0; i < _servers.size(); i++)
-			{
-				_servers[i]->handle();
-			}
-		}
-	}
-
-	void PollHandler::addServer(const ServerConfig& config)
-	{
-		_servers.push_back(new Webserv(config)); // no delete of this heap yet
+		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
+		if (pollRet == SYSTEM_ERR)
+			throw SystemCallFailedException("Poll");
+		else if (pollRet == 0)
+			return false;
+		return true;
 	}
 }

@@ -14,7 +14,7 @@ namespace Webserver
 		MimeTypes(const std::string& filePath);
 		~MimeTypes();
 
-		const std::string& getMIMEType(const std::string& extension) const;
+		const std::string getMIMEType(const std::string& extension) const;
 
 	private:
 		void parse();
