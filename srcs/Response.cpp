@@ -58,14 +58,13 @@ namespace Webserver
 
 	static std::string getContentTypeHeader(const std::string &fileName)
 	{
-		const size_t	extensionIndex = fileName.find_last_of(".") + 1;
+		const size_t	extensionIndex = fileName.find_last_of(".");
 		std::string		fileExtensionWithoutDot;
 		std::string 	mimeType;
 
-		if (extensionIndex == std::string::npos)
-			throw (ValueDoesNotExistException("No file extension"));
+		if (extensionIndex != std::string::npos)
+			fileExtensionWithoutDot = fileName.substr(extensionIndex + 1, std::string::npos);
 
-		fileExtensionWithoutDot = fileName.substr(extensionIndex, fileName.size());
 		mimeType = GlobalConfig::get().mimeTypes.getMIMEType(fileExtensionWithoutDot);
 
 		return mimeType;
