@@ -5,6 +5,7 @@
 
 #ifdef TEST
 	#define private public
+	#define protected public
 #endif
 
 
@@ -22,6 +23,9 @@
 #define HTTPVERSION_MINOR 1
 
 #define BODY_SIZE_LIMIT 10240
+#define SERVER_NAME "Webserv"
+#define DEFAULT_ERROR_PAGE "root/error.html"
+
 
 #pragma endregion
 

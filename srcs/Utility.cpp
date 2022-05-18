@@ -54,10 +54,10 @@ namespace Webserver
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
 
-		timestamp = "[";
+		// timestamp = "[";
 		timestamp += asctime(timeinfo);
 		timestamp.pop_back();
-		timestamp += "] ";
+		// timestamp += "] ";
 		return timestamp;
 	}
 

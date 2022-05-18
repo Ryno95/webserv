@@ -17,16 +17,8 @@ Test(Mimes, invalid)
 {
 	MimeTypes mimes("config/test.mime");
 
-	bool boolean;
-	try
-	{
-		mimes.getMIMEType("doesnt/exist");
-		boolean = true;
-	}
-	catch(const std::exception& e)
-	{
-		boolean = false;
-	}
-
-	cr_expect(boolean == false);
+	cr_expect(mimes.getMIMEType("doenstExists") == "application/octet-stream");
+	cr_expect(mimes.getMIMEType(".") == "application/octet-stream");
+	cr_expect(mimes.getMIMEType("") == "application/octet-stream");
+	cr_expect(mimes.getMIMEType("html.") == "application/octet-stream");
 }

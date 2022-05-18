@@ -75,11 +75,11 @@ namespace Webserver
 		}
 	}
 
-	const std::string& MimeTypes::getMIMEType(const std::string& extension) const
+	const std::string MimeTypes::getMIMEType(const std::string& extension) const
 	{
 		std::map<const std::string, const std::string>::const_iterator result = _types.find(extension);
 		if (result == _types.end())
-			throw ValueDoesNotExistException(extension);
+			return "application/octet-stream";
 		return result->second;
 	}
 }

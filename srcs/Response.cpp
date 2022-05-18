@@ -1,5 +1,9 @@
 #include <iostream>
+#include <Logger.hpp>
 #include <Response.hpp>
+#include <Utility.hpp>
+#include <Exception.hpp>
+#include <config/GlobalConfig.hpp>
 
 namespace Webserver
 {
@@ -9,6 +13,7 @@ namespace Webserver
 
 	Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr)
 	{
+		addConstantHeaderFields();
 	}
 
 	Response::Response(const Response &ref)
@@ -32,8 +37,6 @@ namespace Webserver
 	void Response::setBodyStream(std::ifstream* stream)
 	{
 		_bodyStream = stream;
-		stream->seekg(0, std::ios_base::end);
-		addHeaderField("Content-Length", std::to_string(stream->tellg()));
 	}
 
 	void Response::setStatusCode(HttpStatusCode code)
@@ -46,10 +49,34 @@ namespace Webserver
 		_headerFields.insert(std::pair<std::string, std::string>(key, value));
 	}
 
-	void Response::addHeaderFields()
+	void Response::addConstantHeaderFields()
 	{
-		_headerFields.insert(std::pair<std::string, std::string>("Server", "Simply the best"));
-		_headerFields.insert(std::pair<std::string, std::string>("Accept-Ranges", "bytes"));
+		addHeaderField("Server", SERVER_NAME);
+		addHeaderField("Accept-Ranges", "bytes");
+		addHeaderField("Date", getTimeStamp());
+	}
+
+	static std::string getContentTypeHeader(const std::string &fileName)
+	{
+		const size_t	extensionIndex = fileName.find_last_of(".");
+		std::string		fileExtensionWithoutDot;
+		std::string 	mimeType;
+
+		if (extensionIndex != std::string::npos)
+			fileExtensionWithoutDot = fileName.substr(extensionIndex + 1, std::string::npos);
+
+		mimeType = GlobalConfig::get().mimeTypes.getMIMEType(fileExtensionWithoutDot);
+
+		return mimeType;
+	}
+
+	void Response::createContentHeaders(const std::string &fileName)
+	{
+		if (!_bodyStream->is_open()) // throw execption
+			throw SystemCallFailedException("Response file not opened");
+		getBodyStream()->seekg(0, std::ios_base::end);
+		addHeaderField("Content-Length", std::to_string(_bodyStream->tellg()));
+		addHeaderField("Content-Type", getContentTypeHeader(fileName));
 	}
 
 	std::stringstream	*Response::getHeaderStream()
@@ -70,6 +97,7 @@ namespace Webserver
 			header += cursor->second;
 			++cursor;
 		}
+		DEBUG("\n" + header);
 		header += "\r\n\r\n";
 		_headerStream << header;
 		return (&_headerStream);
