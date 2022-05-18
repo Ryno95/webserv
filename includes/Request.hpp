@@ -27,7 +27,8 @@ namespace Webserver
 
 		HttpStatusCode		getStatus() const;
 		Method::method 		getMethod() const;
-		std::string 		getTarget() const;
+		const std::string&	getTarget() const;
+		const std::string&	getHost() const;
 		size_t 				getBodySize() const;
 		const std::string	&getBody() const;
 
@@ -41,8 +42,9 @@ namespace Webserver
 		void 	addKeyValuePair(const std::string &src, size_t newLinePos);
 
 		size_t parseRequestMethod();
-		size_t parseTarget(size_t pos);
+		size_t parseUri(size_t pos);
 		size_t parseVersion(size_t pos);
+		void validate() const;
 
 		std::string	_query;
 
