@@ -10,7 +10,8 @@
 
 namespace Webserver
 {
-	#define NotFoundErrorPage "root/BadRequestErrorPage.html"
+	#define NotFoundErrorPage "root/NotFoundErrorPage.html"
+	#define BadRequestErrorPage "root/BadRequestErrorPage.html"
 
 	class Response
 	{
