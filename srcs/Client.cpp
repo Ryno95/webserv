@@ -82,12 +82,18 @@ namespace Webserver
 			Response *response;
 			Request const& request = _requestQueue.front();
 
+			// an error occured during parsing / preparing the request, so we send the errorcode back
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
 				response = new Response(request.getStatus());
 				DEBUG("Invalid request received.");
+				return;
 			}
-			else
+
+			// Determine which host to use
+			HostConfig config = _router.getHost(request.getHost(), request.getTarget());
+			DEBUG("Using config: " << config.names[0]);
+
 			{
 				switch (request.getMethod())
 				{
