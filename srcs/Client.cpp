@@ -13,7 +13,7 @@
 
 namespace Webserver
 {
-	Client::Client(int fd) : _fd(fd), _receiver(fd), _sender(fd)
+	Client::Client(const Router& router, int fd) : _fd(fd), _receiver(fd), _sender(fd), _router(router)
 	{
 		PollHandler::addPollfd(fd);
 		hasCommunicated();
@@ -42,12 +42,12 @@ namespace Webserver
 		try
 		{
 			if (PollHandler::isPollInSet(_fd))
-				handleRequest();
+				recvRequests();
 
-			handleProcessing();
+			processRequests();
 
 			if (PollHandler::isPollOutSet(_fd))
-				handleResponse();
+				sendResponses();
 		}
 		catch(const DisconnectedException& e)
 		{
@@ -57,7 +57,7 @@ namespace Webserver
 		return true;
 	}
 
-	void Client::handleRequest()
+	void Client::recvRequests()
 	{
 		_receiver.handle();
 		std::deque<Request> const& newRequests = _receiver.collectRequests();
@@ -75,34 +75,45 @@ namespace Webserver
 		}
 	}
 
-	void Client::handleProcessing()
+	void Client::processRequests()
 	{
-		if (_requests.size() == 0)
-			return;
-
-		Response *response;
-		Request const& request = _requests.front();
-
-		switch (request.getMethod())
+		while (_requests.size() > 0)
 		{
-			case Method::GET:
-				DEBUG("Entering GET method!");
-				response = GETMethod(request).process();
-				break;
-			case Method::POST:
-				DEBUG("Entering POST method!");
-				response = POSTMethod(request).process();
-				break;
-			case Method::DELETE:
-				WARN("DELETE is not yet implemented!");
-				break;
-		}
+			Response *response;
+			Request const& request = _requests.front();
 
-		_requests.pop_front();
-		_responses.push_back(response);
+			if (request.getStatus() != HttpStatusCodes::OK)
+			{
+				response = new Response(request.getStatus());
+				DEBUG("Invalid request received.");
+			}
+			else
+			{
+				switch (request.getMethod())
+				{
+					case Method::GET:
+						DEBUG("Entering GET method!");
+						response = GETMethod(request).process();
+						break;
+					case Method::POST:
+						DEBUG("Entering POST method!");
+						response = POSTMethod(request).process();
+						break;
+					case Method::DELETE:
+						WARN("DELETE is not yet implemented!");
+						break;
+					case Method::INVALID:
+						WARN("INVALID method still continued processing, which is not expected to occur.");
+						break;
+				}
+			}
+
+			_requests.pop_front();
+			_responses.push_back(response);
+		}
 	}
 
-	void Client::handleResponse()
+	void Client::sendResponses()
 	{
 		if (!_sender.hasResponse()) // set new response object as current response to send
 		{

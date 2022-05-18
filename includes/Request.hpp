@@ -21,7 +21,6 @@ namespace Webserver
 		Request(std::string query);
 		~Request();
 
-		void 			throwError(HttpStatusCode code);
 		void			parse();
 		bool 			hasBodyField() const;
 
@@ -30,6 +29,8 @@ namespace Webserver
 		std::string 		getTarget() const;
 		size_t 				getBodySize() const;
 		const std::string	&getBody() const;
+
+		void				setStatus(HttpStatusCode status);
 
 		void				appendBody(const std::string &body);
 
