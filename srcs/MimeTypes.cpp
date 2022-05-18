@@ -79,7 +79,7 @@ namespace Webserver
 	{
 		std::map<const std::string, const std::string>::const_iterator result = _types.find(extension);
 		if (result == _types.end())
-			throw ValueDoesNotExistException(extension);
+			return "application/octet-stream";
 		return result->second;
 	}
 }
