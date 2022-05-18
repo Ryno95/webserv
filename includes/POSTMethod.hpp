@@ -7,7 +7,7 @@ namespace Webserver
 	class POSTMethod : public AMethod
 	{
 		public:
-			POSTMethod(const Request &request);
+			POSTMethod(const Request &request, const HostConfig& config);
 			~POSTMethod();
 
 			Response	*process();

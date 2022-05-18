@@ -4,7 +4,7 @@
 
 namespace Webserver
 {
-	AMethod::AMethod(Request const& request) : _request(request)
+	AMethod::AMethod(Request const& request, const HostConfig& config) : _request(request), _config(config)
 	{
 	}
 

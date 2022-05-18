@@ -2,6 +2,7 @@
 
 #include <Request.hpp>
 #include <Response.hpp>
+#include <config/HostConfig.hpp>
 
 #include <iostream>
 #include <string>
@@ -44,13 +45,14 @@ namespace Webserver
 	class AMethod
 	{
 	public:
-		AMethod(Request const& request);
+		AMethod(Request const& request, const HostConfig& config);
 		virtual Response* process() = 0;
 
 		void writeFile();
 
 	protected:
-		Request const& _request;
+		const Request& _request;
+		const HostConfig& _config;
 		Response* _response;
 	};
 }
