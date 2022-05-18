@@ -46,7 +46,8 @@ TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
 				$(TEST_DIR)parseMimeTypesTests.cpp\
-				$(TEST_DIR)uriParseTests.cpp
+				$(TEST_DIR)uriParseTests.cpp\
+				$(TEST_DIR)wildcardTests.cpp
 
 
 # Section Rules
