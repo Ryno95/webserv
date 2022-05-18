@@ -1,0 +1,16 @@
+Input from a form is seperated by an & ex. "val1=5&val2=66"
+
+Input needs to be seperated, first on "&" and then on "="
+
+How, do you get to the URI data from within your program? You read it from the environment variable QUERY_STRING.
+
+
+
+CGI Blueprint:
+
+open pipes                                 
+create Fork                                 
+execute cgi script > open pipe                  < read input from pipe into webserv
+												send data read from pipe as response
+close pipes
+
