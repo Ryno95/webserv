@@ -104,83 +104,71 @@ Test(UriTests, InvalidTest2)
 Test(UriTests, NormalizePath1)
 {
 	Uri uri("/../");
-	std::cout << uri.getResourcePath() << std::endl;
  	cr_expect(uri.getResourcePath() == "/");
 }
 
 Test(UriTests, NormalizeInvalidPath)
 {
 	Uri uri("../");
-	std::cout << uri.getResourcePath() << std::endl;
  	cr_expect(uri.getResourcePath() == "/");
 }
 
 Test(UriTests, NormalizeInvalidPathR)
 {
 	Uri uri("/root/uploads/../image.png");
-	std::cout << uri.getResourcePath() << std::endl;
  	cr_expect(uri.getResourcePath() == "/root/image.png");
 }
 
 Test(UriTests, NormalizePath2)
 {
 	Uri uri("/../index.html");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/index.html");
 }
 
 Test(UriTests, NormalizePath3)
 {
 	Uri uri("/images/../images/image.png");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/images/image.png");
 }
 
 Test(UriTests, NormalizePath4)
 {
 	Uri uri("/images/../..///image.png");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/image.png");
 }
 
 Test(UriTests, NormalizePath5)
 {
 	Uri uri("/images/./.././images/pngs/../../images/pngs/image.png");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/images/pngs/image.png");
 }
 
 Test(UriTests, NormalizePath6)
 {
 	Uri uri("../..");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/");
 }
 
 Test(UriTests, NormalizePath7)
 {
 	Uri uri("./");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/");
 }
 
 Test(UriTests, NormalizePath8)
 {
 	Uri uri("/.");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/");
 }
 
 Test(UriTests, NormalizePath9)
 {
 	Uri uri("/....");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/....");
 }
 
 Test(UriTests, NormalizePath10)
 {
 	Uri uri("/..../...");
-	std::cout << uri.getResourcePath() << std::endl;
 	cr_expect(uri.getResourcePath() == "/..../...");
 }
