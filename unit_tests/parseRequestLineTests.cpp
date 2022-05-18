@@ -38,7 +38,7 @@ Test(requestLineTests, GET_valid_request)
 		request.setStatus(e.getStatus());
 	}
 	cr_expect(request._method == Method::GET);
-	cr_expect(request._target == "/");
+	cr_expect(request._uri.getResourcePath() == "/");
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 }
 
@@ -59,7 +59,7 @@ Test(requestLineTests, GET_valid_request_large_path)
 		return;
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 	cr_expect(request._method == Method::GET);
-	cr_expect(request._target == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
+	cr_expect(request._uri.getResourcePath() == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
 }
 
 Test(requestLineTests, POST_valid_request)
@@ -77,7 +77,7 @@ Test(requestLineTests, POST_valid_request)
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 	cr_expect(request._method == Method::POST);
-	cr_expect(request._target == "/");
+	cr_expect(request._uri.getResourcePath() == "/");
 }
 
 Test(requestLineTests, DELETE_valid_request)
@@ -95,7 +95,7 @@ Test(requestLineTests, DELETE_valid_request)
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 	cr_expect(request._method == Method::DELETE);
-	cr_expect(request._target == "/");
+	cr_expect(request._uri.getResourcePath() == "/");
 }
 
 Test(requestLineTests, DELETE_no_target)
@@ -224,51 +224,6 @@ Test(requestLineTests, DELETE_trailing_whitespace)
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
-}
-
-Test(requestLineTests, target_just_fits)
-{
-	std::string seed = "GET ";
-	for (size_t i = 0; i < MAX_TARGET_LEN; ++i)
-	{
-		seed += "a";
-	}
-	seed += " HTTP/1.1\r\n";
-	
-	Request request(seed);
-	try
-	{
-		request.parseRequestLine();
-	}
-	catch(const InvalidRequestException& e)
-	{
-		request.setStatus(e.getStatus());
-	}
-
-	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-}
-
-
-Test(requestLineTests, target_just_too_long)
-{
-	std::string seed = "GET ";
-	for (size_t i = 0; i <= MAX_TARGET_LEN; ++i)
-	{
-		seed += "a";
-	}
-	seed += " HTTP/1.1\r\n";
-	
-	Request request(seed);
-	try
-	{
-		request.parseRequestLine();
-	}
-	catch(const InvalidRequestException& e)
-	{
-		request.setStatus(e.getStatus());
-	}
-
-	cr_expect(request.getStatus() == HttpStatusCodes::URI_TOO_LONG);
 }
 
 Test(requestLineTests, GET_invalid_version1)
