@@ -89,4 +89,60 @@ namespace Webserver
 		}
 		return str;
 	}
+
+	bool wildcard(const std::string& string, const std::string& pattern)
+	{
+		size_t targetIter = 0, patternIter = 0, end = 0;
+		bool inWildcard = false;
+		std::string match;
+
+		if (pattern.size() == 0 && string.size() != 0)
+			return false;
+
+		while (end != std::string::npos)
+		{
+			end = pattern.find('*', patternIter);
+			if (end == patternIter)
+			{
+				patternIter++;
+				inWildcard = true;
+				continue;
+			}
+			else if (end == std::string::npos)
+				inWildcard = true;
+
+			match = pattern.substr(patternIter, end - patternIter);
+
+			if (inWildcard == false)
+			{
+				if (string.substr(targetIter, match.size()) != match)
+					return false;
+
+				targetIter += match.size();
+				patternIter += match.size() + 1;
+				inWildcard = true;
+			}
+			else
+			{
+				if (match.size() > 0)
+				{
+					size_t pos = string.find(match, targetIter);
+					if (pos == std::string::npos)
+						return false;
+					targetIter += (pos - targetIter);
+				}
+				else
+					return true;
+
+				if (end == std::string::npos)
+				{
+					if (targetIter + match.size() != string.size())
+						return false;
+				}
+
+				inWildcard = false;
+			}
+		}
+		return true;
+	}
 }
