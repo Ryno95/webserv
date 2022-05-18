@@ -39,7 +39,7 @@ namespace Webserver
 		bool isAbsolute() const;
 
 	private:
-		void normalize();
+		void format();
 		void parse();
 		void parseAbsolute();
 
