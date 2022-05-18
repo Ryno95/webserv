@@ -116,12 +116,12 @@ namespace Webserver
 			_path = _raw;
 	}
 
-	std::string Uri::getResourcePath() const
+	const std::string& Uri::getResourcePath() const
 	{
 		return _path;
 	}
 
-	std::string Uri::getHost() const
+	const std::string& Uri::getHost() const
 	{
 		return _host;
 	}

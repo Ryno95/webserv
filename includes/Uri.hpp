@@ -34,8 +34,8 @@ namespace Webserver
 		Uri(const Uri& ref);
 		~Uri();
 
-		std::string getResourcePath() const;
-		std::string getHost() const;
+		const std::string& getResourcePath() const;
+		const std::string& getHost() const;
 		bool isAbsolute() const;
 
 	private:
