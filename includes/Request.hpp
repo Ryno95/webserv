@@ -7,6 +7,7 @@
 #include <HttpStatusCode.hpp>
 #include <Method.hpp>
 #include <Uri.hpp>
+#include <HeaderFields.hpp>
 
 namespace Webserver
 {
@@ -53,6 +54,7 @@ namespace Webserver
 		std::string	_version;
 		std::map<std::string, std::string>	_headerFields;
 		std::string	_body;
+		HeaderFields						_headers;
 
 		HttpStatusCode _status;
 

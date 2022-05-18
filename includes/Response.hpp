@@ -7,6 +7,7 @@
 
 #include <HttpStatusCode.hpp>
 #include <Request.hpp>
+#include <HeaderFields.hpp>
 
 namespace Webserver
 {
@@ -40,6 +41,7 @@ namespace Webserver
 		std::stringstream 					_headerStream;
 		std::ifstream						*_bodyStream;
 		std::map<std::string, std::string>	_headerFields;
+		HeaderFields						_headers;
 
 		void				addConstantHeaderFields(); // hard coded for now to get the flow going
 	};
