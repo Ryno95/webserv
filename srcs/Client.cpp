@@ -82,7 +82,7 @@ namespace Webserver
 			Response *response;
 			Request const& request = _requestQueue.front();
 
-			// an error occured during parsing / preparing the request, so we send the errorcode back
+			// an error occured during parsing / preparing the request, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
 				response = new Response(request.getStatus());
@@ -92,26 +92,25 @@ namespace Webserver
 
 			// Determine which host to use
 			HostConfig config = _router.getHost(request.getHost(), request.getTarget());
+
 			DEBUG("Using config: " << config.names[0]);
 
+			switch (request.getMethod())
 			{
-				switch (request.getMethod())
-				{
-					case Method::GET:
-						DEBUG("Entering GET method!");
-						response = GETMethod(request).process();
-						break;
-					case Method::POST:
-						DEBUG("Entering POST method!");
-						response = POSTMethod(request).process();
-						break;
-					case Method::DELETE:
-						WARN("DELETE is not yet implemented!");
-						break;
-					case Method::INVALID:
-						WARN("INVALID method still continued processing, which is not expected to occur.");
-						break;
-				}
+				case Method::GET:
+					DEBUG("Entering GET method!");
+					response = GETMethod(request, config).process();
+					break;
+				case Method::POST:
+					DEBUG("Entering POST method!");
+					response = POSTMethod(request, config).process();
+					break;
+				case Method::DELETE:
+					WARN("DELETE is not yet implemented!");
+					break;
+				case Method::INVALID:
+					WARN("INVALID method still continued processing, which is not expected to occur.");
+					break;
 			}
 
 			_requestQueue.pop_front();
