@@ -5,7 +5,6 @@
 #include "../includes/config/HostConfig.hpp"
 #include "../includes/config/ConfigFileParser.hpp"
 #include "../includes/Router.hpp"
-// #include "../includes/Request.hpp"
 
 #include <vector>
 #include <iostream>
