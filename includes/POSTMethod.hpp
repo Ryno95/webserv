@@ -1,6 +1,6 @@
 #include <AMethod.hpp>
 #include <Request.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 
 namespace Webserver
 {

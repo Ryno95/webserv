@@ -3,7 +3,7 @@
 #include <map>
 #include <iostream>
 #include <Request.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 
 using namespace Webserver;
 

@@ -7,7 +7,7 @@
 
 #include <Request.hpp>
 #include <Receiver.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 #include <Sender.hpp>
 #include <Router.hpp>
 

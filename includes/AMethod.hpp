@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Request.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 #include <config/HostConfig.hpp>
 
 #include <iostream>

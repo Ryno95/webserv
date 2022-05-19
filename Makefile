@@ -12,7 +12,6 @@ MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Webserv\
 				Client\
 				Request\
-				Response\
 				Receiver\
 				Sender\
 				AMethod\
@@ -23,8 +22,10 @@ CLASSES		=	Webserv\
 				PollHandler\
 				ServerHandler\
 				Utility\
+				responses/Response\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
+				responses/RedirectResponse\
 				Router\
 				Uri\
 				config/ConfigFileParser\
