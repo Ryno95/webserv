@@ -12,7 +12,7 @@
 
 namespace Webserver
 {
-POSTMethod::POSTMethod(const Request &request, const HostConfig& config) : AMethod(request, config) {}
+POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(request, host) {}
 
 	POSTMethod::~POSTMethod() {}
 

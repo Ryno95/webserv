@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Request.hpp>
+#include <Host.hpp>
 #include <responses/Response.hpp>
-#include <config/HostConfig.hpp>
 
 #include <iostream>
 #include <string>
@@ -45,14 +45,14 @@ namespace Webserver
 	class AMethod
 	{
 	public:
-		AMethod(Request const& request, const HostConfig& config);
+		AMethod(Request const& request, const Host& host);
 		virtual Response* process() = 0;
 
 		void writeFile();
 
 	protected:
 		const Request& _request;
-		const HostConfig& _config;
+		const Host& _host;
 		Response* _response;
 	};
 }
