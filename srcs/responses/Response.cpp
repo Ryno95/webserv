@@ -44,13 +44,14 @@ namespace Webserver
 		this->_statusCode = code;
 	}
 
-	void Response::addHeaderField(std::string key, std::string value)
+	void Response::addHeaderField(const std::string& key, const std::string& value)
 	{
 		_headerFields.insert(std::pair<std::string, std::string>(key, value));
 	}
 
 	void Response::addConstantHeaderFields()
 	{
+
 		addHeaderField("Server", SERVER_NAME);
 		addHeaderField("Accept-Ranges", "bytes");
 		addHeaderField("Date", getTimeStamp());
