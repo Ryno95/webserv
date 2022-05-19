@@ -24,7 +24,7 @@ namespace Webserver
 		return hosts[0];
 	}
 
-	Host::Host(const HostConfig& config, const std::string& uri) : HostConfig::HostConfig(config)
+	Host::Host(const HostConfig& config, const std::string& uri) : HostConfig::HostConfig(config), _routeType(RouteType::CHANGE_ROOT)
 	{
 		matchLocation(uri);
 	}
@@ -35,8 +35,8 @@ namespace Webserver
 		{
 			if (wildcard(uri, locations[i].pattern) == true)
 			{
-				_location = locations[i];
-				root = _location.route;
+				_routeType = locations[i].routeType;
+				root = locations[i].route;
 				break;
 			}
 		}
@@ -45,11 +45,6 @@ namespace Webserver
 	std::string Host::getName() const
 	{
 		return names[0];
-	}
-
-	LocationConfig Host::getLocation() const
-	{
-		return _location;
 	}
 
 	bool Host::getAutoIndexEnabled() const
@@ -77,5 +72,20 @@ namespace Webserver
 		if (std::find(acceptedMethods.begin(), acceptedMethods.end(), m) == acceptedMethods.end())
 			return false;
 		return true;
+	}
+
+	bool Host::isRedirect() const
+	{
+		return _routeType == RouteType::REDIRECT;
+	}
+
+	bool Host::isUpload() const
+	{
+		return _routeType == RouteType::UPLOAD;
+	}
+
+	bool Host::isChangeRoot() const
+	{
+		return _routeType == RouteType::CHANGE_ROOT;
 	}
 }

@@ -13,12 +13,14 @@ namespace Webserver
 		static Host		determine(const ServerConfig& config, const std::string& hostName, const std::string& uri);
 
 		std::string		getName() const;
-		LocationConfig	getLocation() const;
 		bool			getAutoIndexEnabled() const;
 		std::string		getRoot() const;
 		std::string		getDefaultIndex() const;
 		std::string		getDefaultError() const;
 		bool			isMethodAccepted(Method::method) const;
+		bool			isRedirect() const;
+		bool			isUpload() const;
+		bool			isChangeRoot() const;
 	
 	private:
 		static const HostConfig& matchHost(const std::vector<HostConfig>& hosts, const std::string& hostName);
@@ -26,6 +28,7 @@ namespace Webserver
 		Host(const HostConfig& config, const std::string& uri);
 		void matchLocation(const std::string& uri);
 
-		LocationConfig _location;
+		// LocationConfig _location;
+		RouteType::RouteType _routeType;
 	};
 }
