@@ -36,7 +36,7 @@ namespace Webserver
 		HttpStatusCode		getStatusCode() const;
 
 	private:
-		struct cmpCaseInsensitive {
+		struct CmpCaseInsensitive {
 			bool operator()(const std::string& a, const std::string& b) const {
 				return stringToLower(a) < stringToLower(b);
 			}
@@ -47,7 +47,7 @@ namespace Webserver
 		HttpStatusCode 						_statusCode;
 		std::stringstream 					_headerStream;
 		std::ifstream						*_bodyStream;
-		std::map<std::string, std::string, cmpCaseInsensitive>	_headerFields;
+		std::map<std::string, std::string, CmpCaseInsensitive>	_headerFields;
 
 		void				addConstantHeaderFields(); // hard coded for now to get the flow going
 	
