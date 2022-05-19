@@ -21,12 +21,12 @@ CLASSES		=	Webserv\
 				POSTMethod\
 				PollHandler\
 				ServerHandler\
+				Host\
 				Utility\
 				responses/Response\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
-				Router\
 				Uri\
 				config/ConfigFileParser\
 				config/AConfig\
