@@ -4,6 +4,7 @@
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
+#include <responses/RedirectResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -79,7 +80,7 @@ namespace Webserver
 	{
 		while (_requestQueue.size() > 0)
 		{
-			Response *response;
+			Response *response = nullptr;
 			Request const& request = _requestQueue.front();
 
 			// an error occured during parsing / preparing the request, so we send the error-code back
@@ -87,34 +88,43 @@ namespace Webserver
 			{
 				response = new Response(request.getStatus());
 				DEBUG("Invalid request received.");
-				return;
 			}
-
-			// Determine which host to use
-			Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-
-			DEBUG("Using config: " << host.getName());
-
-			switch (request.getMethod())
+			else
 			{
-				case Method::GET:
-					DEBUG("Entering GET method!");
-					response = GETMethod(request, host).process();
-					break;
-				case Method::POST:
-					DEBUG("Entering POST method!");
-					response = POSTMethod(request, host).process();
-					break;
-				case Method::DELETE:
-					WARN("DELETE is not yet implemented!");
-					break;
-				case Method::INVALID:
-					WARN("INVALID method still continued processing, which is not expected to occur.");
-					break;
+				// Determine which host to use
+				Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+				if (host.isRedirect())
+				{
+					response = new RedirectResponse(request.getTarget());
+					DEBUG("Redirection encountered.");
+				}
+				else
+				{
+					DEBUG("Using config: " << host.getName());
+
+					switch (request.getMethod())
+					{
+						case Method::GET:
+							DEBUG("Entering GET method!");
+							response = GETMethod(request, host).process();
+							break;
+						case Method::POST:
+							DEBUG("Entering POST method!");
+							response = POSTMethod(request, host).process();
+							break;
+						case Method::DELETE:
+							WARN("DELETE is not yet implemented!");
+							break;
+						case Method::INVALID:
+							WARN("INVALID method still continued processing, which is not expected to occur.");
+							break;
+					}
+				}
 			}
 
 			_requestQueue.pop_front();
-			_responseQueue.push_back(response);
+			if (response != nullptr)
+				_responseQueue.push_back(response);
 		}
 	}
 
