@@ -36,21 +36,6 @@ namespace Webserver
 		return map;
 	}
 
-	bool LocationConfig::isRedirect() const
-	{
-		return routeType == RouteType::REDIRECT;
-	}
-
-	bool LocationConfig::isUpload() const
-	{
-		return routeType == RouteType::UPLOAD;
-	}
-
-	bool LocationConfig::isChangeRoot() const
-	{
-		return routeType == RouteType::CHANGE_ROOT;
-	}
-
 	/*
 		Returns MatchType::SUFFIX or MatchType::PREFIX.
 		SUFFIX means matching based on "ends with"
