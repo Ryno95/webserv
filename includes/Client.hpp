@@ -5,18 +5,18 @@
 #include <deque>
 #include <vector>
 
+#include <config/ServerConfig.hpp>
 #include <Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
 #include <Sender.hpp>
-#include <Router.hpp>
 
 namespace Webserver
 {
 	class Client
 	{
 	public:
-		Client(const Router& router, int fd);
+		Client(const ServerConfig& config, int fd);
 		~Client();
 
 		bool handle();
@@ -45,6 +45,6 @@ namespace Webserver
 		int _fd;
 		Receiver _receiver;
 		Sender _sender;
-		const Router& _router;
+		const ServerConfig& _serverConfig;
 	};
 }

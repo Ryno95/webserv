@@ -13,7 +13,7 @@
 
 namespace Webserver
 {
-	Client::Client(const Router& router, int fd) : _fd(fd), _receiver(fd), _sender(fd), _router(router)
+	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config)
 	{
 		PollHandler::addPollfd(fd);
 		hasCommunicated();
@@ -91,19 +91,19 @@ namespace Webserver
 			}
 
 			// Determine which host to use
-			HostConfig config = _router.getHost(request.getHost(), request.getTarget());
+			Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
-			DEBUG("Using config: " << config.names[0]);
+			DEBUG("Using config: " << host.getName());
 
 			switch (request.getMethod())
 			{
 				case Method::GET:
 					DEBUG("Entering GET method!");
-					response = GETMethod(request, config).process();
+					response = GETMethod(request, host).process();
 					break;
 				case Method::POST:
 					DEBUG("Entering POST method!");
-					response = POSTMethod(request, config).process();
+					response = POSTMethod(request, host).process();
 					break;
 				case Method::DELETE:
 					WARN("DELETE is not yet implemented!");

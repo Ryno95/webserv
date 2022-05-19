@@ -15,12 +15,11 @@
 #include <Webserv.hpp>
 #include <config/GlobalConfig.hpp>
 #include <Exception.hpp>
-#include <Router.hpp>
 
 namespace Webserver
 {
 	Webserv::Webserv(const ServerConfig& config)
-		: _config(config), _router(Router(config))
+		: _config(config)
 	{
 		setup();
 		PollHandler::addPollfd(_listenerFd);
@@ -87,7 +86,7 @@ namespace Webserver
 				WARN("Accept in our listener was blocking, so we continue");
 			}
 			else
-				_clients.push_back(new Client(_router, fd));
+				_clients.push_back(new Client(_config, fd));
 		}
 	}
 
@@ -101,12 +100,6 @@ namespace Webserver
 	{
 		handleListener();
 		handleClients();
-	}
-
-	// probably not going to be used
-	const Router& Webserv::getRouter() const
-	{
-		return _router;
 	}
 
 	const ServerConfig& Webserv::getConfig() const
