@@ -36,8 +36,10 @@ namespace Webserver
 		HttpStatusCode		getStatusCode() const;
 
 	private:
-		struct CmpCaseInsensitive {
-			bool operator()(const std::string& a, const std::string& b) const {
+		struct CmpCaseInsensitive
+		{
+			bool operator()(const std::string& a, const std::string& b) const
+			{
 				return stringToLower(a) < stringToLower(b);
 			}
 		};

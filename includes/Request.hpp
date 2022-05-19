@@ -38,8 +38,10 @@ namespace Webserver
 		void				appendBody(const std::string &body);
 
 	private:
-		struct CmpCaseInsensitive {
-			bool operator()(const std::string& a, const std::string& b) const {
+		struct CmpCaseInsensitive
+		{
+			bool operator()(const std::string& a, const std::string& b) const
+			{
 				return stringToLower(a) < stringToLower(b);
 			}
 		};
@@ -60,7 +62,6 @@ namespace Webserver
 		std::string	_version;
 		std::map<std::string, std::string, CmpCaseInsensitive>	_headerFields;
 		std::string	_body;
-		// HeaderFields						_headers;
 
 		HttpStatusCode _status;
 
