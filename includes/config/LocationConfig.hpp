@@ -37,10 +37,6 @@ namespace Webserver
 		void validate() const;
 		MatchType::MatchType getMatchType() const;
 
-		bool isRedirect() const;
-		bool isUpload() const;
-		bool isChangeRoot() const;
-
 		std::string	pattern;
 		std::string route;
 		RouteType::RouteType routeType;
