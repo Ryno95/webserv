@@ -15,6 +15,7 @@ namespace Webserver
 		{
 			PollHandler::checkPoll();
 
+			
 			for (size_t i = 0; i < _servers.size(); i++)
 			{
 				_servers[i]->handle();

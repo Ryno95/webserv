@@ -7,8 +7,15 @@ namespace Webserver
 {
 	class CGI
 	{
-		CGI(const Request &request, const Router &router);
-		~CGI();
+		public:
+			enum FDs
+			{
+				READ_FD,
+				WRITE_FD
+			} FDs;
+	
+			CGI(const Request &request, const Router &router);
+			~CGI();
 
 		void performCGI();
 		private:

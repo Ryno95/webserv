@@ -4,7 +4,7 @@ Input needs to be seperated, first on "&" and then on "="
 
 How, do you get to the URI data from within your program? You read it from the environment variable QUERY_STRING.
 
-
+curl "127.0.0.1:8080/cgi-bin/add.py?num1=5&num2=65" -v
 
 CGI Blueprint:
 
@@ -13,4 +13,14 @@ create Fork
 execute cgi script > open pipe                  < read input from pipe into webserv
 												send data read from pipe as response
 close pipes
+
+
+
+->	CGI(Request object)
+->	addPollfd & removePollfd
+->  request(Host already determined that it's CGI, via routing)
+->	request body contains the QUERY_STRING to be exported
+->	create vector of strings to be converted to the char*env[]
+->	execve cgi script
+
 

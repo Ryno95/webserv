@@ -4,6 +4,8 @@
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
+#include <responses/BadStatusResponse.hpp>
+#include <CGI.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -84,8 +86,14 @@ namespace Webserver
 
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
-				response = new Response(request.getStatus());
+				response = new BadStatusResponse(request.getStatus(), BadRequestErrorPage);
 				DEBUG("Invalid request received.");
+			}
+			if (true) // isCGI()
+			{
+				_CGIQueue.push_back(new CGI(request, _router));
+				// perform CGI
+				// _CGIQueue.pushback(newCGI(args.....))
 			}
 			else
 			{
