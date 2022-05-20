@@ -4,6 +4,7 @@
 #include <Exception.hpp>
 #include <PollHandler.hpp>
 #include <Host.hpp>
+#include <stdlib.h>
 
 namespace Webserver
 {
@@ -14,6 +15,7 @@ namespace Webserver
 			throw SystemCallFailedException("Pipe()");
 		PollHandler::addPollfd(pipeFd[READ_FD]);
 		PollHandler::addPollfd(pipeFd[WRITE_FD]);
+		performCGI();
 	}	
 
 	CGI::~CGI()
@@ -32,9 +34,20 @@ namespace Webserver
 			// parent process
 			// read here
 			close(pipeFd[WRITE_FD]);
-			
-			wait(NULL);
-			
+			char buffer[100];
+        	int readBytes = 0, bufferRead = 0;
+
+        	while (1)
+        	{
+        	    readBytes = read(pipeFd[READ_FD], &buffer[bufferRead], 2);
+        	    if (readBytes <=  0)
+        	        break ;
+        	    bufferRead += readBytes;
+        	}
+        	buffer[bufferRead] = '\0';
+        	std::cout <<  buffer << std::endl;
+			close(pipeFd[READ_FD]);
+        	wait(NULL);
 		}
 		else
 		{
@@ -46,10 +59,22 @@ namespace Webserver
 			if (dup2(pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
 				throw SystemCallFailedException("Dup2()");
 			
-			// 	find cgo script to execute
-			const std::string cgiScript = "root/cgi-bin/add.py";
+			// 	getExecutablePath() = /usr/local/bin/python3;
+			const char *exePath = "/usr/local/bin/python3";
 
-			// execve()
+			// 	getEnvPath = /usr/bin/env;
+			const char *envPath = "/usr/bin/env";
+
+			// 	getCgiPath()		= root/cgi-bin/add.py;
+			const char *cgiPath = "root/cgi-bin/add.py";
+
+			// body = QueryString
+			const char *queryString = "QUERY_STRING=val1=6&val2=5";
+			const char *argv[] = {"env", queryString, exePath, cgiPath, NULL};
+			std::cout << "before execve" << std::endl;
+			if (execve(envPath,(char *const *)argv, NULL) == -1)
+				ERROR("EXECVE FAILED");
+			std::cout << "after execve" << std::endl;
 			// 	execve that bitch
 			//	chilld process
 			//	write here
