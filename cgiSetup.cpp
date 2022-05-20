@@ -41,26 +41,24 @@ int gofukingmental()
 	}
 	else
 	{
+		//	child process
 		close(pipeFd[READ_FD]);
 		if (dup2(pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
 			return (write(1, "dup2() failed\n", 15));
         std::cerr << "Executing hello.cpp" << std::endl;
         execve("hello", NULL, NULL);
         std::cerr << "Executed hello.cpp" << std::endl;
-		//	child process
 		//	write here
 	}
 }
 
 int main(void)
 {
-    gofukingmental();
-    gofukingmental();
-    gofukingmental();
-    gofukingmental();
-    gofukingmental();
-	// wait(NULL);
-    // close(1);
     while (true);
+    gofukingmental();
+    // gofukingmental();
+    // gofukingmental();
+    // gofukingmental();
+    gofukingmental();
     return (0);
 }
