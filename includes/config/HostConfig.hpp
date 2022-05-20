@@ -5,6 +5,7 @@
 
 #include <Method.hpp>
 #include <config/AConfig.hpp>
+#include <config/LocationConfig.hpp>
 
 namespace Webserver
 {
@@ -18,7 +19,7 @@ namespace Webserver
 		void	validate() const;
 
 		std::vector<std::string>	names;
-		std::vector<std::string>	locations;
+		std::vector<LocationConfig>	locations;
 		bool						autoIndexEnabled;
 		std::string					root;
 		std::string					defaultIndex;

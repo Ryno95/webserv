@@ -25,7 +25,13 @@ namespace Webserver
 		{
 			_serverConfigs[i].validate();
 			for (size_t j = 0; j < _serverConfigs[i].hosts.size(); j++)
+			{
 				_serverConfigs[i].hosts[j].validate();
+				for (size_t k = 0; k < _serverConfigs[i].hosts[j].locations.size(); k++)
+				{
+					_serverConfigs[i].hosts[j].locations[k].validate();
+				}
+			}
 		}	
 	}
 
@@ -41,9 +47,11 @@ namespace Webserver
 
 		std::string line;
 		state currentState = NONE;
+
 		ServerConfig currentServerConfig;
 		HostConfig currentHostConfig;
 		GlobalConfig currentGlobalConfig;
+		LocationConfig currentLocationConfig;
 
 		while (std::getline(fstream, line))
 		{
@@ -82,7 +90,7 @@ namespace Webserver
 				else if (line == "host")
 					currentState = PRE_HOST_BLOCK;
 				else
-					parseServerVariable(line, currentServerConfig);
+					parseVariableIntoConfig(line, currentServerConfig);
 				break;
 
 			case PRE_HOST_BLOCK:
@@ -99,10 +107,33 @@ namespace Webserver
 					currentHostConfig = HostConfig();
 					currentState = IN_SERVER_BLOCK;
 				}
+				else if (line.find("location") != std::string::npos)
+				{
+					currentLocationConfig = LocationConfig(line);
+					currentState = PRE_LOCATION_BLOCK;
+				}
 				else
-					parseHostVariable(line, currentHostConfig);
+					parseVariableIntoConfig(line, currentHostConfig);
 				break;
-			
+
+			case PRE_LOCATION_BLOCK:
+				if (line == "{")
+					currentState = IN_LOCATION_BLOCK;
+				else
+					throw ConfigParseUnexpectedTokenException("{", _lineCount, line);
+				break;
+
+			case IN_LOCATION_BLOCK:
+				if (line == "}")
+				{
+					currentHostConfig.locations.push_back(currentLocationConfig);
+					currentState = IN_HOST_BLOCK;
+				}
+				else
+					parseVariableIntoConfig(line, currentLocationConfig);
+				break;
+
+
 			case PRE_APPLICATION_BLOCK:
 				if (line == "{")
 					currentState = IN_APPLICATION_BLOCK;
@@ -114,7 +145,7 @@ namespace Webserver
 				if (line == "}")
 					currentState = NONE;
 				else
-					parseGlobalVariable(line, currentGlobalConfig);
+					parseVariableIntoConfig(line, currentGlobalConfig);
 				break;
 			}
 		}
@@ -126,44 +157,5 @@ namespace Webserver
 
 		GlobalConfig::set(currentGlobalConfig);
 		return _serverConfigs;
-	}
-
-	void ConfigFileParser::parseGlobalVariable(const std::string &line, GlobalConfig& config) const
-	{
-		size_t pos = std::min(line.find('\t'), line.find(' '));
-		if (pos == std::string::npos)
-			throw ConfigParseException(_lineCount, line);
-
-		std::string key = line.substr(0, pos);
-		std::string value = line.substr(pos + 1, line.size() - pos);
-		value = removeLeadingWhitespace(value);
-
-		config.parseVariable(key, value);
-	}
-
-	void ConfigFileParser::parseServerVariable(const std::string &line, ServerConfig &config) const
-	{
-		size_t pos = std::min(line.find('\t'), line.find(' '));
-		if (pos == std::string::npos)
-			throw ConfigParseException(_lineCount, line);
-
-		std::string key = line.substr(0, pos);
-		std::string value = line.substr(pos + 1, line.size() - pos);
-		value = removeLeadingWhitespace(value);
-
-		config.parseVariable(key, value);
-	}
-
-	void ConfigFileParser::parseHostVariable(const std::string &line, HostConfig &config) const
-	{
-		size_t pos = std::min(line.find('\t'), line.find(' '));
-		if (pos == std::string::npos)
-			throw ConfigParseException(_lineCount, line);
-
-		std::string key = line.substr(0, pos);
-		std::string value = line.substr(pos + 1, line.size() - pos);
-		value = removeLeadingWhitespace(value);
-
-		config.parseVariable(key, value);
 	}
 }

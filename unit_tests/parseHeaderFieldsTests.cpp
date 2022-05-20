@@ -201,3 +201,18 @@ Test(ParseHeaderTests, ColonInHeader)
 	cr_expect(myRequest._headerFields["Host"] == "localhost:8080");
 
 }
+
+Test(HeaderFieldTests, CaseSensitivity)
+{
+	const std::string input =	"UsEr-AgEnT: libcurl/7.16.3\r\n"
+								"HOST: www.example.com\r\n"
+								"AccEpt-LangUagE: en, mi\r\n\r\n";
+
+	Request myRequest(input);
+	HttpStatusCode status;
+	myRequest.parseHeaderFields(0);
+
+	cr_expect(myRequest._headerFields["USER-AGENT"] == "libcurl/7.16.3");
+	cr_expect(myRequest._headerFields["host"] == "www.example.com");
+	cr_expect(myRequest._headerFields["accept-language"] == "en, mi");
+}

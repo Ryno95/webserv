@@ -15,10 +15,10 @@ namespace Webserver
 		static void addPollfd(int fd);
 		static void removePollfd(int fd);
 
-		static bool isPollSet(int fd);
-		static bool isPollOutSet(int fd);
-		static bool isPollInSet(int fd);
-		static void setPollOut(int fd, bool enabled);
+		static bool canReadOrWrite(int fd);
+		static bool canWrite(int fd);
+		static bool canRead(int fd);
+		static void setWriteFlag(int fd, bool enabled);
 
 	private:
 		static pollfd* findPollfd(int fd);

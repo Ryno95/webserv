@@ -30,7 +30,7 @@ namespace Webserver
 		throw ValueDoesNotExistException(toString(fd));
 	}
 
-	void PollHandler::setPollOut(int fd, bool enabled)
+	void PollHandler::setWriteFlag(int fd, bool enabled)
 	{
 		pollfd* pfd = findPollfd(fd);
 		if (enabled)
@@ -39,19 +39,19 @@ namespace Webserver
 			pfd->events = POLLIN;
 	}
 
-	bool PollHandler::isPollSet(int fd)
+	bool PollHandler::canReadOrWrite(int fd)
 	{
 		pollfd* pfd = findPollfd(fd);
 		return pfd->revents != 0;
 	}
 
-	bool PollHandler::isPollInSet(int fd)
+	bool PollHandler::canRead(int fd)
 	{
 		pollfd* pfd = findPollfd(fd);
 		return BIT_ISSET(pfd->revents, POLLIN_BIT);
 	}
 
-	bool PollHandler::isPollOutSet(int fd)
+	bool PollHandler::canWrite(int fd)
 	{
 		pollfd* pfd = findPollfd(fd);
 		return BIT_ISSET(pfd->revents, POLLOUT_BIT);

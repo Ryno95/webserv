@@ -6,6 +6,8 @@
 #include <defines.hpp>
 #include <HttpStatusCode.hpp>
 #include <Method.hpp>
+#include <Uri.hpp>
+#include <Utility.hpp>
 
 namespace Webserver
 {
@@ -26,7 +28,8 @@ namespace Webserver
 
 		HttpStatusCode		getStatus() const;
 		Method::method 		getMethod() const;
-		std::string 		getTarget() const;
+		const std::string&	getTarget() const;
+		const std::string&	getHost() const;
 		size_t 				getBodySize() const;
 		const std::string	&getBody() const;
 
@@ -35,20 +38,29 @@ namespace Webserver
 		void				appendBody(const std::string &body);
 
 	private:
+		struct CmpCaseInsensitive
+		{
+			bool operator()(const std::string& a, const std::string& b) const
+			{
+				return stringToLower(a) < stringToLower(b);
+			}
+		};
+
 		size_t 	parseRequestLine();
 		void 	parseHeaderFields(size_t pos);
 		void 	addKeyValuePair(const std::string &src, size_t newLinePos);
 
 		size_t parseRequestMethod();
-		size_t parseTarget(size_t pos);
+		size_t parseUri(size_t pos);
 		size_t parseVersion(size_t pos);
+		void validate() const;
 
 		std::string	_query;
 
 		Method::method		_method;
-		std::string	_target;
+		Uri _uri;
 		std::string	_version;
-		std::map<std::string, std::string>	_headerFields;
+		std::map<std::string, std::string, CmpCaseInsensitive>	_headerFields;
 		std::string	_body;
 
 		HttpStatusCode _status;

@@ -12,7 +12,6 @@ MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Webserv\
 				Client\
 				Request\
-				Response\
 				Receiver\
 				Sender\
 				AMethod\
@@ -22,15 +21,19 @@ CLASSES		=	Webserv\
 				POSTMethod\
 				PollHandler\
 				ServerHandler\
+				Host\
 				Utility\
+				responses/Response\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
-				Router\
+				responses/RedirectResponse\
+				Uri\
 				config/ConfigFileParser\
 				config/AConfig\
 				config/HostConfig\
 				config/ServerConfig\
-				config/GlobalConfig
+				config/GlobalConfig\
+				config/LocationConfig
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -43,7 +46,10 @@ LINKING		=	-I $(INCL_DIR)
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
-				$(TEST_DIR)parseMimeTypesTests.cpp
+				$(TEST_DIR)parseMimeTypesTests.cpp\
+				$(TEST_DIR)uriParseTests.cpp\
+				$(TEST_DIR)wildcardTests.cpp\
+				$(TEST_DIR)routeTests.cpp
 
 
 # Section Rules
