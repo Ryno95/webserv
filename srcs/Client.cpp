@@ -93,7 +93,7 @@ namespace Webserver
 			}
 			if (true) // isCGI()
 			{
-				_CGIQueue.push_back(new CGI(request, _router));
+				_cgiQueue.push_back(new CGI(request));
 				// perform CGI
 				// _CGIQueue.pushback(newCGI(args.....))
 			}

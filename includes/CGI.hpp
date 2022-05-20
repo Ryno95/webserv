@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Request.hpp>
-#include <Router.hpp>
 
 namespace Webserver
 {
@@ -14,13 +13,12 @@ namespace Webserver
 				WRITE_FD
 			} FDs;
 	
-			CGI(const Request &request, const Router &router);
+			CGI(const Request &request);
 			~CGI();
 
 		void performCGI();
 		private:
 			const Request 	&_request; 
-			const Router	&_router; 
 			int				pid;
 			int				pipeFd[2];
 	};

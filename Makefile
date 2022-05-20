@@ -27,7 +27,6 @@ CLASSES		=	Webserv\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
-				Router\
 				CGI\
 				Uri\
 				config/ConfigFileParser\

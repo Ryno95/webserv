@@ -1,10 +1,12 @@
 #include <iostream>
 #include <CGI.hpp>
 #include <unistd.h>
+#include <Exception.hpp>
+#include <PollHandler.hpp>
 
 namespace Webserver
 {
-	CGI::CGI(const Request &request, const Router &router) : _request(request), _router(router)
+	CGI::CGI(const Request &request) : _request(request)
 	{
 		if (pipe(pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
@@ -44,4 +46,3 @@ namespace Webserver
 	}
 	
 }
-		

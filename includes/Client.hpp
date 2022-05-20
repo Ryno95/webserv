@@ -10,7 +10,6 @@
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
 #include <Sender.hpp>
-#include <Router.hpp>
 #include <CGI.hpp>
 
 namespace Webserver
@@ -42,7 +41,7 @@ namespace Webserver
 
 		std::deque<Request> _requestQueue;
 		std::deque<Response *> _responseQueue;
-		// std::vector<CGI*> _cgiQueue;
+		std::vector<CGI*> _cgiQueue;
 
 		int _fd;
 		Receiver _receiver;
