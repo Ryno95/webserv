@@ -6,6 +6,7 @@
 #include <PollHandler.hpp>
 #include <responses/BadStatusResponse.hpp>
 #include <CGI.hpp>
+#include <responses/RedirectResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -15,7 +16,7 @@
 
 namespace Webserver
 {
-	Client::Client(const Router& router, int fd) : _fd(fd), _receiver(fd), _sender(fd), _router(router)
+	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config)
 	{
 		PollHandler::addPollfd(fd);
 		hasCommunicated();
@@ -36,19 +37,19 @@ namespace Webserver
 	*/
 	bool Client::handle()
 	{
-		if (!PollHandler::isPollSet(_fd))
+		if (!PollHandler::canReadOrWrite(_fd))
 			return checkTimeout();
 
 		hasCommunicated();
 
 		try
 		{
-			if (PollHandler::isPollInSet(_fd))
+			if (PollHandler::canRead(_fd))
 				recvRequests();
 
 			processRequests();
 
-			if (PollHandler::isPollOutSet(_fd))
+			if (PollHandler::canWrite(_fd))
 				sendResponses();
 		}
 		catch(const DisconnectedException& e)
@@ -66,24 +67,25 @@ namespace Webserver
 		if (newRequests.size() == 0)
 			return;
 
-		PollHandler::setPollOut(_fd, true);
+		PollHandler::setWriteFlag(_fd, true);
 
 		std::deque<Request>::const_iterator first = newRequests.begin();
 		std::deque<Request>::const_iterator last = newRequests.end();
 		while (first != last)
 		{
-			_requests.push_back(*first);
+			_requestQueue.push_back(*first);
 			++first;
 		}
 	}
 
 	void Client::processRequests()
 	{
-		while (_requests.size() > 0)
+		while (_requestQueue.size() > 0)
 		{
-			Response *response;
-			Request const& request = _requests.front();
+			Response *response = nullptr;
+			Request const& request = _requestQueue.front();
 
+			// an error occured during parsing / preparing the request, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
 				response = new BadStatusResponse(request.getStatus(), BadRequestErrorPage);
@@ -97,27 +99,40 @@ namespace Webserver
 			}
 			else
 			{
-				switch (request.getMethod())
+				// Determine which host to use
+				Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+				if (host.isRedirect())
 				{
-					case Method::GET:
-						DEBUG("Entering GET method!");
-						response = GETMethod(request).process();
-						break;
-					case Method::POST:
-						DEBUG("Entering POST method!");
-						response = POSTMethod(request).process();
-						break;
-					case Method::DELETE:
-						WARN("DELETE is not yet implemented!");
-						break;
-					case Method::INVALID:
-						WARN("INVALID method still continued processing, which is not expected to occur.");
-						break;
+					response = new RedirectResponse(request.getTarget());
+					DEBUG("Redirection encountered.");
+				}
+				else
+				{
+					DEBUG("Using config: " << host.getName());
+
+					switch (request.getMethod())
+					{
+						case Method::GET:
+							DEBUG("Entering GET method!");
+							response = GETMethod(request, host).process();
+							break;
+						case Method::POST:
+							DEBUG("Entering POST method!");
+							response = POSTMethod(request, host).process();
+							break;
+						case Method::DELETE:
+							WARN("DELETE is not yet implemented!");
+							break;
+						case Method::INVALID:
+							WARN("INVALID method still continued processing, which is not expected to occur.");
+							break;
+					}
 				}
 			}
 
-			_requests.pop_front();
-			_responses.push_back(response);
+			_requestQueue.pop_front();
+			if (response != nullptr)
+				_responseQueue.push_back(response);
 		}
 	}
 
@@ -125,10 +140,10 @@ namespace Webserver
 	{
 		if (!_sender.hasResponse()) // set new response object as current response to send
 		{
-			if (_responses.size() > 0)
+			if (_responseQueue.size() > 0)
 			{
-				_sender.setResponse(_responses.front());
-				_responses.pop_front();
+				_sender.setResponse(_responseQueue.front());
+				_responseQueue.pop_front();
 			}
 		}
 
@@ -136,7 +151,7 @@ namespace Webserver
 			_sender.handle();
 		else
 		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::setPollOut(_fd, false);
+			PollHandler::setWriteFlag(_fd, false);
 		}
 	}
 

@@ -5,9 +5,10 @@
 #include <deque>
 #include <vector>
 
+#include <config/ServerConfig.hpp>
 #include <Request.hpp>
 #include <Receiver.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 #include <Sender.hpp>
 #include <Router.hpp>
 #include <CGI.hpp>
@@ -17,7 +18,7 @@ namespace Webserver
 	class Client
 	{
 	public:
-		Client(const Router& router, int fd);
+		Client(const ServerConfig& config, int fd);
 		~Client();
 
 		bool handle();
@@ -39,13 +40,13 @@ namespace Webserver
 
 		timeval _lastCommunicated;
 
-		std::deque<Request> _requests;
-		std::deque<Response *> _responses;
-		std::vector<CGI *> _CGIQueue;
+		std::deque<Request> _requestQueue;
+		std::deque<Response *> _responseQueue;
+		// std::vector<CGI*> _cgiQueue;
 
 		int _fd;
 		Receiver _receiver;
 		Sender _sender;
-		const Router& _router;
+		const ServerConfig& _serverConfig;
 	};
 }

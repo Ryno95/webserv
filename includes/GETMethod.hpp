@@ -9,7 +9,7 @@ namespace Webserver
 	class GETMethod : public AMethod
 	{
 	public:
-		GETMethod(Request const& request);
+		GETMethod(Request const& request, const Host& host);
 		~GETMethod();
 
 		Response* process();

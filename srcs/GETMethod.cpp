@@ -4,7 +4,7 @@
 
 namespace Webserver
 {
-	GETMethod::GETMethod(Request const& request) : AMethod(request)
+	GETMethod::GETMethod(Request const& request, const Host& host) : AMethod(request, host)
 	{
 	}
 

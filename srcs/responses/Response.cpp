@@ -1,6 +1,6 @@
 #include <iostream>
 #include <Logger.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 #include <Utility.hpp>
 #include <Exception.hpp>
 #include <config/GlobalConfig.hpp>
@@ -44,13 +44,14 @@ namespace Webserver
 		this->_statusCode = code;
 	}
 
-	void Response::addHeaderField(std::string key, std::string value)
+	void Response::addHeaderField(const std::string& key, const std::string& value)
 	{
 		_headerFields.insert(std::pair<std::string, std::string>(key, value));
 	}
 
 	void Response::addConstantHeaderFields()
 	{
+
 		addHeaderField("Server", SERVER_NAME);
 		addHeaderField("Accept-Ranges", "bytes");
 		addHeaderField("Date", getTimeStamp());

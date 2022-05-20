@@ -1,13 +1,13 @@
 #include <AMethod.hpp>
 #include <Request.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
 
 namespace Webserver
 {
 	class POSTMethod : public AMethod
 	{
 		public:
-			POSTMethod(const Request &request);
+			POSTMethod(const Request &request, const Host& host);
 			~POSTMethod();
 
 			Response	*process();

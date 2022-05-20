@@ -1,10 +1,11 @@
-#include <Request.hpp>
-#include <Utility.hpp>
-#include <Exception.hpp>
-
 #include <iostream>
 #include <cctype>
 #include <cstdlib>
+
+#include <Request.hpp>
+#include <Utility.hpp>
+#include <Exception.hpp>
+#include <Logger.hpp>
 
 namespace Webserver
 {
@@ -50,16 +51,14 @@ namespace Webserver
 		return pos;
 	}
 
-	size_t Request::parseTarget(size_t pos)
+	size_t Request::parseUri(size_t pos)
 	{
 		size_t pos2;
 
 		pos2 = _query.find(' ', pos);
 		if (pos == std::string::npos || pos2 - pos == 0)
 			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
-		_target = _query.substr(pos, (pos2 - pos));
-		if (_target.size() > MAX_TARGET_LEN)
-			throw InvalidRequestException(HttpStatusCodes::URI_TOO_LONG);
+		_uri = Uri(_query.substr(pos, (pos2 - pos)));
 		return pos2;
 	}
 
@@ -112,7 +111,7 @@ namespace Webserver
 		size_t pos;
 
 		pos = parseRequestMethod();
-		pos = parseTarget(pos + 1);
+		pos = parseUri(pos + 1);
 		pos = parseVersion(pos + 1);
 		
 		return pos;
@@ -164,6 +163,7 @@ namespace Webserver
 	{
 		size_t pos = parseRequestLine();
 		parseHeaderFields(pos);
+		validate();
 	}
 
 	HttpStatusCode Request::getStatus() const
@@ -171,9 +171,18 @@ namespace Webserver
 		return _status;
 	}
 
-	std::string Request::getTarget() const
+	const std::string& Request::getTarget() const
 	{
-		return _target;
+		return _uri.getResourcePath();
+	}
+
+	// RFC: 5.2 The Resource Identified by a Request
+	const std::string& Request::getHost() const
+	{
+		if (_uri.isAbsolute())
+			return _uri.getHost();
+		else
+			return _headerFields.find("Host")->second; // protected by validate(), but still prone to segmentation fault
 	}
 
 	Method::method Request::getMethod() const
@@ -196,5 +205,11 @@ namespace Webserver
 	void	Request::setStatus(HttpStatusCode status)
 	{
 		_status = status;
+	}
+
+	void Request::validate() const
+	{
+		if (_uri.getHost().size() == 0 && _headerFields.find("Host") == _headerFields.end())
+			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 	}
 }

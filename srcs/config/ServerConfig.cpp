@@ -4,7 +4,8 @@
 namespace Webserver
 {
 	ServerConfig::ServerConfig() 
-	:	AConfig::AConfig(fillVariablesMap()), port(80)
+	:	AConfig::AConfig(fillVariablesMap()),
+		port(80)
 	{
 	}
 
