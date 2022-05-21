@@ -16,16 +16,17 @@ namespace Webserver
 
 	class Response
 	{
-	public:
+	protected:
 		Response();
 		Response(const Response &ref);
 		Response(HttpStatusCode code);
-		~Response();
+		Response &operator=(const Response &rhs);
+
+	public:
+		virtual ~Response();
 
 		void	setStatusCode(HttpStatusCode code);
 		void	setBodyStream(std::ifstream* stream);
-
-		Response			&operator=(const Response &rhs);
 
 		void				buildHeader();
 		std::stringstream	*getHeaderStream();
@@ -34,15 +35,6 @@ namespace Webserver
 
 		std::ifstream		*getBodyStream();
 		HttpStatusCode		getStatusCode() const;
-
-	private:
-		struct CmpCaseInsensitive
-		{
-			bool operator()(const std::string& a, const std::string& b) const
-			{
-				return stringToLower(a) < stringToLower(b);
-			}
-		};
 
 	protected:
 
