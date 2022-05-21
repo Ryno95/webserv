@@ -20,6 +20,8 @@ namespace Webserver
 
 	Response* GETMethod::process()
 	{
+		DEBUG("Entering GET method!");
+
 		std::ifstream* stream = new std::ifstream();
 
 		std::string target = _request.getTarget();
