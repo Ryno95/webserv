@@ -6,6 +6,7 @@
 #include <Logger.hpp>
 #include <PollHandler.hpp>
 #include <responses/RedirectResponse.hpp>
+#include <responses/BadStatusResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -85,7 +86,7 @@ namespace Webserver
 		if (host.isRedirect())
 		{
 			DEBUG("Redirection encountered.");
-			return new RedirectResponse(request.getTarget());
+			return new RedirectResponse(host.getRoot());
 		}
 
 		switch (request.getMethod())
@@ -110,7 +111,7 @@ namespace Webserver
 			// an error occured during parsing / preparing the request, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
-				response = new Response(request.getStatus());
+				response = new BadStatusResponse(request.getStatus());
 				DEBUG("Invalid request received.");
 			}
 			else
