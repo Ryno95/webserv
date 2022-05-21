@@ -38,14 +38,6 @@ namespace Webserver
 		void				appendBody(const std::string &body);
 
 	private:
-		struct CmpCaseInsensitive
-		{
-			bool operator()(const std::string& a, const std::string& b) const
-			{
-				return stringToLower(a) < stringToLower(b);
-			}
-		};
-
 		size_t 	parseRequestLine();
 		void 	parseHeaderFields(size_t pos);
 		void 	addKeyValuePair(const std::string &src, size_t newLinePos);
