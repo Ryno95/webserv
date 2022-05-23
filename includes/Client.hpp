@@ -47,5 +47,6 @@ namespace Webserver
 		Receiver _receiver;
 		Sender _sender;
 		const ServerConfig& _serverConfig;
+		bool _closeAfterRespond;
 	};
 }
