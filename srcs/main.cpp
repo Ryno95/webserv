@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include <Webserv.hpp>
-#include <ServerHandler.hpp>
 #include <Logger.hpp>
 #include <config/ConfigFileParser.hpp>
 
