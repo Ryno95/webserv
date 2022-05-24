@@ -49,6 +49,10 @@ namespace Webserver
 		_handlers.push_back(instance);
 	}
 
+	/*
+		Removes int fd from the array of fds we are polling for and the handlers.
+		Caution: Does not remove tick events! Call remove(int, IPollableTickable*) instead.
+	*/
 	void PollHandler::remove(int fd)
 	{
 		int index = getIndexOf(fd);
@@ -57,6 +61,18 @@ namespace Webserver
 
 		_fds.erase(_fds.begin() + index);
 		_handlers.erase(_handlers.begin() + index);
+	}
+
+	void PollHandler::remove(int fd, IPollableTickable* instance)
+	{
+		std::vector<IPollableTickable*>::iterator it = std::find(_tickables.begin(), _tickables.end(), instance);
+		if (it == _tickables.end())
+		{
+			WARN("Fd '" << fd << "' is not added to tickables array.");
+		}
+		else
+			_tickables.erase(it);
+		remove(fd);
 	}
 
 	void PollHandler::setWriteEnabled(int fd, bool enabled)
@@ -83,7 +99,7 @@ namespace Webserver
 			iter++;
 		}
 
-		WARN("Fd '" << fd << "' is not added to the poll handler. This could be a serious bug.");
+		WARN("Fd '" << fd << "' is not added to the poll handler. Have you subscribed using Pollhandler::add()?");
 		return -1;
 	}
 }

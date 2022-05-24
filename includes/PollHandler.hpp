@@ -17,6 +17,7 @@ namespace Webserver
 		static void add(int fd, IPollable* instance);
 		static void add(int fd, IPollableTickable* instance);
 		static void remove(int fd);
+		static void remove(int fd, IPollableTickable* instance);
 		static void setWriteEnabled(int fd, bool enabled);
 
 	private:
