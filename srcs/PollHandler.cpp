@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <PollHandler.hpp>
 #include <Logger.hpp>
 #include <Exception.hpp>
