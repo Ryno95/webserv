@@ -8,6 +8,7 @@ namespace HttpStatusCodes
 {
 	const HttpStatusCode OK					= HttpStatusCode(200, "OK");
 	const HttpStatusCode CREATED			= HttpStatusCode(201, "Created");
+	const HttpStatusCode REDIRECT			= HttpStatusCode(301, "Redirect");
 	const HttpStatusCode BAD_REQUEST		= HttpStatusCode(400, "Bad Request");
 	const HttpStatusCode NOT_FOUND			= HttpStatusCode(404, "Not Found");
 	const HttpStatusCode URI_TOO_LONG		= HttpStatusCode(414, "Request-URI Too Long");

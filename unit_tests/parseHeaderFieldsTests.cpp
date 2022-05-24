@@ -26,9 +26,9 @@ Test(ParseHeaderTests, ValidHeader)
 	}
 
 	cr_expect(status == HttpStatusCodes::OK);
-	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
-	cr_expect(myRequest._headerFields["Host"] == "www.example.com");
-	cr_expect(myRequest._headerFields["Accept-Language"] == "en, mi");
+	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(myRequest._map["Host"] == "www.example.com");
+	cr_expect(myRequest._map["Accept-Language"] == "en, mi");
 }
 
 //  A server MUST reject any received request message that contains
@@ -70,8 +70,8 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 		status = e.getStatus();
 	}
 	cr_expect(status == HttpStatusCodes::OK);
-	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
-	cr_expect(myRequest._headerFields.size() == 1);
+	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(myRequest._map.size() == 1);
 }
 
 Test(ParseHeaderTests, WhiteSpaceBeforeKey)
@@ -91,7 +91,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 		status = e.getStatus();
 	}
 	cr_expect(status == HttpStatusCodes::OK);
-	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
 }
 
 Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
@@ -112,8 +112,8 @@ Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 		status = e.getStatus();
 	}
 	cr_expect(status == HttpStatusCodes::OK);
-	cr_expect(myRequest._headerFields["User-Agent"] == "libcurl/7.16.3");
-	cr_expect(myRequest._headerFields.size() == 1);
+	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(myRequest._map.size() == 1);
 }
 
 // // Might change as we continue
@@ -133,7 +133,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 	{
 		status = e.getStatus();
 	}
-	cr_expect(myRequest._headerFields.size() == 0);
+	cr_expect(myRequest._map.size() == 0);
 	cr_expect(status == HttpStatusCodes::OK);
 }
 
@@ -154,7 +154,7 @@ Test(ParseHeaderTests, NoColon)
 		status = e.getStatus();
 	}
 	cr_expect(status == HttpStatusCodes::BAD_REQUEST);
-	cr_expect(myRequest._headerFields.size() == 0);
+	cr_expect(myRequest._map.size() == 0);
 }
 
 Test(ParseHeaderTests, MultiLineNoColon)
@@ -176,7 +176,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 	}
 
 	cr_expect(status == HttpStatusCodes::BAD_REQUEST);
-	cr_expect(myRequest._headerFields.size() == 0);
+	cr_expect(myRequest._map.size() == 0);
 }
 
 Test(ParseHeaderTests, ColonInHeader)
@@ -197,8 +197,8 @@ Test(ParseHeaderTests, ColonInHeader)
 	}
 
 	cr_expect(status == HttpStatusCodes::OK);
-	cr_expect(myRequest._headerFields.size() == 1);
-	cr_expect(myRequest._headerFields["Host"] == "localhost:8080");
+	cr_expect(myRequest._map.size() == 1);
+	cr_expect(myRequest._map["Host"] == "localhost:8080");
 
 }
 
@@ -212,7 +212,7 @@ Test(HeaderFieldTests, CaseSensitivity)
 	HttpStatusCode status;
 	myRequest.parseHeaderFields(0);
 
-	cr_expect(myRequest._headerFields["USER-AGENT"] == "libcurl/7.16.3");
-	cr_expect(myRequest._headerFields["host"] == "www.example.com");
-	cr_expect(myRequest._headerFields["accept-language"] == "en, mi");
+	cr_expect(myRequest._map["USER-AGENT"] == "libcurl/7.16.3");
+	cr_expect(myRequest._map["host"] == "www.example.com");
+	cr_expect(myRequest._map["accept-language"] == "en, mi");
 }

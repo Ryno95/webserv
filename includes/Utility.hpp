@@ -21,4 +21,12 @@ namespace Webserver
 		ss << val;
 		return ss.str();
 	}
+
+	struct CmpCaseInsensitive
+	{
+		bool operator()(const std::string& a, const std::string& b) const
+		{
+			return stringToLower(a) < stringToLower(b);
+		}
+	};
 }

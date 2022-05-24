@@ -6,6 +6,7 @@
 #include <Logger.hpp>
 #include <PollHandler.hpp>
 #include <responses/RedirectResponse.hpp>
+#include <responses/BadStatusResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -85,7 +86,7 @@ namespace Webserver
 		if (host.isRedirect())
 		{
 			DEBUG("Redirection encountered.");
-			return new RedirectResponse(request.getTarget());
+			return new RedirectResponse(host.getRoot());
 		}
 
 		switch (request.getMethod())
@@ -110,7 +111,7 @@ namespace Webserver
 			// an error occured during parsing / preparing the request, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)
 			{
-				response = new Response(request.getStatus());
+				response = new BadStatusResponse(request.getStatus());
 				DEBUG("Invalid request received.");
 			}
 			else
@@ -126,11 +127,14 @@ namespace Webserver
 
 	void Client::sendResponses()
 	{
-		if (!_sender.hasResponse()) // set new response object as current response to send
+		if (!_sender.hasResponse()) // Is the sender still sending a response?
 		{
-			if (_responseQueue.size() > 0)
+			if (_responseQueue.size() > 0) // If we have some queued, pop the front
 			{
-				_sender.setResponse(_responseQueue.front());
+				Response* response = _responseQueue.front();
+				// Check connection header to know if we should close after sending this response
+
+				_sender.setResponse(response);
 				_responseQueue.pop_front();
 			}
 		}
@@ -145,7 +149,7 @@ namespace Webserver
 
 	/*
 		For the time functions hasCommunicated() and checkTimeout():
-			We might set a "now" time in Webserv.cpp or somewhere else, after poll, and get that value.
+			We might set current_time once per poll iteration and get that value.
 			It reduces the amount of system calls!
 	*/
 	void Client::hasCommunicated()

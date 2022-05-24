@@ -29,7 +29,6 @@ namespace Webserver
 
 	Response& Response::operator=(const Response &rhs)
 	{
-		this->_headerFields = rhs._headerFields;
 		this->_statusCode = rhs._statusCode;
 		return (*this);
 	}
@@ -44,17 +43,11 @@ namespace Webserver
 		this->_statusCode = code;
 	}
 
-	void Response::addHeaderField(const std::string& key, const std::string& value)
-	{
-		_headerFields.insert(std::pair<std::string, std::string>(key, value));
-	}
-
 	void Response::addConstantHeaderFields()
 	{
-
-		addHeaderField("Server", SERVER_NAME);
-		addHeaderField("Accept-Ranges", "bytes");
-		addHeaderField("Date", getTimeStamp());
+		addHeader(Header::Server, SERVER_NAME);
+		addHeader(Header::AcceptRanges, "bytes");
+		addHeader(Header::Date, getTimeStamp());
 	}
 
 	static std::string getContentTypeHeader(const std::string &fileName)
@@ -73,17 +66,17 @@ namespace Webserver
 
 	void Response::createContentHeaders(const std::string &fileName)
 	{
-		if (!_bodyStream->is_open()) // throw execption
+		if (!_bodyStream->is_open()) // throw exception
 			throw SystemCallFailedException("Response file not opened");
 		getBodyStream()->seekg(0, std::ios_base::end);
-		addHeaderField("Content-Length", std::to_string(_bodyStream->tellg()));
-		addHeaderField("Content-Type", getContentTypeHeader(fileName));
+		addHeader(Header::ContentLength, std::to_string(_bodyStream->tellg()));
+		addHeader(Header::ContentType, getContentTypeHeader(fileName));
 	}
 
 	std::stringstream	*Response::getHeaderStream()
 	{
-		std::map<std::string, std::string>::const_iterator cursor = _headerFields.begin();
-		std::map<std::string, std::string>::const_iterator end = _headerFields.end();
+		std::map<std::string, std::string>::const_iterator cursor = headersBegin();
+		std::map<std::string, std::string>::const_iterator end = headersEnd();
 		
 		std::string	header = HTTPVERSION;
 		header += " ";

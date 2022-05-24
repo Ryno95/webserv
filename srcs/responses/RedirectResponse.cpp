@@ -1,11 +1,11 @@
 #include <responses/RedirectResponse.hpp>
+#include <Logger.hpp>
 
 namespace Webserver
 {
-	RedirectResponse::RedirectResponse(const std::string& url)
+	RedirectResponse::RedirectResponse(const std::string& url) : Response(HttpStatusCodes::REDIRECT)
 	{
-		// set status code 301
-		// add header field Location: [url]
+		addHeader(Header::Location, url);
 	}
 
 	RedirectResponse::~RedirectResponse()
