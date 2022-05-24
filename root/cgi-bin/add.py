@@ -18,6 +18,5 @@ print('<output>{0} + {1} = {2}</output>'.format(num1, num2, num1 + num2))
 
 
 
-# print("<TITLE>CGI script output</TITLE>")
-# print("<H1>This is my first CGI script</H1>")
-# print("Hello, world!")
+print("<TITLE>CGI script output</TITLE>")
+print("<H1>This is my first CGI script</H1>")

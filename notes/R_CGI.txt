@@ -25,3 +25,7 @@ close pipes
 
 
 QUERY_STRING="val1=5&val2=66"
+
+
+
+create CGIresponse instead of object

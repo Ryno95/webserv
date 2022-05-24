@@ -6,7 +6,7 @@
 #include <Logger.hpp>
 #include <PollHandler.hpp>
 #include <responses/BadStatusResponse.hpp>
-#include <CGI.hpp>
+#include <responses/CgiResponse.hpp>
 #include <responses/RedirectResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 
@@ -121,12 +121,8 @@ namespace Webserver
 			if (request.getTarget().find(".py") != std::string::npos) // host.isCGI()
 			{
 				DEBUG("ENTERING CGI");
-				// CGI *object = new CGI();
-				// _response = object->createCgiResponse();
-				_cgiQueue.push_back(new CGI(request));
-				// response = _cgiQueue
-				// perform CGI
-				// _CGIQueue.pushback(newCGI(args.....))
+				CgiResponse cgi(request);
+				response = cgi.createCgiResponse();
 			}
 			else
 			{
