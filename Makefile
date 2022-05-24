@@ -16,9 +16,10 @@ CLASSES		=	Webserv\
 				Sender\
 				AMethod\
 				GETMethod\
+				POSTMethod\
+				DELETEMethod\
 				MimeTypes\
 				Logger\
-				POSTMethod\
 				PollHandler\
 				ServerHandler\
 				Host\

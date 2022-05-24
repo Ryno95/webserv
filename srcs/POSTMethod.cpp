@@ -57,6 +57,8 @@ POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(reque
 
 	Response* POSTMethod::process()
 	{
+		DEBUG("Entering POST method!");
+
 		const std::string	fileName  = createFileName(_request.getTarget());
 		std::ofstream       *outfile = new std::ofstream();
 		bool				isCreatingNewFile = false;

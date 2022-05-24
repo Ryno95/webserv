@@ -35,6 +35,7 @@ namespace Webserver
 		void recvRequests();
 		void sendResponses();
 		void processRequests();
+		Response* processValidRequest(const Request& request);
 
 		timeval _lastCommunicated;
 

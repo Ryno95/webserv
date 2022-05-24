@@ -1,6 +1,7 @@
 #include <Client.hpp>
 #include <GETMethod.hpp>
 #include <POSTMethod.hpp>
+#include <DELETEMethod.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
@@ -76,6 +77,29 @@ namespace Webserver
 		}
 	}
 
+	Response* Client::processValidRequest(const Request& request)
+	{
+		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+		DEBUG("Using config: " << host.getName());
+
+		if (host.isRedirect())
+		{
+			DEBUG("Redirection encountered.");
+			return new RedirectResponse(request.getTarget());
+		}
+
+		switch (request.getMethod())
+		{
+			case Method::GET:		return GETMethod(request, host).process();
+			case Method::POST:		return POSTMethod(request, host).process();
+			case Method::DELETE:	return DELETEMethod(request, host).process();
+
+			default:
+				WARN("INVALID method still continued processing, which is not expected to occur.");
+		}
+		return nullptr;
+	}
+
 	void Client::processRequests()
 	{
 		while (_requestQueue.size() > 0)
@@ -91,35 +115,7 @@ namespace Webserver
 			}
 			else
 			{
-				// Determine which host to use
-				Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-				if (host.isRedirect())
-				{
-					response = new RedirectResponse(request.getTarget());
-					DEBUG("Redirection encountered.");
-				}
-				else
-				{
-					DEBUG("Using config: " << host.getName());
-
-					switch (request.getMethod())
-					{
-						case Method::GET:
-							DEBUG("Entering GET method!");
-							response = GETMethod(request, host).process();
-							break;
-						case Method::POST:
-							DEBUG("Entering POST method!");
-							response = POSTMethod(request, host).process();
-							break;
-						case Method::DELETE:
-							WARN("DELETE is not yet implemented!");
-							break;
-						case Method::INVALID:
-							WARN("INVALID method still continued processing, which is not expected to occur.");
-							break;
-					}
-				}
+				response = processValidRequest(request);
 			}
 
 			_requestQueue.pop_front();
