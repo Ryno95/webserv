@@ -7,6 +7,7 @@
 #include <PollHandler.hpp>
 #include <responses/RedirectResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
+#include <responses/OkStatusResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -85,6 +86,12 @@ namespace Webserver
 		{
 			DEBUG("Redirection encountered.");
 			return new RedirectResponse(host.getRoot());
+		}
+
+		if (host.isCgi())
+		{
+			DEBUG("CGI triggered.");
+			return new OkStatusResponse(HttpStatusCodes::OK);
 		}
 
 		switch (request.getMethod())
