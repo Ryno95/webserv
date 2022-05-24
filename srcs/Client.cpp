@@ -28,8 +28,6 @@ namespace Webserver
 	{
 		close(_fd);
 		PollHandler::remove(_fd);
-
-		DEBUG("Client destroyed: " << _fd);
 	}
 
 	void Client::readHandler()
@@ -58,34 +56,6 @@ namespace Webserver
 			_needsRemove = true;
 		}
 	}
-
-	/*
-		Returns false when the client should be removed (disconnected)
-	*/
-	// bool Client::handle()
-	// {
-	// 	if (!PollHandler::canReadOrWrite(_fd))
-	// 		return checkTimeout();
-
-	// 	hasCommunicated();
-
-	// 	try
-	// 	{
-	// 		if (PollHandler::canRead(_fd))
-	// 			recvRequests();
-
-	// 		processRequests();
-
-	// 		if (PollHandler::canWrite(_fd))
-	// 			sendResponses();
-	// 	}
-	// 	catch(const DisconnectedException& e)
-	// 	{
-	// 		return false;
-	// 	}
-
-	// 	return true;
-	// }
 
 	void Client::recvRequests()
 	{
