@@ -74,7 +74,6 @@ namespace Webserver
 
 	void Webserv::removeClients()
 	{
-		DEBUG("Clients connected:" << _clients.size());
 		size_t size = _clients.size();
 		for (size_t i = 0; i < size; i++)
 		{
