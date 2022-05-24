@@ -29,7 +29,7 @@ namespace Webserver
 	Webserv::~Webserv()
 	{
 		close(_listenerFd);
-		PollHandler::remove(_listenerFd);
+		PollHandler::remove(_listenerFd, this);
 
 		DEBUG("Destroyed server instance on port: " << _config.port);
 	}
@@ -74,14 +74,27 @@ namespace Webserver
 
 	void Webserv::removeClients()
 	{
-		for (size_t i = 0; i < _clients.size(); i++)
+		DEBUG("Clients connected:" << _clients.size());
+		size_t size = _clients.size();
+		for (size_t i = 0; i < size; i++)
 		{
 			if (_clients[i]->needsRemove())
 			{
-				DEBUG("Removed client with index: " << i);
 				delete _clients[i];
 				_clients.erase(_clients.begin() + i);
+				i--;
+				size--;
 			}
+		}
+	}
+
+	void Webserv::checkTimeout() const
+	{
+		timeval now;
+		gettimeofday(&now, NULL);
+		for (size_t i = 0; i < _clients.size(); i++)
+		{
+			_clients[i]->checkTimeout(now);
 		}
 	}
 
@@ -102,7 +115,7 @@ namespace Webserver
 
 	void Webserv::tick()
 	{
-		DEBUG("Tick");
+		checkTimeout();
 		removeClients();
 	}
 }

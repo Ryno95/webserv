@@ -25,6 +25,7 @@ namespace Webserver
 		void readHandler();
 		void writeHandler();
 		bool needsRemove() const;
+		void checkTimeout(timeval now);
 
 		struct DisconnectedException : std::exception
 		{
@@ -35,7 +36,6 @@ namespace Webserver
 		};
 
 	private:
-		bool checkTimeout() const;
 		void hasCommunicated();
 		void recvRequests();
 		void sendResponses();

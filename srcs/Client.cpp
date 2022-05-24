@@ -28,6 +28,7 @@ namespace Webserver
 	{
 		close(_fd);
 		PollHandler::remove(_fd);
+		DEBUG("Removed client with fd: " << _fd);
 	}
 
 	void Client::readHandler()
@@ -154,15 +155,14 @@ namespace Webserver
 		gettimeofday(&_lastCommunicated, NULL);
 	}
 
-	bool Client::checkTimeout() const
-	{
-		timeval now;
-		gettimeofday(&now, NULL);
-		return ((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000) < TIMEOUT_MS;
-	}
-
 	bool Client::needsRemove() const
 	{
 		return _needsRemove;
+	}
+
+	void Client::checkTimeout(timeval now)
+	{
+		if (((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000) >= TIMEOUT_MS)
+			_needsRemove = true;
 	}
 }

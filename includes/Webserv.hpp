@@ -26,6 +26,7 @@ namespace Webserver
 			void writeHandler();
 			void tick();
 			const ServerConfig& getConfig() const;
+			void checkTimeout() const;
 			void removeClients();
 
 		private:
