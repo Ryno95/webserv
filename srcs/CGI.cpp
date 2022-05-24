@@ -70,7 +70,9 @@ namespace Webserver
 
 			// body = QueryString
 			const char *queryString = "QUERY_STRING=val1=6&val2=5";
-			const char *argv[] = {"env", queryString, exePath, cgiPath, NULL};
+			// const char * queryString = std::string("QUERY_STRING=" + _request.getBody()).c_str();
+			DEBUG(queryString);
+			const char *argv[] = {"env", "-i", queryString, exePath, cgiPath, NULL};
 			std::cout << "before execve" << std::endl;
 			if (execve(envPath,(char *const *)argv, NULL) == -1)
 				ERROR("EXECVE FAILED");

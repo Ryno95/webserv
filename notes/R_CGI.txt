@@ -24,3 +24,4 @@ close pipes
 ->	execve cgi script
 
 
+QUERY_STRING="val1=5&val2=66"

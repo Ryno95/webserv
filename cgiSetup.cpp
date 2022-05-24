@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <iostream>
+#include <stdlib.h>
 
 enum FDs
 {
@@ -8,7 +9,7 @@ enum FDs
 	WRITE_FD
 } FDs;
 
-int gofukingmental()
+int gofukingmental(char *argv)
 {
     int pipeFd[2];
     int pid;
@@ -38,6 +39,7 @@ int gofukingmental()
         buffer[bufferRead] = '\0';
         std::cout <<  buffer << std::endl;
 		close(pipeFd[READ_FD]);
+        wait(NULL);
 	}
 	else
 	{
@@ -45,20 +47,32 @@ int gofukingmental()
 		close(pipeFd[READ_FD]);
 		if (dup2(pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
 			return (write(1, "dup2() failed\n", 15));
+
         std::cerr << "Executing hello.cpp" << std::endl;
-        execve("hello", NULL, NULL);
+
+        char queryString[] = "QUERY_STRING=val1=5&val2=66";
+
+        if (putenv(queryString) == -1)
+            std::cout << "Setenv failed!" << std::endl;
+
+        std::cerr << "Does this return what i need?" << getenv("QUERY_STRING") << std::endl;
+        
+        const char *argv[] = {"env", "-i", queryString, "/usr/local/bin/python3", "root/cgi-bin/add.py", NULL};
+
+        // if (system("python3 root/cgi-bin/add.py") == -1)
+        //     perror("");
+        const char *path = "/usr/bin/env";
+        if (execve(path, (char *const *)argv,NULL) == -1)
+            perror("");
+        close(pipeFd[WRITE_FD]);
         std::cerr << "Executed hello.cpp" << std::endl;
-		//	write here
 	}
+    return (0);
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+    gofukingmental(argv[1]);
     while (true);
-    gofukingmental();
-    // gofukingmental();
-    // gofukingmental();
-    // gofukingmental();
-    gofukingmental();
     return (0);
 }

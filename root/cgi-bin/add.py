@@ -1,4 +1,6 @@
 import cgi, cgitb
+import os
+
 cgitb.enable()
 
 form = cgi.FieldStorage()
@@ -7,8 +9,8 @@ print('Content-Type: text/html') # HTML is following
 print('')                         # Leave a blank line
 print('<h1>Addition Results</h1>')
 try:
-    num1 = int(form["num1"].value)
-    num2 = int(form["num2"].value)
+    num1 = int(form["val1"].value)
+    num2 = int(form["val2"].value)
 except:
     print('<output>Sorry, the script cannot turn your inputs into numbers (integers).</output>')
     raise SystemExit(1)

@@ -84,23 +84,28 @@ namespace Webserver
 		{
 			Response *response = nullptr;
 			Request const& request = _requestQueue.front();
+			Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
 			// an error occured during parsing / preparing the request, so we send the error-code back
-			if (request.getStatus() != HttpStatusCodes::OK)
+			if (request.getStatus() != HttpStatusCodes::OK) // extra check if determine() went well;
 			{
 				response = new BadStatusResponse(request.getStatus(), BadRequestErrorPage);
 				DEBUG("Invalid request received.");
 			}
-			if (true) // isCGI()
+			DEBUG(request.getTarget());
+			if (request.getTarget().find(".py") != std::string::npos) // host.isCGI()
 			{
+				DEBUG("ENTERING CGI");
+				// CGI *object = new CGI();
+				// _response = object->createCgiResponse();
 				_cgiQueue.push_back(new CGI(request));
+				// response = _cgiQueue
 				// perform CGI
 				// _CGIQueue.pushback(newCGI(args.....))
 			}
 			else
 			{
 				// Determine which host to use
-				Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 				if (host.isRedirect())
 				{
 					response = new RedirectResponse(request.getTarget());
