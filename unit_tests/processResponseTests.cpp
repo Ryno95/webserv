@@ -22,6 +22,6 @@ Test(ResponseTests, BasicGETRequest)
 	
 	cr_expect(response._statusCode == HttpStatusCodes::OK);
 	// cr_expect(response._body == "Hello Mr.Client");
-	cr_expect(response._headerFields["Server"] == "Webserv");
-	// cr_expect(response._headerFields["Content-Length"] == "15");
+	cr_expect(response._map["Server"] == "Webserv");
+	// cr_expect(response._map["Content-Length"] == "15");
 }

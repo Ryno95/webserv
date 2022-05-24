@@ -1,12 +1,14 @@
 #include <Client.hpp>
 #include <GETMethod.hpp>
 #include <POSTMethod.hpp>
+#include <DELETEMethod.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
 #include <responses/BadStatusResponse.hpp>
 #include <CGI.hpp>
 #include <responses/RedirectResponse.hpp>
+#include <responses/BadStatusResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -78,6 +80,29 @@ namespace Webserver
 		}
 	}
 
+	Response* Client::processValidRequest(const Request& request)
+	{
+		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+		DEBUG("Using config: " << host.getName());
+
+		if (host.isRedirect())
+		{
+			DEBUG("Redirection encountered.");
+			return new RedirectResponse(host.getRoot());
+		}
+
+		switch (request.getMethod())
+		{
+			case Method::GET:		return GETMethod(request, host).process();
+			case Method::POST:		return POSTMethod(request, host).process();
+			case Method::DELETE:	return DELETEMethod(request, host).process();
+
+			default:
+				WARN("INVALID method still continued processing, which is not expected to occur.");
+		}
+		return nullptr;
+	}
+
 	void Client::processRequests()
 	{
 		while (_requestQueue.size() > 0)
@@ -105,34 +130,7 @@ namespace Webserver
 			}
 			else
 			{
-				// Determine which host to use
-				if (host.isRedirect())
-				{
-					response = new RedirectResponse(request.getTarget());
-					DEBUG("Redirection encountered.");
-				}
-				else
-				{
-					DEBUG("Using config: " << host.getName());
-
-					switch (request.getMethod())
-					{
-						case Method::GET:
-							DEBUG("Entering GET method!");
-							response = GETMethod(request, host).process();
-							break;
-						case Method::POST:
-							DEBUG("Entering POST method!");
-							response = POSTMethod(request, host).process();
-							break;
-						case Method::DELETE:
-							WARN("DELETE is not yet implemented!");
-							break;
-						case Method::INVALID:
-							WARN("INVALID method still continued processing, which is not expected to occur.");
-							break;
-					}
-				}
+				response = processValidRequest(request);
 			}
 
 			_requestQueue.pop_front();
@@ -143,11 +141,14 @@ namespace Webserver
 
 	void Client::sendResponses()
 	{
-		if (!_sender.hasResponse()) // set new response object as current response to send
+		if (!_sender.hasResponse()) // Is the sender still sending a response?
 		{
-			if (_responseQueue.size() > 0)
+			if (_responseQueue.size() > 0) // If we have some queued, pop the front
 			{
-				_sender.setResponse(_responseQueue.front());
+				Response* response = _responseQueue.front();
+				// Check connection header to know if we should close after sending this response
+
+				_sender.setResponse(response);
 				_responseQueue.pop_front();
 			}
 		}
@@ -162,7 +163,7 @@ namespace Webserver
 
 	/*
 		For the time functions hasCommunicated() and checkTimeout():
-			We might set a "now" time in Webserv.cpp or somewhere else, after poll, and get that value.
+			We might set current_time once per poll iteration and get that value.
 			It reduces the amount of system calls!
 	*/
 	void Client::hasCommunicated()

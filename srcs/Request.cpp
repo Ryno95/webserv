@@ -117,7 +117,7 @@ namespace Webserver
 		return pos;
 	}
 
-	void	Request::addKeyValuePair(const std::string &src, size_t newLinePos)
+	void	Request::parseKeyValuePair(const std::string &src, size_t newLinePos)
 	{
 		const size_t 	colonPos = src.find(COLON);
 		int				i = 0;
@@ -129,7 +129,7 @@ namespace Webserver
 		while(std::isspace(src[colonPos + CRLF_CHAR_COUNT + i]))
 			++i;
 		std::string value = src.substr(colonPos + CRLF_CHAR_COUNT + i, newLinePos);
-		_headerFields.insert(std::pair<std::string, std::string>(key, value));
+		addHeader(key, value);
 	}
 
 	std::string	getTrimmedLine(std::string line)
@@ -152,7 +152,7 @@ namespace Webserver
 		while ((next = _query.find(CRLF, last)) != std::string::npos)
 		{
 			trimmedLine = getTrimmedLine(_query.substr(last, next - last));
-			addKeyValuePair(trimmedLine, next);
+			parseKeyValuePair(trimmedLine, next);
 			if (isTerminatorStr(_query.substr(next, TERMINATOR_LEN)))
 				break ;
 			last = next + CRLF_CHAR_COUNT;
@@ -177,12 +177,16 @@ namespace Webserver
 	}
 
 	// RFC: 5.2 The Resource Identified by a Request
-	const std::string& Request::getHost() const
+	std::string Request::getHost() const
 	{
 		if (_uri.isAbsolute())
 			return _uri.getHost();
-		else
-			return _headerFields.find("Host")->second; // protected by validate(), but still prone to segmentation fault
+
+		std::string value;
+		if (tryGetHeader(Header::Host, value))
+			return value;
+		WARN("No host could be determined, while this should've been caught during Request::validate()");
+		throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 	}
 
 	Method::method Request::getMethod() const
@@ -192,10 +196,9 @@ namespace Webserver
 
 	size_t Request::getBodySize() const
 	{
-		std::map<std::string, std::string>::const_iterator it = _headerFields.find("Content-Length");
-
-		if (it != _headerFields.end())
-			return std::atol(it->second.c_str());
+		std::string length;
+		if (tryGetHeader(Header::ContentLength, length))
+			return std::atol(length.c_str());
 		return -1;
 	}
 
@@ -209,7 +212,7 @@ namespace Webserver
 
 	void Request::validate() const
 	{
-		if (_uri.getHost().size() == 0 && _headerFields.find("Host") == _headerFields.end())
+		if (_uri.getHost().size() == 0 && !containsHeader(Header::Host))
 			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 	}
 }

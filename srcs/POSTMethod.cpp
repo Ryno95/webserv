@@ -43,13 +43,13 @@ POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(reque
 		const std::string absPath = _absPathForCreatedFile.substr(_absPathForCreatedFile.find_first_of("/"),  _absPathForCreatedFile.size());
 		const std::string location(HttpProtocol + localHost + ":" + listenPort + absPath);
 
-		_response->addHeaderField("Location", location);
-		_response->addHeaderField("Created-file", _absPathForCreatedFile);
+		_response->addHeader(Header::Location, location);
+		_response->addHeader("Created-file", _absPathForCreatedFile); // What is this? Have reference for Pascal? Me no comprendro
 	}
 
 	void POSTMethod::setPostResponseHeaders(bool isCreated)
 	{
-		_response->addHeaderField("Content-Length", std::to_string(_request.getBodySize()));
+		_response->addHeader(Header::ContentLength, std::to_string(_request.getBodySize()));
 		if (isCreated)
 			addLocationHeader();
 
@@ -57,6 +57,8 @@ POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(reque
 
 	Response* POSTMethod::process()
 	{
+		DEBUG("Entering POST method!");
+
 		const std::string	fileName  = createFileName(_request.getTarget());
 		std::ofstream       *outfile = new std::ofstream();
 		bool				isCreatingNewFile = false;

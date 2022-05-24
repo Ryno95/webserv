@@ -36,6 +36,7 @@ namespace Webserver
 		void recvRequests();
 		void sendResponses();
 		void processRequests();
+		Response* processValidRequest(const Request& request);
 
 		timeval _lastCommunicated;
 
@@ -47,5 +48,6 @@ namespace Webserver
 		Receiver _receiver;
 		Sender _sender;
 		const ServerConfig& _serverConfig;
+		bool _closeAfterRespond;
 	};
 }
