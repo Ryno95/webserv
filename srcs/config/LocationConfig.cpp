@@ -66,7 +66,9 @@ namespace Webserver
 			routeType = RouteType::REDIRECT;
 		else if (type == "upload")
 			routeType = RouteType::UPLOAD;
+		else if (type == "cgi")
+			routeType = RouteType::CGI;
 		else
-			throw InvalidValueException("Either root, redirect or upload should be set for a location");
+			throw InvalidValueException("Either root, redirect, upload or cgi should be set for a location");
 	}
 }

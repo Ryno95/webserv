@@ -21,14 +21,14 @@ namespace Webserver
 		bool			isRedirect() const;
 		bool			isUpload() const;
 		bool			isChangeRoot() const;
-	
+		bool			isCgi() const;
+
 	private:
 		static const HostConfig& matchHost(const std::vector<HostConfig>& hosts, const std::string& hostName);
 
 		Host(const HostConfig& config, const std::string& uri);
 		void matchLocation(const std::string& uri);
 
-		// LocationConfig _location;
 		RouteType::RouteType _routeType;
 	};
 }
