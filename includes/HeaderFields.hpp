@@ -27,57 +27,61 @@ namespace Header
 	const std::string ContentLanguage = "Content-Language";
 	const std::string ContentLength = "Content-Length";
 	const std::string ContentLocation = "Content-Location";
-
-// const std::string Content-MD5 121
-// const std::string Content-Range 122
-// const std::string Content-Type 124
-// const std::string Date 124
-// const std::string Clockless Origin Server Operation 125
-// const std::string ETag 126
-// const std::string Expect 126
-// const std::string Expires 127
-// const std::string From 128
-// const std::string Host 128
-// const std::string If-Match 129
-// const std::string If-Modified-Since 130
-// const std::string If-None-Match 132
-// const std::string If-Range 133
-// const std::string If-Unmodified-Since 134
-// const std::string Last-Modified 134
-// const std::string Location 135
-// const std::string Max-Forwards 136
-// const std::string Pragma 136
-// const std::string Proxy-Authenticate 137
-// const std::string Proxy-Authorization 137
-// const std::string Range 138
-// const std::string Byte Ranges 138
-// const std::string Range Retrieval Requests 139
-// const std::string Referer 140
-// const std::string Retry-After 141
-// const std::string Server 141
-// const std::string TE 142
-// const std::string Trailer 143
-// const std::string Transfer-Encoding 143
-// const std::string Upgrade 144
-// const std::string User-Agent 145
-// const std::string Vary 145
-// const std::string Via 146
-// const std::string Warning 148
-// const std::string WWW-Authenticate 150
+	const std::string ContentMD5 = "Content-MD5";
+	const std::string ContentRange = "Content-Range";
+	const std::string ContentType = "Content-Type";
+	const std::string Date = "Date";
+	const std::string ClocklessOriginServerOperation = "Clockless Origin Server Operation";
+	const std::string ETag = "ETag";
+	const std::string Expect = "Expect";
+	const std::string Expires = "Expires";
+	const std::string From = "From";
+	const std::string Host = "Host";
+	const std::string IfMatch = "If-Match";
+	const std::string IfModifiedSince = "If-Modified-Since";
+	const std::string IfNoneMatch = "If-None-Match";
+	const std::string IfRange = "If-Range";
+	const std::string IfUnmodifiedSince = "If-Unmodified-Since";
+	const std::string LastModified = "Last-Modified";
+	const std::string Location = "Location";
+	const std::string MaxForwards = "Max-Forwards";
+	const std::string Pragma = "Pragma";
+	const std::string ProxyAuthenticate = "Proxy-Authenticate";
+	const std::string ProxyAuthorization = "Proxy-Authorization";
+	const std::string Range = "Range";
+	const std::string ByteRanges = "Byte Ranges";
+	const std::string RangeRetrievalRequests = "Range Retrieval Requests";
+	const std::string Referer = "Referer";
+	const std::string RetryAfter = "Retry-After";
+	const std::string Server = "Server";
+	const std::string TE = "TE";
+	const std::string Trailer = "Trailer";
+	const std::string TransferEncoding = "Transfer-Encoding";
+	const std::string Upgrade = "Upgrade";
+	const std::string UserAgent = "User-Agent";
+	const std::string Vary = "Vary";
+	const std::string Via = "Via";
+	const std::string Warning = "Warning";
+	const std::string WWWAuthenticate = "WWW-Authenticate";
 }
 
 namespace Webserver
 {
+	typedef std::map<std::string, std::string, CmpCaseInsensitive>	map_type;
+	typedef map_type::value_type									pair_type;
+	typedef map_type::const_iterator								const_iterator;
+
 	class HeaderFields
 	{
 	public:
 		bool containsHeader(const std::string& key) const;
 		void addHeader(const std::string& key, const std::string& value);
 		bool tryGetHeader(const std::string& key, std::string& value) const;
-		// const std::string& operator[](const std::string& key);
+		const_iterator headersBegin() const;
+		const_iterator headersEnd() const;
 	
 	private:
-		std::map<std::string, std::string, CmpCaseInsensitive> _map;
+		map_type _map;
 
 	};
 }

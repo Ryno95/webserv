@@ -14,7 +14,7 @@ namespace Webserver
 	*/
 	bool HeaderFields::tryGetHeader(const std::string& key, std::string& value) const
 	{
-		std::map<std::string, std::string>::iterator pos = _map.find(key);
+		const_iterator pos = _map.find(key);
 		if (pos == _map.end())
 			return false;
 		value = pos->second;
@@ -26,8 +26,13 @@ namespace Webserver
 		_map.insert(std::pair<std::string, std::string>(key, value));
 	}
 
-	// const std::string& HeaderFields::operator[](const std::string& key)
-	// {
-	// 	return _map[key];
-	// }
+	const_iterator HeaderFields::headersBegin() const
+	{
+		return _map.begin();
+	}
+
+	const_iterator HeaderFields::headersEnd() const
+	{
+		return _map.end();
+	}
 }
