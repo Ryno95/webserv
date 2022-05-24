@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <iostream>
+#include <sstream>
 #include <stdlib.h>
 
 enum FDs
@@ -25,8 +26,10 @@ int gofukingmental(char *argv)
 	{
 		// parent process
 		// read here
+        std::stringstream dreamyStreamy;
+        
 		close(pipeFd[WRITE_FD]);
-		char buffer[100];
+		char buffer[1024];
         int readBytes = 0, bufferRead = 0;
 
         while (1)
@@ -34,10 +37,11 @@ int gofukingmental(char *argv)
             readBytes = read(pipeFd[READ_FD], &buffer[bufferRead], 2);
             if (readBytes <=  0)
                 break ;
-            bufferRead += readBytes;
+            buffer[readBytes] = '\0';
+            dreamyStreamy << buffer;
+            std::cout << dreamyStreamy.rdbuf() << std::endl;
         }
-        buffer[bufferRead] = '\0';
-        std::cout <<  buffer << std::endl;
+        std::cout << dreamyStreamy.read() << std::endl;
 		close(pipeFd[READ_FD]);
         wait(NULL);
 	}
@@ -73,6 +77,6 @@ int gofukingmental(char *argv)
 int main(int argc, char *argv[])
 {
     gofukingmental(argv[1]);
-    while (true);
+    // while (true);
     return (0);
 }

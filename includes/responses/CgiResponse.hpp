@@ -19,7 +19,6 @@ namespace Webserver
 			~CgiResponse();
 
 		void 		performCGI();
-		Response	*createCgiResponse();
 		std::string	getExecutablePath(const std::string &exe);
 
 
@@ -29,6 +28,7 @@ namespace Webserver
 			int					_pipeFd[2];
 			const std::string 	_cgiExecutable;
 			const std::string 	_envExecutable;
+
 	};
 
 }

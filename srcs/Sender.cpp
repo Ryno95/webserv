@@ -31,6 +31,8 @@ namespace Webserver
 
 			case SEND_BODY:
 				_dataStream = _response->getBodyStream();
+				if(_dataStream == nullptr)
+					_dataStream = &(_response->_cgiStream);
 				break;
 
 			case FINISHED:

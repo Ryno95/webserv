@@ -1,5 +1,6 @@
 #include <iostream>
 #include <responses/CgiResponse.hpp>
+#include <responses/OkStatusResponse.hpp>
 #include <unistd.h>
 #include <Exception.hpp>
 #include <PollHandler.hpp>
@@ -20,7 +21,6 @@ namespace Webserver
 			throw SystemCallFailedException("Pipe()");
 		PollHandler::addPollfd(_pipeFd[READ_FD]);
 		PollHandler::addPollfd(_pipeFd[WRITE_FD]);
-		// DEBUG("CREATING ")
 		performCGI();
 	}	
 
@@ -68,18 +68,18 @@ namespace Webserver
 			// parent process
 			// read here
 			close(_pipeFd[WRITE_FD]);
-			char buffer[100];
-        	int readBytes = 0, bufferRead = 0;
+			char buffer[BUFFERSIZE];
+        	int readBytes = 0;
 
         	while (1)
         	{
-        	    readBytes = read(_pipeFd[READ_FD], &buffer[bufferRead], 2);
+        	    readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
         	    if (readBytes <=  0)
         	        break ;
-        	    bufferRead += readBytes;
+        		buffer[readBytes] = '\0';
+				_cgiStream << buffer;
         	}
-        	buffer[bufferRead] = '\0';
-        	std::cout <<  buffer << std::endl;
+        	std::cout << _cgiStream.str() << std::endl;
 			close(_pipeFd[READ_FD]);
         	wait(NULL);
 		}
@@ -99,9 +99,9 @@ namespace Webserver
 			// const char *queryString = "QUERY_STRING=val1=6&val2=5";
 			const char * queryString = std::string("QUERY_STRING=" + _request.getBody()).c_str();
 
-			DEBUG(queryString);
+			// DEBUG(queryString);
 			const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
-			std::cout << "before execve" << std::endl;
+			// std::cout << "before execve" << std::endl;
 			if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == -1)
 				ERROR("EXECVE FAILED");
 			// 	execve that bitch
@@ -113,9 +113,4 @@ namespace Webserver
 		}
 		
 	}
-	Response* CgiResponse::createCgiResponse()
-	{
-		return nullptr;	
-	}
-	
 }

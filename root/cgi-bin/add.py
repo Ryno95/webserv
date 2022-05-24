@@ -4,9 +4,9 @@ import os
 cgitb.enable()
 
 form = cgi.FieldStorage()
-
-print('Content-Type: text/html') # HTML is following
-print('')                         # Leave a blank line
+print("<!DOCTYPE html>\n<html>\n")
+# print('Content-Type: text/html') # HTML is following
+# print('')                         # Leave a blank line
 print('<h1>Addition Results</h1>')
 try:
     num1 = int(form["val1"].value)
@@ -20,3 +20,4 @@ print('<output>{0} + {1} = {2}</output>'.format(num1, num2, num1 + num2))
 
 print("<TITLE>CGI script output</TITLE>")
 print("<H1>This is my first CGI script</H1>")
+print("</html>\n")
