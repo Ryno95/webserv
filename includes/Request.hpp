@@ -8,10 +8,11 @@
 #include <Method.hpp>
 #include <Uri.hpp>
 #include <Utility.hpp>
+#include <HeaderFields.hpp>
 
 namespace Webserver
 {
-	class Request
+	class Request : public HeaderFields
 	{
 	#define COLON 			":"
 	#define CRLF			"\r\n"
@@ -29,7 +30,7 @@ namespace Webserver
 		HttpStatusCode		getStatus() const;
 		Method::method 		getMethod() const;
 		const std::string&	getTarget() const;
-		const std::string&	getHost() const;
+		std::string			getHost() const;
 		size_t 				getBodySize() const;
 		const std::string	&getBody() const;
 
@@ -40,7 +41,7 @@ namespace Webserver
 	private:
 		size_t 	parseRequestLine();
 		void 	parseHeaderFields(size_t pos);
-		void 	addKeyValuePair(const std::string &src, size_t newLinePos);
+		void 	parseKeyValuePair(const std::string &src, size_t newLinePos);
 
 		size_t parseRequestMethod();
 		size_t parseUri(size_t pos);
@@ -52,7 +53,6 @@ namespace Webserver
 		Method::method		_method;
 		Uri _uri;
 		std::string	_version;
-		std::map<std::string, std::string, CmpCaseInsensitive>	_headerFields;
 		std::string	_body;
 
 		HttpStatusCode _status;

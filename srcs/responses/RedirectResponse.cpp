@@ -5,7 +5,7 @@ namespace Webserver
 {
 	RedirectResponse::RedirectResponse(const std::string& url) : Response(HttpStatusCodes::REDIRECT)
 	{
-		addHeaderField("Location", url);
+		addHeader(Header::Location, url);
 	}
 
 	RedirectResponse::~RedirectResponse()

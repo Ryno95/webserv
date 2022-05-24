@@ -31,7 +31,6 @@ namespace Webserver
 
 		void				buildHeader();
 		std::stringstream	*getHeaderStream();
-		// void				addHeaderField(const std::string& key, const std::string& value);
 		void				createContentHeaders(const std::string &fileName);
 
 		std::ifstream		*getBodyStream();
@@ -43,8 +42,6 @@ namespace Webserver
 		HttpStatusCode 						_statusCode;
 		std::stringstream 					_headerStream;
 		std::ifstream						*_bodyStream;
-		// std::map<std::string, std::string, CmpCaseInsensitive>	_headerFields;
-		// HeaderFields						_headers;
 
 		void				addConstantHeaderFields(); // hard coded for now to get the flow going
 	
