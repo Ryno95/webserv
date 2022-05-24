@@ -9,6 +9,8 @@ namespace Webserver
 {
 	int run(int argc, char** argv)
 	{
+		std::vector<Webserv*> servers;
+
 		try
 		{
 			std::string path;
@@ -22,9 +24,9 @@ namespace Webserver
 
 			for (size_t i = 0; i < configs.size(); i++)
 			{
-				ServerHandler::addServer(configs[i]);
+				servers.push_back(new Webserv(configs[i]));
 			}
-			ServerHandler::run();
+			PollHandler::loop();
 		}
 		catch(const std::exception& e)
 		{
