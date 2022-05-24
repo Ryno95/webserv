@@ -16,9 +16,9 @@
 
 namespace Webserver
 {
-	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config)
+	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false)
 	{
-		PollHandler::addPollfd(fd);
+		PollHandler::add(fd, this);
 		hasCommunicated();
 
 		DEBUG("Accepted client on fd: " << _fd);
@@ -27,38 +27,65 @@ namespace Webserver
 	Client::~Client()
 	{
 		close(_fd);
-		PollHandler::removePollfd(_fd);
+		PollHandler::remove(_fd);
 
-		DEBUG("Client disconnected: " << _fd);
+		DEBUG("Client destroyed: " << _fd);
+	}
+
+	void Client::readHandler()
+	{
+		try
+		{
+			recvRequests();
+			processRequests();
+		}
+		catch(const DisconnectedException& e)
+		{
+			DEBUG("Client disconnected: " << _fd);
+			_needsRemove = true;
+		}
+	}
+
+	void Client::writeHandler()
+	{
+		try
+		{
+			sendResponses();
+		}
+		catch(const DisconnectedException& e)
+		{
+			DEBUG("Client disconnected: " << _fd);
+			_needsRemove = true;
+		}
 	}
 
 	/*
 		Returns false when the client should be removed (disconnected)
 	*/
-	bool Client::handle()
-	{
-		if (!PollHandler::canReadOrWrite(_fd))
-			return checkTimeout();
+	// bool Client::handle()
+	// {
+	// 	if (!PollHandler::canReadOrWrite(_fd))
+	// 		return checkTimeout();
 
-		hasCommunicated();
+	// 	hasCommunicated();
 
-		try
-		{
-			if (PollHandler::canRead(_fd))
-				recvRequests();
+	// 	try
+	// 	{
+	// 		if (PollHandler::canRead(_fd))
+	// 			recvRequests();
 
-			processRequests();
+	// 		processRequests();
 
-			if (PollHandler::canWrite(_fd))
-				sendResponses();
-		}
-		catch(const DisconnectedException& e)
-		{
-			return false;
-		}
+	// 		if (PollHandler::canWrite(_fd))
+	// 			sendResponses();
+	// 	}
+	// 	catch(const DisconnectedException& e)
+	// 	{
+	// 		return false;
+	// 	}
 
-		return true;
-	}
+	// 	return true;
+	// }
 
 	void Client::recvRequests()
 	{
@@ -67,7 +94,7 @@ namespace Webserver
 		if (newRequests.size() == 0)
 			return;
 
-		PollHandler::setWriteFlag(_fd, true);
+		PollHandler::setWriteEnabled(_fd, true);
 
 		std::deque<Request>::const_iterator first = newRequests.begin();
 		std::deque<Request>::const_iterator last = newRequests.end();
@@ -120,7 +147,7 @@ namespace Webserver
 			}
 
 			_requestQueue.pop_front();
-			if (response != nullptr)
+			if (response != nullptr) // If we ALWAYS want to respond, we could send BAD_REQUEST
 				_responseQueue.push_back(response);
 		}
 	}
@@ -143,7 +170,7 @@ namespace Webserver
 			_sender.handle();
 		else
 		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::setWriteFlag(_fd, false);
+			PollHandler::setWriteEnabled(_fd, false);
 		}
 	}
 
@@ -162,5 +189,10 @@ namespace Webserver
 		timeval now;
 		gettimeofday(&now, NULL);
 		return ((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000) < TIMEOUT_MS;
+	}
+
+	bool Client::needsRemove() const
+	{
+		return _needsRemove;
 	}
 }

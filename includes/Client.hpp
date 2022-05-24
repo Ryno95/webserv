@@ -5,21 +5,26 @@
 #include <deque>
 #include <vector>
 
+#include <Webserv.hpp>
 #include <config/ServerConfig.hpp>
 #include <Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
 #include <Sender.hpp>
+#include <IPollable.hpp>
 
 namespace Webserver
 {
-	class Client
+	class Webserv;
+	class Client : public IPollable
 	{
 	public:
 		Client(const ServerConfig& config, int fd);
 		~Client();
 
-		bool handle();
+		void readHandler();
+		void writeHandler();
+		bool needsRemove() const;
 
 		struct DisconnectedException : std::exception
 		{
@@ -41,12 +46,12 @@ namespace Webserver
 
 		std::deque<Request> _requestQueue;
 		std::deque<Response *> _responseQueue;
-		// std::vector<CGI*> _cgiQueue;
 
 		int _fd;
 		Receiver _receiver;
 		Sender _sender;
 		const ServerConfig& _serverConfig;
 		bool _closeAfterRespond;
+		bool _needsRemove;
 	};
 }

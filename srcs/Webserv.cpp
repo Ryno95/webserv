@@ -22,14 +22,14 @@ namespace Webserver
 		: _config(config)
 	{
 		setup();
-		PollHandler::addPollfd(_listenerFd);
+		PollHandler::add(_listenerFd, this);
 		DEBUG("Created server instance on port: " << _config.port);
 	}
 
 	Webserv::~Webserv()
 	{
 		close(_listenerFd);
-		PollHandler::removePollfd(_listenerFd);
+		PollHandler::remove(_listenerFd);
 
 		DEBUG("Destroyed server instance on port: " << _config.port);
 	}
@@ -57,53 +57,52 @@ namespace Webserver
 		if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw SystemCallFailedException("fcntl");
 
-		if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // TMP, store GlobalConfig as a member of this class?
+		if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // store GlobalConfig as a member of this class?
 			throw SystemCallFailedException("listen");
-	}
-
-	void Webserv::handleClients()
-	{
-		size_t size = _clients.size();
-
-		for (size_t i = 0; i < size; i++)
-		{
-			if (_clients[i]->handle() == false)
-			{
-				removeClient(i);
-				--i;
-				--size;
-			}
-		}
 	}
 
 	void Webserv::handleListener()
 	{
-		if (PollHandler::canRead(_listenerFd))
+		int fd = accept(_listenerFd, NULL, NULL);
+		if (fd == SYSTEM_ERR)
 		{
-			int fd = accept(_listenerFd, NULL, NULL);
-			if (fd == SYSTEM_ERR)
-			{
-				WARN("Accept in our listener was blocking, so we continue");
-			}
-			else
-				_clients.push_back(new Client(_config, fd));
+			WARN("Accept in our listener was blocking, so we continue");
 		}
+		else
+			_clients.push_back(new Client(_config, fd));
 	}
 
-	void Webserv::removeClient(int index)
+	void Webserv::removeClients()
 	{
-		delete _clients[index];
-		_clients.erase(_clients.begin() + index);
-	}
-
-	void Webserv::handle()
-	{
-		handleListener();
-		handleClients();
+		for (size_t i = 0; i < _clients.size(); i++)
+		{
+			if (_clients[i]->needsRemove())
+			{
+				DEBUG("Removed client with index: " << i);
+				delete _clients[i];
+				_clients.erase(_clients.begin() + i);
+			}
+		}
 	}
 
 	const ServerConfig& Webserv::getConfig() const
 	{
 		return _config;
+	}
+
+	void Webserv::readHandler()
+	{
+		handleListener();
+	}
+
+	void Webserv::writeHandler()
+	{
+		// not used for listener
+	}
+
+	void Webserv::tick()
+	{
+		DEBUG("Tick");
+		removeClients();
 	}
 }

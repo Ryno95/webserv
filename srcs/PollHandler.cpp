@@ -6,89 +6,84 @@
 namespace Webserver
 {
 	std::vector<pollfd> PollHandler::_fds;
+	std::vector<IPollable*> PollHandler::_handlers;
+	std::vector<IPollableTickable*> PollHandler::_tickables;
 
-	void PollHandler::addPollfd(int fd)
+	void PollHandler::loop()
+	{
+		while (true)
+		{
+			int pollRet;
+
+			pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
+			if (pollRet == SYSTEM_ERR)
+				throw SystemCallFailedException("Poll");
+
+			for (size_t i = 0; i < _tickables.size(); i++)
+			{
+				_tickables[i]->tick();
+			}
+
+			for (size_t i = 0; i < _fds.size(); i++)
+			{
+				if (BIT_ISSET(_fds[i].revents, POLLIN_BIT))
+					_handlers[i]->readHandler();
+				if (BIT_ISSET(_fds[i].revents, POLLOUT_BIT))
+					_handlers[i]->writeHandler();
+			}
+		}
+	}
+
+	void PollHandler::add(int fd, IPollableTickable* instance)
+	{
+		_tickables.push_back(instance);
+		add(fd, (IPollable*)instance);
+	}
+
+	void PollHandler::add(int fd, IPollable* instance)
 	{
 		pollfd pfd;
 		pfd.fd = fd;
 		pfd.events = POLLIN;
 		_fds.push_back(pfd);
+		_handlers.push_back(instance);
 	}
 
-	pollfd* PollHandler::findPollfd(int fd)
+	void PollHandler::remove(int fd)
 	{
-		std::vector<pollfd>::iterator start = _fds.begin();
-		std::vector<pollfd>::iterator end = _fds.end();
+		int index = getIndexOf(fd);
+		if (index == -1)
+			return;
 
-		while (start != end)
-		{
-			if (start->fd == fd)
-				return &(*start);
-			start++;
-		}
-		ERROR("fd '" << fd << "' is not added to the poll handler. This could be a serious bug.");
-		throw ValueDoesNotExistException(toString(fd));
+		_fds.erase(_fds.begin() + index);
+		_handlers.erase(_handlers.begin() + index);
 	}
 
-	void PollHandler::setWriteFlag(int fd, bool enabled)
+	void PollHandler::setWriteEnabled(int fd, bool enabled)
 	{
-		pollfd* pfd = findPollfd(fd);
+		int index = getIndexOf(fd);
+		if (index == -1)
+			return;
+
 		if (enabled)
-			pfd->events = POLLIN | POLLOUT;
+			_fds[index].events = POLLIN | POLLOUT;
 		else
-			pfd->events = POLLIN;
+			_fds[index].events = POLLIN;
 	}
 
-	bool PollHandler::canReadOrWrite(int fd)
+	int PollHandler::getIndexOf(int fd)
 	{
-		pollfd* pfd = findPollfd(fd);
-		return pfd->revents != 0;
-	}
-
-	bool PollHandler::canRead(int fd)
-	{
-		pollfd* pfd = findPollfd(fd);
-		return BIT_ISSET(pfd->revents, POLLIN_BIT);
-	}
-
-	bool PollHandler::canWrite(int fd)
-	{
-		pollfd* pfd = findPollfd(fd);
-		return BIT_ISSET(pfd->revents, POLLOUT_BIT);
-	}
-
-	/*
-		If parameter fd is currently in the poll array, fd is removed.
-		Otherwise nothing happens.
-	*/
-	void PollHandler::removePollfd(int fd)
-	{
-		std::vector<pollfd>::iterator start = _fds.begin();
+		std::vector<pollfd>::iterator iter = _fds.begin();
 		std::vector<pollfd>::iterator end = _fds.end();
 
-		while (start != end)
+		while (iter != end)
 		{
-			if (start->fd == fd)
-			{
-				_fds.erase(start);
-				return;
-			}
-			start++;
+			if (iter->fd == fd)
+				return iter - _fds.begin();
+			iter++;
 		}
-		_fds.erase(start);
 
-		WARN("Tried to remove pollfd " << fd << ", but we were not polling for that.");
-	}
-
-	bool PollHandler::checkPoll()
-	{
-		int pollRet;
-
-		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
-		if (pollRet == SYSTEM_ERR)
-			throw SystemCallFailedException("Poll");
-		else if (pollRet == 0)
-			return false;
-		return true;
+		WARN("Fd '" << fd << "' is not added to the poll handler. This could be a serious bug.");
+		return -1;
 	}
 }

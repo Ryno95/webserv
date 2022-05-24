@@ -5,25 +5,25 @@
 
 #include <config/ServerConfig.hpp>
 #include <defines.hpp>
+#include <IPollable.hpp>
 
 namespace Webserver
 {
+
 	class PollHandler
 	{
 	public:
-		static bool checkPoll();
-		static void addPollfd(int fd);
-		static void removePollfd(int fd);
-
-		static bool canReadOrWrite(int fd);
-		static bool canWrite(int fd);
-		static bool canRead(int fd);
-		static void setWriteFlag(int fd, bool enabled);
+		static void loop();
+		static void add(int fd, IPollable* instance);
+		static void add(int fd, IPollableTickable* instance);
+		static void remove(int fd);
+		static void setWriteEnabled(int fd, bool enabled);
 
 	private:
-		static pollfd* findPollfd(int fd);
+		static int getIndexOf(int fd);
 
 		static std::vector<pollfd> _fds;
-
+		static std::vector<IPollable*> _handlers;
+		static std::vector<IPollableTickable*> _tickables;
 	};
 }
