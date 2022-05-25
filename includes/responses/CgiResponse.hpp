@@ -19,10 +19,11 @@ namespace Webserver
 			~CgiResponse();
 
 		void 		performCGI();
-		std::string	getExecutablePath(const std::string &exe);
 
 
 		private:
+			std::string	getExecutablePath(const std::string &exe);
+			
 			const Request 		&_request; 
 			int					_pid;
 			int					_pipeFd[2];

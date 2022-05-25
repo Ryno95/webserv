@@ -16,7 +16,6 @@ namespace Webserver
 	CgiResponse::CgiResponse(const Request &request)
 		: _request(request), _cgiExecutable(getExecutablePath("/Python3")), _envExecutable(getExecutablePath("/env"))
 	{
-		// Host cgiHost = Host::determine(_request.getHost());
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 		PollHandler::addPollfd(_pipeFd[READ_FD]);
@@ -30,7 +29,7 @@ namespace Webserver
 		PollHandler::removePollfd(_pipeFd[WRITE_FD]);
 	}
 
-	int	is_executable(const char *full_path_executable)
+	static int	is_executable(const char *full_path_executable)
 	{
 		struct stat	status;
 
@@ -111,6 +110,6 @@ namespace Webserver
 			if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
 				throw SystemCallFailedException("dup2()");
 		}
-		
+		_statusCode = HttpStatusCodes::OK;
 	}
 }
