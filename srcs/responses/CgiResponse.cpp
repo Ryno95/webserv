@@ -7,14 +7,17 @@
 #include <Host.hpp>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <string.h>
 
 
 #define TERMINATOR '\0'
 
 namespace Webserver
 {
-	CgiResponse::CgiResponse(const Request &request)
-		: _request(request), _cgiExecutable(getExecutablePath("/Python3")), _envExecutable(getExecutablePath("/env"))
+	CgiResponse::CgiResponse(const Request &request, const Host &host)
+		: 	_request(request), _cgiExecutable(getExecutablePath("/Python3")),
+			_envExecutable(getExecutablePath("/env")),
+			_host(host)
 	{
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
@@ -41,11 +44,11 @@ namespace Webserver
 	{
 		std::string		all_paths(getenv("PATH"));
 		size_t			SinglePathLen;
+		int 			i = 0;
 
 		if (all_paths.size() < 1)
 			return (NULL);
 		SinglePathLen = all_paths.find(COLON);
-		int i = 0;
 		while (SinglePathLen != std::string::npos)
 		{
 			std::string single_path(all_paths.substr(i, SinglePathLen - i));
@@ -57,6 +60,21 @@ namespace Webserver
 		return (NULL);
 	}
 
+
+	const char *CgiResponse::createQueryString()
+	{
+		const std::string queryStringPrefix("QUERY_STRING=");
+
+		return (queryStringPrefix + _request.getBody()).c_str();
+	} 
+
+	int CgiResponse::executeCommand(const char *queryString, const char *cgiPath)
+	{
+		const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
+		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == -1)
+				ERROR("EXECVE FAILED");
+	}
+
 	void	CgiResponse::performCGI()
 	{
 		_pid = fork();
@@ -64,12 +82,12 @@ namespace Webserver
 			throw SystemCallFailedException("Fork()");
 		else if (_pid > 0)
 		{
-			// parent process
-			// read here
-			close(_pipeFd[WRITE_FD]);
+			if (close(_pipeFd[WRITE_FD]) == -1)
+				throw SystemCallFailedException("close()");
 			char buffer[BUFFERSIZE];
         	int readBytes = 0;
 
+			// reading needs to be done via poll somehow
         	while (1)
         	{
         	    readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
@@ -84,31 +102,19 @@ namespace Webserver
 		}
 		else
 		{
-			// 	close pipe reading end reading 
+			const char *cgiPath = "root/cgi-bin/add.py"; // will be replaced by host location/route
+			const char *queryString = createQueryString();
+
 			if (close(_pipeFd[READ_FD]) == -1)
 				throw SystemCallFailedException("Close()");
 
-			// 	set pipe writing end to stdout
 			if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
 				throw SystemCallFailedException("Dup2()");
 
-			const char *cgiPath = "root/cgi-bin/add.py";
-
-			// body = QueryString
-			// const char *queryString = "QUERY_STRING=val1=6&val2=5";
-			const char * queryString = std::string("QUERY_STRING=" + _request.getBody()).c_str();
-
-			// DEBUG(queryString);
-			const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
-			// std::cout << "before execve" << std::endl;
-			if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == -1)
-				ERROR("EXECVE FAILED");
-			// 	execve that bitch
-			//	chilld process
-			//	write here
+			
+			if (executeCommand(queryString, cgiPath) == -1)
+				throw SystemCallFailedException("execve()");
 			close(_pipeFd[READ_FD]);
-			if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
-				throw SystemCallFailedException("dup2()");
 		}
 		_statusCode = HttpStatusCodes::OK;
 	}

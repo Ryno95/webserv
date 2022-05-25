@@ -117,11 +117,10 @@ namespace Webserver
 				response = new BadStatusResponse(request.getStatus(), BadRequestErrorPage);
 				DEBUG("Invalid request received.");
 			}
-			DEBUG(request.getTarget());
 			if (request.getTarget().find(".py") != std::string::npos) // host.isCGI()
 			{
 				DEBUG("ENTERING CGI");
-				response = new CgiResponse(request);
+				response = new CgiResponse(request, host);
 			}
 			else
 			{
