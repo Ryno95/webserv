@@ -21,6 +21,8 @@ CLASSES		=	Webserv\
 				MimeTypes\
 				Logger\
 				PollHandler\
+				TickHandler\
+				TimeoutHandler\
 				Host\
 				Utility\
 				responses/Response\
