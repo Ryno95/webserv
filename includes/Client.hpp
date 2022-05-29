@@ -22,6 +22,7 @@ namespace Webserver
 		Client(const ServerConfig& config, int fd);
 		~Client();
 
+		int getFd() const;
 		void readHandler();
 		void writeHandler();
 		bool needsRemove() const;

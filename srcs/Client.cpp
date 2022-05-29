@@ -19,7 +19,7 @@ namespace Webserver
 {
 	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false)
 	{
-		PollHandler::add(fd, this);
+		PollHandler::add(this);
 		hasCommunicated();
 
 		DEBUG("Accepted client on fd: " << _fd);
@@ -27,8 +27,8 @@ namespace Webserver
 
 	Client::~Client()
 	{
+		PollHandler::remove(this);
 		close(_fd);
-		PollHandler::remove(_fd);
 		DEBUG("Removed client with fd: " << _fd);
 	}
 
@@ -45,6 +45,11 @@ namespace Webserver
 			DEBUG("Client disconnected: " << _fd);
 			_needsRemove = true;
 		}
+	}
+
+	int Client::getFd() const
+	{
+		return _fd;
 	}
 
 	void Client::writeHandler()
@@ -71,7 +76,7 @@ namespace Webserver
 		if (newRequests.size() == 0)
 			return;
 
-		PollHandler::setWriteEnabled(_fd, true);
+		PollHandler::setWriteEnabled(this, true);
 
 		std::deque<Request>::const_iterator first = newRequests.begin();
 		std::deque<Request>::const_iterator last = newRequests.end();
@@ -161,7 +166,7 @@ namespace Webserver
 			_sender.handle();
 		else
 		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::setWriteEnabled(_fd, false);
+			PollHandler::setWriteEnabled(this, false);
 		}
 
 		if (_sender.hasResponse() == false && _closeAfterRespond == true)

@@ -36,16 +36,16 @@ namespace Webserver
 		}
 	}
 
-	void PollHandler::add(int fd, IPollableTickable* instance)
+	void PollHandler::add(IPollableTickable* instance)
 	{
 		_tickables.push_back(instance);
-		add(fd, (IPollable*)instance);
+		add((IPollable*)instance);
 	}
 
-	void PollHandler::add(int fd, IPollable* instance)
+	void PollHandler::add(IPollable* instance)
 	{
 		pollfd pfd;
-		pfd.fd = fd;
+		pfd.fd = instance->getFd();
 		pfd.events = POLLIN;
 		_fds.push_back(pfd);
 		_handlers.push_back(instance);
@@ -55,9 +55,9 @@ namespace Webserver
 		Removes int fd from the array of fds we are polling for and the handlers.
 		Caution: Does not remove tick events! Call remove(int, IPollableTickable*) instead.
 	*/
-	void PollHandler::remove(int fd)
+	void PollHandler::remove(IPollable* instance)
 	{
-		int index = getIndexOf(fd);
+		int index = getPollfdIndexOf(instance->getFd());
 		if (index == -1)
 			return;
 
@@ -65,21 +65,21 @@ namespace Webserver
 		_handlers.erase(_handlers.begin() + index);
 	}
 
-	void PollHandler::remove(int fd, IPollableTickable* instance)
+	void PollHandler::remove(IPollableTickable* instance)
 	{
 		std::vector<IPollableTickable*>::iterator it = std::find(_tickables.begin(), _tickables.end(), instance);
 		if (it == _tickables.end())
 		{
-			WARN("Fd '" << fd << "' is not added to tickables array.");
+			WARN("Fd '" << instance->getFd() << "' is not added to tickables array.");
 		}
 		else
 			_tickables.erase(it);
-		remove(fd);
+		remove((IPollable*)instance);
 	}
 
-	void PollHandler::setWriteEnabled(int fd, bool enabled)
+	void PollHandler::setWriteEnabled(IPollable* fd, bool enabled)
 	{
-		int index = getIndexOf(fd);
+		int index = getPollfdIndexOf(fd->getFd());
 		if (index == -1)
 			return;
 
@@ -89,7 +89,7 @@ namespace Webserver
 			_fds[index].events = POLLIN;
 	}
 
-	int PollHandler::getIndexOf(int fd)
+	int PollHandler::getPollfdIndexOf(int fd)
 	{
 		std::vector<pollfd>::iterator iter = _fds.begin();
 		std::vector<pollfd>::iterator end = _fds.end();

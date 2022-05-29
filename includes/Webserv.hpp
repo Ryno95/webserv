@@ -22,6 +22,7 @@ namespace Webserver
 			Webserv(const ServerConfig& config);
 			~Webserv();
 
+			int getFd() const;
 			void readHandler();
 			void writeHandler();
 			void tick();

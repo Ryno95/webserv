@@ -22,14 +22,14 @@ namespace Webserver
 		: _config(config)
 	{
 		setup();
-		PollHandler::add(_listenerFd, this);
+		PollHandler::add(this);
 		DEBUG("Created server instance on port: " << _config.port);
 	}
 
 	Webserv::~Webserv()
 	{
 		close(_listenerFd);
-		PollHandler::remove(_listenerFd, this);
+		PollHandler::remove(this);
 
 		DEBUG("Destroyed server instance on port: " << _config.port);
 	}
@@ -59,6 +59,11 @@ namespace Webserver
 
 		if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // store GlobalConfig as a member of this class?
 			throw SystemCallFailedException("listen");
+	}
+
+	int Webserv::getFd() const
+	{
+		return _listenerFd;
 	}
 
 	void Webserv::handleListener()

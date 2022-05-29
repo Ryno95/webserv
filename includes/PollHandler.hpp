@@ -14,14 +14,14 @@ namespace Webserver
 	{
 	public:
 		static void loop();
-		static void add(int fd, IPollable* instance);
-		static void add(int fd, IPollableTickable* instance);
-		static void remove(int fd);
-		static void remove(int fd, IPollableTickable* instance);
-		static void setWriteEnabled(int fd, bool enabled);
+		static void add(IPollable* instance);
+		static void add(IPollableTickable* instance);
+		static void remove(IPollable* instance);
+		static void remove(IPollableTickable* instance);
+		static void setWriteEnabled(IPollable* instance, bool enabled);
 
 	private:
-		static int getIndexOf(int fd);
+		static int getPollfdIndexOf(int fd);
 
 		static std::vector<pollfd> _fds;
 		static std::vector<IPollable*> _handlers;
