@@ -9,22 +9,24 @@
 
 namespace Webserver
 {
-
-	class PollHandler
+	class PollHandler : public ASubscribeable<IPollable>
 	{
 	public:
-		static void loop();
-		static void add(IPollable* instance);
-		static void add(IPollableTickable* instance);
-		static void remove(IPollable* instance);
-		static void remove(IPollableTickable* instance);
-		static void setWriteEnabled(IPollable* instance, bool enabled);
+		static PollHandler& get(); // tmp singleton?
+	private:
+		static PollHandler _singleton; // tmp singleton?
+
+	public:
+		PollHandler();
+		~PollHandler();
+		void update();
+		void add(IPollable* instance);
+		ssize_t remove(IPollable* instance);
+		void setWriteEnabled(IPollable* instance, bool enabled);
 
 	private:
-		static int getPollfdIndexOf(int fd);
+		int getPollfdIndexOf(int fd);
 
-		static std::vector<pollfd> _fds;
-		static std::vector<IPollable*> _handlers;
-		static std::vector<IPollableTickable*> _tickables;
+		std::vector<pollfd> _fds;
 	};
 }

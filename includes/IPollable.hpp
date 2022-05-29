@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ASubscribeable.hpp>
+
 namespace Webserver
 {
 	class IPollable
@@ -9,12 +11,5 @@ namespace Webserver
 		virtual void readHandler() = 0;
 		virtual void writeHandler() = 0;
 		virtual int getFd() const = 0;
-	};
-
-	class IPollableTickable : public IPollable
-	{
-	public:
-		virtual ~IPollableTickable() {}
-		virtual void tick() = 0;
 	};
 }

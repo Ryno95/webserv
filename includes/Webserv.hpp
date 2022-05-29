@@ -9,6 +9,7 @@
 #include <Client.hpp>
 #include <config/ServerConfig.hpp>
 #include <IPollable.hpp>
+#include <ITickable.hpp>
 #include <PollHandler.hpp>
 
 namespace Webserver
@@ -16,7 +17,7 @@ namespace Webserver
 
 	class Client;
 
-	class Webserv : public IPollableTickable
+	class Webserv : public IPollable, public ITickable
 	{
 		public:
 			Webserv(const ServerConfig& config);
@@ -27,7 +28,7 @@ namespace Webserver
 			void writeHandler();
 			void tick();
 			const ServerConfig& getConfig() const;
-			void checkTimeout() const;
+			// void checkTimeout() const;
 			void removeClients();
 
 		private:

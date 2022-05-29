@@ -7,39 +7,45 @@
 
 namespace Webserver
 {
-	std::vector<pollfd> PollHandler::_fds;
-	std::vector<IPollable*> PollHandler::_handlers;
-	std::vector<IPollableTickable*> PollHandler::_tickables;
+	/*
+		Singleton
+	*/
+	PollHandler PollHandler::_singleton;
 
-	void PollHandler::loop()
+	PollHandler& PollHandler::get()
 	{
-		while (true)
-		{
-			int pollRet;
-
-			pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
-			if (pollRet == SYSTEM_ERR)
-				throw SystemCallFailedException("Poll");
-
-			for (size_t i = 0; i < _tickables.size(); i++)
-			{
-				_tickables[i]->tick();
-			}
-
-			for (size_t i = 0; i < _fds.size(); i++)
-			{
-				if (BIT_ISSET(_fds[i].revents, POLLIN_BIT))
-					_handlers[i]->readHandler();
-				if (BIT_ISSET(_fds[i].revents, POLLOUT_BIT))
-					_handlers[i]->writeHandler();
-			}
-		}
+		return _singleton;
 	}
 
-	void PollHandler::add(IPollableTickable* instance)
+
+	/*
+		Object
+	*/
+
+	PollHandler::PollHandler()
 	{
-		_tickables.push_back(instance);
-		add((IPollable*)instance);
+		std::cout << "PollHandler ctor called" << std::endl;
+	}
+
+	PollHandler::~PollHandler()
+	{
+	}
+
+	void PollHandler::update()
+	{
+		int pollRet;
+
+		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
+		if (pollRet == SYSTEM_ERR)
+			throw SystemCallFailedException("Poll");
+
+		for (size_t i = 0; i < _fds.size(); i++)
+		{
+			if (BIT_ISSET(_fds[i].revents, POLLIN_BIT))
+				_subscribers[i]->readHandler();
+			if (BIT_ISSET(_fds[i].revents, POLLOUT_BIT))
+				_subscribers[i]->writeHandler();
+		}
 	}
 
 	void PollHandler::add(IPollable* instance)
@@ -48,33 +54,14 @@ namespace Webserver
 		pfd.fd = instance->getFd();
 		pfd.events = POLLIN;
 		_fds.push_back(pfd);
-		_handlers.push_back(instance);
+		ASubscribeable::add(instance);
 	}
 
-	/*
-		Removes int fd from the array of fds we are polling for and the handlers.
-		Caution: Does not remove tick events! Call remove(int, IPollableTickable*) instead.
-	*/
-	void PollHandler::remove(IPollable* instance)
+	ssize_t PollHandler::remove(IPollable* instance)
 	{
-		int index = getPollfdIndexOf(instance->getFd());
-		if (index == -1)
-			return;
-
+		ssize_t index = ASubscribeable::remove(instance);
 		_fds.erase(_fds.begin() + index);
-		_handlers.erase(_handlers.begin() + index);
-	}
-
-	void PollHandler::remove(IPollableTickable* instance)
-	{
-		std::vector<IPollableTickable*>::iterator it = std::find(_tickables.begin(), _tickables.end(), instance);
-		if (it == _tickables.end())
-		{
-			WARN("Fd '" << instance->getFd() << "' is not added to tickables array.");
-		}
-		else
-			_tickables.erase(it);
-		remove((IPollable*)instance);
+		return index;
 	}
 
 	void PollHandler::setWriteEnabled(IPollable* fd, bool enabled)

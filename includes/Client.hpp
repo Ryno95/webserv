@@ -12,21 +12,23 @@
 #include <responses/Response.hpp>
 #include <Sender.hpp>
 #include <IPollable.hpp>
+#include <ITimeoutable.hpp>
 
 namespace Webserver
 {
 	class Webserv;
-	class Client : public IPollable
+	class Client : public IPollable, public ITimeoutable
 	{
 	public:
 		Client(const ServerConfig& config, int fd);
 		~Client();
 
+		void timeout();
+		timeval getLastCommunicated() const;
 		int getFd() const;
 		void readHandler();
 		void writeHandler();
 		bool needsRemove() const;
-		void checkTimeout(timeval now);
 
 		struct DisconnectedException : std::exception
 		{

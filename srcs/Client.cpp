@@ -5,6 +5,7 @@
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
+#include <TimeoutHandler.hpp>
 #include <responses/RedirectResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 #include <responses/OkStatusResponse.hpp>
@@ -19,7 +20,8 @@ namespace Webserver
 {
 	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false)
 	{
-		PollHandler::add(this);
+		PollHandler::get().add(this);
+		TimeoutHandler::get().add(this);
 		hasCommunicated();
 
 		DEBUG("Accepted client on fd: " << _fd);
@@ -27,8 +29,10 @@ namespace Webserver
 
 	Client::~Client()
 	{
-		PollHandler::remove(this);
+		PollHandler::get().remove(this);
+		TimeoutHandler::get().remove(this);
 		close(_fd);
+
 		DEBUG("Removed client with fd: " << _fd);
 	}
 
@@ -76,7 +80,7 @@ namespace Webserver
 		if (newRequests.size() == 0)
 			return;
 
-		PollHandler::setWriteEnabled(this, true);
+		PollHandler::get().setWriteEnabled(this, true);
 
 		std::deque<Request>::const_iterator first = newRequests.begin();
 		std::deque<Request>::const_iterator last = newRequests.end();
@@ -166,7 +170,7 @@ namespace Webserver
 			_sender.handle();
 		else
 		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::setWriteEnabled(this, false);
+			PollHandler::get().setWriteEnabled(this, false);
 		}
 
 		if (_sender.hasResponse() == false && _closeAfterRespond == true)
@@ -180,6 +184,7 @@ namespace Webserver
 	*/
 	void Client::hasCommunicated()
 	{
+		// Use TimeoutHandler::getTime() instead for optimization
 		gettimeofday(&_lastCommunicated, NULL);
 	}
 
@@ -188,12 +193,14 @@ namespace Webserver
 		return _needsRemove;
 	}
 
-	void Client::checkTimeout(timeval now)
+	void Client::timeout()
 	{
-		if (((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000) >= TIMEOUT_MS)
-		{
-			_needsRemove = true;
-			DEBUG("Connection timed-out fd: " << _fd);
-		}
+		_needsRemove = true;
+		DEBUG("FD " << _fd << " timed-out.");
+	}
+
+	timeval Client::getLastCommunicated() const
+	{
+		return _lastCommunicated;
 	}
 }

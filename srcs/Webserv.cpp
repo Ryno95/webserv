@@ -15,6 +15,7 @@
 #include <Webserv.hpp>
 #include <config/GlobalConfig.hpp>
 #include <Exception.hpp>
+#include <TickHandler.hpp>
 
 namespace Webserver
 {
@@ -22,14 +23,17 @@ namespace Webserver
 		: _config(config)
 	{
 		setup();
-		PollHandler::add(this);
+		PollHandler::get().add(this);
+		TickHandler::get().add(this);
+
 		DEBUG("Created server instance on port: " << _config.port);
 	}
 
 	Webserv::~Webserv()
 	{
 		close(_listenerFd);
-		PollHandler::remove(this);
+		PollHandler::get().remove(this);
+		TickHandler::get().remove(this);
 
 		DEBUG("Destroyed server instance on port: " << _config.port);
 	}
@@ -92,16 +96,6 @@ namespace Webserver
 		}
 	}
 
-	void Webserv::checkTimeout() const
-	{
-		timeval now;
-		gettimeofday(&now, NULL);
-		for (size_t i = 0; i < _clients.size(); i++)
-		{
-			_clients[i]->checkTimeout(now);
-		}
-	}
-
 	const ServerConfig& Webserv::getConfig() const
 	{
 		return _config;
@@ -119,7 +113,6 @@ namespace Webserver
 
 	void Webserv::tick()
 	{
-		checkTimeout();
 		removeClients();
 	}
 }
