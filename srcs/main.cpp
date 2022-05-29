@@ -4,8 +4,22 @@
 #include <Logger.hpp>
 #include <config/ConfigFileParser.hpp>
 
+#include <TickHandler.hpp>
+#include <TimeoutHandler.hpp>
+
 namespace Webserver
 {
+
+	void loop()
+	{
+		while (true)
+		{
+			PollHandler::get().update();
+			TickHandler::get().update();
+			TimeoutHandler::get().update();
+		}
+	}
+
 	int run(int argc, char** argv)
 	{
 		std::vector<Webserv*> servers;
@@ -25,7 +39,8 @@ namespace Webserver
 			{
 				servers.push_back(new Webserv(configs[i]));
 			}
-			PollHandler::loop();
+
+			loop();
 		}
 		catch(const std::exception& e)
 		{
