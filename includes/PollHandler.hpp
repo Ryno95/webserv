@@ -19,9 +19,10 @@ namespace Webserver
 	public:
 		PollHandler();
 		~PollHandler();
+
 		void update();
 		void add(IPollable* instance);
-		ssize_t remove(IPollable* instance);
+		void remove(IPollable* instance);
 		void setWriteEnabled(IPollable* instance, bool enabled);
 
 	private:
