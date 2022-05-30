@@ -10,7 +10,7 @@ namespace Webserver
 	{
 	public:
 		virtual ~ITimeoutable() {}
-		virtual void timeout() = 0;
+		virtual void onTimeout() = 0;
 		virtual timeval getLastCommunicated() const = 0;
 	
 	protected:

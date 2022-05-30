@@ -8,6 +8,6 @@ namespace Webserver
 	{
 	public:
 		virtual ~ITickable() {};
-		virtual void tick() = 0;
+		virtual void onTick() = 0;
 	};
 }
