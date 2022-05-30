@@ -23,7 +23,6 @@ namespace Webserver
 
 	TimeoutHandler::TimeoutHandler()
 	{
-		std::cout << "TimeoutHandler ctor called" << std::endl;
 	}
 
 	TimeoutHandler::~TimeoutHandler()
@@ -37,7 +36,7 @@ namespace Webserver
 		{
 			timeval lastCommunicated = _subscribers[i]->getLastCommunicated();
 			if (((_now.tv_sec - lastCommunicated.tv_sec) * 1000) + ((_now.tv_usec - lastCommunicated.tv_usec) / 1000) >= TIMEOUT_MS)
-				_subscribers[i]->timeout();
+				_subscribers[i]->onTimeout();
 		}
 	}
 

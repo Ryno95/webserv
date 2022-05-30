@@ -18,6 +18,7 @@ namespace Webserver
 	public:
 		TimeoutHandler();
 		~TimeoutHandler();
+
 		void update();
 		timeval getTime() const;
 

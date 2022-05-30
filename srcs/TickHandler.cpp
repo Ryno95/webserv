@@ -22,7 +22,6 @@ namespace Webserver
 
 	TickHandler::TickHandler()
 	{
-		std::cout << "TickHandler ctor called" << std::endl;
 	}
 
 	TickHandler::~TickHandler()
@@ -33,7 +32,7 @@ namespace Webserver
 	{
 		for (size_t i = 0; i < _subscribers.size(); i++)
 		{
-			_subscribers[i]->tick();
+			_subscribers[i]->onTick();
 		}
 	}
 }
