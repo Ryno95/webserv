@@ -70,17 +70,6 @@ namespace Webserver
 		return _listenerFd;
 	}
 
-	void Webserv::handleListener()
-	{
-		int fd = accept(_listenerFd, NULL, NULL);
-		if (fd == SYSTEM_ERR)
-		{
-			WARN("Accept in our listener was blocking, so we continue");
-		}
-		else
-			_clients.push_back(new Client(_config, fd));
-	}
-
 	void Webserv::removeClients()
 	{
 		size_t size = _clients.size();
@@ -101,17 +90,23 @@ namespace Webserver
 		return _config;
 	}
 
-	void Webserv::readHandler()
+	void Webserv::onRead()
 	{
-		handleListener();
+		int fd = accept(_listenerFd, NULL, NULL);
+		if (fd == SYSTEM_ERR)
+		{
+			WARN("Accept in our listener was blocking, so we continue");
+		}
+		else
+			_clients.push_back(new Client(_config, fd));
 	}
 
-	void Webserv::writeHandler()
+	void Webserv::onWrite()
 	{
 		// not used for listener
 	}
 
-	void Webserv::tick()
+	void Webserv::onTick()
 	{
 		removeClients();
 	}

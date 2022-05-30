@@ -24,16 +24,14 @@ namespace Webserver
 			~Webserv();
 
 			int getFd() const;
-			void readHandler();
-			void writeHandler();
-			void tick();
+			void onRead();
+			void onWrite();
+			void onTick();
 			const ServerConfig& getConfig() const;
-			// void checkTimeout() const;
 			void removeClients();
 
 		private:
 			void setup();
-			void handleListener();
 
 			const ServerConfig& _config;
 
