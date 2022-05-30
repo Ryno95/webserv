@@ -1,4 +1,4 @@
-#include <DELETEMethod.hpp>
+#include <methods/DELETEMethod.hpp>
 
 namespace Webserver
 {

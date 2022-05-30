@@ -1,5 +1,5 @@
 #include <iostream>
-#include <responses/CgiResponse.hpp>
+#include <methods/Cgi.hpp>
 #include <responses/OkStatusResponse.hpp>
 #include <unistd.h>
 #include <Exception.hpp>
@@ -14,7 +14,7 @@
 
 namespace Webserver
 {
-	CgiResponse::CgiResponse(const Request &request, const Host &host)
+	Cgi::Cgi(const Request &request, const Host &host)
 		: 	_request(request), _cgiExecutable(getExecutablePath("/Python3")),
 			_envExecutable(getExecutablePath("/env")),
 			_host(host)
@@ -26,7 +26,7 @@ namespace Webserver
 		performCGI();
 	}	
 
-	CgiResponse::~CgiResponse()
+	Cgi::~Cgi()
 	{
 		PollHandler::removePollfd(_pipeFd[READ_FD]);
 		PollHandler::removePollfd(_pipeFd[WRITE_FD]);
@@ -40,7 +40,7 @@ namespace Webserver
 		return(stat(full_path_executable, &status) == F_OK);
 	}
 
-	std::string	CgiResponse::getExecutablePath(const std::string &exe)
+	std::string	Cgi::getExecutablePath(const std::string &exe)
 	{
 		std::string		all_paths(getenv("PATH"));
 		size_t			SinglePathLen;
@@ -61,21 +61,21 @@ namespace Webserver
 	}
 
 
-	const char *CgiResponse::createQueryString()
+	const char *Cgi::createQueryString()
 	{
 		const std::string queryStringPrefix("QUERY_STRING=");
 
 		return (queryStringPrefix + _request.getBody()).c_str();
 	} 
 
-	int CgiResponse::executeCommand(const char *queryString, const char *cgiPath)
+	int Cgi::executeCommand(const char *queryString, const char *cgiPath)
 	{
 		const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
 		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == -1)
 				ERROR("EXECVE FAILED");
 	}
 
-	void	CgiResponse::performCGI()
+	void	Cgi::performCGI()
 	{
 		_pid = fork();
 		if (_pid < 0)

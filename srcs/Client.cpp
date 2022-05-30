@@ -1,12 +1,12 @@
 #include <Client.hpp>
-#include <GETMethod.hpp>
-#include <POSTMethod.hpp>
-#include <DELETEMethod.hpp>
+#include <methods/GETMethod.hpp>
+#include <methods/POSTMethod.hpp>
+#include <methods/DELETEMethod.hpp>
+#include <methods/Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
 #include <responses/BadStatusResponse.hpp>
-#include <responses/CgiResponse.hpp>
 #include <responses/RedirectResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 
@@ -120,7 +120,7 @@ namespace Webserver
 			if (request.getTarget().find(".py") != std::string::npos) // host.isCGI()
 			{
 				DEBUG("ENTERING CGI");
-				response = new CgiResponse(request, host);
+				response = new Cgi(request, host);
 			}
 			else
 			{

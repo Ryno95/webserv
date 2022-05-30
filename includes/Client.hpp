@@ -9,7 +9,7 @@
 #include <Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
-#include <responses/CgiResponse.hpp>
+#include <methods/Cgi.hpp>
 #include <Sender.hpp>
 
 namespace Webserver

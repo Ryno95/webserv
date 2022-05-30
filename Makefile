@@ -14,10 +14,11 @@ CLASSES		=	Webserv\
 				Request\
 				Receiver\
 				Sender\
-				AMethod\
-				GETMethod\
-				POSTMethod\
-				DELETEMethod\
+				methods/AMethod\
+				methods/GETMethod\
+				methods/POSTMethod\
+				methods/DELETEMethod\
+				methods/Cgi\
 				MimeTypes\
 				Logger\
 				PollHandler\
@@ -28,7 +29,6 @@ CLASSES		=	Webserv\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
-				responses/CgiResponse\
 				Uri\
 				config/ConfigFileParser\
 				config/AConfig\

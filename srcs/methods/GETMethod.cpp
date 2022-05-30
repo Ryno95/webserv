@@ -1,4 +1,4 @@
-#include <GETMethod.hpp>
+#include <methods/GETMethod.hpp>
 #include <responses/OkStatusResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 

@@ -4,7 +4,7 @@
 
 #include <config/ServerConfig.hpp>
 #include <HttpStatusCode.hpp>
-#include <POSTMethod.hpp>
+#include <methods/POSTMethod.hpp>
 #include <Logger.hpp>
 #include <responses/OkStatusResponse.hpp>
 #include <responses/BadStatusResponse.hpp>

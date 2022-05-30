@@ -3,11 +3,12 @@
 #include <Request.hpp>
 #include <Host.hpp>
 #include <responses/Response.hpp>
+#include <methods/AMethod.hpp>
 
 
 namespace Webserver
 {
-	class CgiResponse : public Response
+	class Cgi : public Response
 	{
 		public:
 			enum FDs
@@ -16,8 +17,8 @@ namespace Webserver
 				WRITE_FD
 			} FDs;
 	
-			CgiResponse(const Request &request, const Host &host);
-			~CgiResponse();
+			Cgi(const Request &request, const Host &host);
+			~Cgi();
 
 		void 		performCGI();
 
