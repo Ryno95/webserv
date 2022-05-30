@@ -24,7 +24,6 @@ namespace Webserver
 
 	PollHandler::PollHandler()
 	{
-		std::cout << "PollHandler ctor called" << std::endl;
 	}
 
 	PollHandler::~PollHandler()
@@ -42,9 +41,9 @@ namespace Webserver
 		for (size_t i = 0; i < _fds.size(); i++)
 		{
 			if (BIT_ISSET(_fds[i].revents, POLLIN_BIT))
-				_subscribers[i]->readHandler();
+				_subscribers[i]->onRead();
 			if (BIT_ISSET(_fds[i].revents, POLLOUT_BIT))
-				_subscribers[i]->writeHandler();
+				_subscribers[i]->onWrite();
 		}
 	}
 
@@ -57,11 +56,10 @@ namespace Webserver
 		ASubscribeable::add(instance);
 	}
 
-	ssize_t PollHandler::remove(IPollable* instance)
+	void PollHandler::remove(IPollable* instance)
 	{
-		ssize_t index = ASubscribeable::remove(instance);
-		_fds.erase(_fds.begin() + index);
-		return index;
+		ASubscribeable::remove(instance);
+		_fds.erase(_fds.begin() + getPollfdIndexOf(instance->getFd()));
 	}
 
 	void PollHandler::setWriteEnabled(IPollable* fd, bool enabled)
@@ -88,7 +86,7 @@ namespace Webserver
 			iter++;
 		}
 
-		WARN("Fd '" << fd << "' is not added to the poll handler. Have you subscribed using Pollhandler::add()?");
+		WARN("Fd '" << fd << "' is not added to the poll handler. Have you correctly subscribed to PollHandler?");
 		return -1;
 	}
 }
