@@ -16,6 +16,7 @@ namespace Webserver
 	public:
 		TickHandler();
 		~TickHandler();
+
 		void update();
 
 	};
