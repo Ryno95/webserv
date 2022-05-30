@@ -2,39 +2,66 @@
 
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 
 namespace Webserver
 {
-	typedef unsigned long ssize_t;
+	/*
+		Base subscribeable template class.
+		Template argument should be the interface of the subscribers.
+		Update should be called periodically to check all subscribers data against this object's state.
+		Usually the subscriber's interface contains a function callback which can be called by this handler's update function.
+	*/
 
 	template<class T>
 	class ASubscribeable
 	{
-	protected:
-		ASubscribeable() {}
-		virtual ~ASubscribeable() {}
+		typedef T*	subscriber_type;
+		typedef typename std::vector<subscriber_type>::iterator	iterator;
 
 	public:
 		virtual void update() = 0;
 
-
-		virtual void add(T* instance)
+		/*
+			Adds subscriber to the currently subscribed subscribers collection.
+			Add does not check whether subscriber is already subscribed to the handler.
+			Which means it's possible to subscribe multiple times with the same instance.
+		*/
+		virtual void add(subscriber_type subscriber)
 		{
-			_subscribers.push_back(instance);
+			_subscribers.push_back(subscriber);
 		}
 
-		virtual ssize_t remove(T* instance)
+		/*
+			If subscriber is currently subscribed, removes subscriber.
+			Otherwise nothing happens.
+		*/
+		virtual void remove(subscriber_type subscriber)
 		{
-			typename std::vector<T*>::const_iterator it = std::find(_subscribers.begin(), _subscribers.end(), instance);
+			iterator it = std::find(_subscribers.begin(), _subscribers.end(), subscriber);
 			if (it == _subscribers.end())
-				return -1;
-			
-			_subscribers.erase(it);
-			return _subscribers.begin() - it;
-		}
+				return;
 
+			_subscribers.erase(it);
+		}
 
 	protected:
-		std::vector<T*> _subscribers;
+		ASubscribeable() {}
+		virtual ~ASubscribeable() {}
+
+		/*
+			If subscriber is contained in subscribers, returns the index of subscriber.
+			Otherwise returns -1.
+		*/
+		long indexOf(subscriber_type subscriber)
+		{
+			iterator it = std::find(_subscribers.begin(), _subscribers.end(), subscriber);
+			if (it == _subscribers.end())
+				return -1;
+
+			return it - _subscribers.begin();
+		}
+
+		std::vector<subscriber_type> _subscribers;
 	};
 }
