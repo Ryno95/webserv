@@ -29,3 +29,16 @@ QUERY_STRING="val1=5&val2=66"
 
 
 create CGIresponse instead of object
+
+
+
+
+for host routing, check host field in request header
+host=hostname
+and then on location blocks
+
+		location			cgi-bin
+		{
+			pattern			*.py
+			root			root/cgi-bin/
+		}
