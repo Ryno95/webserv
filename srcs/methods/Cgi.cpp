@@ -7,6 +7,7 @@
 #include <Host.hpp>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <string.h>
 
 
@@ -66,7 +67,7 @@ namespace Webserver
 		return (queryStringPrefix + _request.getBody()).c_str();
 	} 
 
-	int Cgi::executeCommand(const char *queryString, const char *cgiPath)
+	void Cgi::executeCommand(const char *queryString, const char *cgiPath)
 	{
 		const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
 		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == SYSTEM_CALL_ERROR)

@@ -28,7 +28,7 @@ namespace Webserver
 			std::string			getExecutablePath(const std::string &exe);
 			const char* 		createQueryString();
 			void				executeCgiFile();
-			int					executeCommand(const char *queryString, const char *cgiPath);
+			void				executeCommand(const char *queryString, const char *cgiPath);
 			std::stringstream* 	getCgiStream();
 
 			const std::string 	_cgiExecutable;
