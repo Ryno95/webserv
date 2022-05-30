@@ -23,11 +23,11 @@ namespace Webserver
 		Client(const ServerConfig& config, int fd);
 		~Client();
 
-		void timeout();
+		void onTimeout();
 		timeval getLastCommunicated() const;
 		int getFd() const;
-		void readHandler();
-		void writeHandler();
+		void onRead();
+		void onWrite();
 		bool needsRemove() const;
 
 		struct DisconnectedException : std::exception

@@ -36,7 +36,7 @@ namespace Webserver
 		DEBUG("Removed client with fd: " << _fd);
 	}
 
-	void Client::readHandler()
+	void Client::onRead()
 	{
 		try
 		{
@@ -56,7 +56,7 @@ namespace Webserver
 		return _fd;
 	}
 
-	void Client::writeHandler()
+	void Client::onWrite()
 	{
 		if (_needsRemove == true)
 			return;
@@ -193,7 +193,7 @@ namespace Webserver
 		return _needsRemove;
 	}
 
-	void Client::timeout()
+	void Client::onTimeout()
 	{
 		_needsRemove = true;
 		DEBUG("FD " << _fd << " timed-out.");
