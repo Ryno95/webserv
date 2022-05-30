@@ -15,15 +15,14 @@
 namespace Webserver
 {
 	Cgi::Cgi(const Request &request, const Host &host)
-		: 	_request(request), _cgiExecutable(getExecutablePath("/Python3")),
-			_envExecutable(getExecutablePath("/env")),
-			_host(host)
+		: AMethod(request, host),
+		_cgiExecutable(getExecutablePath("/Python3")),
+		_envExecutable(getExecutablePath("/env"))
 	{
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 		PollHandler::addPollfd(_pipeFd[READ_FD]);
 		PollHandler::addPollfd(_pipeFd[WRITE_FD]);
-		performCGI();
 	}	
 
 	Cgi::~Cgi()
@@ -60,7 +59,6 @@ namespace Webserver
 		return (NULL);
 	}
 
-
 	const char *Cgi::createQueryString()
 	{
 		const std::string queryStringPrefix("QUERY_STRING=");
@@ -71,51 +69,62 @@ namespace Webserver
 	int Cgi::executeCommand(const char *queryString, const char *cgiPath)
 	{
 		const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
-		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == -1)
-				ERROR("EXECVE FAILED");
+		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == SYSTEM_CALL_ERROR)
+				throw SystemCallFailedException("execve()");
 	}
 
-	void	Cgi::performCGI()
+	void Cgi::executeCgiFile()
+	{
+		const char *cgiPath = "root/cgi-bin/add.py"; // will be replaced by host location/route
+		const char *queryString = createQueryString();
+
+		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("Close()");
+
+		if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("Dup2()");
+
+		if (close(_pipeFd[WRITE_FD]) == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("Close()");
+	
+		executeCommand(queryString, cgiPath);
+	}
+
+	std::stringstream* Cgi::getCgiStream()
+	{
+		std::stringstream* 	cgiStream = new std::stringstream();
+		char 				buffer[BUFFERSIZE];
+        int 				readBytes = 0;
+
+		if (close(_pipeFd[WRITE_FD]) == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("close()");
+
+		// reading needs to be done via poll somehow
+        while (1)
+        {
+            readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
+            if (readBytes <  0)
+                throw SystemCallFailedException("read()") ;
+			else if (readBytes == 0)
+				break ;
+        	buffer[readBytes] = '\0';
+			*cgiStream << buffer;
+        }
+		close(_pipeFd[READ_FD]);
+        wait(NULL);
+		return cgiStream;
+	}
+
+	Response*	Cgi::process()
 	{
 		_pid = fork();
-		if (_pid < 0)
+		if (_pid == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Fork()");
-		else if (_pid > 0)
-		{
-			if (close(_pipeFd[WRITE_FD]) == -1)
-				throw SystemCallFailedException("close()");
-			char buffer[BUFFERSIZE];
-        	int readBytes = 0;
+		else if (_pid == CHILD_PROCESS)
+			executeCgiFile();
 
-			// reading needs to be done via poll somehow
-        	while (1)
-        	{
-        	    readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
-        	    if (readBytes <=  0)
-        	        break ;
-        		buffer[readBytes] = '\0';
-				_cgiStream << buffer;
-        	}
-        	std::cout << _cgiStream.str() << std::endl;
-			close(_pipeFd[READ_FD]);
-        	wait(NULL);
-		}
-		else
-		{
-			const char *cgiPath = "root/cgi-bin/add.py"; // will be replaced by host location/route
-			const char *queryString = createQueryString();
-
-			if (close(_pipeFd[READ_FD]) == -1)
-				throw SystemCallFailedException("Close()");
-
-			if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) < 0)
-				throw SystemCallFailedException("Dup2()");
-
-			
-			if (executeCommand(queryString, cgiPath) == -1)
-				throw SystemCallFailedException("execve()");
-			close(_pipeFd[READ_FD]);
-		}
-		_statusCode = HttpStatusCodes::OK;
+		Response *cgiResponse = new OkStatusResponse(HttpStatusCodes::OK);
+		cgiResponse->_cgiStream = getCgiStream();;
+		return (cgiResponse);
 	}
 }

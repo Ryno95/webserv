@@ -120,7 +120,7 @@ namespace Webserver
 			if (request.getTarget().find(".py") != std::string::npos) // host.isCGI()
 			{
 				DEBUG("ENTERING CGI");
-				response = new Cgi(request, host);
+				response = Cgi(request, host).process();
 			}
 			else
 			{

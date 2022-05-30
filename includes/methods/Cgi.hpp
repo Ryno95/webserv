@@ -2,13 +2,14 @@
 
 #include <Request.hpp>
 #include <Host.hpp>
-#include <responses/Response.hpp>
 #include <methods/AMethod.hpp>
-
 
 namespace Webserver
 {
-	class Cgi : public Response
+	#define SYSTEM_CALL_ERROR -1
+	#define CHILD_PROCESS  0
+
+	class Cgi : public AMethod
 	{
 		public:
 			enum FDs
@@ -20,23 +21,22 @@ namespace Webserver
 			Cgi(const Request &request, const Host &host);
 			~Cgi();
 
-		void 		performCGI();
+		Response	*process();
 
 
 		private:
-			std::string	getExecutablePath(const std::string &exe);
-			const char *createQueryString();
-			int			executeCommand(const char *queryString, const char *cgiPath);
-			// implement a createResponse, remove inheritance
-			
-			const Host 			&_host;
-			const Request 		&_request; 
+			std::string			getExecutablePath(const std::string &exe);
+			const char* 		createQueryString();
+			void				executeCgiFile();
+			int					executeCommand(const char *queryString, const char *cgiPath);
+			std::stringstream* 	getCgiStream();
+
 			const std::string 	_cgiExecutable;
 			const std::string 	_envExecutable;
 			int					_pid;
 			int					_pipeFd[2];
+			// cgiStream
 
 	};
-
 }
 

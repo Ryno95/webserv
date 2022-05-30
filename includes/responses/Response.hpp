@@ -36,7 +36,7 @@ namespace Webserver
 		std::ifstream		*getBodyStream();
 		HttpStatusCode		getStatusCode() const;
 		const HeaderFields& getHeaders() const;
-		std::stringstream					_cgiStream;
+		std::stringstream					*_cgiStream;
 
 	protected:
 
