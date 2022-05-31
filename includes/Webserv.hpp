@@ -8,24 +8,30 @@
 
 #include <Client.hpp>
 #include <config/ServerConfig.hpp>
+#include <IPollable.hpp>
+#include <ITickable.hpp>
 #include <PollHandler.hpp>
 
 namespace Webserver
 {
-	class Webserv
+
+	class Client;
+
+	class Webserv : public IPollable, public ITickable
 	{
 		public:
 			Webserv(const ServerConfig& config);
 			~Webserv();
 
-			void handle();
+			int getFd() const;
+			void onRead();
+			void onWrite();
+			void onTick();
 			const ServerConfig& getConfig() const;
+			void checkClientsStatus();
 
 		private:
 			void setup();
-			void handleListener();
-			void handleClients();
-			void removeClient(int index);
 
 			const ServerConfig& _config;
 
