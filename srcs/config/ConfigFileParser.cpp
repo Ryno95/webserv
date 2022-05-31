@@ -62,6 +62,68 @@ namespace Webserver
 			if (line.size() == 0 || line.front() == '#')
 				continue;
 
+
+
+	class IParseSection
+	{
+	protected:
+		virtual ~IParseSection();
+	public:
+		const std::vector<Keyword>& getKeywords() const = 0;
+		void startSection(const std::string& line) = 0;
+		void endSection(); // return T?
+	};
+
+/*
+
+	IKeyword
+	{
+		void execute();
+	};
+
+	struct Keyword : IKeyword
+	{
+		std::string keyword;
+		void execute();
+	};
+
+
+
+		server is IParseSection and has IParseSection (child)
+
+
+
+	Every state has keywords it's expecting.
+	Some keywords expand to a different state,
+	other keywords just parse a variable.
+
+	Expanding to a different state:
+		returns an object of the expected state
+
+	main -> Server
+			... parse Server ...
+		<-- return Server to main
+
+	Server -> Host
+			... parse Host ...
+		<-- return Host to Server
+
+	Host -> Location
+			... parse Location ...
+		<-- return Location to Host
+
+
+	Expected types per state:
+
+		main:	application	-> return GlobalConfig
+				server		-> return ServerConfig
+
+		server:	host		-> return HostConfig
+
+		host:	location	-> return LocationConfig
+
+*/
+
 			switch (currentState)
 			{
 			case NONE:

@@ -26,7 +26,7 @@ namespace RouteType
 
 namespace Webserver
 {
-	struct LocationConfig : public AConfig
+	struct LocationConfig : public HostConfig
 	{
 		LocationConfig();
 		LocationConfig(const std::string& value);
