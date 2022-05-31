@@ -41,16 +41,8 @@ namespace Webserver
 			IN_LOCATION_BLOCK
 		} state;
 
-		// template<class T>
-		// void parseVariable(const std::string& value, T* dest) const;
-
 		template<class T>
 		void parseVariableIntoConfig(const std::string& line, T& config) const;
-
-		// void parseGlobalVariable(const std::string& line, GlobalConfig& config) const;
-		// void parseHostVariable(const std::string& line, HostConfig& config) const;
-		// void parseServerVariable(const std::string& line, ServerConfig& config) const;
-		// void parseLocationVariable(const std::string& line, LocationConfig& config) const;
 
 		void validateAllConfigs() const;
 	

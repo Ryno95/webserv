@@ -107,7 +107,7 @@ namespace Webserver
 					currentHostConfig = HostConfig();
 					currentState = IN_SERVER_BLOCK;
 				}
-				else if (line.find("location") != std::string::npos)
+				else if (line.find("location") != std::string::npos) // possible bug where host fields get "location" as value
 				{
 					currentLocationConfig = LocationConfig(line);
 					currentState = PRE_LOCATION_BLOCK;
