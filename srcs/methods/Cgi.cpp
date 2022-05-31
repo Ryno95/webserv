@@ -91,7 +91,7 @@ namespace Webserver
 		executeCommand(queryString, cgiPath);
 	}
 
-	std::stringstream* Cgi::getCgiStream()
+	std::stringstream* Cgi::getCgiStream() // createResponse?
 	{
 		std::stringstream* 	cgiStream = new std::stringstream();
 		char 				buffer[BUFFERSIZE];
@@ -112,7 +112,6 @@ namespace Webserver
 			*cgiStream << buffer;
         }
 		close(_pipeFd[READ_FD]);
-        wait(NULL);
 		return cgiStream;
 	}
 
@@ -122,10 +121,20 @@ namespace Webserver
 		if (_pid == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Fork()");
 		else if (_pid == CHILD_PROCESS)
-			executeCgiFile();
+		{
+			try{
+				executeCgiFile();
+			}
+			catch (std::exception &e) {
+				exit(1);
+			}
+		}
 
-		Response *cgiResponse = new OkStatusResponse(HttpStatusCodes::OK);
-		cgiResponse->_cgiStream = getCgiStream();;
+        // waitpid(_pid, &status, WNOHANG);
+		
+		Response *cgiResponse =  createResponse();
+		// new OkStatusResponse(HttpStatusCodes::OK);
+		cgiResponse->_cgiStream = getCgiStream();
 		return (cgiResponse);
 	}
 }
