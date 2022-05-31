@@ -28,7 +28,7 @@ namespace Webserver
 			void onWrite();
 			void onTick();
 			const ServerConfig& getConfig() const;
-			void removeClients();
+			void checkClientsStatus();
 
 		private:
 			void setup();

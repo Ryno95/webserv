@@ -70,7 +70,7 @@ namespace Webserver
 		return _listenerFd;
 	}
 
-	void Webserv::removeClients()
+	void Webserv::checkClientsStatus()
 	{
 		size_t size = _clients.size();
 		for (size_t i = 0; i < size; i++)
@@ -108,6 +108,6 @@ namespace Webserver
 
 	void Webserv::onTick()
 	{
-		removeClients();
+		checkClientsStatus();
 	}
 }
