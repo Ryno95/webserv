@@ -9,8 +9,8 @@ print("<!DOCTYPE html>\n<html>\n")
 # print('')                         # Leave a blank line
 print('<h1>Addition Results</h1>')
 try:
-    num1 = int(form["val1"].value)
-    num2 = int(form["val2"].value)
+    num1 = 6
+    num2 = 6
 except:
     print('<output>Sorry, the script cannot turn your inputs into numbers (integers).</output>')
     raise SystemExit(1)
