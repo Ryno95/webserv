@@ -1,14 +1,29 @@
 #include <iostream>
 
 #include <Webserv.hpp>
-#include <ServerHandler.hpp>
 #include <Logger.hpp>
 #include <config/ConfigFileParser.hpp>
 
+#include <TickHandler.hpp>
+#include <TimeoutHandler.hpp>
+
 namespace Webserver
 {
+
+	void loop()
+	{
+		while (true)
+		{
+			PollHandler::get().update();
+			TickHandler::get().update();
+			TimeoutHandler::get().update();
+		}
+	}
+
 	int run(int argc, char** argv)
 	{
+		std::vector<Webserv*> servers;
+
 		try
 		{
 			std::string path;
@@ -22,9 +37,10 @@ namespace Webserver
 
 			for (size_t i = 0; i < configs.size(); i++)
 			{
-				ServerHandler::addServer(configs[i]);
+				servers.push_back(new Webserv(configs[i]));
 			}
-			ServerHandler::run();
+
+			loop();
 		}
 		catch(const std::exception& e)
 		{

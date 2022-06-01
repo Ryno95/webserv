@@ -18,17 +18,19 @@ CLASSES		=	Webserv\
 				methods/GETMethod\
 				methods/POSTMethod\
 				methods/DELETEMethod\
-				methods/Cgi\
+				Cgi\
 				MimeTypes\
 				Logger\
 				PollHandler\
-				ServerHandler\
+				TickHandler\
+				TimeoutHandler\
 				Host\
 				Utility\
 				responses/Response\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
+				responses/CgiResponse\
 				Uri\
 				config/ConfigFileParser\
 				config/AConfig\

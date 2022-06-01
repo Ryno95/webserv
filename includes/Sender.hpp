@@ -13,6 +13,7 @@ namespace Webserver
 	class Sender
 	{
 	public:
+		static bool IS_FINISHED;
 		Sender(int fd);
 		Sender(Sender const& rhs);
 		~Sender();

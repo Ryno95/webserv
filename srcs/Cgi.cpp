@@ -1,35 +1,41 @@
 #include <iostream>
-#include <methods/Cgi.hpp>
+#include <Cgi.hpp>
 #include <responses/OkStatusResponse.hpp>
 #include <unistd.h>
 #include <Exception.hpp>
 #include <PollHandler.hpp>
+#include <TimeoutHandler.hpp>
 #include <Host.hpp>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <fcntl.h>
+#include <Logger.hpp>
 
+#include <Sender.hpp>
 
 #define TERMINATOR '\0'
 
 namespace Webserver
 {
 	Cgi::Cgi(const Request &request, const Host &host)
-		: AMethod(request, host),
-		_cgiExecutable(getExecutablePath("/Python3")),
-		_envExecutable(getExecutablePath("/env"))
+		:	_cgiExecutable(getExecutablePath("/Python3")),
+			_envExecutable(getExecutablePath("/env")),
+			_request(request),
+			_cgiStream(new std::stringstream())
 	{
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
-		PollHandler::addPollfd(_pipeFd[READ_FD]);
-		PollHandler::addPollfd(_pipeFd[WRITE_FD]);
 	}	
 
 	Cgi::~Cgi()
 	{
-		PollHandler::removePollfd(_pipeFd[READ_FD]);
-		PollHandler::removePollfd(_pipeFd[WRITE_FD]);
+		WARN("DESTRUCTING CGI OBJECT");
+		PollHandler::get().remove(this);
+		TimeoutHandler::get().remove(this);
+		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("close()");
 	}
 
 	static int	is_executable(const char *full_path_executable)
@@ -70,6 +76,7 @@ namespace Webserver
 	void Cgi::executeCommand(const char *queryString, const char *cgiPath)
 	{
 		const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
+		std::cerr << "EXECUTING " << _cgiExecutable << std::endl;
 		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == SYSTEM_CALL_ERROR)
 				throw SystemCallFailedException("execve()");
 	}
@@ -82,59 +89,82 @@ namespace Webserver
 		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Close()");
 
+			// int dup2(int oldfd, int newfd);
 		if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Dup2()");
 
-		if (close(_pipeFd[WRITE_FD]) == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Close()");
+		// if (close(_pipeFd[WRITE_FD]) == SYSTEM_CALL_ERROR)
+		// 	throw SystemCallFailedException("Close()");
 	
 		executeCommand(queryString, cgiPath);
 	}
 
-	std::stringstream* Cgi::getCgiStream() // createResponse?
+	// Write end is only used in the child process
+	int Cgi::getFd() const
 	{
-		std::stringstream* 	cgiStream = new std::stringstream();
+		// WARN("SUBSCRIBED FD" << _pipeFd[READ_FD]);
+		return _pipeFd[READ_FD];
+	}
+	
+	timeval Cgi::getLastCommunicated() const
+	{
+		struct timeval time;
+		if (gettimeofday(&time, NULL) == SYSTEM_CALL_ERROR)
+			throw (SystemCallFailedException("gettimeofday()"));
+		return (time);
+	}
+
+	void Cgi::onRead()
+	{
+		int stat;
 		char 				buffer[BUFFERSIZE];
         int 				readBytes = 0;
 
-		if (close(_pipeFd[WRITE_FD]) == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("close()");
+		WARN("ON_READ CGI TRIGGERD");
 
-		// reading needs to be done via poll somehow
-        while (1)
-        {
-            readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
-            if (readBytes <  0)
-                throw SystemCallFailedException("read()") ;
-			else if (readBytes == 0)
-				break ;
-        	buffer[readBytes] = '\0';
-			*cgiStream << buffer;
-        }
-		close(_pipeFd[READ_FD]);
-		return cgiStream;
+		while (1)
+		{
+			readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
+			WARN("BYTES READ IN ON READ: " << readBytes);
+			if (readBytes == -1)
+				return ;
+			if (readBytes == 0)
+			{
+				WARN("SETTING FINISHED");
+				Sender::IS_FINISHED = true;
+				return ;
+			}
+			buffer[readBytes] = '\0';
+			*_cgiStream << buffer;
+		}
 	}
 
-	Response*	Cgi::process()
+	std::stringstream* 	Cgi::getCgiStream() const
+	{
+		return _cgiStream;
+	}
+
+	void	Cgi::execute()
 	{
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Fork()");
 		else if (_pid == CHILD_PROCESS)
 		{
-			try{
+			try {
 				executeCgiFile();
 			}
 			catch (std::exception &e) {
+				std::cerr << "CGI EXECUTION FAILED" << std::endl;
 				exit(1);
 			}
 		}
-
-        // waitpid(_pid, &status, WNOHANG);
-		
-		Response *cgiResponse =  createResponse();
-		// new OkStatusResponse(HttpStatusCodes::OK);
-		cgiResponse->_cgiStream = getCgiStream();
-		return (cgiResponse);
+		close(_pipeFd[WRITE_FD]);
+        waitpid(_pid, NULL, WNOHANG);
+		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+			throw SystemCallFailedException("fcntl");
+		PollHandler::get().add(this);
+		TimeoutHandler::get().add(this);
+		// onRead();
 	}
 }

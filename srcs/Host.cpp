@@ -89,4 +89,9 @@ namespace Webserver
 	{
 		return _routeType == RouteType::CHANGE_ROOT;
 	}
+
+	bool Host::isCgi() const
+	{
+		return _routeType == RouteType::CGI;
+	}
 }

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <PollHandler.hpp>
 #include <Logger.hpp>
 #include <Exception.hpp>
@@ -5,90 +7,88 @@
 
 namespace Webserver
 {
-	std::vector<pollfd> PollHandler::_fds;
+	/*
+		Singleton
+	*/
+	PollHandler PollHandler::_singleton;
 
-	void PollHandler::addPollfd(int fd)
+	PollHandler& PollHandler::get()
 	{
-		pollfd pfd;
-		pfd.fd = fd;
-		pfd.events = POLLIN;
-		_fds.push_back(pfd);
+		return _singleton;
 	}
 
-	pollfd* PollHandler::findPollfd(int fd)
-	{
-		std::vector<pollfd>::iterator start = _fds.begin();
-		std::vector<pollfd>::iterator end = _fds.end();
-
-		while (start != end)
-		{
-			if (start->fd == fd)
-				return &(*start);
-			start++;
-		}
-		ERROR("fd '" << fd << "' is not added to the poll handler. This could be a serious bug.");
-		throw ValueDoesNotExistException(toString(fd));
-	}
-
-	void PollHandler::setWriteFlag(int fd, bool enabled)
-	{
-		pollfd* pfd = findPollfd(fd);
-		if (enabled)
-			pfd->events = POLLIN | POLLOUT;
-		else
-			pfd->events = POLLIN;
-	}
-
-	bool PollHandler::canReadOrWrite(int fd)
-	{
-		pollfd* pfd = findPollfd(fd);
-		return pfd->revents != 0;
-	}
-
-	bool PollHandler::canRead(int fd)
-	{
-		pollfd* pfd = findPollfd(fd);
-		return BIT_ISSET(pfd->revents, POLLIN_BIT);
-	}
-
-	bool PollHandler::canWrite(int fd)
-	{
-		pollfd* pfd = findPollfd(fd);
-		return BIT_ISSET(pfd->revents, POLLOUT_BIT);
-	}
 
 	/*
-		If parameter fd is currently in the poll array, fd is removed.
-		Otherwise nothing happens.
+		Object
 	*/
-	void PollHandler::removePollfd(int fd)
+
+	PollHandler::PollHandler()
 	{
-		std::vector<pollfd>::iterator start = _fds.begin();
-		std::vector<pollfd>::iterator end = _fds.end();
-
-		while (start != end)
-		{
-			if (start->fd == fd)
-			{
-				_fds.erase(start);
-				return;
-			}
-			start++;
-		}
-		_fds.erase(start);
-
-		WARN("Tried to remove pollfd " << fd << ", but we were not polling for that.");
 	}
 
-	bool PollHandler::checkPoll()
+	PollHandler::~PollHandler()
+	{
+	}
+
+	void PollHandler::update()
 	{
 		int pollRet;
 
 		pollRet = poll(&_fds.front(), _fds.size(), 1000); // 1000 ms is temporary
 		if (pollRet == SYSTEM_ERR)
 			throw SystemCallFailedException("Poll");
-		else if (pollRet == 0)
-			return false;
-		return true;
+
+		for (size_t i = 0; i < _fds.size(); i++)
+		{
+			if (BIT_ISSET(_fds[i].revents, POLLIN_BIT))
+				_subscribers[i]->onRead();
+			if (BIT_ISSET(_fds[i].revents, POLLOUT_BIT))
+				_subscribers[i]->onWrite();
+		}
+	}
+
+	void PollHandler::add(IPollable* instance)
+	{
+		pollfd pfd;
+		pfd.fd = instance->getFd();
+		pfd.events = POLLIN;
+		_fds.push_back(pfd);
+		ASubscribeable::add(instance);
+		ERROR("Added fd: " << instance->getFd());
+	}
+
+	void PollHandler::remove(IPollable* instance)
+	{
+		ASubscribeable::remove(instance);
+		_fds.erase(_fds.begin() + getPollfdIndexOf(instance->getFd()));
+		ERROR("Removed fd: " << instance->getFd());
+	}
+
+	void PollHandler::setWriteEnabled(IPollable* fd, bool enabled)
+	{
+		int index = getPollfdIndexOf(fd->getFd());
+		if (index == -1)
+			return;
+
+		if (enabled)
+			_fds[index].events = POLLIN | POLLOUT;
+		else
+			_fds[index].events = POLLIN;
+	}
+
+	int PollHandler::getPollfdIndexOf(int fd)
+	{
+		std::vector<pollfd>::iterator iter = _fds.begin();
+		std::vector<pollfd>::iterator end = _fds.end();
+
+		while (iter != end)
+		{
+			if (iter->fd == fd)
+				return iter - _fds.begin();
+			iter++;
+		}
+
+		WARN("Fd '" << fd << "' is not added to the poll handler. Have you correctly subscribed to PollHandler?");
+		return -1;
 	}
 }

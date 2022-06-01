@@ -5,22 +5,31 @@
 #include <deque>
 #include <vector>
 
+#include <Webserv.hpp>
 #include <config/ServerConfig.hpp>
 #include <Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
-#include <methods/Cgi.hpp>
+#include <Cgi.hpp>
 #include <Sender.hpp>
+#include <IPollable.hpp>
+#include <ITimeoutable.hpp>
 
 namespace Webserver
 {
-	class Client
+	class Webserv;
+	class Client : public IPollable, public ITimeoutable
 	{
 	public:
 		Client(const ServerConfig& config, int fd);
 		~Client();
 
-		bool handle();
+		void onTimeout();
+		timeval getLastCommunicated() const;
+		int getFd() const;
+		void onRead();
+		void onWrite();
+		bool needsRemove() const;
 
 		struct DisconnectedException : std::exception
 		{
@@ -31,7 +40,6 @@ namespace Webserver
 		};
 
 	private:
-		bool checkTimeout() const;
 		void hasCommunicated();
 		void recvRequests();
 		void sendResponses();
@@ -48,5 +56,6 @@ namespace Webserver
 		Sender _sender;
 		const ServerConfig& _serverConfig;
 		bool _closeAfterRespond;
+		bool _needsRemove;
 	};
 }

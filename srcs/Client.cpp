@@ -2,13 +2,15 @@
 #include <methods/GETMethod.hpp>
 #include <methods/POSTMethod.hpp>
 #include <methods/DELETEMethod.hpp>
-#include <methods/Cgi.hpp>
+#include <Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
-#include <responses/BadStatusResponse.hpp>
+#include <TimeoutHandler.hpp>
 #include <responses/RedirectResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
+#include <responses/OkStatusResponse.hpp>
+#include <responses/CgiResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -18,9 +20,10 @@
 
 namespace Webserver
 {
-	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config)
+	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false)
 	{
-		PollHandler::addPollfd(fd);
+		PollHandler::get().add(this);
+		TimeoutHandler::get().add(this);
 		hasCommunicated();
 
 		DEBUG("Accepted client on fd: " << _fd);
@@ -28,38 +31,48 @@ namespace Webserver
 
 	Client::~Client()
 	{
+		PollHandler::get().remove(this);
+		TimeoutHandler::get().remove(this);
 		close(_fd);
-		PollHandler::removePollfd(_fd);
 
-		DEBUG("Client disconnected: " << _fd);
+		DEBUG("Removed client with fd: " << _fd);
 	}
 
-	/*
-		Returns false when the client should be removed (disconnected)
-	*/
-	bool Client::handle()
+	void Client::onRead()
 	{
-		if (!PollHandler::canReadOrWrite(_fd))
-			return checkTimeout();
-
-		hasCommunicated();
-
 		try
 		{
-			if (PollHandler::canRead(_fd))
-				recvRequests();
-
+			hasCommunicated();
+			recvRequests();
 			processRequests();
-
-			if (PollHandler::canWrite(_fd))
-				sendResponses();
 		}
 		catch(const DisconnectedException& e)
 		{
-			return false;
+			DEBUG("Client disconnected: " << _fd);
+			_needsRemove = true;
 		}
+	}
 
-		return true;
+	int Client::getFd() const
+	{
+		return _fd;
+	}
+
+	void Client::onWrite()
+	{
+		if (_needsRemove == true)
+			return;
+
+		try
+		{
+			hasCommunicated();
+			sendResponses();
+		}
+		catch(const DisconnectedException& e)
+		{
+			DEBUG("Client disconnected: " << _fd);
+			_needsRemove = true;
+		}
 	}
 
 	void Client::recvRequests()
@@ -69,7 +82,7 @@ namespace Webserver
 		if (newRequests.size() == 0)
 			return;
 
-		PollHandler::setWriteFlag(_fd, true);
+		PollHandler::get().setWriteEnabled(this, true);
 
 		std::deque<Request>::const_iterator first = newRequests.begin();
 		std::deque<Request>::const_iterator last = newRequests.end();
@@ -89,6 +102,12 @@ namespace Webserver
 		{
 			DEBUG("Redirection encountered.");
 			return new RedirectResponse(host.getRoot());
+		}
+
+		if (host.isCgi())
+		{
+			DEBUG("CGI triggered.");
+			return  new CgiResponse(request, host);
 		}
 
 		switch (request.getMethod())
@@ -117,18 +136,19 @@ namespace Webserver
 				response = new BadStatusResponse(request.getStatus(), BadRequestErrorPage);
 				DEBUG("Invalid request received.");
 			}
-			if (request.getTarget().find(".py") != std::string::npos) // host.isCGI()
-			{
-				DEBUG("ENTERING CGI");
-				response = Cgi(request, host).process();
-			}
 			else
-			{
 				response = processValidRequest(request);
-			}
+
+			// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
+			// response->setConnectionHeader()
+			std::string connectionValue;
+			if (request.tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
+				response->addHeader(Header::Connection, "close");
+			else
+				response->addHeader(Header::Connection, "keep-alive");
 
 			_requestQueue.pop_front();
-			if (response != nullptr)
+			if (response != nullptr) // If we ALWAYS want to respond, we could send BAD_REQUEST
 				_responseQueue.push_back(response);
 		}
 	}
@@ -140,7 +160,13 @@ namespace Webserver
 			if (_responseQueue.size() > 0) // If we have some queued, pop the front
 			{
 				Response* response = _responseQueue.front();
+
 				// Check connection header to know if we should close after sending this response
+				std::string connectionValue;
+				if (response->tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
+					_closeAfterRespond = true;
+				else
+					_closeAfterRespond = false;
 
 				_sender.setResponse(response);
 				_responseQueue.pop_front();
@@ -151,8 +177,11 @@ namespace Webserver
 			_sender.handle();
 		else
 		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::setWriteFlag(_fd, false);
+			PollHandler::get().setWriteEnabled(this, false);
 		}
+
+		if (_sender.hasResponse() == false && _closeAfterRespond == true)
+			_needsRemove = true;
 	}
 
 	/*
@@ -162,13 +191,23 @@ namespace Webserver
 	*/
 	void Client::hasCommunicated()
 	{
+		// Use TimeoutHandler::getTime() instead for optimization
 		gettimeofday(&_lastCommunicated, NULL);
 	}
 
-	bool Client::checkTimeout() const
+	bool Client::needsRemove() const
 	{
-		timeval now;
-		gettimeofday(&now, NULL);
-		return ((now.tv_sec - _lastCommunicated.tv_sec) * 1000) + ((now.tv_usec - _lastCommunicated.tv_usec) / 1000) < TIMEOUT_MS;
+		return _needsRemove;
+	}
+
+	void Client::onTimeout()
+	{
+		_needsRemove = true;
+		DEBUG("FD " << _fd << " timed-out.");
+	}
+
+	timeval Client::getLastCommunicated() const
+	{
+		return _lastCommunicated;
 	}
 }

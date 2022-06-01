@@ -5,25 +5,29 @@
 
 #include <config/ServerConfig.hpp>
 #include <defines.hpp>
+#include <IPollable.hpp>
 
 namespace Webserver
 {
-	class PollHandler
+	class PollHandler : public ASubscribeable<IPollable>
 	{
 	public:
-		static bool checkPoll();
-		static void addPollfd(int fd);
-		static void removePollfd(int fd);
+		static PollHandler& get(); // tmp singleton?
+	private:
+		static PollHandler _singleton; // tmp singleton?
 
-		static bool canReadOrWrite(int fd);
-		static bool canWrite(int fd);
-		static bool canRead(int fd);
-		static void setWriteFlag(int fd, bool enabled);
+	public:
+		PollHandler();
+		~PollHandler();
+
+		void update();
+		void add(IPollable* instance);
+		void remove(IPollable* instance);
+		void setWriteEnabled(IPollable* instance, bool enabled);
 
 	private:
-		static pollfd* findPollfd(int fd);
+		int getPollfdIndexOf(int fd);
 
-		static std::vector<pollfd> _fds;
-
+		std::vector<pollfd> _fds;
 	};
 }

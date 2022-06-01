@@ -32,7 +32,16 @@ namespace Webserver
 			case SEND_BODY:
 				_dataStream = _response->getBodyStream();
 				if(_dataStream == nullptr)
+				{
+					DEBUG("DATA STREAM SET TO CGI_STREAM");
 					_dataStream = _response->_cgiStream;
+					if (_dataStream != nullptr)
+						IS_FINISHED = false;
+					else
+					{
+						ERROR("No CGI datastream set!");
+					}
+				}
 				break;
 
 			case FINISHED:
@@ -52,28 +61,31 @@ namespace Webserver
 			return 0;
 		}
 
-		_dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
+		WARN("BYTES READ" << _dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize));
 		return _dataStream->gcount();
 	}
 
 	void Sender::handle()
 	{
 		long bufferSize = 0;
-
 		while (bufferSize < BUFFERSIZE && _currentState != FINISHED)
 		{
 			if (_dataStream == nullptr)
 				setDataStream();
 			bufferSize += fillBuffer(bufferSize);
-			if (bufferSize < BUFFERSIZE)
+			if ((_currentState == SEND_HEADER && bufferSize < BUFFERSIZE) || (_dataStream == nullptr || IS_FINISHED))
 			{
+				ERROR("Incrementing state from " << _currentState << " to: " << _currentState + 1);
+				std::cout << _buffer << std::endl;
 				_currentState++;
 				_dataStream = nullptr;
 			}
 		}
 
 		if (_currentState == FINISHED)
+		{
 			deleteResponse();
+		}
 
 		if (bufferSize == 0)
 		{
@@ -119,4 +131,5 @@ namespace Webserver
 		_currentState = SEND_HEADER;
 		_dataStream = nullptr;
 	}
+	bool Sender::IS_FINISHED = false;
 }
