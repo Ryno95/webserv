@@ -71,17 +71,17 @@ namespace Webserver
 
 	const char *Cgi::createQueryString()
 	{
-		const std::string queryStringPrefix("QUERY_STRING=val1=4&val2=6");
+		const std::string queryStringPrefix("QUERY_STRING=");
 
-		return (queryStringPrefix.c_str());
+		return (queryStringPrefix + _request.getBody()).c_str();
 	} 
 
 	void Cgi::executeCommand()
 	{
 		const char*	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget()).c_str();
-		const char*	queryString = std::string("QUERY_STRING=" + _request.getBody()).c_str();
-		const char *env[] = {queryString, NULL};
-		const char *argv[] = {"python3", completeCgiTarget, NULL};
+		const char*	queryString = createQueryString();
+		const char* env[] = {queryString, NULL};
+		const char* argv[] = {"python3", completeCgiTarget, NULL};
 	
 		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
@@ -92,7 +92,6 @@ namespace Webserver
 		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Close()");
 
-			// int dup2(int oldfd, int newfd);
 		if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Dup2()");
 	
@@ -119,19 +118,18 @@ namespace Webserver
 		char 				buffer[BUFFERSIZE];
         int 				readBytes = 0;
 
-		WARN("ON_READ CGI TRIGGERD");
-
+		DEBUG("ON_READ CGI TRIGGERD");
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
 		if (readBytes == -1)
 			return ;
 		else if (readBytes == 0)
 		{
-			WARN("SETTING FINISHED");
+			DEBUG("SETTING FINISHED");
 			Sender::IS_FINISHED = true;
 			return ;
 		}
 		buffer[readBytes] = '\0';
-		_cgiStream->str(_cgiStream->str() + buffer);
+		*_cgiStream << buffer;
 	}
 
 	std::stringstream* 	Cgi::getCgiStream() const
@@ -154,8 +152,10 @@ namespace Webserver
 				exit(1);
 			}
 		}
+		
 		close(_pipeFd[WRITE_FD]);
-        waitpid(_pid, NULL, 0);
+		// WNOHANG returns _pid whn the _pid process has actually finished
+        while (waitpid(_pid, NULL, WNOHANG) != _pid);
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw SystemCallFailedException("fcntl");
 		PollHandler::get().add(this);
