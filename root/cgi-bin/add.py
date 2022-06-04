@@ -5,14 +5,14 @@ import sys
 cgitb.enable()
 
 print("EXECUTING ADD.PY", file=sys.stderr);
-form = cgi.FieldStorage()
+input_data = cgi.FieldStorage()
 print("<!DOCTYPE html>\n<html>\n")
 # print('Content-Type: text/html') # HTML is following
 # print('')                         # Leave a blank line
 print('<h1>Addition Results</h1>')
 try:
-    num1 = 6
-    num2 = 6
+    num1 = int(input_data["val1"].value)
+    num2 = int(input_data["val2"].value)
 except:
     print('<output>Sorry, the script cannot turn your inputs into numbers (integers).</output>')
     raise SystemExit(1)

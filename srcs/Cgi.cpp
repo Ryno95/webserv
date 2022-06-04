@@ -19,12 +19,14 @@
 
 namespace Webserver
 {
+	// add Root to target, again
 	Cgi::Cgi(const Request &request, const Host &host)
 		:	_cgiExecutable(getExecutablePath("/Python3")),
 			_envExecutable(getExecutablePath("/env")),
 			_request(request),
 			_cgiStream(new std::stringstream())
 	{
+		DEBUG("TARGET: " << request.getTarget());
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 	}	
@@ -68,22 +70,32 @@ namespace Webserver
 
 	const char *Cgi::createQueryString()
 	{
-		const std::string queryStringPrefix("QUERY_STRING=");
+		const std::string queryStringPrefix("QUERY_STRING=val1=4&val2=6");
 
-		return (queryStringPrefix + _request.getBody()).c_str();
+		return (queryStringPrefix.c_str());
 	} 
 
 	void Cgi::executeCommand(const char *queryString, const char *cgiPath)
 	{
-		const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
-		std::cerr << "EXECUTING " << _cgiExecutable << std::endl;
-		if (execve(_envExecutable.c_str(),(char *const *)argv, NULL) == SYSTEM_CALL_ERROR)
-				throw SystemCallFailedException("execve()");
+		// const char *argv[] = {"env", "-i", queryString, _cgiExecutable.c_str(), cgiPath, NULL};
+		// std::cerr << "EXECUTING " << _cgiExecutable << std::endl;
+		// if (execve(_envExecutable.c_str(), (char *const *)argv, NULL) == SYSTEM_CALL_ERROR)
+		// 		throw SystemCallFailedException("execve()");
+		// ERROR("CGI SCRIPT: " << cgiPath);
+		char *query = "QUERY_STRING=val1=4&val2=6";
+		// ERROR("Query_strings: " << query);
+		const char *env[] = {query, NULL};
+		const char *argv[] = {"python3", cgiPath, NULL};
+		if (execve("/usr/local/bin/python3", (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
+		{
+			perror("");
+			throw SystemCallFailedException("execve()");
+		}
 	}
 
 	void Cgi::executeCgiFile()
 	{
-		const char *cgiPath = "root/cgi-bin/add.py"; // will be replaced by host location/route
+		const char *cgiPath = std::string("root" + _request.getTarget()).c_str(); // root/cgi-bin/add.py"; // will be replaced by host location/route
 		const char *queryString = createQueryString();
 
 		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
@@ -122,20 +134,20 @@ namespace Webserver
 
 		WARN("ON_READ CGI TRIGGERD");
 
-		while (1)
+		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
+		WARN("CGI read: " << readBytes);
+		if (readBytes == -1)
+			return ;
+		else if (readBytes == 0)
 		{
-			readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
-			WARN("BYTES READ IN ON READ: " << readBytes);
-			if (readBytes == -1)
-				return ;
-			if (readBytes == 0)
-			{
-				WARN("SETTING FINISHED");
-				Sender::IS_FINISHED = true;
-				return ;
-			}
+			WARN("SETTING FINISHED");
+			Sender::IS_FINISHED = true;
+			return ;
+		}
+		else
+		{
 			buffer[readBytes] = '\0';
-			*_cgiStream << buffer;
+			_cgiStream->str(_cgiStream->str() + buffer);
 		}
 	}
 
@@ -160,7 +172,7 @@ namespace Webserver
 			}
 		}
 		close(_pipeFd[WRITE_FD]);
-        waitpid(_pid, NULL, WNOHANG);
+        waitpid(_pid, NULL, 0);
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw SystemCallFailedException("fcntl");
 		PollHandler::get().add(this);
