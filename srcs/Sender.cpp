@@ -36,7 +36,6 @@ namespace Webserver
 				{
 					DEBUG("DATA STREAM SET TO CGI_STREAM");
 					_dataStream = _response->_cgiStream;
-					DEBUG("FULL CGI DATA: " << _dataStream->rdbuf());
 					if (_dataStream != nullptr)
 						IS_FINISHED = false;
 					else
@@ -78,8 +77,6 @@ namespace Webserver
 				setDataStream();
 			bytes = fillBuffer(bufferSize);
 			bufferSize += bytes;
-			DEBUG("BYTESREAD: " << bytes);
-			DEBUG("BUFFERSIZE: " << bufferSize);
 			if (bufferSize < BUFFERSIZE)
 			{
 				ERROR("Incrementing state from " << _currentState << " to: " << _currentState + 1);
@@ -108,7 +105,6 @@ namespace Webserver
 		}
 
 		ssize_t written;
-		DEBUG("WRITING: " << _buffer);
 		written = write(_fd, _buffer, bufferSize);
 
 		DEBUG("Sent " << written << " bytes to " << _fd);

@@ -50,7 +50,6 @@ namespace Webserver
 		addHeader(Header::Server, SERVER_NAME);
 		addHeader(Header::AcceptRanges, "bytes");
 		addHeader(Header::Date, getTimeStamp());
-		addHeader(Header::ContentLength, "400");
 	}
 
 	static std::string getContentTypeHeader(const std::string &fileName)

@@ -26,7 +26,6 @@ namespace Webserver
 			_request(request),
 			_cgiStream(new std::stringstream())
 	{
-		DEBUG("TARGET: " << request.getTarget());
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 	}	
@@ -177,6 +176,5 @@ namespace Webserver
 			throw SystemCallFailedException("fcntl");
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
-		// onRead();
 	}
 }
