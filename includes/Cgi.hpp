@@ -39,7 +39,7 @@ namespace Webserver
 			std::string			getExecutablePath(const std::string &exe);
 			const char* 		createQueryString();
 			void				executeCgiFile();
-			void				executeCommand(const char *queryString, const char *cgiPath);
+			void				executeCommand();
 
 			const std::string 	_cgiExecutable;
 			const std::string 	_envExecutable;
@@ -47,6 +47,7 @@ namespace Webserver
 			int					_pipeFd[2];
 			const Request&		_request;
 			std::stringstream* 	_cgiStream;
+			const Host&			_host;
 			// cgiStream
 
 	};
