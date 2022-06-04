@@ -40,7 +40,7 @@ namespace Webserver
 		};
 
 	private:
-		void hasCommunicated();
+		void setLastCommunicated();
 		void recvRequests();
 		void sendResponses();
 		void processRequests();

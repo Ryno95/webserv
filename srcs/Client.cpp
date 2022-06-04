@@ -24,7 +24,7 @@ namespace Webserver
 	{
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
-		hasCommunicated();
+		setLastCommunicated();
 
 		DEBUG("Accepted client on fd: " << _fd);
 	}
@@ -42,7 +42,7 @@ namespace Webserver
 	{
 		try
 		{
-			hasCommunicated();
+			setLastCommunicated();
 			recvRequests();
 			processRequests();
 		}
@@ -65,7 +65,7 @@ namespace Webserver
 
 		try
 		{
-			hasCommunicated();
+			setLastCommunicated();
 			sendResponses();
 		}
 		catch(const DisconnectedException& e)
@@ -185,11 +185,11 @@ namespace Webserver
 	}
 
 	/*
-		For the time functions hasCommunicated() and checkTimeout():
+		For the time functions setLastCommunicated() and checkTimeout():
 			We might set current_time once per poll iteration and get that value.
 			It reduces the amount of system calls!
 	*/
-	void Client::hasCommunicated()
+	void Client::setLastCommunicated()
 	{
 		// Use TimeoutHandler::getTime() instead for optimization
 		gettimeofday(&_lastCommunicated, NULL);
