@@ -19,16 +19,6 @@ namespace Webserver
 		ParseException(const std::string& msg) : std::runtime_error("During parsing: " + msg) {}
 	};
 
-	struct ConfigParseException : ParseException
-	{
-		ConfigParseException(int lineNum, const std::string& line) : ParseException("Failed to parse variable at line [" + toString(lineNum) + "]: " + line) {}
-	};
-
-	struct ConfigParseUnexpectedTokenException : ParseException
-	{
-		ConfigParseUnexpectedTokenException(const std::string& expected, int lineNum, const std::string& line) : ParseException("Expected '" + expected + "' on line [" + toString(lineNum) + "]: " + line) {}
-	};
-
 	struct ValueDoesNotExistException : std::runtime_error
 	{
 		ValueDoesNotExistException(const std::string& val) : std::runtime_error("Value is not contained: " + val) {}
@@ -57,4 +47,21 @@ namespace Webserver
 	private:
 		HttpStatusCode _status;
 	};
+
 }
+
+namespace ConfigFileParser
+{
+	using namespace Webserver;
+
+	struct ConfigParseUnexpectedTokenException : ParseException
+	{
+		ConfigParseUnexpectedTokenException(const std::string& expected, int lineNum, const std::string& line) : ParseException("Expected '" + expected + "' on line [" + toString(lineNum) + "]: " + line) {}
+	};
+
+	struct ConfigParseException : ParseException
+	{
+		ConfigParseException(int lineNum, const std::string& line) : ParseException("Failed to parse variable at line [" + toString(lineNum) + "]: " + line) {}
+	};
+}
+
