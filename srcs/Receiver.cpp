@@ -35,7 +35,6 @@ namespace Webserver
 
 		_recvBuffer.resize(BUFFERSIZE);
 		bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFERSIZE, 0);
-
 		if (bytesRecv == 0)
 			throw Client::DisconnectedException();
 		if (bytesRecv == SYSTEM_ERR) // do we need to handle this?
@@ -48,21 +47,18 @@ namespace Webserver
 
 	void Receiver::processHeaderRecv()
 	{
-		size_t pos = _recvBuffer.find("\r\n\r\n");
-		if (pos == std::string::npos)
-		{
-			_buffer += _recvBuffer;
-			_recvBuffer.resize(0);
-		}
-		else
-		{
-			pos += 4;
-			_buffer += _recvBuffer.substr(0, pos);
-			_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
-			checkHeader();
+		DEBUG("PROC HEADER RECV");
+		while (_recvBuffer.size() > 0)
+		{	
+			_buffer += _recvBuffer.substr(0, 1);
+			_recvBuffer = _recvBuffer.substr(1, _recvBuffer.size());
+			if (_buffer.find("\r\n\r\n") != std::string::npos)
+			{
+				checkHeader();
+				return ;
+			}
 		}
 	}
-
 
 
 	void Receiver::processBodyRecv()
@@ -79,6 +75,7 @@ namespace Webserver
 		_newRequest = Request(_buffer);
 		_buffer.clear();
 
+		DEBUG("CHECK HEADER");
 		try
 		{
 			_newRequest.parse();
@@ -109,14 +106,17 @@ namespace Webserver
 			switch (_state)
 			{
 				case RECV_HEADER:
+					DEBUG("STATE = RECV_HEADER");
 					processHeaderRecv();
 					break;
 
 				case RECV_BODY:
+					DEBUG("STATE = RECV_BODY");
 					processBodyRecv();
 					break;
 
 				case ADD_REQUEST:
+					DEBUG("STATE = ADD_REQUEST");
 					_readyRequests.push_back(_newRequest);
 					_state = RECV_HEADER;
 					break;
