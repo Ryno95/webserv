@@ -19,7 +19,7 @@ cgiRequest = CgiRequest(localhost, data=_data)
 try:
     cgiRequest.doRequest()
 except Exception as e:
-    print("CGI REQUEST FAILED: \n")
+    print("CGI REQUEST FAILED: ")
     print(e)
     raise SystemExit(0)
 EXIT_CODE += cgiRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, cgiRequest._response)
