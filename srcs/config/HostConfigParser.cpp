@@ -43,7 +43,7 @@ namespace Webserver
 	{
 		if (_data._acceptedMethods.size() == 0)
 		{
-			WARN("A host does not accept any HTTP method.");
+			WARN("One of the configured hosts does not accept any HTTP method.");
 		}
 	}
 }
