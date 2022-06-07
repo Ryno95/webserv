@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <Exception.hpp>
+#include <RouteType.hpp>
 
 namespace Webserver
 {
@@ -87,4 +88,16 @@ namespace Webserver
 		return values;
 	}
 
+	template<>
+	inline RouteType::RouteType VariableParser::parse(const std::string& value) const
+	{
+		if (value == "fileserver")
+			return RouteType::FILESERVER;
+		else if (value == "redirect")
+			return RouteType::REDIRECT;
+		else if (value == "cgi")
+			return RouteType::CGI;
+		else
+			throw Webserver::InvalidValueException(value);
+	}
 }
