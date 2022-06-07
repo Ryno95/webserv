@@ -5,7 +5,7 @@
 
 namespace Webserver
 {
-	ConfigParser::ConfigParser(std::istream& stream) : AConfigParser::AConfigParser(new StreamData(stream, 1), initKeywords())
+	ConfigParser::ConfigParser(std::istream& stream) : AConfigParser::AConfigParser(new StreamData(stream, 1), createKeywords())
 	{
 	}
 
@@ -14,7 +14,7 @@ namespace Webserver
 		delete _streamData;
 	}
 
-	std::map<std::string, AConfigParser::ICommand*> ConfigParser::initKeywords()
+	std::map<std::string, AConfigParser::ICommand*> ConfigParser::createKeywords()
 	{
 		std::map<std::string, ICommand*> keywords;
 		keywords["server"]	= new CreateChildCommand<ServerConfigParser>(this);

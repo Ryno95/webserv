@@ -12,7 +12,7 @@ namespace Webserver
 		void parse();
 
 	protected:
-		std::map<std::string, ICommand*> initKeywords();
+		std::map<std::string, ICommand*> createKeywords();
 
 	private:
 		Webserver::AppConfig _data;

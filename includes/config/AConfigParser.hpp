@@ -144,7 +144,7 @@ namespace Webserver
 	private:
 		void begin()
 		{
-			_keywords = initKeywords();
+			_keywords = createKeywords();
 			_keywords["}"] = new EndCommand(this);
 		}
 
@@ -204,7 +204,7 @@ namespace Webserver
 				throw std::runtime_error("Unclosed section encountered.");
 		}
 
-		virtual std::map<std::string, ICommand*> initKeywords() = 0;
+		virtual std::map<std::string, ICommand*> createKeywords() = 0;
 		std::vector<AConfigParser*> _children;
 		StreamData* _streamData;
 		std::map<std::string, ICommand*> _keywords;

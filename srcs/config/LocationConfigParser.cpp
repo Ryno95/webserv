@@ -6,7 +6,7 @@ namespace Webserver
 	{
 	}
 
-	std::map<std::string, AConfigParser::ICommand*> LocationConfigParser::initKeywords()
+	std::map<std::string, AConfigParser::ICommand*> LocationConfigParser::createKeywords()
 	{
 		std::map<std::string, ICommand*> keywords;
 		keywords["route"]		= new ParseVariableCommand<std::string>(&_data._route);

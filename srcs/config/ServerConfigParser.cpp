@@ -7,7 +7,7 @@ namespace Webserver
 	{
 	}
 
-	std::map<std::string, AConfigParser::ICommand*> ServerConfigParser::initKeywords()
+	std::map<std::string, AConfigParser::ICommand*> ServerConfigParser::createKeywords()
 	{
 		std::map<std::string, ICommand*> keywords;
 		keywords["host"]		= new CreateChildCommand<HostConfigParser>(this);

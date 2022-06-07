@@ -11,7 +11,7 @@ namespace Webserver
 		ServerConfigParser(StreamData* streamData);
 
 	protected:
-		std::map<std::string, ICommand*> initKeywords();
+		std::map<std::string, ICommand*> createKeywords();
 
 	private:
 		Webserver::ServerConfig _data;

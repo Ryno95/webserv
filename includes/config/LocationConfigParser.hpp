@@ -11,7 +11,7 @@ namespace Webserver
 		LocationConfigParser(StreamData* streamData);
 
 	protected:
-		std::map<std::string, ICommand*> initKeywords();
+		std::map<std::string, ICommand*> createKeywords();
 
 	private:
 		Webserver::LocationConfig _data;
