@@ -3,12 +3,11 @@
 #include <string>
 
 #include <config/ServerConfig.hpp>
-#include <config/HostConfig.hpp>
 #include <config/LocationConfig.hpp>
 
 namespace Webserver
 {
-	struct Host : private HostConfig
+	struct Host : private LocationConfig
 	{
 		static Host		determine(const ServerConfig& config, const std::string& hostName, const std::string& uri);
 
