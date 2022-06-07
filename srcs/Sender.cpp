@@ -83,8 +83,6 @@ namespace Webserver
 				_dataStream = nullptr;
 				break ;
 			}
-			// if (bytes == 0)
-			// 	break ;
 		}
 
 
