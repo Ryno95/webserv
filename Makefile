@@ -19,9 +19,8 @@ CLASSES		=	Utility\
 				config/HostConfig\
 				config/LocationConfig\
 				MimeTypes\
-				Logger
-
-# CLASSES		=	Webserv\
+				Logger\
+				Webserv\
 				Client\
 				Request\
 				Receiver\
@@ -30,26 +29,16 @@ CLASSES		=	Utility\
 				GETMethod\
 				POSTMethod\
 				DELETEMethod\
-				MimeTypes\
-				Logger\
 				PollHandler\
 				TickHandler\
 				TimeoutHandler\
 				Host\
-				Utility\
 				responses/Response\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
 				Uri\
-				HeaderFields\
-				config/ConfigFileParser\
-				config/AConfig\
-				config/HostConfig\
-				config/ServerConfig\
-				config/GlobalConfig\
-				config/LocationConfig
-				
+				HeaderFields
 
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)

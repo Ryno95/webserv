@@ -50,9 +50,14 @@ namespace Webserver
 		}
 	}
 
-	void ConfigParser::parse()
+	AppConfig* ConfigParser::combineParsers() const
+	{
+	}
+
+	AppConfig* ConfigParser::parse()
 	{
 		readStream();
 		validate();
+		return combineParsers();
 	}
 }

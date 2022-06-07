@@ -9,11 +9,12 @@ namespace Webserver
 	public:
 		ConfigParser(std::istream& stream);
 		~ConfigParser();
-		void parse();
+		AppConfig* parse();
 
 	private:
 		std::map<std::string, ICommand*> createKeywords();
 		void validate();
+		AppConfig* combineParsers() const;
 
 		AppConfig _data;
 	};

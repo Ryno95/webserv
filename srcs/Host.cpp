@@ -8,7 +8,8 @@ namespace Webserver
 {
 	Host Host::determine(const ServerConfig& config, const std::string& hostName, const std::string& uri)
 	{
-		return Host(matchHost(config.hosts, hostName), uri);
+		const HostConfig& host = matchHost(config.hosts, hostName);
+		return Host(matchLocation(host, uri));
 	}
 
 	const HostConfig& Host::matchHost(const std::vector<HostConfig>& hosts, const std::string& hostName)
@@ -24,22 +25,19 @@ namespace Webserver
 		return hosts[0];
 	}
 
-	Host::Host(const HostConfig& config, const std::string& uri) : HostConfig::HostConfig(config), _routeType(RouteType::CHANGE_ROOT)
+	const HostConfig& Host::matchLocation(const HostConfig& host, const std::string& uri)
 	{
-		matchLocation(uri);
-	}
-
-	void Host::matchLocation(const std::string& uri)
-	{
+		const std::vector<LocationConfig>& locations = host.getLocationConfigs();
 		for (size_t i = 0; i < locations.size(); i++)
 		{
 			if (wildcard(uri, locations[i].pattern) == true)
-			{
-				_routeType = locations[i].routeType;
-				root = locations[i].route;
-				break;
-			}
+				return locations[i];
 		}
+		return host;
+	}
+
+	Host::Host(const HostConfig& config) : LocationConfig::LocationConfig(config)
+	{
 	}
 
 	std::string Host::getName() const
@@ -47,50 +45,30 @@ namespace Webserver
 		return names[0];
 	}
 
-	bool Host::getAutoIndexEnabled() const
-	{
-		return autoIndexEnabled;
-	}
+	// bool Host::isMethodAccepted(Method::method m) const
+	// {
+	// 	if (std::find(acceptedMethods.begin(), acceptedMethods.end(), m) == acceptedMethods.end())
+	// 		return false;
+	// 	return true;
+	// }
 
-	std::string Host::getRoot() const
-	{
-		return root;
-	}
+	// bool Host::isRedirect() const
+	// {
+	// 	return _routeType == RouteType::REDIRECT;
+	// }
 
-	std::string Host::getDefaultIndex() const
-	{
-		return defaultIndex;
-	}
+	// bool Host::isUpload() const
+	// {
+	// 	return _routeType == RouteType::UPLOAD;
+	// }
 
-	std::string Host::getDefaultError() const
-	{
-		return defaultError;
-	}
+	// bool Host::isChangeRoot() const
+	// {
+	// 	return _routeType == RouteType::CHANGE_ROOT;
+	// }
 
-	bool Host::isMethodAccepted(Method::method m) const
-	{
-		if (std::find(acceptedMethods.begin(), acceptedMethods.end(), m) == acceptedMethods.end())
-			return false;
-		return true;
-	}
-
-	bool Host::isRedirect() const
-	{
-		return _routeType == RouteType::REDIRECT;
-	}
-
-	bool Host::isUpload() const
-	{
-		return _routeType == RouteType::UPLOAD;
-	}
-
-	bool Host::isChangeRoot() const
-	{
-		return _routeType == RouteType::CHANGE_ROOT;
-	}
-
-	bool Host::isCgi() const
-	{
-		return _routeType == RouteType::CGI;
-	}
+	// bool Host::isCgi() const
+	// {
+	// 	return _routeType == RouteType::CGI;
+	// }
 }

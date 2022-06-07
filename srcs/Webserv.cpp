@@ -13,7 +13,6 @@
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <Webserv.hpp>
-#include <config/GlobalConfig.hpp>
 #include <Exception.hpp>
 #include <TickHandler.hpp>
 
@@ -26,7 +25,7 @@ namespace Webserver
 		PollHandler::get().add(this);
 		TickHandler::get().add(this);
 
-		DEBUG("Created server instance on port: " << _config.port);
+		DEBUG("Created server instance on port: " << _config.getPort());
 	}
 
 	Webserv::~Webserv()
@@ -35,7 +34,7 @@ namespace Webserver
 		PollHandler::get().remove(this);
 		TickHandler::get().remove(this);
 
-		DEBUG("Destroyed server instance on port: " << _config.port);
+		DEBUG("Destroyed server instance on port: " << _config.getPort());
 	}
 
 	void Webserv::setup()
@@ -44,7 +43,7 @@ namespace Webserver
 		struct sockaddr_in servAddr;
 
 		servAddr.sin_family = AF_INET;
-		servAddr.sin_port = htons(_config.port);
+		servAddr.sin_port = htons(_config.getPort());
 		servAddr.sin_addr.s_addr = INADDR_ANY;
 
 		_listenerFd = socket(AF_INET, SOCK_STREAM, STD_TCP);

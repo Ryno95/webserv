@@ -197,6 +197,7 @@ namespace Webserver
 
 		virtual std::map<std::string, ICommand*> createKeywords() = 0;
 		virtual void validate() = 0;
+
 		std::vector<AConfigParser*> _children;
 		StreamData* _streamData;
 		std::map<std::string, ICommand*> _keywords;

@@ -21,13 +21,20 @@ namespace Webserver
 	// 	}
 	// }
 
-	ConfigParser* parseConfig(const std::string& path)
+	void parseConfig(const std::string& path)
 	{
-		std::ifstream fstream(path);
-		if (fstream.fail())
-			throw FileNotFoundException(path);
-		ConfigParser* parsed = new ConfigParser(&fstream);
-		return parsed;
+		try
+		{
+			std::ifstream fstream(path);
+			if (fstream.fail())
+				throw FileNotFoundException(path);
+			ConfigParser* parser = new ConfigParser(fstream);
+			parser->parse();
+		}
+		catch(const std::exception& e)
+		{
+			throw std::runtime_error(std::string("In config file: ") + e.what());
+		}
 	}
 
 	int run(int argc, char** argv)
@@ -55,8 +62,7 @@ namespace Webserver
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << std::endl;
-			// ERROR(e.what());
+			ERROR(e.what());
 			return 1;
 		}
 
