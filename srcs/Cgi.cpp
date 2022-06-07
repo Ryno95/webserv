@@ -30,11 +30,34 @@ namespace Webserver
 	{
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
+		_pid = fork();
+		if (_pid == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("Fork()");
+		else if (_pid == CHILD_PROCESS)
+		{
+			try {
+				executeCgiFile();
+			}
+			catch (std::exception &e) {
+				std::cerr << "CGI EXECUTION FAILED" << std::endl;
+				exit(1);
+			}
+		}
+		else
+		{
+			close(_pipeFd[WRITE_FD]);
+
+			// WNOHANG returns _pid when the _pid process has actually finished
+    		while(waitpid(_pid, NULL, WNOHANG) != _pid);
+			if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+				throw SystemCallFailedException("fcntl");
+			PollHandler::get().add(this);
+			TimeoutHandler::get().add(this);
+		}
 	}	
 
 	Cgi::~Cgi()
 	{
-		WARN("DESTRUCTING CGI OBJECT");
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
 		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
@@ -98,7 +121,7 @@ namespace Webserver
 		executeCommand();
 	}
 
-	// Write end is only used in the child process
+	// Write end of the pipe is only used in the child process
 	int Cgi::getFd() const
 	{
 		return _pipeFd[READ_FD];
@@ -114,15 +137,11 @@ namespace Webserver
 
 	void Cgi::onRead()
 	{
-		int stat;
 		char 				buffer[BUFFERSIZE];
         int 				readBytes = 0;
 
-		DEBUG("ON_READ CGI TRIGGERD");
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
-		if (readBytes == -1)
-			return ;
-		else if (readBytes == 0)
+		if (readBytes == SYSTEM_ERR || readBytes == 0)
 			return ;
 		buffer[readBytes] = '\0';
 		*_cgiStream << buffer;
@@ -131,31 +150,5 @@ namespace Webserver
 	std::stringstream* 	Cgi::getCgiStream() const
 	{
 		return _cgiStream;
-	}
-
-	void	Cgi::execute()
-	{
-		_pid = fork();
-		if (_pid == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Fork()");
-		else if (_pid == CHILD_PROCESS)
-		{
-			try {
-				executeCgiFile();
-			}
-			catch (std::exception &e) {
-				std::cerr << "CGI EXECUTION FAILED" << std::endl;
-				exit(1);
-			}
-		}
-		
-		close(_pipeFd[WRITE_FD]);
-	
-		// WNOHANG returns _pid when the _pid process has actually finished
-    	while(waitpid(_pid, NULL, WNOHANG) != _pid);
-		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
-			throw SystemCallFailedException("fcntl");
-		PollHandler::get().add(this);
-		TimeoutHandler::get().add(this);
 	}
 }

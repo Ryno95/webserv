@@ -54,14 +54,14 @@ namespace Webserver
 		pfd.events = POLLIN;
 		_fds.push_back(pfd);
 		ASubscribeable::add(instance);
-		ERROR("Added fd: " << instance->getFd());
+		DEBUG("Added fd: " << instance->getFd());
 	}
 
 	void PollHandler::remove(IPollable* instance)
 	{
 		ASubscribeable::remove(instance);
 		_fds.erase(_fds.begin() + getPollfdIndexOf(instance->getFd()));
-		ERROR("Removed fd: " << instance->getFd());
+		DEBUG("Removed fd: " << instance->getFd());
 	}
 
 	void PollHandler::setWriteEnabled(IPollable* fd, bool enabled)

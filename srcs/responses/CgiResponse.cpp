@@ -7,10 +7,7 @@ namespace Webserver
 {
 	CgiResponse::CgiResponse(const Request &request, const Host &host) : Response(request.getStatus()), _cgiRequest(Cgi(request, host))
 	{
-		WARN("ENTERING CGI RESPONSE CONSTRUCTOR");
-		_cgiRequest.execute();
+		addHeader(Header::ContentType, "text/html");
 		_cgiStream = _cgiRequest.getCgiStream();
-		// addHeader(Header::ContentLength, "2000");
-		// DEBUG(_cgiStream->str());
 	}	
 }

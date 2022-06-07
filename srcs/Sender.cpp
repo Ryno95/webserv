@@ -105,18 +105,18 @@ namespace Webserver
 
 		DEBUG("Sent " << written << " bytes to " << _fd);
 
-		if (written != bufferSize)
+		if (written != bufferSize || written == 0)
 		{
 			WARN("Actual bytes written is not equal to the amount requested to send." << std::endl <<
 					"There is no implementation to catch this issue yet." << std::endl <<
 					"Requested: " << bufferSize << " written: " << written << std::endl);
 		}
+
 		// this doesnt make sense, if bufferSize is bigger than total response size the body wont ever be sent
 		if (_currentState == FINISHED)
 		{
 			deleteResponse();
 		}
-
 	}
 
 	void Sender::deleteResponse()
