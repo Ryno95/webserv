@@ -29,8 +29,8 @@ namespace Webserver
 			_host(host)
 	{
 		ERROR("ROOT: " << _host.getRoot());
-		ERROR("CGI Executable" <<  _cgiExecutable);
-		ERROR("FULL CGI" <<  prependRoot(_host.getRoot(), _request.getTarget()).c_str());
+		ERROR("CGI Executable: " <<  _cgiExecutable);
+		ERROR("FULL CGI: " <<  prependRoot(_host.getRoot(), _request.getTarget()).c_str());
 
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");

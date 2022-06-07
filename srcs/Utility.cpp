@@ -94,7 +94,7 @@ namespace Webserver
 	// assumes target starts with forward slash ex. /add.py
 	std::string prependRoot(const std::string& root, const std::string& target)
 	{
-		return std::string(root + target.substr(target.find('/'), target.size()));
+		return std::string(root + target.substr(target.find('/') + 1, target.size()));
 	}
 
 	bool wildcard(const std::string& string, const std::string& pattern)
