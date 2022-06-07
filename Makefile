@@ -9,7 +9,19 @@ INCL_DIR	=	includes/
 TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
-CLASSES		=	Webserv\
+CLASSES		=	Utility\
+				config/ConfigParser\
+				config/ConfigServerParser\
+				config/ConfigHostParser\
+				config/ConfigLocationParser\
+				config/AppConfig\
+				config/ServerConfig\
+				config/HostConfig\
+				config/LocationConfig\
+				MimeTypes\
+				Logger
+
+# CLASSES		=	Webserv\
 				Client\
 				Request\
 				Receiver\
@@ -30,13 +42,15 @@ CLASSES		=	Webserv\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
 				Uri\
+				HeaderFields\
 				config/ConfigFileParser\
 				config/AConfig\
 				config/HostConfig\
 				config/ServerConfig\
 				config/GlobalConfig\
-				config/LocationConfig\
-				HeaderFields
+				config/LocationConfig
+				
+
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
