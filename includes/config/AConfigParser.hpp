@@ -5,12 +5,13 @@
 #include <map>
 #include <algorithm>
 #include <exception>
+#include <string>
 
+#include <Logger.hpp>
 #include <Exception.hpp>
 #include <Method.hpp>
 #include <Utility.hpp>
 #include <VariableParser.hpp>
-#include <string>
 
 namespace Webserver
 {
@@ -60,7 +61,7 @@ namespace Webserver
 			void callback(const std::string& args)
 			{
 				if (args.size() == 0)
-					throw 
+					throw std::runtime_error("No value assigned to variable");
 				*_dest = _parser.parse<T>(args);
 			}
 
@@ -69,25 +70,63 @@ namespace Webserver
 			VariableParser _parser;
 		};
 
+		class BeginCommand : public ICommand
+		{
+		public:
+			BeginCommand(AConfigParser* instance) : _instance(instance) {}
+			~BeginCommand() {}
+
+			void callback(const std::string& args)
+			{
+				(void)args;
+				_instance->begin();
+			}
+
+		private:
+			AConfigParser* _instance;
+		};
+
+		class EndCommand : public ICommand
+		{
+		public:
+			EndCommand(AConfigParser* instance) : _instance(instance) {}
+			~EndCommand() {}
+
+			virtual void callback(const std::string& args)
+			{
+				(void)args;
+				_instance->end();
+			}
+
+		private:
+			AConfigParser* _instance;
+		};
+
 
 
 	protected:
 		struct StreamData
 		{
-			StreamData(std::ifstream* fstream, uint line) : stream(fstream), currentLine(line) {}
+			StreamData(std::istream& istream, uint line) : stream(istream), currentLine(line) {}
 
-			std::ifstream* stream;
+			std::istream& stream;
 			uint currentLine;
 		};
+
+
 
 	/*
 		AConfigParser, abstract config parser class
 	*/
 
-	public:
-		AConfigParser(StreamData streamData, std::map<std::string, ICommand*> keywords) : _keywords(keywords), _streamData(streamData)
+	protected:
+		AConfigParser(StreamData* streamData) : _streamData(streamData), _finished(false)
 		{
-			readStream();
+			_keywords["{"] = new BeginCommand(this);
+		}
+
+		AConfigParser(StreamData* streamData, std::map<std::string, ICommand*> keywords) : _streamData(streamData), _keywords(keywords), _finished(false)
+		{
 		}
 
 		~AConfigParser()
@@ -103,11 +142,33 @@ namespace Webserver
 		}
 
 	private:
-		void readStream()
+		void begin()
+		{
+			_keywords = initKeywords();
+			_keywords["}"] = new EndCommand(this);
+		}
+
+		void end()
+		{
+			_finished = true;
+		}
+
+	protected:
+		bool finishedCorrectly()
+		{
+			return _finished;
+		}
+
+		bool readStream()
 		{
 			std::string line, key, value;
-			while (std::getline((*(std::istream*)_streamData.stream), line))
+			while (_finished == false)
 			{
+				if (_streamData->stream.eof())
+					return false;
+
+				std::getline(_streamData->stream, line);
+
 				line = Webserver::removeLeadingWhitespace(line);
 				line = Webserver::removeTrailingWhitespace(line);
 
@@ -127,22 +188,28 @@ namespace Webserver
 				else
 					it->second->callback(value);
 
-				_streamData.currentLine++;
+				_streamData->currentLine++;
 			}
+			return true;
 		}
 
-	protected:
 		template<class T>
 		void addChild(const std::string& args)
 		{
 			if (args.size() != 0)
 				throw std::runtime_error("Unexpected tokens after keyword: " + args);
+
 			_children.push_back(new T(_streamData));
+			if (_children.back()->readStream() == false)
+				throw std::runtime_error("Unclosed section encountered.");
 		}
 
 		virtual std::map<std::string, ICommand*> initKeywords() = 0;
 		std::vector<AConfigParser*> _children;
+		StreamData* _streamData;
 		std::map<std::string, ICommand*> _keywords;
-		StreamData _streamData;
+
+	private:
+		bool _finished;
 	};
 }
