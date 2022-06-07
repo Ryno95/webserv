@@ -1,3 +1,4 @@
+from urllib import response
 import requests
 from requests import Session
 from requests.structures import CaseInsensitiveDict
@@ -15,9 +16,16 @@ localhost = "http://localhost:8080/add.py"
 _data={"val1":"6",
         "val2":"63"}
 
-cgiRequest = CgiRequest(localhost, data=_data)
-cgiRequest.doRequest()
-EXIT_CODE += cgiRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, cgiRequest._response)
-if not cgiRequest._response.text.find(_data["val1"] + _data["val2"]):
+# cgiRequest = CgiRequest(localhost, data=_data)
+# cgiRequest.doRequest()
+response = requests.post(localhost, data=_data) 
+if (response.status_code != HttpResponseStatus.OK):
+    EXIT_CODE += 1
+else:
+    print("OK!")
+# EXIT_CODE += cgiRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, cgiRequest._response)
+if not response.text.find(_data["val1"] + _data["val2"]):
         EXIT_CODE += 1
+else:
+    print("OK!")
 exit(EXIT_CODE)
