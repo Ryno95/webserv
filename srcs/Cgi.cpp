@@ -78,7 +78,7 @@ namespace Webserver
 		int 			i = 0;
 
 		if (all_paths.size() < 1)
-			return (NULL);
+			return ("");
 		SinglePathLen = all_paths.find(COLON);
 		while (SinglePathLen != std::string::npos)
 		{
@@ -88,7 +88,7 @@ namespace Webserver
 			i = SinglePathLen + 1;
 			SinglePathLen = all_paths.find(COLON, i);
 		}
-		return (NULL);
+		return ("");
 	}
 
 	const char *Cgi::createQueryString()
