@@ -100,10 +100,10 @@ namespace Webserver
 	void Cgi::executeCommand()
 	{
 		std::cerr << "EXEC()" << std::endl;
-		const char*	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget()).c_str();
-		const char*	queryString = createQueryString().c_str();
-		const char* env[] = {queryString, NULL};
-		const char* argv[] = {"python3", completeCgiTarget, NULL};
+		std::string	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget());
+		std::string	queryString = createQueryString();
+		const char* env[] = {queryString.c_str(), NULL};
+		const char* argv[] = {"python3", completeCgiTarget.c_str(), NULL};
 
 		std::cerr << "CGI SCRIPT: " << completeCgiTarget << std::endl;
 		std::cerr << "QueryString: " << queryString << std::endl;

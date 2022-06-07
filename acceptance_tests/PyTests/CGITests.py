@@ -21,7 +21,7 @@ try:
 except Exception as e:
     print("CGI REQUEST FAILED: ")
     print(e)
-    raise SystemExit(0)
+    raise SystemExit(69)
 EXIT_CODE += cgiRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, cgiRequest._response)
 if not cgiRequest._response.text.find(_data["val1"] + _data["val2"]):
         EXIT_CODE += 1
