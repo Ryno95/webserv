@@ -4,30 +4,32 @@
 #include <vector>
 
 #include <Method.hpp>
-#include <config/AConfig.hpp>
-#include <config/LocationConfig.hpp>
 
 namespace Webserver
 {
-	struct HostConfig : public AConfig
+	class LocationConfig;
+
+	class HostConfig
 	{
+		friend class ConfigHostParser;
+
+	public:
 		HostConfig();
 		HostConfig(const HostConfig& ref);
 		~HostConfig();
 		HostConfig& operator=(const HostConfig& ref);
 
-		void	validate() const;
-
-		std::vector<std::string>	names;
-		std::vector<LocationConfig>	locations;
-		bool						autoIndexEnabled;
-		std::string					root;
-		std::string					defaultIndex;
-		std::string					defaultError;
-		std::vector<Method::method>	acceptedMethods;
-
 	private:
-		map_type fillVariablesMap();
+		std::vector<std::string>	_names;
+		std::vector<LocationConfig>	_locations;
 
+	protected:
+		bool						_autoIndexEnabled;
+		std::string					_root;
+		std::string					_defaultIndex;
+		std::string					_defaultError;
+		std::vector<Method::method>	_acceptedMethods;
 	};
 }
+
+#include <config/LocationConfig.hpp> // Placed here instead of at the top because of circular dependency with inheritance dependency in LocationConfig

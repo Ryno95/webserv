@@ -3,13 +3,12 @@
 
 namespace Webserver
 {
-	ServerConfig::ServerConfig() 
-	:	AConfig::AConfig(fillVariablesMap()),
-		port(80)
+	ServerConfig::ServerConfig() :
+		_port(80)
 	{
 	}
 
-	ServerConfig::ServerConfig(const ServerConfig& ref) : AConfig::AConfig(fillVariablesMap())
+	ServerConfig::ServerConfig(const ServerConfig& ref)
 	{
 		*this = ref;
 	}
@@ -20,23 +19,23 @@ namespace Webserver
 
 	ServerConfig& ServerConfig::operator=(const ServerConfig& ref)
 	{
-		port = ref.port;
-		hosts = ref.hosts;
+		_port = ref._port;
+		_hosts = ref._hosts;
 		return *this;
 	}
 
-	AConfig::map_type ServerConfig::fillVariablesMap()
-	{
-		map_type map;
+	// AConfig::map_type ServerConfig::fillVariablesMap()
+	// {
+	// 	map_type map;
 
-		map["listen_port"]		= var_data(var_uint, &port);
+	// 	map["listen_port"]		= var_data(var_uint, &port);
 
-		return map;
-	}
+	// 	return map;
+	// }
 
-	void ServerConfig::validate() const
-	{
-		if (port > _maxPortNumber || port <= 0)
-			throw InvalidValueException("server, port should be between 1 and 65535");
-	}
+	// void ServerConfig::validate() const
+	// {
+	// 	if (port > _maxPortNumber || port <= 0)
+	// 		throw InvalidValueException("server, port should be between 1 and 65535");
+	// }
 }
