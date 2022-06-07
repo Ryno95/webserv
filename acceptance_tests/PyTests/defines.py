@@ -23,6 +23,7 @@ class Methods(Enum):
     GET     = 1
     POST    = 2
     DELETE  = 3
+    CGI  = 4
 
 LOCAL_HOST = "http://localhost:8080"
 TEST_FILE_DIR = "acceptance_tests/PyTests/"
