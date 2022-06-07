@@ -11,7 +11,7 @@ namespace Webserver
 
 	class HostConfig
 	{
-		friend class ConfigHostParser;
+		friend class HostConfigParser;
 
 	public:
 		HostConfig();

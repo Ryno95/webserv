@@ -5,10 +5,10 @@
 
 namespace Webserver
 {
-	class ConfigLocationParser : public AConfigParser
+	class LocationConfigParser : public AConfigParser
 	{
 	public:
-		ConfigLocationParser(StreamData streamData);
+		LocationConfigParser(StreamData streamData);
 
 	protected:
 		std::map<std::string, ICommand*> initKeywords();

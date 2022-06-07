@@ -11,9 +11,9 @@ TEST_DIR	=	unit_tests/
 MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
 				config/ConfigParser\
-				config/ConfigServerParser\
-				config/ConfigHostParser\
-				config/ConfigLocationParser\
+				config/ServerConfigParser\
+				config/HostConfigParser\
+				config/LocationConfigParser\
 				config/AppConfig\
 				config/ServerConfig\
 				config/HostConfig\

@@ -1,19 +1,19 @@
 #pragma once
 
-#include <config/HostConfig.hpp>
+#include <config/ServerConfig.hpp>
 #include <config/AConfigParser.hpp>
 
 namespace Webserver
 {
-	class ConfigHostParser : public AConfigParser
+	class ServerConfigParser : public AConfigParser
 	{
 	public:
-		ConfigHostParser(StreamData streamData);
+		ServerConfigParser(StreamData streamData);
 
 	protected:
 		std::map<std::string, ICommand*> initKeywords();
 
 	private:
-		Webserver::HostConfig _data;
+		Webserver::ServerConfig _data;
 	};
 }

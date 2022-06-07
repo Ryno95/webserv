@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include <config/ConfigParser.hpp>
-#include <config/ConfigServerParser.hpp>
+#include <config/ServerConfigParser.hpp>
 
 namespace Webserver
 {
@@ -13,7 +13,7 @@ namespace Webserver
 	std::map<std::string, AConfigParser::ICommand*> ConfigParser::initKeywords()
 	{
 		std::map<std::string, ICommand*> keywords;
-		keywords["server"]	= new CreateChildCommand<ConfigServerParser>(this);
+		keywords["server"]	= new CreateChildCommand<ServerConfigParser>(this);
 
 		keywords["listen_backlog"]	= new ParseVariableCommand<uint>(&_data._listenBacklog);
 		keywords["buffer_size"]		= new ParseVariableCommand<uint>(&_data._bufferSize);

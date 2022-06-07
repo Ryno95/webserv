@@ -10,7 +10,7 @@ namespace Webserver
 
 	class ServerConfig
 	{
-		friend class ConfigServerParser;
+		friend class ServerConfigParser;
 
 	public:
 		ServerConfig();

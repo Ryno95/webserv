@@ -28,7 +28,7 @@ namespace Webserver
 {
 	class LocationConfig : public HostConfig
 	{
-		friend class ConfigLocationParser;
+		friend class LocationConfigParser;
 
 	public:
 		LocationConfig();
