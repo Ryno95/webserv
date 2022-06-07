@@ -37,8 +37,9 @@ namespace Webserver
 		~LocationConfig();
 		LocationConfig& operator=(const LocationConfig& rhs);
 
+		const std::string& getMatchPattern() const;
+
 	private:
 		std::string _pattern;
-		std::string _route;
 	};
 }

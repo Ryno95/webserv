@@ -18,6 +18,13 @@ namespace Webserver
 		~AppConfig();
 		AppConfig& operator=(const AppConfig& ref);
 
+		const std::vector<ServerConfig> getServerConfigs() const;
+		const MimeTypes& getMimeTypes() const;
+		uint getListenBacklog() const;
+		uint getBufferSize() const;
+		bool isDebugEnabled() const;
+		bool isDebugLoggingEnabled() const;
+		const std::string& getLogFileName() const;
 
 
 	private:

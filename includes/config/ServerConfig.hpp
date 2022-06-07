@@ -18,6 +18,9 @@ namespace Webserver
 		~ServerConfig();
 		ServerConfig& operator=(const ServerConfig& ref);
 
+		const std::vector<HostConfig> getHostConfigs() const;
+		uint getPort() const;
+
 	private:
 		std::vector<HostConfig>	_hosts;
 
