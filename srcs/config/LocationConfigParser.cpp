@@ -2,7 +2,7 @@
 
 namespace Webserver
 {
-	LocationConfigParser::LocationConfigParser(StreamData streamData) : AConfigParser::AConfigParser(streamData, initKeywords())
+	LocationConfigParser::LocationConfigParser(StreamData* streamData) : AConfigParser::AConfigParser(streamData)
 	{
 	}
 

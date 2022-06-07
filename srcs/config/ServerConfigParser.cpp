@@ -3,7 +3,7 @@
 
 namespace Webserver
 {
-	ServerConfigParser::ServerConfigParser(StreamData streamData) : AConfigParser::AConfigParser(streamData, initKeywords())
+	ServerConfigParser::ServerConfigParser(StreamData* streamData) : AConfigParser::AConfigParser(streamData)
 	{
 	}
 
