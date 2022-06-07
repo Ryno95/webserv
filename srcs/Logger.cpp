@@ -1,7 +1,7 @@
 #include <Colors.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
-#include <config/GlobalConfig.hpp>
+// #include <config/GlobalConfig.hpp>
 
 #include <ctime>
 #include <sstream>
@@ -23,14 +23,14 @@ namespace Webserver
 
 	static void printDebug(const std::string& msg)
 	{
-		if (GlobalConfig::get().debugEnabled)
+		// if (GlobalConfig::get().debugEnabled)
 			std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
 	}
 
 	void Logger::log(const std::string& msg)
 	{
-		if (!GlobalConfig::get().loggingEnabled)
-			return;
+		// if (!GlobalConfig::get().loggingEnabled)
+			// return;
 
 		if (!_logFile.is_open())
 		{

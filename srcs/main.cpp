@@ -1,28 +1,38 @@
 #include <iostream>
+#include <fstream>
+// #include <Webserv.hpp>
+// #include <Logger.hpp>
+// #include <config/ConfigFileParser.hpp>
 
-#include <Webserv.hpp>
-#include <Logger.hpp>
-#include <config/ConfigFileParser.hpp>
-
-#include <TickHandler.hpp>
-#include <TimeoutHandler.hpp>
+// #include <TickHandler.hpp>
+// #include <TimeoutHandler.hpp>
+#include <config/ConfigParser.hpp>
 
 namespace Webserver
 {
 
-	void loop()
+	// void loop()
+	// {
+	// 	while (true)
+	// 	{
+	// 		PollHandler::get().update();
+	// 		TickHandler::get().update();
+	// 		TimeoutHandler::get().update();
+	// 	}
+	// }
+
+	ConfigParser* parseConfig(const std::string& path)
 	{
-		while (true)
-		{
-			PollHandler::get().update();
-			TickHandler::get().update();
-			TimeoutHandler::get().update();
-		}
+		std::ifstream fstream(path);
+		if (fstream.fail())
+			throw FileNotFoundException(path);
+		ConfigParser* parsed = new ConfigParser(&fstream);
+		return parsed;
 	}
 
 	int run(int argc, char** argv)
 	{
-		std::vector<Webserv*> servers;
+		// std::vector<Webserv*> servers;
 
 		try
 		{
@@ -31,20 +41,22 @@ namespace Webserver
 				path = argv[1];
 			else
 				path = "config/default.config";
+			parseConfig(path);
 
-			ConfigFileParser parser(path);
-			std::vector<ServerConfig>& configs = parser.parse();
+			// ConfigFileParser parser(path);
+			// std::vector<ServerConfig>& configs = parser.parse();
 
-			for (size_t i = 0; i < configs.size(); i++)
-			{
-				servers.push_back(new Webserv(configs[i]));
-			}
+			// for (size_t i = 0; i < configs.size(); i++)
+			// {
+			// 	servers.push_back(new Webserv(configs[i]));
+			// }
 
-			loop();
+			// loop();
 		}
 		catch(const std::exception& e)
 		{
-			ERROR(e.what());
+			std::cerr << e.what() << std::endl;
+			// ERROR(e.what());
 			return 1;
 		}
 
