@@ -5,9 +5,13 @@
 
 namespace Webserver
 {
-	ConfigParser::ConfigParser(std::ifstream* stream) : AConfigParser::AConfigParser(StreamData(stream, 0), initKeywords())
+	ConfigParser::ConfigParser(std::istream& stream) : AConfigParser::AConfigParser(new StreamData(stream, 1), initKeywords())
 	{
+	}
 
+	ConfigParser::~ConfigParser()
+	{
+		delete _streamData;
 	}
 
 	std::map<std::string, AConfigParser::ICommand*> ConfigParser::initKeywords()
@@ -22,5 +26,10 @@ namespace Webserver
 		keywords["debug_logging"]	= new ParseVariableCommand<bool>(&_data._loggingEnabled);
 		keywords["log_file"]		= new ParseVariableCommand<std::string>(&_data._logFile);
 		return keywords;
+	}
+
+	void ConfigParser::parse()
+	{
+		readStream();
 	}
 }
