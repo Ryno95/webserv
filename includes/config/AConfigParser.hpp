@@ -15,7 +15,6 @@
 
 namespace Webserver
 {
-
 	class AConfigParser
 	{
 
@@ -194,17 +193,10 @@ namespace Webserver
 		}
 
 		template<class T>
-		void addChild(const std::string& args)
-		{
-			if (args.size() != 0)
-				throw std::runtime_error("Unexpected tokens after keyword: " + args);
-
-			_children.push_back(new T(_streamData));
-			if (_children.back()->readStream() == false)
-				throw std::runtime_error("Unclosed section encountered.");
-		}
+		void addChild(const std::string& args);
 
 		virtual std::map<std::string, ICommand*> createKeywords() = 0;
+		virtual void validate() = 0;
 		std::vector<AConfigParser*> _children;
 		StreamData* _streamData;
 		std::map<std::string, ICommand*> _keywords;
@@ -212,4 +204,16 @@ namespace Webserver
 	private:
 		bool _finished;
 	};
+
+	template<class T>
+	void AConfigParser::addChild(const std::string& args)
+	{
+		if (args.size() != 0)
+			throw std::runtime_error("Unexpected tokens after keyword: " + args);
+
+		_children.push_back(new T(_streamData));
+		if (_children.back()->readStream() == false)
+			throw std::runtime_error("Unclosed section encountered.");
+		_children.back()->validate();
+	}
 }
