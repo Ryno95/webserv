@@ -32,4 +32,39 @@ namespace Webserver
 		_acceptedMethods = ref._acceptedMethods;
 		return *this;
 	}
+
+	const std::vector<std::string>& HostConfig::getHostNames() const
+	{
+		return _names;
+	}
+
+	const std::vector<LocationConfig>& HostConfig::getLocationConfigs() const
+	{
+		return _locations;
+	}
+
+	bool HostConfig::isAutoIndexEnabled() const
+	{
+		return _autoIndexEnabled;
+	}
+
+	const std::string& HostConfig::getRoot() const
+	{
+		return _root;
+	}
+
+	const std::string& HostConfig::getDefaultIndex() const
+	{
+		return _defaultIndex;
+	}
+
+	const std::string& HostConfig::getDefaultError() const
+	{
+		return _defaultError;
+	}
+
+	const std::vector<Method::method> HostConfig::getAcceptedMethods() const
+	{
+		return _acceptedMethods;
+	}
 }

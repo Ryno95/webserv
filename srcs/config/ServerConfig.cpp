@@ -23,4 +23,14 @@ namespace Webserver
 		_hosts = ref._hosts;
 		return *this;
 	}
+
+	const std::vector<HostConfig> ServerConfig::getHostConfigs() const
+	{
+		return _hosts;
+	}
+
+	uint ServerConfig::getPort() const
+	{
+		return _port;
+	}
 }

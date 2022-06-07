@@ -11,6 +11,8 @@ namespace Webserver
 	{
 		std::map<std::string, ICommand*> keywords;
 
+		keywords["route_type"]	= new ParseVariableCommand<RouteType::RouteType>(&_data._routeType);
+
 		addProtectedKeywords(keywords);
 		return keywords;
 	}
