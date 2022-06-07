@@ -48,20 +48,14 @@ namespace Webserver
 		HttpStatusCode _status;
 	};
 
-}
-
-namespace ConfigFileParser
-{
-	using namespace Webserver;
-
 	struct ConfigParseUnexpectedTokenException : ParseException
 	{
-		ConfigParseUnexpectedTokenException(const std::string& expected, int lineNum, const std::string& line) : ParseException("Expected '" + expected + "' on line [" + toString(lineNum) + "]: " + line) {}
+		ConfigParseUnexpectedTokenException(const std::string& expected, int lineNum, const std::string& line) : ParseException("Expected '" + expected + "' on line [" + Webserver::toString(lineNum) + "]: " + line) {}
 	};
 
 	struct ConfigParseException : ParseException
 	{
-		ConfigParseException(int lineNum, const std::string& line) : ParseException("Failed to parse variable at line [" + toString(lineNum) + "]: " + line) {}
+		ConfigParseException(int lineNum, const std::string& line) : ParseException("Failed to parse variable at line [" + Webserver::toString(lineNum) + "]: " + line) {}
 	};
 }
 
