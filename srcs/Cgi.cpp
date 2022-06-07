@@ -100,6 +100,7 @@ namespace Webserver
 	void Cgi::executeCommand()
 	{
 		const char*	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget()).c_str();
+		ERROR("ROOT: " << _host.getRoot());
 		const char*	queryString = createQueryString();
 		const char* env[] = {queryString, NULL};
 		const char* argv[] = {"python3", completeCgiTarget, NULL};

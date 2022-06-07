@@ -19,6 +19,7 @@ ExitCode+=$?
 python3 POSTTests.py
 ExitCode+=$?
 
+pwd
 python3 CGITests.py
 ExitCode+=$?
 
