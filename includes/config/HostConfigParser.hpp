@@ -12,9 +12,11 @@ namespace Webserver
 
 	protected:
 		virtual std::map<std::string, ICommand*> createKeywords();
+		virtual void validate();
+
 		void addProtectedKeywords(std::map<std::string, ICommand*>& keywords);
 
 	private:
-		Webserver::HostConfig _data;
+		HostConfig _data;
 	};
 }

@@ -28,8 +28,31 @@ namespace Webserver
 		return keywords;
 	}
 
+	void ConfigParser::validate()
+	{
+		/*
+			Rules
+		*/
+
+		if (_children.size() == 0)
+			throw ParseException("No servers configured.");
+		if (_data._bufferSize == 0)
+			throw ParseException("Buffer size must be greater than 0.");
+
+
+		/*
+			Warnings
+		*/
+
+		if (_data._bufferSize > UINT16_MAX)
+		{
+			WARN("Large buffersize configured: " << _data._bufferSize);
+		}
+	}
+
 	void ConfigParser::parse()
 	{
 		readStream();
+		validate();
 	}
 }

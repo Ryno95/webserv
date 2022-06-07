@@ -11,10 +11,10 @@ namespace Webserver
 		~ConfigParser();
 		void parse();
 
-	protected:
-		std::map<std::string, ICommand*> createKeywords();
-
 	private:
-		Webserver::AppConfig _data;
+		std::map<std::string, ICommand*> createKeywords();
+		void validate();
+
+		AppConfig _data;
 	};
 }

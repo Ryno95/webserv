@@ -3,6 +3,18 @@
 
 namespace Webserver
 {
+	template<>
+	void AConfigParser::addChild<LocationConfigParser>(const std::string& args)
+	{
+		if (args.size() == 0)
+			throw std::runtime_error("No pattern assigned to Location");
+		
+		_children.push_back(new LocationConfigParser(_streamData, args));
+		if (_children.back()->readStream() == false)
+			throw std::runtime_error("Unclosed section encountered.");
+		_children.back()->validate();
+	}
+
 	HostConfigParser::HostConfigParser(StreamData* streamData) : AConfigParser::AConfigParser(streamData)
 	{
 	}
@@ -25,5 +37,13 @@ namespace Webserver
 
 		addProtectedKeywords(keywords);
 		return keywords;
+	}
+
+	void HostConfigParser::validate()
+	{
+		if (_data._acceptedMethods.size() == 0)
+		{
+			WARN("A host does not accept any HTTP method.");
+		}
 	}
 }

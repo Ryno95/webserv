@@ -8,11 +8,12 @@ namespace Webserver
 	class LocationConfigParser : public HostConfigParser
 	{
 	public:
-		LocationConfigParser(StreamData* streamData);
+		LocationConfigParser(StreamData* streamData, const std::string& pattern);
 
 	private:
 		std::map<std::string, ICommand*> createKeywords();
+		void validate();
 
-		Webserver::LocationConfig _data;
+		LocationConfig _data;
 	};
 }

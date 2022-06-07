@@ -15,4 +15,12 @@ namespace Webserver
 		keywords["port"]		= new ParseVariableCommand<uint>(&_data._port);
 		return keywords;
 	}
+
+	void ServerConfigParser::validate()
+	{
+		if (_children.size() == 0)
+			throw ParseException("No hosts configured.");
+		if (_data._port > UINT16_MAX)
+			throw InvalidValueException(std::string("Port: " + toString(_data._port)));
+	}
 }

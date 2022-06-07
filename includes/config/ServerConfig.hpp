@@ -25,7 +25,5 @@ namespace Webserver
 		std::vector<HostConfig>	_hosts;
 
 		uint					_port;
-
-		static const int	_maxPortNumber = 65535;
 	};
 }

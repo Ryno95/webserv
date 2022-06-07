@@ -23,17 +23,8 @@ namespace Webserver
 	LocationConfig& LocationConfig::operator=(const LocationConfig& ref)
 	{
 		_pattern = ref._pattern;
-		_route = ref._route;
 		return *this;
 	}
-
-	// AConfig::map_type LocationConfig::fillVariablesMap()
-	// {
-	// 	map_type map;
-	// 	map["pattern"]	= var_data(var_string, &pattern);
-	// 	map["route"]	= var_data(var_string, &route);
-	// 	return map;
-	// }
 
 	/*
 		Returns MatchType::SUFFIX or MatchType::PREFIX.
@@ -46,12 +37,6 @@ namespace Webserver
 	// 		return MatchType::SUFFIX;
 	// 	else
 	// 		return MatchType::PREFIX;
-	// }
-
-	// void LocationConfig::validate() const
-	// {
-	// 	if (route.size() == 0)
-	// 		throw InvalidValueException("A route destination should be set for a location");
 	// }
 
 	// void LocationConfig::parseRouteType(const std::string& value)
