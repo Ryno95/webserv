@@ -22,13 +22,12 @@ namespace Webserver
 {
 	// add Root to target, again
 	Cgi::Cgi(const Request &request, const Host &host)
-		:	_cgiExecutable(getExecutablePath("/Python3")),
+		:	_cgiExecutable(getExecutablePath("/python3")),
 			_envExecutable(getExecutablePath("/env")),
 			_request(request),
 			_cgiStream(new std::stringstream()),
 			_host(host)
 	{
-		ERROR("HERE");
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 		_pid = fork();
