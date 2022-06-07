@@ -28,6 +28,8 @@ namespace Webserver
 			_cgiStream(new std::stringstream()),
 			_host(host)
 	{
+		ERROR("ROOT: " << _host.getRoot());
+		ERROR(_cgiExecutable);
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 		_pid = fork();
@@ -100,7 +102,6 @@ namespace Webserver
 	void Cgi::executeCommand()
 	{
 		const char*	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget()).c_str();
-		ERROR("ROOT: " << _host.getRoot());
 		const char*	queryString = createQueryString();
 		const char* env[] = {queryString, NULL};
 		const char* argv[] = {"python3", completeCgiTarget, NULL};
