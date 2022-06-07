@@ -99,16 +99,11 @@ namespace Webserver
 
 	void Cgi::executeCommand()
 	{
-		std::cerr << "EXEC()" << std::endl;
 		std::string	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget());
 		std::string	queryString = createQueryString();
 		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", completeCgiTarget.c_str(), NULL};
 
-		std::cerr << "CGI SCRIPT: " << completeCgiTarget << std::endl;
-		std::cerr << "QueryString: " << queryString << std::endl;
-		std::cerr << "Cgi Executor: " << _cgiExecutable.c_str() << std::endl;
-	
 		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}
