@@ -13,7 +13,7 @@ try:
     num1 = int(input_data["val1"].value)
     num2 = int(input_data["val2"].value)
 except:
-    print("<output>Sorry, the script cannot turn your inputs into numbers (integers).</output>")
+    print("<output>Sorry, the script cannot turn your inputs into numbers (integers).</output>\n</body>\n</html>")
     raise SystemExit(1)
 
 
