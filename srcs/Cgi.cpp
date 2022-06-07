@@ -60,8 +60,7 @@ namespace Webserver
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
-		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("close()");
+		close(_pipeFd[READ_FD]);
 	}
 
 	static int	is_executable(const char *full_path_executable)
