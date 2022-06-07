@@ -32,16 +32,7 @@ namespace Webserver
 			case SEND_BODY:
 				_dataStream = _response->getBodyStream();
 				if(_dataStream == nullptr)
-				{
-					DEBUG("DATA STREAM SET TO CGI_STREAM");
 					_dataStream = _response->_cgiStream;
-					if (_dataStream != nullptr)
-						IS_FINISHED = false;
-					else
-					{
-						ERROR("No CGI datastream set!");
-					}
-				}
 				break;
 
 			case FINISHED:
