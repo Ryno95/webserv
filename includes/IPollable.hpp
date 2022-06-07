@@ -8,9 +8,8 @@ namespace Webserver
 	{
 	public:
 		virtual ~IPollable() {}
-
-		virtual void 	onRead() = 0;
-		virtual void 	onWrite() = 0;
-		virtual int 	getFd() const = 0;
+		virtual void onRead() = 0;
+		virtual void onWrite() = 0;
+		virtual int getFd() const = 0;
 	};
 }

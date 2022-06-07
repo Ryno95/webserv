@@ -131,16 +131,12 @@ namespace Webserver
 			Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
 			// an error occured during parsing / preparing the request, so we send the error-code back
-			if (request.getStatus() != HttpStatusCodes::OK) // extra check if determine() went well;
-			{
-				response = new BadStatusResponse(request.getStatus(), BadRequestErrorPage);
-				DEBUG("Invalid request received.");
-			}
+			if (request.getStatus() != HttpStatusCodes::OK)
+				response = new BadStatusResponse(request.getStatus());
 			else
 				response = processValidRequest(request);
 
 			// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
-			// response->setConnectionHeader()
 			std::string connectionValue;
 			if (request.tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
 				response->addHeader(Header::Connection, "close");
