@@ -20,12 +20,12 @@ GetRequest = Request.GETRequest()
 response  = requests.get(localhost)
 EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.NOT_FOUND, response)
 
-localhost = "http://localhost:8080/hello.py"
-basicCgiResponseBody = "<!DOCTYPE html>\n<html>\n\n<h1>Hello World!</h1>\n</html>\n\n"
-GetRequest = Request.GETRequest()
-response  = requests.get(localhost)
-EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, response)
-EXIT_CODE += GetRequest.compareActualToExpected(response.text, basicCgiResponseBody)
+# localhost = "http://localhost:8080/hello.py"
+# basicCgiResponseBody = "<!DOCTYPE html>\n<html>\n\n<h1>Hello World!</h1>\n</html>\n\n"
+# GetRequest = Request.GETRequest()
+# response  = requests.get(localhost)
+# EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, response)
+# EXIT_CODE += GetRequest.compareActualToExpected(response.text, basicCgiResponseBody)
 time.sleep(1)
 
 exit(EXIT_CODE)
