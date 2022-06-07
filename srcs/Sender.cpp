@@ -78,7 +78,6 @@ namespace Webserver
 			bufferSize += bytes;
 			if (bufferSize < BUFFERSIZE)
 			{
-				ERROR("Incrementing state from " << _currentState << " to: " << _currentState + 1);
 				_currentState++;
 				_dataStream = nullptr;
 				break ;

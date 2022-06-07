@@ -47,7 +47,6 @@ namespace Webserver
 
 	void Receiver::processHeaderRecv()
 	{
-		DEBUG("PROC HEADER RECV");
 		while (_recvBuffer.size() > 0)
 		{	
 			_buffer += _recvBuffer.substr(0, 1);
@@ -75,7 +74,6 @@ namespace Webserver
 		_newRequest = Request(_buffer);
 		_buffer.clear();
 
-		DEBUG("CHECK HEADER");
 		try
 		{
 			_newRequest.parse();
@@ -106,17 +104,14 @@ namespace Webserver
 			switch (_state)
 			{
 				case RECV_HEADER:
-					DEBUG("STATE = RECV_HEADER");
 					processHeaderRecv();
 					break;
 
 				case RECV_BODY:
-					DEBUG("STATE = RECV_BODY");
 					processBodyRecv();
 					break;
 
 				case ADD_REQUEST:
-					DEBUG("STATE = ADD_REQUEST");
 					_readyRequests.push_back(_newRequest);
 					_state = RECV_HEADER;
 					break;

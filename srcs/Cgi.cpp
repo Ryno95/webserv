@@ -68,7 +68,6 @@ namespace Webserver
 	{
 		struct stat	status;
 
-		DEBUG(full_path_executable);
 		return(stat(full_path_executable, &status) == F_OK);
 	}
 
