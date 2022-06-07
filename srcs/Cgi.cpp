@@ -87,14 +87,14 @@ namespace Webserver
 		{
 			std::string single_path(all_paths.substr(i, SinglePathLen - i));
 			if (is_executable((single_path + exe).c_str()))
-				return single_path + exe;
+				return std::string(single_path + exe);
 			i = SinglePathLen + 1;
 			SinglePathLen = all_paths.find(COLON, i);
 		}
 		return ("");
 	}
 
-	const char *Cgi::createQueryString()
+	std::string Cgi::createQueryString()
 	{
 		const std::string queryStringPrefix("QUERY_STRING=");
 
@@ -103,8 +103,9 @@ namespace Webserver
 
 	void Cgi::executeCommand()
 	{
+		std::cerr << "EXEC()" << std::endl;
 		const char*	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget()).c_str();
-		const char*	queryString = createQueryString();
+		const char*	queryString = createQueryString().c_str();
 		const char* env[] = {queryString, NULL};
 		const char* argv[] = {"python3", completeCgiTarget, NULL};
 	

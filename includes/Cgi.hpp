@@ -37,7 +37,7 @@ namespace Webserver
 
 		private:
 			std::string			getExecutablePath(const std::string &exe);
-			const char* 		createQueryString();
+			std::string 		createQueryString();
 			void				executeCgiFile();
 			void				executeCommand();
 
