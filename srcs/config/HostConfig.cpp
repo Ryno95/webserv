@@ -32,21 +32,4 @@ namespace Webserver
 		_acceptedMethods = ref._acceptedMethods;
 		return *this;
 	}
-
-	// AConfig::map_type HostConfig::fillVariablesMap()
-	// {
-	// 	map_type map;
-	// 	map["name"]				= var_data(var_strings, &names);
-	// 	map["root"]				= var_data(var_string, &root);
-	// 	map["methods"]			= var_data(var_methods, &acceptedMethods);
-	// 	map["default_index"]	= var_data(var_string, &defaultIndex);
-	// 	map["default_error"]	= var_data(var_string, &defaultError);
-	// 	map["autoindex"]		= var_data(var_bool, &autoIndexEnabled);
-	// 	return map;
-	// }
-
-	// void HostConfig::validate() const
-	// {
-	// 	return ;
-	// }
 }
