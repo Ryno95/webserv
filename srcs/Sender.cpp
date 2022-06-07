@@ -100,7 +100,6 @@ namespace Webserver
 		}
 
 		ssize_t written;
-		// DEBUG("WRITING: " << std::string(_buffer).substr(0, bufferSize));
 		written = write(_fd, _buffer, bufferSize);
 
 		DEBUG("Sent " << written << " bytes to " << _fd);
@@ -112,7 +111,6 @@ namespace Webserver
 					"Requested: " << bufferSize << " written: " << written << std::endl);
 		}
 
-		// this doesnt make sense, if bufferSize is bigger than total response size the body wont ever be sent
 		if (_currentState == FINISHED)
 		{
 			deleteResponse();
