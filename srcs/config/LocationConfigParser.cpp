@@ -2,7 +2,7 @@
 
 namespace Webserver
 {
-	LocationConfigParser::LocationConfigParser(StreamData* streamData) : AConfigParser::AConfigParser(streamData)
+	LocationConfigParser::LocationConfigParser(StreamData* streamData) : HostConfigParser::HostConfigParser(streamData)
 	{
 	}
 
@@ -10,6 +10,8 @@ namespace Webserver
 	{
 		std::map<std::string, ICommand*> keywords;
 		keywords["route"]		= new ParseVariableCommand<std::string>(&_data._route);
+
+		addProtectedKeywords(keywords);
 		return keywords;
 	}
 }

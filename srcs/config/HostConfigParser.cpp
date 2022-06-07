@@ -7,6 +7,15 @@ namespace Webserver
 	{
 	}
 
+	void HostConfigParser::addProtectedKeywords(std::map<std::string, ICommand*>& keywords)
+	{
+		keywords["autoindex"]			= new ParseVariableCommand<bool>(&_data._autoIndexEnabled);
+		keywords["root"]				= new ParseVariableCommand<std::string>(&_data._root);
+		keywords["default_index"]		= new ParseVariableCommand<std::string>(&_data._defaultIndex);
+		keywords["default_error"]		= new ParseVariableCommand<std::string>(&_data._defaultError);
+		keywords["accepted_methods"]	= new ParseVariableCommand<std::vector<Method::method> >(&_data._acceptedMethods);
+	}
+
 	std::map<std::string, AConfigParser::ICommand*> HostConfigParser::createKeywords()
 	{
 		std::map<std::string, ICommand*> keywords;
@@ -14,11 +23,7 @@ namespace Webserver
 
 		keywords["name"]		= new ParseVariableCommand<std::vector<std::string> >(&_data._names);
 
-		keywords["autoindex"]			= new ParseVariableCommand<bool>(&_data._autoIndexEnabled);
-		keywords["root"]				= new ParseVariableCommand<std::string>(&_data._root);
-		keywords["default_index"]		= new ParseVariableCommand<std::string>(&_data._defaultIndex);
-		keywords["default_error"]		= new ParseVariableCommand<std::string>(&_data._defaultError);
-		keywords["accepted_methods"]	= new ParseVariableCommand<std::vector<Method::method> >(&_data._acceptedMethods);
+		addProtectedKeywords(keywords);
 		return keywords;
 	}
 }

@@ -11,7 +11,8 @@ namespace Webserver
 		HostConfigParser(StreamData* streamData);
 
 	protected:
-		std::map<std::string, ICommand*> createKeywords();
+		virtual std::map<std::string, ICommand*> createKeywords();
+		void addProtectedKeywords(std::map<std::string, ICommand*>& keywords);
 
 	private:
 		Webserver::HostConfig _data;

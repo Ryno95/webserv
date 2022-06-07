@@ -1,19 +1,18 @@
 #pragma once
 
-#include <config/AConfigParser.hpp>
+#include <config/HostConfigParser.hpp>
 #include <config/LocationConfig.hpp>
 
 namespace Webserver
 {
-	class LocationConfigParser : public AConfigParser
+	class LocationConfigParser : public HostConfigParser
 	{
 	public:
 		LocationConfigParser(StreamData* streamData);
 
-	protected:
+	private:
 		std::map<std::string, ICommand*> createKeywords();
 
-	private:
 		Webserver::LocationConfig _data;
 	};
 }
