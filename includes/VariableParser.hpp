@@ -5,9 +5,8 @@
 #include <vector>
 #include <Exception.hpp>
 
-namespace ConfigFileParser
+namespace Webserver
 {
-
 	class VariableParser
 	{
 	public:
