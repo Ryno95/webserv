@@ -21,9 +21,9 @@ ExitCode+=$?
 
 python3 CGITests.py
 ExitCode+=$?
-sleep 1
 
 rm -rf ./root/uploads/*.txt
 
+sleep 1
 kill $PID
 exit $ExitCode
