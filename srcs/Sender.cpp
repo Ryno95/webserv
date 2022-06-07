@@ -30,7 +30,6 @@ namespace Webserver
 				break;
 
 			case SEND_BODY:
-				usleep(2000);
 				_dataStream = _response->getBodyStream();
 				if(_dataStream == nullptr)
 				{
@@ -82,16 +81,12 @@ namespace Webserver
 				ERROR("Incrementing state from " << _currentState << " to: " << _currentState + 1);
 				_currentState++;
 				_dataStream = nullptr;
+				break ;
 			}
 			// if (bytes == 0)
 			// 	break ;
 		}
 
-		// this doesnt make sense, as soon as the buffer 
-		if (_currentState == FINISHED)
-		{
-			deleteResponse();
-		}
 
 		if (bufferSize == 0 )
 		{
@@ -105,6 +100,7 @@ namespace Webserver
 		}
 
 		ssize_t written;
+		// DEBUG("WRITING: " << std::string(_buffer).substr(0, bufferSize));
 		written = write(_fd, _buffer, bufferSize);
 
 		DEBUG("Sent " << written << " bytes to " << _fd);
@@ -115,6 +111,12 @@ namespace Webserver
 					"There is no implementation to catch this issue yet." << std::endl <<
 					"Requested: " << bufferSize << " written: " << written << std::endl);
 		}
+		// this doesnt make sense, if bufferSize is bigger than total response size the body wont ever be sent
+		if (_currentState == FINISHED)
+		{
+			deleteResponse();
+		}
+
 	}
 
 	void Sender::deleteResponse()

@@ -123,11 +123,7 @@ namespace Webserver
 		if (readBytes == -1)
 			return ;
 		else if (readBytes == 0)
-		{
-			DEBUG("SETTING FINISHED");
-			Sender::IS_FINISHED = true;
 			return ;
-		}
 		buffer[readBytes] = '\0';
 		*_cgiStream << buffer;
 	}
@@ -154,8 +150,9 @@ namespace Webserver
 		}
 		
 		close(_pipeFd[WRITE_FD]);
-		// WNOHANG returns _pid whn the _pid process has actually finished
-        while (waitpid(_pid, NULL, WNOHANG) != _pid);
+	
+		// WNOHANG returns _pid when the _pid process has actually finished
+    	while(waitpid(_pid, NULL, WNOHANG) != _pid);
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw SystemCallFailedException("fcntl");
 		PollHandler::get().add(this);
