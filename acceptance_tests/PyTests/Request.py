@@ -6,8 +6,8 @@ from defines import Colors, returnStatus, Methods, HttpResponseStatus, LOCAL_HOS
 
 #Initilize all class vars in __init__
 class Request:
-    def __init__(self, method: Methods):
-        self._method = method
+    # def __init__(self, method: Methods):
+    #     self._method = method
 
     def printSucces(self):
          print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL}")

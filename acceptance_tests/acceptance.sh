@@ -6,7 +6,7 @@
 PID=$!
 
 # sleep for 1 second to give the server time to start-up
-sleep 2
+sleep 1
 
 # save the return val of the tests for actions
 ExitCode=0
@@ -21,6 +21,7 @@ ExitCode+=$?
 
 python3 CGITests.py
 ExitCode+=$?
+sleep 1
 
 rm -rf ./root/uploads/*.txt
 
