@@ -28,6 +28,7 @@ namespace Webserver
 			_cgiStream(new std::stringstream()),
 			_host(host)
 	{
+		ERROR("HERE");
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 		_pid = fork();
