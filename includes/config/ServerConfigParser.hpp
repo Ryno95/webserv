@@ -8,7 +8,7 @@ namespace Webserver
 	class ServerConfigParser : public AConfigParser
 	{
 	public:
-		ServerConfigParser(StreamData streamData);
+		ServerConfigParser(StreamData* streamData);
 
 	protected:
 		std::map<std::string, ICommand*> initKeywords();
