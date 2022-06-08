@@ -24,7 +24,7 @@ namespace Webserver
 	HostConfig& HostConfig::operator=(const HostConfig& ref)
 	{
 		_names = ref._names;
-		_locations = ref._locations;
+		_children = ref._children;
 		_autoIndexEnabled = ref._autoIndexEnabled;
 		_root = ref._root;
 		_defaultIndex = ref._defaultIndex;
@@ -38,9 +38,9 @@ namespace Webserver
 		return _names;
 	}
 
-	const std::vector<LocationConfig>& HostConfig::getLocationConfigs() const
+	const std::vector<LocationConfig*>& HostConfig::getLocationConfigs() const
 	{
-		return _locations;
+		return _children;
 	}
 
 	bool HostConfig::isAutoIndexEnabled() const

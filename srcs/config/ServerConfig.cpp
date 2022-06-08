@@ -20,13 +20,13 @@ namespace Webserver
 	ServerConfig& ServerConfig::operator=(const ServerConfig& ref)
 	{
 		_port = ref._port;
-		_hosts = ref._hosts;
+		_children = ref._children;
 		return *this;
 	}
 
-	const std::vector<HostConfig> ServerConfig::getHostConfigs() const
+	const std::vector<HostConfig*> ServerConfig::getHostConfigs() const
 	{
-		return _hosts;
+		return _children;
 	}
 
 	uint ServerConfig::getPort() const

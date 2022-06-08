@@ -50,14 +50,23 @@ namespace Webserver
 		}
 	}
 
-	AppConfig* ConfigParser::combineParsers() const
+	ConfigParser::data_type* ConfigParser::getDataStruct() const
 	{
+		data_type* data = new data_type(_data);
+
+		for (size_t i = 0; i < _children.size(); i++)
+		{
+			data->_children.push_back(((child_type*)_children[i])->getDataStruct());
+			DEBUG("Server added as a child of AppConfig");
+		}
+
+		return data;
 	}
 
-	AppConfig* ConfigParser::parse()
+	void ConfigParser::parse()
 	{
 		readStream();
 		validate();
-		return combineParsers();
+		AppConfig* config = getDataStruct();
 	}
 }

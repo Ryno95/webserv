@@ -27,8 +27,8 @@ namespace Webserver
 		const std::string& getLogFileName() const;
 
 
+		std::vector<ServerConfig*> _children;
 	private:
-		std::vector<ServerConfig> _serverConfigs;
 		MimeTypes	_mimeTypes;
 
 		uint		_listenBacklog;

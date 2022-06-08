@@ -2,12 +2,17 @@
 
 #include <config/HostConfig.hpp>
 #include <config/AConfigParser.hpp>
+// #include <config/LocationConfigParser.hpp>
 
 namespace Webserver
 {
-	class HostConfigParser : public AConfigParser
+	class LocationConfigParser;
+	class HostConfigParser : public AConfigParser, public IBranch<HostConfig, LocationConfigParser>
 	{
 	public:
+		typedef HostConfig data_type;
+		typedef LocationConfigParser child_type;
+
 		HostConfigParser(StreamData* streamData);
 
 	protected:
@@ -17,6 +22,6 @@ namespace Webserver
 		void addProtectedKeywords(std::map<std::string, ICommand*>& keywords);
 
 	private:
-		HostConfig _data;
+		data_type _data;
 	};
 }

@@ -15,6 +15,35 @@
 
 namespace Webserver
 {
+	template<class T>
+	class INode
+	{
+	protected:
+		virtual ~INode() {}
+		virtual T* getData() const = 0;
+	};
+
+	template<class T>
+	class ILeaf : public INode<T>
+	{
+	protected:
+		virtual ~ILeaf() {}
+		virtual T* getData() const = 0;
+	};
+
+	template<class T, class V>
+	class IBranch : public INode<T>
+	{
+	protected:
+		virtual ~IBranch() {}
+		virtual T* getData() const = 0;
+		// virtual V* getChildData() const = 0;
+	};
+
+
+
+
+
 	class AConfigParser
 	{
 
@@ -140,6 +169,10 @@ namespace Webserver
 			}
 		}
 
+		// template<class T>
+		// typename T::data_type* getDataStructSfinae(); //const typename T::data_type& ref
+
+
 	private:
 		void begin()
 		{
@@ -153,11 +186,6 @@ namespace Webserver
 		}
 
 	protected:
-		bool finishedCorrectly()
-		{
-			return _finished;
-		}
-
 		bool readStream()
 		{
 			std::string line, key, value;
@@ -217,4 +245,35 @@ namespace Webserver
 			throw std::runtime_error("Unclosed section encountered.");
 		_children.back()->validate();
 	}
+
+	// template<class T>
+	// typename T::data_type* AConfigParser::getDataStructSfinae() //const typename T::data_type& ref
+	// {
+	// 	// get this datastruct, filled with it's children's datastructs
+
+	// 	typename T::data_type* dataStruct = new typename T::data_type();
+
+	// 	IBranch* node = dynamic_cast<IBranch*>((T*)this);
+	// 	if (node == nullptr)
+	// 	{
+	// 		DEBUG("Leaf reached.");
+	// 	}
+	// 	else
+	// 	{
+	// 		DEBUG("Going into branch...");
+
+	// 		for (size_t i = 0; i < _children.size(); i++)
+	// 		{
+	// 			dataStruct->_children.push_back(_children[i]->getDataStructSfinae<typename T::child_type>());
+	// 		}
+	// 	}
+
+	// 	return dataStruct;
+	// }
+
+	// template<>
+	// void* AConfigParser::getDataStructSfinae<void>()
+	// {
+	// 	return nullptr;
+	// }
 }

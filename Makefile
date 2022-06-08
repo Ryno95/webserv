@@ -19,26 +19,26 @@ CLASSES		=	Utility\
 				config/HostConfig\
 				config/LocationConfig\
 				MimeTypes\
-				Logger\
-				Webserv\
-				Client\
-				Request\
-				Receiver\
-				Sender\
-				AMethod\
-				GETMethod\
-				POSTMethod\
-				DELETEMethod\
-				PollHandler\
-				TickHandler\
-				TimeoutHandler\
-				Host\
-				responses/Response\
-				responses/OkStatusResponse\
-				responses/BadStatusResponse\
-				responses/RedirectResponse\
-				Uri\
-				HeaderFields
+				Logger
+				# Webserv\
+				# Client\
+				# Request\
+				# Receiver\
+				# Sender\
+				# AMethod\
+				# GETMethod\
+				# POSTMethod\
+				# DELETEMethod\
+				# PollHandler\
+				# TickHandler\
+				# TimeoutHandler\
+				# Host\
+				# responses/Response\
+				# responses/OkStatusResponse\
+				# responses/BadStatusResponse\
+				# responses/RedirectResponse\
+				# Uri\
+				# HeaderFields
 
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
