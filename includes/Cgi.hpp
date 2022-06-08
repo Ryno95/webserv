@@ -22,17 +22,18 @@ namespace Webserver
 			Cgi(const Request &request, const Host &host);
 			~Cgi();
 
-		void		execute();
+			void		execute();
 
-		void		onRead();
-		void		onWrite() {};
-		int			getFd() const;
+			void		onRead();
+			void		onWrite() {};
+			int			getFd() const;
 
-		// what to do on timeout???
-		void 	onTimeout() {WARN("ENTIRING TIEOUT CGI");};
-		timeval getLastCommunicated() const;
+			// what to do on timeout???
+			void 	onTimeout() {WARN("ENTIRING TIEOUT CGI");};
+			timeval getLastCommunicated() const;
 		
-		std::stringstream* 	getCgiStream() const;
+			std::stringstream* 	getCgiStream() const;
+			HttpStatusCode 		getStatus() const;
 		
 
 		private:
@@ -40,16 +41,14 @@ namespace Webserver
 			std::string 		createQueryString();
 			void				executeCgiFile();
 			void				executeCommand();
+			void				reapChild();
 
 			const std::string 	_cgiExecutable;
-			const std::string 	_envExecutable;
 			int					_pid;
 			int					_pipeFd[2];
 			const Request&		_request;
 			std::stringstream* 	_cgiStream;
 			const Host&			_host;
-			// cgiStream
-
+			HttpStatusCode		_status;
 	};
 }
-

@@ -23,10 +23,10 @@ namespace Webserver
 	// add Root to target, again
 	Cgi::Cgi(const Request &request, const Host &host)
 		:	_cgiExecutable(getExecutablePath("/python3")),
-			_envExecutable(getExecutablePath("/env")),
 			_request(request),
 			_cgiStream(new std::stringstream()),
-			_host(host)
+			_host(host),
+			_status(HttpStatusCodes::OK)
 	{
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
@@ -43,17 +43,12 @@ namespace Webserver
 				exit(1);
 			}
 		}
-		else
-		{
-			close(_pipeFd[WRITE_FD]);
-
-			// WNOHANG returns _pid when the _pid process has actually finished
-    		while(waitpid(_pid, NULL, WNOHANG) != _pid);
-			if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
-				throw SystemCallFailedException("fcntl");
-			PollHandler::get().add(this);
-			TimeoutHandler::get().add(this);
-		}
+		// parent
+		reapChild();
+		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+			throw SystemCallFailedException("fcntl");
+		PollHandler::get().add(this);
+		TimeoutHandler::get().add(this);
 	}	
 
 	Cgi::~Cgi()
@@ -61,6 +56,21 @@ namespace Webserver
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
 		close(_pipeFd[READ_FD]);
+	}
+
+	void				Cgi::reapChild()
+	{
+		int status;
+
+		close(_pipeFd[WRITE_FD]);
+		// WNOHANG returns _pid when the _pid process has actually finished
+		waitpid(_pid, &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
+		{
+			delete _cgiStream;
+			_cgiStream = nullptr;
+			_status = HttpStatusCodes::NOT_FOUND;
+		}
 	}
 
 	static int	is_executable(const char *full_path_executable)
@@ -104,7 +114,9 @@ namespace Webserver
 		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", completeCgiTarget.c_str(), NULL};
 
-		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
+		if (access(completeCgiTarget.c_str(), F_OK ) == SYSTEM_ERR || _cgiExecutable == "")
+			exit(2);
+		else if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}
 
@@ -145,8 +157,7 @@ namespace Webserver
 		*_cgiStream << buffer;
 	}
 
-	std::stringstream* 	Cgi::getCgiStream() const
-	{
-		return _cgiStream;
-	}
+	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }
+
+	HttpStatusCode 		Cgi::getStatus() const { return _status; }
 }
