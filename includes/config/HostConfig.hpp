@@ -39,5 +39,3 @@ namespace Webserver
 		std::vector<Method::method>	_acceptedMethods;
 	};
 }
-
-#include <config/LocationConfig.hpp> // Placed here instead of at the top because of circular dependency with inheritance dependency in LocationConfig
