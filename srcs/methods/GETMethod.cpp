@@ -13,13 +13,6 @@ namespace Webserver
 	{
 	}
 
-	std::string createFilePath(std::string path)
-	{
-	
-		path.insert(0, "root");
-		return path;
-	}
-
 	Response* GETMethod::process()
 	{
 		DEBUG("Entering GET method!");
@@ -28,9 +21,8 @@ namespace Webserver
 		std::string		target = _request.getTarget();
 
 		if (target == "/")
-			target = _host.getDefaultIndex(); // home returned of redirect naar home
+			target = _host.getDefaultIndex();
 		stream->open(prependRoot(_host.getRoot(), target));
-		// stream->open(createFilePath(target));
 		if (stream->fail())
 		{
 			delete stream;
