@@ -1,6 +1,7 @@
 #include <methods/GETMethod.hpp>
 #include <responses/OkStatusResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
+#include <Utility.hpp>
 
 namespace Webserver
 {
@@ -14,6 +15,7 @@ namespace Webserver
 
 	std::string createFilePath(std::string path)
 	{
+	
 		path.insert(0, "root");
 		return path;
 	}
@@ -22,13 +24,13 @@ namespace Webserver
 	{
 		DEBUG("Entering GET method!");
 
-		std::ifstream* stream = new std::ifstream();
+		std::ifstream*	stream = new std::ifstream();
+		std::string		target = _request.getTarget();
 
-		std::string target = _request.getTarget();
 		if (target == "/")
-			target = "/index.html"; // home returned of redirect naar home
-
-		stream->open(createFilePath(target));
+			target = _host.getDefaultIndex(); // home returned of redirect naar home
+		stream->open(prependRoot(_host.getRoot(), target));
+		// stream->open(createFilePath(target));
 		if (stream->fail())
 		{
 			delete stream;
