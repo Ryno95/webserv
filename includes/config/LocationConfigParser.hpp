@@ -1,21 +1,24 @@
 #pragma once
 
-#include <config/HostConfigParser.hpp>
+#include <config/AParseTreeLeaf.hpp>
+// #include <config/HostConfigParser.hpp>
 #include <config/LocationConfig.hpp>
 
 namespace Webserver
 {
-	class LocationConfigParser : public HostConfigParser
+	class LocationConfigParser : public AParseTreeLeaf<LocationConfig>
 	{
 	public:
-		typedef LocationConfig data_type;
+		LocationConfigParser(StreamData* streamData, const std::map<std::string, ICommand*>& hostKeywords, const std::string& pattern);
+		LocationConfigParser(StreamData* streamData);
 
-		LocationConfigParser(StreamData* streamData, const std::string& pattern);
+		void validate();
+
+		LocationConfig* getData() const;
 
 	private:
 		std::map<std::string, ICommand*> createKeywords();
-		void validate();
 
-		data_type _data;
+		std::map<std::string, ICommand*> _hostKeywords;
 	};
 }

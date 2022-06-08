@@ -5,7 +5,7 @@
 
 namespace Webserver
 {
-	ConfigParser::ConfigParser(std::istream& stream) : AConfigParser::AConfigParser(new StreamData(stream, 1), createKeywords())
+	ConfigParser::ConfigParser(std::istream& stream) : AParseTreeBranch::AParseTreeBranch(new StreamData(stream, 1), createKeywords())
 	{
 	}
 
@@ -14,17 +14,17 @@ namespace Webserver
 		delete _streamData;
 	}
 
-	std::map<std::string, AConfigParser::ICommand*> ConfigParser::createKeywords()
+	std::map<std::string, ICommand*> ConfigParser::createKeywords()
 	{
 		std::map<std::string, ICommand*> keywords;
 		keywords["server"]	= new CreateChildCommand<ServerConfigParser>(this);
 
-		keywords["listen_backlog"]	= new ParseVariableCommand<uint>(&_data._listenBacklog);
-		keywords["buffer_size"]		= new ParseVariableCommand<uint>(&_data._bufferSize);
-		keywords["mime_config"]		= new ParseVariableCommand<std::string>(&_data._mimeFilePath);
-		keywords["debug_mode"]		= new ParseVariableCommand<bool>(&_data._debugEnabled);
-		keywords["debug_logging"]	= new ParseVariableCommand<bool>(&_data._loggingEnabled);
-		keywords["log_file"]		= new ParseVariableCommand<std::string>(&_data._logFile);
+		keywords["listen_backlog"]	= new ParseVariableCommand<uint>(&_data->_listenBacklog);
+		keywords["buffer_size"]		= new ParseVariableCommand<uint>(&_data->_bufferSize);
+		keywords["mime_config"]		= new ParseVariableCommand<std::string>(&_data->_mimeFilePath);
+		keywords["debug_mode"]		= new ParseVariableCommand<bool>(&_data->_debugEnabled);
+		keywords["debug_logging"]	= new ParseVariableCommand<bool>(&_data->_loggingEnabled);
+		keywords["log_file"]		= new ParseVariableCommand<std::string>(&_data->_logFile);
 		return keywords;
 	}
 
@@ -36,7 +36,7 @@ namespace Webserver
 
 		if (_children.size() == 0)
 			throw ParseException("No servers configured.");
-		if (_data._bufferSize == 0)
+		if (_data->_bufferSize == 0)
 			throw ParseException("Buffer size must be greater than 0.");
 
 
@@ -44,29 +44,20 @@ namespace Webserver
 			Warnings
 		*/
 
-		if (_data._bufferSize > UINT16_MAX)
+		if (_data->_bufferSize > UINT16_MAX)
 		{
-			WARN("Large buffersize configured: " << _data._bufferSize);
+			WARN("Large buffersize configured: " << _data->_bufferSize);
 		}
 	}
 
-	ConfigParser::data_type* ConfigParser::getDataStruct() const
+	AppConfig* ConfigParser::getData() const
 	{
-		data_type* data = new data_type(_data);
-
-		for (size_t i = 0; i < _children.size(); i++)
-		{
-			data->_children.push_back(((child_type*)_children[i])->getDataStruct());
-			DEBUG("Server added as a child of AppConfig");
-		}
-
-		return data;
+		return _data;
 	}
 
 	void ConfigParser::parse()
 	{
 		readStream();
 		validate();
-		AppConfig* config = getDataStruct();
 	}
 }

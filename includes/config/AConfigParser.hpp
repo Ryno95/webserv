@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <iostream>
 #include <map>
 #include <algorithm>
@@ -9,144 +8,13 @@
 
 #include <Logger.hpp>
 #include <Exception.hpp>
-#include <Method.hpp>
 #include <Utility.hpp>
-#include <VariableParser.hpp>
+#include <config/ParseTreeUtility.hpp>
 
 namespace Webserver
 {
-	template<class T>
-	class INode
-	{
-	protected:
-		virtual ~INode() {}
-		virtual T* getData() const = 0;
-	};
-
-	template<class T>
-	class ILeaf : public INode<T>
-	{
-	protected:
-		virtual ~ILeaf() {}
-		virtual T* getData() const = 0;
-	};
-
-	template<class T, class V>
-	class IBranch : public INode<T>
-	{
-	protected:
-		virtual ~IBranch() {}
-		virtual T* getData() const = 0;
-		// virtual V* getChildData() const = 0;
-	};
-
-
-
-
-
 	class AConfigParser
 	{
-
-	/*
-		ICommand and concrete commands
-	*/
-
-	protected:
-		class ICommand
-		{
-		public:
-			virtual void callback(const std::string& args) = 0;
-			virtual ~ICommand() {}
-		};
-
-
-
-		template<class T>
-		class CreateChildCommand : public ICommand
-		{
-		public:
-			CreateChildCommand(AConfigParser* instance) : _instance(instance) {}
-			~CreateChildCommand() {}
-
-			void callback(const std::string& args)
-			{
-				_instance->addChild<T>(args);
-			}
-
-		private:
-			AConfigParser* _instance;
-		};
-
-
-
-		template<class T>
-		class ParseVariableCommand : public ICommand
-		{
-		public:
-			ParseVariableCommand(T* dest) : _dest(dest) {}
-			~ParseVariableCommand() {}
-
-			void callback(const std::string& args)
-			{
-				if (args.size() == 0)
-					throw std::runtime_error("No value assigned to variable");
-				*_dest = _parser.parse<T>(args);
-			}
-
-		private:
-			T* _dest;
-			VariableParser _parser;
-		};
-
-		class BeginCommand : public ICommand
-		{
-		public:
-			BeginCommand(AConfigParser* instance) : _instance(instance) {}
-			~BeginCommand() {}
-
-			void callback(const std::string& args)
-			{
-				(void)args;
-				_instance->begin();
-			}
-
-		private:
-			AConfigParser* _instance;
-		};
-
-		class EndCommand : public ICommand
-		{
-		public:
-			EndCommand(AConfigParser* instance) : _instance(instance) {}
-			~EndCommand() {}
-
-			virtual void callback(const std::string& args)
-			{
-				(void)args;
-				_instance->end();
-			}
-
-		private:
-			AConfigParser* _instance;
-		};
-
-
-
-	protected:
-		struct StreamData
-		{
-			StreamData(std::istream& istream, uint line) : stream(istream), currentLine(line) {}
-
-			std::istream& stream;
-			uint currentLine;
-		};
-
-
-
-	/*
-		AConfigParser, abstract config parser class
-	*/
-
 	protected:
 		AConfigParser(StreamData* streamData) : _streamData(streamData), _finished(false)
 		{
@@ -169,11 +37,7 @@ namespace Webserver
 			}
 		}
 
-		// template<class T>
-		// typename T::data_type* getDataStructSfinae(); //const typename T::data_type& ref
-
-
-	private:
+	public:
 		void begin()
 		{
 			_keywords = createKeywords();
@@ -185,7 +49,6 @@ namespace Webserver
 			_finished = true;
 		}
 
-	protected:
 		bool readStream()
 		{
 			std::string line, key, value;
@@ -220,60 +83,15 @@ namespace Webserver
 			return true;
 		}
 
-		template<class T>
-		void addChild(const std::string& args);
+	protected:
 
 		virtual std::map<std::string, ICommand*> createKeywords() = 0;
 		virtual void validate() = 0;
 
-		std::vector<AConfigParser*> _children;
 		StreamData* _streamData;
 		std::map<std::string, ICommand*> _keywords;
 
 	private:
 		bool _finished;
 	};
-
-	template<class T>
-	void AConfigParser::addChild(const std::string& args)
-	{
-		if (args.size() != 0)
-			throw std::runtime_error("Unexpected tokens after keyword: " + args);
-
-		_children.push_back(new T(_streamData));
-		if (_children.back()->readStream() == false)
-			throw std::runtime_error("Unclosed section encountered.");
-		_children.back()->validate();
-	}
-
-	// template<class T>
-	// typename T::data_type* AConfigParser::getDataStructSfinae() //const typename T::data_type& ref
-	// {
-	// 	// get this datastruct, filled with it's children's datastructs
-
-	// 	typename T::data_type* dataStruct = new typename T::data_type();
-
-	// 	IBranch* node = dynamic_cast<IBranch*>((T*)this);
-	// 	if (node == nullptr)
-	// 	{
-	// 		DEBUG("Leaf reached.");
-	// 	}
-	// 	else
-	// 	{
-	// 		DEBUG("Going into branch...");
-
-	// 		for (size_t i = 0; i < _children.size(); i++)
-	// 		{
-	// 			dataStruct->_children.push_back(_children[i]->getDataStructSfinae<typename T::child_type>());
-	// 		}
-	// 	}
-
-	// 	return dataStruct;
-	// }
-
-	// template<>
-	// void* AConfigParser::getDataStructSfinae<void>()
-	// {
-	// 	return nullptr;
-	// }
 }

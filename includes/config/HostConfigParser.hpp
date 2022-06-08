@@ -1,27 +1,23 @@
 #pragma once
 
+#include <config/AParseTreeBranch.hpp>
 #include <config/HostConfig.hpp>
-#include <config/AConfigParser.hpp>
-// #include <config/LocationConfigParser.hpp>
+#include <config/LocationConfigParser.hpp>
 
 namespace Webserver
 {
-	class LocationConfigParser;
-	class HostConfigParser : public AConfigParser, public IBranch<HostConfig, LocationConfigParser>
+	class HostConfigParser : public AParseTreeBranch<HostConfig, LocationConfigParser>
 	{
 	public:
-		typedef HostConfig data_type;
-		typedef LocationConfigParser child_type;
-
 		HostConfigParser(StreamData* streamData);
+		void addChild(const std::string& args);
+
+		HostConfig* getData() const;
+		void validate();
 
 	protected:
-		virtual std::map<std::string, ICommand*> createKeywords();
-		virtual void validate();
-
+		std::map<std::string, ICommand*> createKeywords();
 		void addProtectedKeywords(std::map<std::string, ICommand*>& keywords);
 
-	private:
-		data_type _data;
 	};
 }

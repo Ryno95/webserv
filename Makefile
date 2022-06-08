@@ -10,6 +10,7 @@ TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
+				config/ParseTreeUtility\
 				config/ConfigParser\
 				config/ServerConfigParser\
 				config/HostConfigParser\
