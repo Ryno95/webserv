@@ -18,19 +18,13 @@ POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(reque
 
 	std::string POSTMethod::createFileName(const std::string &target)
 	{
-		// const std::string	timestamp_s = std::to_string(time(nullptr));
 		const std::string	root(ROOT); // Will be replaced by config file
 		std::string			fileName;
 		
 		fileName =  root;
-		// if (target == "/")
-		// 	fileName += timestamp_s;
-		// else
-		// {
-			size_t found = target.find_last_of("/");
-			fileName += target.substr(1, found);
-			fileName += target.substr(found + 1);
-		// }
+		size_t found = target.find_last_of("/");
+		fileName += target.substr(1, found);
+		fileName += target.substr(found + 1);
 		return (fileName);
 	}
 
@@ -44,7 +38,7 @@ POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(reque
 		const std::string location(HttpProtocol + localHost + ":" + listenPort + absPath);
 
 		_response->addHeader(Header::Location, location);
-		_response->addHeader("Created-file", _absPathForCreatedFile); // What is this? Have reference for Pascal? Me no comprendro
+		_response->addHeader("Created-file", _absPathForCreatedFile);
 	}
 
 	void POSTMethod::setPostResponseHeaders(bool isCreated)
@@ -74,7 +68,6 @@ POSTMethod::POSTMethod(const Request &request, const Host& host) : AMethod(reque
 			delete outfile;
 			return _response;
 		}
-		// Writing process will be in chunks
 		_absPathForCreatedFile = fileName;
 		*outfile << _request.getBody();
 		delete outfile;
