@@ -1,5 +1,6 @@
 #include <responses/CgiResponse.hpp>
 #include <responses/OkStatusResponse.hpp>
+#include <responses/BadStatusResponse.hpp>
 #include <HttpStatusCode.hpp>
 #include <HeaderFields.hpp>
 #include <unistd.h>
@@ -13,6 +14,7 @@ namespace Webserver
 		this->setStatusCode(_cgiRequest.getStatus());
 		if (_statusCode == HttpStatusCodes::NOT_FOUND)
 		{
+			// createBodyStream(host.determine()
 			setBodyStream(new std::ifstream("root/NotFoundErrorPage.html"));
 			if (!_bodyStream->is_open())
 				throw std::runtime_error("Errorfile doens't exist");
