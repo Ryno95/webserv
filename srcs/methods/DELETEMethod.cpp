@@ -7,13 +7,6 @@
 #include <responses/BadStatusResponse.hpp>
 #include <responses/OkStatusResponse.hpp>
 
-
-//	If a DELETE method is successfully applied, the origin server SHOULD
-//	send a 202 (Accepted) status code if the action will likely succeed
-//	but has not yet been enacted, a 204 (No Content) status code if the
-//	action has been enacted and no further information is to be supplied,
-//	or a 200 (OK) status code if the action has been enacted and the
-//	response message includes a representation describing the status.
 namespace Webserver
 {
 	DELETEMethod::DELETEMethod(const Request &request, const Host& host) : AMethod(request, host)
@@ -24,7 +17,6 @@ namespace Webserver
 	{
 	}
 
-// curl -X "DELETE" localhost:8080/target
 	Response* DELETEMethod::process()
 	{
 		const std::string 	fullTarget = prependRoot(_host.getRoot(), _request.getTarget());
