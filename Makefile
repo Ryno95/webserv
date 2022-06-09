@@ -11,7 +11,7 @@ TEST_DIR	=	unit_tests/
 MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
 				config/ParseTreeUtility\
-				config/ConfigParser\
+				config/AppConfigParser\
 				config/ServerConfigParser\
 				config/HostConfigParser\
 				config/LocationConfigParser\
@@ -20,26 +20,26 @@ CLASSES		=	Utility\
 				config/HostConfig\
 				config/LocationConfig\
 				MimeTypes\
-				Logger
-				# Webserv\
-				# Client\
-				# Request\
-				# Receiver\
-				# Sender\
-				# AMethod\
-				# GETMethod\
-				# POSTMethod\
-				# DELETEMethod\
-				# PollHandler\
-				# TickHandler\
-				# TimeoutHandler\
-				# Host\
-				# responses/Response\
-				# responses/OkStatusResponse\
-				# responses/BadStatusResponse\
-				# responses/RedirectResponse\
-				# Uri\
-				# HeaderFields
+				Logger\
+				Webserv\
+				Client\
+				Request\
+				Receiver\
+				Sender\
+				AMethod\
+				GETMethod\
+				POSTMethod\
+				DELETEMethod\
+				PollHandler\
+				TickHandler\
+				TimeoutHandler\
+				Host\
+				responses/Response\
+				responses/OkStatusResponse\
+				responses/BadStatusResponse\
+				responses/RedirectResponse\
+				Uri\
+				HeaderFields
 
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)

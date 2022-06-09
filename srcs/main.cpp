@@ -6,7 +6,8 @@
 
 // #include <TickHandler.hpp>
 // #include <TimeoutHandler.hpp>
-#include <config/ConfigParser.hpp>
+#include <config/Parser.hpp>
+#include <config/AppConfigParser.hpp>
 
 namespace Webserver
 {
@@ -21,15 +22,15 @@ namespace Webserver
 	// 	}
 	// }
 
-	void parseConfig(const std::string& path)
+	AppConfig* parseConfig(const std::string& path)
 	{
 		try
 		{
 			std::ifstream fstream(path);
 			if (fstream.fail())
 				throw FileNotFoundException(path);
-			ConfigParser* parser = new ConfigParser(fstream);
-			parser->parse();
+			AppConfig* config = Parser<AppConfigParser>(fstream).parse();
+			return config;
 		}
 		catch(const std::exception& e)
 		{
@@ -49,6 +50,7 @@ namespace Webserver
 			else
 				path = "config/default.config";
 			parseConfig(path);
+			system("leaks Webserver.out");
 
 			// ConfigFileParser parser(path);
 			// std::vector<ServerConfig>& configs = parser.parse();
