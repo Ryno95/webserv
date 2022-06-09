@@ -39,3 +39,12 @@ Test(prependRoot, NOforwardSlash)
 
 	cr_expect(prepended == expected);
 }
+
+Test(prependRoot, rootIncInRequest)
+{
+    std::string prepended(prependRoot("root/", "/root/target/file.txt"));
+    
+    std::string expected("root/target/file.txt");
+
+	cr_expect(prepended == expected);
+}

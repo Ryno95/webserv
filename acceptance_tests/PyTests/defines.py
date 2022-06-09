@@ -4,6 +4,7 @@ class HttpResponseStatus:
     OK				= 200
     CREATED			= 201
     BAD_REQUEST		= 400
+    FORBIDDEN		= 403
     NOT_FOUND		= 404
     URI_TOO_LONG	= 414
     TEAPOT			= 418
@@ -23,7 +24,7 @@ class Methods(Enum):
     GET     = 1
     POST    = 2
     DELETE  = 3
-    CGI  = 4
+    CGI     = 4
 
 LOCAL_HOST = "http://localhost:8080"
 TEST_FILE_DIR = "acceptance_tests/PyTests/"
