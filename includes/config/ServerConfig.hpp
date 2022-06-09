@@ -3,12 +3,13 @@
 #include <vector>
 
 #include <config/HostConfig.hpp>
+#include <config/AComposite.hpp>
 
 namespace Webserver
 {
 	typedef unsigned int uint;
 
-	class ServerConfig
+	class ServerConfig : public AComposite<HostConfig*>
 	{
 		friend class ServerConfigParser;
 
@@ -18,12 +19,9 @@ namespace Webserver
 		~ServerConfig();
 		ServerConfig& operator=(const ServerConfig& ref);
 
-		const std::vector<HostConfig*> getHostConfigs() const;
 		uint getPort() const;
 
-		std::vector<HostConfig*>	_children;
 	private:
-
-		uint					_port;
+		uint _port;
 	};
 }

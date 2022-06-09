@@ -4,12 +4,13 @@
 #include <vector>
 
 #include <Method.hpp>
+#include <config/AComposite.hpp>
 
 namespace Webserver
 {
 	class LocationConfig;
 
-	class HostConfig
+	class HostConfig : public AComposite<LocationConfig*>
 	{
 		friend class HostConfigParser;
 
@@ -20,14 +21,12 @@ namespace Webserver
 		HostConfig& operator=(const HostConfig& ref);
 
 		const std::vector<std::string>& getHostNames() const;
-		const std::vector<LocationConfig*>& getLocationConfigs() const;
 		bool isAutoIndexEnabled() const;
 		const std::string& getRoot() const;
 		const std::string& getDefaultIndex() const;
 		const std::string& getDefaultError() const;
 		const std::vector<Method::method> getAcceptedMethods() const;
 
-		std::vector<LocationConfig*>	_children;
 	private:
 		std::vector<std::string>	_names;
 

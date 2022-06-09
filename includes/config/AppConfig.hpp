@@ -5,10 +5,11 @@
 #include <config/ServerConfig.hpp>
 #include <Logger.hpp>
 #include <MimeTypes.hpp>
+#include <config/AComposite.hpp>
 
 namespace Webserver
 {
-	class AppConfig
+	class AppConfig : public AComposite<ServerConfig*>
 	{
 	public:
 		friend class AppConfigParser;
@@ -18,15 +19,12 @@ namespace Webserver
 		~AppConfig();
 		AppConfig& operator=(const AppConfig& ref);
 
-		const std::vector<ServerConfig> getServerConfigs() const;
 		const MimeTypes& getMimeTypes() const;
 		uint getListenBacklog() const;
 		uint getBufferSize() const;
 		bool isDebugEnabled() const;
 		bool isDebugLoggingEnabled() const;
 		const std::string& getLogFileName() const;
-
-		std::vector<ServerConfig*> _children;
 
 	private:
 		MimeTypes	_mimeTypes;
@@ -37,6 +35,5 @@ namespace Webserver
 		bool		_debugEnabled;
 		bool		_loggingEnabled;
 		std::string	_logFile;
-
 	};
 }
