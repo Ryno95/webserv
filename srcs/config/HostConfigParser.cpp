@@ -15,7 +15,7 @@ namespace Webserver
 		if (_children.back()->readStream() == false)
 			throw std::runtime_error("Unclosed section encountered.");
 		_children.back()->validate();
-		_data->_children.push_back(_children.back()->getData());
+		_data->addChild(_children.back()->getData());
 	}
 
 	HostConfigParser::HostConfigParser(StreamData* streamData) : AParseTreeBranch::AParseTreeBranch(streamData)
