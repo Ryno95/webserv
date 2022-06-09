@@ -100,7 +100,7 @@ class DELETERequest(Request):
     def __init__(self, target):
         self._method = Methods.DELETE
         self._target = target
-        self._fullFilePath = "root" + self._target
+        self._fullFilePath = "../../root" + self._target
         self._uri = LOCAL_HOST + target
         self._response = []
         self._fd = None
