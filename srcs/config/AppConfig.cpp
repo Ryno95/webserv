@@ -37,4 +37,29 @@ namespace Webserver
 	{
 		return _bufferSize;
 	}
+
+	const MimeTypes& AppConfig::getMimeTypes() const
+	{
+		return _mimeTypes;
+	}
+
+	uint AppConfig::getListenBacklog() const
+	{
+		return _listenBacklog;
+	}
+
+	bool AppConfig::isDebugEnabled() const
+	{
+		return _debugEnabled;
+	}
+
+	bool AppConfig::isDebugLoggingEnabled() const
+	{
+		return _loggingEnabled;
+	}
+
+	const std::string& AppConfig::getLogFileName() const
+	{
+		return _logFile;
+	}
 }
