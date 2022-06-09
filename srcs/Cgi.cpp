@@ -28,6 +28,7 @@ namespace Webserver
 			_host(host),
 			_status(HttpStatusCodes::OK)
 	{
+		_pipeFd[READ_FD] = SYSTEM_ERR;
 		if (pipe(_pipeFd) <  0)
 			throw SystemCallFailedException("Pipe()");
 		_pid = fork();
@@ -55,7 +56,8 @@ namespace Webserver
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
-		close(_pipeFd[READ_FD]);
+		if (_pipeFd[READ_FD] != SYSTEM_ERR)
+			close(_pipeFd[READ_FD]);
 	}
 
 	void				Cgi::reapChild()
