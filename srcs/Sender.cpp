@@ -125,5 +125,4 @@ namespace Webserver
 		_currentState = SEND_HEADER;
 		_dataStream = nullptr;
 	}
-	bool Sender::IS_FINISHED = false;
 }

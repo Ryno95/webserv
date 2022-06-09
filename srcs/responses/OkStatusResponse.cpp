@@ -13,11 +13,6 @@ namespace Webserver
        setBodyStream(stream);
        createContentHeaders(fileName);
     }
-
-    OkStatusResponse::OkStatusResponse(std::stringstream* strStream, HttpStatusCode code) : Response(code)
-    {
-        _cgiStream = strStream;
-    }
     
     OkStatusResponse::~OkStatusResponse()
     {
