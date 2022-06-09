@@ -8,14 +8,14 @@ namespace Webserver
 	class Parser
 	{
 	public:
-		Parser(std::istream& stream) : _streamData(new StreamData(stream, 1))
+		Parser(std::istream& stream) : _streamData(new StreamData(stream, 1)), _rootParser(new T(_streamData))
 		{
-			_rootParser = new T(_streamData);
 		}
 
 		~Parser()
 		{
 			delete _streamData;
+			delete _rootParser;
 		};
 
 		typename T::data_type* parse()

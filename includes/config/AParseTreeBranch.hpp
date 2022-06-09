@@ -23,7 +23,7 @@ namespace Webserver
 			if (_children.back()->readStream() == false)
 				throw std::runtime_error("Unclosed section encountered.");
 			_children.back()->validate();
-			this->_data->_children.push_back(_children.back()->getData());
+			this->_data->addChild(_children.back()->getData());
 		}
 
 	protected:
@@ -31,7 +31,14 @@ namespace Webserver
 		{
 		}
 
-		virtual ~AParseTreeBranch() {}
+		virtual ~AParseTreeBranch()
+		{
+			for (size_t i = 0; i < _children.size(); i++)
+			{
+				delete _children[i];
+			}
+			
+		}
 
 		std::vector<child_type*> _children;
 	};

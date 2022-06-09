@@ -10,9 +10,11 @@ namespace Webserver
 	public:
 		typedef T data_type;
 
-		data_type* getData() const
+		data_type* getData()
 		{
-			return _data;
+			data_type* tmp = _data;
+			_data = nullptr;
+			return tmp;
 		}
 
 	protected:
@@ -20,7 +22,11 @@ namespace Webserver
 		{
 		}
 
-		virtual ~AParseTreeLeaf() {}
+		virtual ~AParseTreeLeaf()
+		{
+			if (_data != nullptr)
+				delete _data;
+		}
 
 		data_type* _data;
 	};
