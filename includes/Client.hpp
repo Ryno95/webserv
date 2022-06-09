@@ -10,6 +10,7 @@
 #include <Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
+#include <Cgi.hpp>
 #include <Sender.hpp>
 #include <IPollable.hpp>
 #include <ITimeoutable.hpp>
@@ -39,7 +40,7 @@ namespace Webserver
 		};
 
 	private:
-		void hasCommunicated();
+		void setLastCommunicated();
 		void recvRequests();
 		void sendResponses();
 		void processRequests();

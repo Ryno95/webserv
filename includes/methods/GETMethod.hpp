@@ -1,6 +1,6 @@
 #pragma once
 
-#include <AMethod.hpp>
+#include <methods/AMethod.hpp>
 
 #include <string>
 

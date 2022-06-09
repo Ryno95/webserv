@@ -1,7 +1,8 @@
 #include <Client.hpp>
-#include <GETMethod.hpp>
-#include <POSTMethod.hpp>
-#include <DELETEMethod.hpp>
+#include <methods/GETMethod.hpp>
+#include <methods/POSTMethod.hpp>
+#include <methods/DELETEMethod.hpp>
+#include <Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
@@ -9,6 +10,7 @@
 #include <responses/RedirectResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 #include <responses/OkStatusResponse.hpp>
+#include <responses/CgiResponse.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -22,7 +24,7 @@ namespace Webserver
 	{
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
-		hasCommunicated();
+		setLastCommunicated();
 
 		DEBUG("Accepted client on fd: " << _fd);
 	}
@@ -40,7 +42,7 @@ namespace Webserver
 	{
 		try
 		{
-			hasCommunicated();
+			setLastCommunicated();
 			recvRequests();
 			processRequests();
 		}
@@ -63,7 +65,7 @@ namespace Webserver
 
 		try
 		{
-			hasCommunicated();
+			setLastCommunicated();
 			sendResponses();
 		}
 		catch(const DisconnectedException& e)
@@ -105,7 +107,7 @@ namespace Webserver
 		if (host.isCgi())
 		{
 			DEBUG("CGI triggered.");
-			return new OkStatusResponse(HttpStatusCodes::OK);
+			return  new CgiResponse(request, host);
 		}
 
 		switch (request.getMethod())
@@ -126,6 +128,7 @@ namespace Webserver
 		{
 			Response *response = nullptr;
 			Request const& request = _requestQueue.front();
+			Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
 			// an error occured during parsing / preparing the request, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)
@@ -178,11 +181,11 @@ namespace Webserver
 	}
 
 	/*
-		For the time functions hasCommunicated() and checkTimeout():
+		For the time functions setLastCommunicated() and checkTimeout():
 			We might set current_time once per poll iteration and get that value.
 			It reduces the amount of system calls!
 	*/
-	void Client::hasCommunicated()
+	void Client::setLastCommunicated()
 	{
 		// Use TimeoutHandler::getTime() instead for optimization
 		gettimeofday(&_lastCommunicated, NULL);

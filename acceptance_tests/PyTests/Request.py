@@ -42,7 +42,7 @@ class GETRequest(Request):
         self._method = Methods.GET
 
 class POSTRequest(Request):
-    def __init__(self, fileName):
+    def __init__(self, fileName=None):
         self._method = Methods.POST
         self._fileName = fileName
         self._fd = 0
@@ -73,3 +73,17 @@ class POSTRequest(Request):
     
 class DELETERequest(Request):
     pass
+
+class CgiRequest(Request):
+    def __init__(self, uri, data):
+       self._method = Methods.CGI
+       self._uri = uri
+       self._data = data
+       self._response = []
+       self._requestOutput = []
+    
+    def doRequest(self):
+        self._response = requests.post(self._uri, data=self._data)
+
+    
+

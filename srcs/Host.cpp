@@ -24,7 +24,8 @@ namespace Webserver
 		return hosts[0];
 	}
 
-	Host::Host(const HostConfig& config, const std::string& uri) : HostConfig::HostConfig(config), _routeType(RouteType::CHANGE_ROOT)
+	Host::Host(const HostConfig& config, const std::string& uri)
+		: HostConfig::HostConfig(config), _routeType(RouteType::CHANGE_ROOT)
 	{
 		matchLocation(uri);
 	}

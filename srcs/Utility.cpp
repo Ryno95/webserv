@@ -90,6 +90,13 @@ namespace Webserver
 		return str;
 	}
 
+	// assumes root ends on forward slash ex. root/cgi-bin/
+	// assumes target starts with forward slash ex. /add.py
+	std::string prependRoot(const std::string& root, const std::string& target)
+	{
+		return std::string(root + target.substr(target.find('/') + 1, target.size()));
+	}
+
 	bool wildcard(const std::string& string, const std::string& pattern)
 	{
 		size_t targetIter = 0, patternIter = 0, end = 0;

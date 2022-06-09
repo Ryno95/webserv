@@ -13,5 +13,6 @@ namespace HttpStatusCodes
 	const HttpStatusCode NOT_FOUND			= HttpStatusCode(404, "Not Found");
 	const HttpStatusCode URI_TOO_LONG		= HttpStatusCode(414, "Request-URI Too Long");
 	const HttpStatusCode TEAPOT				= HttpStatusCode(418, "Teapot");
+	const HttpStatusCode INTERNAL_ERROR		= HttpStatusCode(500, "Internal Server Error");
 	const HttpStatusCode NOT_IMPLEMENTED	= HttpStatusCode(501, "Not Implemented");
 }
