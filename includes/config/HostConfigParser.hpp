@@ -12,12 +12,8 @@ namespace Webserver
 		HostConfigParser(StreamData* streamData);
 		void addChild(const std::string& args);
 
-		HostConfig* getData() const;
 		void validate();
-
-	protected:
 		std::map<std::string, ICommand*> createKeywords();
 		void addProtectedKeywords(std::map<std::string, ICommand*>& keywords);
-
 	};
 }

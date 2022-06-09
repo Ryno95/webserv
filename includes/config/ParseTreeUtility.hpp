@@ -74,19 +74,19 @@ namespace Webserver
 	};
 
 
-	class AConfigParser; // Forward declaration
+	class ATopDownParser; // Forward declaration
 
 
 	class BeginCommand : public ICommand
 	{
 	public:
-		BeginCommand(AConfigParser* instance);
+		BeginCommand(ATopDownParser* instance);
 		~BeginCommand();
 
 		void callback(const std::string& args);
 
 	private:
-		AConfigParser* _instance;
+		ATopDownParser* _instance;
 	};
 
 
@@ -95,12 +95,12 @@ namespace Webserver
 	class EndCommand : public ICommand
 	{
 	public:
-		EndCommand(AConfigParser* instance);
+		EndCommand(ATopDownParser* instance);
 		~EndCommand();
 
 		virtual void callback(const std::string& args);
 
 	private:
-		AConfigParser* _instance;
+		ATopDownParser* _instance;
 	};
 }

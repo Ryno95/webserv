@@ -23,9 +23,4 @@ namespace Webserver
 		if (_data->_port > UINT16_MAX)
 			throw InvalidValueException(std::string("Port: " + toString(_data->_port)));
 	}
-
-	ServerConfig* ServerConfigParser::getData() const
-	{
-		return _data;
-	}
 }

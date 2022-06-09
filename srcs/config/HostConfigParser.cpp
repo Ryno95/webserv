@@ -11,6 +11,7 @@ namespace Webserver
 		std::map<std::string, ICommand*> keywords;
 		addProtectedKeywords(keywords);
 		_children.push_back(new LocationConfigParser(_streamData, keywords, args));
+		_children.back()->useBrackets();
 		if (_children.back()->readStream() == false)
 			throw std::runtime_error("Unclosed section encountered.");
 		_children.back()->validate();
@@ -47,10 +48,5 @@ namespace Webserver
 		{
 			WARN("One of the configured hosts does not accept any HTTP method.");
 		}
-	}
-
-	HostConfig* HostConfigParser::getData() const
-	{
-		return _data;
 	}
 }

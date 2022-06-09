@@ -11,10 +11,7 @@ namespace Webserver
 	public:
 		ServerConfigParser(StreamData* streamData);
 
-		ServerConfig* getData() const;
 		void validate();
-
-	private:
 		std::map<std::string, ICommand*> createKeywords();
 	};
 }

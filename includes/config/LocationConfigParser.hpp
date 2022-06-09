@@ -13,12 +13,9 @@ namespace Webserver
 		LocationConfigParser(StreamData* streamData);
 
 		void validate();
-
-		LocationConfig* getData() const;
-
-	private:
 		std::map<std::string, ICommand*> createKeywords();
 
+	private:
 		std::map<std::string, ICommand*> _hostKeywords;
 	};
 }

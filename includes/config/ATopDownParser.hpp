@@ -13,33 +13,28 @@
 
 namespace Webserver
 {
-	class AConfigParser
+	class ATopDownParser
 	{
 	protected:
-		AConfigParser(StreamData* streamData) : _streamData(streamData), _finished(false)
-		{
-			_keywords["{"] = new BeginCommand(this);
-		}
-
-		AConfigParser(StreamData* streamData, std::map<std::string, ICommand*> keywords) : _streamData(streamData), _keywords(keywords), _finished(false)
+		ATopDownParser(StreamData* streamData) : _streamData(streamData), _finished(false)
 		{
 		}
 
-		~AConfigParser()
+		~ATopDownParser()
 		{
-			std::map<std::string, ICommand*>::iterator it = _keywords.begin();
-			std::map<std::string, ICommand*>::iterator end = _keywords.end();
-
-			while (it != end)
-			{
-				delete it->second;
-				it++;
-			}
+			deleteKeywords();
 		}
 
 	public:
+		void useBrackets()
+		{
+			deleteKeywords();
+			_keywords["{"] = new BeginCommand(this);
+		}
+
 		void begin()
 		{
+			deleteKeywords();
 			_keywords = createKeywords();
 			_keywords["}"] = new EndCommand(this);
 		}
@@ -83,6 +78,17 @@ namespace Webserver
 			return true;
 		}
 
+	void addKeyword(const std::string& keyword, ICommand* callback)
+	{
+		_keywords.insert(std::pair<std::string, ICommand*>(keyword, callback));
+	}
+
+	void setKeywords(const std::map<std::string, ICommand*>& newKeywords)
+	{
+		deleteKeywords();
+		_keywords = newKeywords;
+	}
+
 	protected:
 
 		virtual std::map<std::string, ICommand*> createKeywords() = 0;
@@ -92,6 +98,19 @@ namespace Webserver
 		std::map<std::string, ICommand*> _keywords;
 
 	private:
+		void deleteKeywords()
+		{
+			std::map<std::string, ICommand*>::iterator it = _keywords.begin();
+			std::map<std::string, ICommand*>::iterator end = _keywords.end();
+
+			while (it != end)
+			{
+				delete it->second;
+				it++;
+			}
+			_keywords.clear();
+		}
+
 		bool _finished;
 	};
 }

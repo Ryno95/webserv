@@ -11,7 +11,7 @@ namespace Webserver
 	class AppConfig
 	{
 	public:
-		friend class ConfigParser;
+		friend class AppConfigParser;
 
 		AppConfig(); 
 		AppConfig(const AppConfig& ref);
@@ -26,8 +26,8 @@ namespace Webserver
 		bool isDebugLoggingEnabled() const;
 		const std::string& getLogFileName() const;
 
-
 		std::vector<ServerConfig*> _children;
+
 	private:
 		MimeTypes	_mimeTypes;
 

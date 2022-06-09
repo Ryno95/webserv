@@ -19,6 +19,7 @@ namespace Webserver
 				throw std::runtime_error("Unexpected tokens after keyword: " + args);
 
 			_children.push_back(new child_type(this->_streamData));
+			_children.back()->useBrackets();
 			if (_children.back()->readStream() == false)
 				throw std::runtime_error("Unclosed section encountered.");
 			_children.back()->validate();
@@ -27,10 +28,6 @@ namespace Webserver
 
 	protected:
 		AParseTreeBranch(StreamData* streamData) : AParseTreeLeaf<T>::AParseTreeLeaf(streamData)
-		{
-		}
-
-		AParseTreeBranch(StreamData* streamData, std::map<std::string, ICommand*> keywords) : AParseTreeLeaf<T>::AParseTreeLeaf(streamData, keywords)
 		{
 		}
 

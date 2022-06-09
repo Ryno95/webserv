@@ -25,9 +25,4 @@ namespace Webserver
 	void LocationConfigParser::validate()
 	{
 	}
-
-	LocationConfig* LocationConfigParser::getData() const
-	{
-		return _data;
-	}
 }

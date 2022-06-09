@@ -32,5 +32,10 @@ namespace Webserver
 		_logFile = ref._logFile;
 		return *this;
 	}
+
+	uint AppConfig::getBufferSize() const
+	{
+		return _bufferSize;
+	}
 }
 

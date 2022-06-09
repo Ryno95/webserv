@@ -1,9 +1,9 @@
 #include <config/ParseTreeUtility.hpp>
-#include <config/AConfigParser.hpp>
+#include <config/ATopDownParser.hpp>
 
 namespace Webserver
 {
-	BeginCommand::BeginCommand(AConfigParser* instance) : _instance(instance)
+	BeginCommand::BeginCommand(ATopDownParser* instance) : _instance(instance)
 	{
 	}
 
@@ -19,7 +19,7 @@ namespace Webserver
 
 
 
-	EndCommand::EndCommand(AConfigParser* instance) : _instance(instance)
+	EndCommand::EndCommand(ATopDownParser* instance) : _instance(instance)
 	{
 	}
 

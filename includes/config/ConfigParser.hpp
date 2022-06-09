@@ -1,22 +1,16 @@
 #pragma once
 
 #include <config/AParseTreeBranch.hpp>
-#include <config/AppConfig.hpp>
-#include <config/ServerConfigParser.hpp>
+#include <config/AppConfigParser.hpp>
 
-namespace Webserver
-{
-	class ConfigParser : public AParseTreeBranch<AppConfig, ServerConfigParser>
-	{
-	public:
-		ConfigParser(std::istream& stream);
-		~ConfigParser();
-		void parse();
+// namespace Webserver
+// {
+// 	class ConfigParser : public AParseTreeRoot<AppConfigParser>
+// 	{
+// 	public:
+// 		ConfigParser(std::istream& stream);
+// 		~ConfigParser();
 
-		AppConfig* getData() const;
-
-	private:
-		std::map<std::string, ICommand*> createKeywords();
-		void validate();
-	};
-}
+// 		AppConfigParser::data_type* parse();
+// 	};
+// }
