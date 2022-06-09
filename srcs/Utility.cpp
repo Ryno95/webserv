@@ -95,7 +95,6 @@ namespace Webserver
 		const size_t	targetSlashPos = target.find('/');
 		const size_t	rootSlashPos = root.find_last_of('/');
 		const size_t	rootSize = root.size();
-		const size_t	targetSize = target.size();
 
 		if (rootSlashPos == rootSize - 1 && targetSlashPos == 0)
 			return std::string(root + target.substr(targetSlashPos + 1, target.size()));

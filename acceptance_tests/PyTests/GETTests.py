@@ -20,6 +20,6 @@ GetRequest = Request.GETRequest()
 response  = requests.get(localhost)
 EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.NOT_FOUND, response)
 
-time.sleep(0.5)
+time.sleep(0.2)
 
 exit(EXIT_CODE)
