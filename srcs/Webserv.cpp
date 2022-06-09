@@ -18,6 +18,22 @@
 
 namespace Webserver
 {
+
+#pragma region Singleton AppConfig
+
+	AppConfig* Webserv::_appConfig;
+	void Webserv::config(AppConfig* config)
+	{
+		_appConfig = config;
+	}
+
+	const AppConfig& Webserv::config()
+	{
+		return *_appConfig;
+	}
+
+#pragma endregion
+
 	Webserv::Webserv(const ServerConfig& config)
 		: _config(config)
 	{
@@ -60,7 +76,7 @@ namespace Webserver
 		if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw SystemCallFailedException("fcntl");
 
-		if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // store GlobalConfig as a member of this class?
+		if (listen(_listenerFd, config().getListenBacklog()) == SYSTEM_ERR)
 			throw SystemCallFailedException("listen");
 	}
 
