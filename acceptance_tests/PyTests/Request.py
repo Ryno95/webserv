@@ -78,7 +78,8 @@ class POSTRequest(Request):
             self.printError(self._body, createdFile)
         filename = "".join(("../../", str(createdFile)))
         fd = open(filename, 'r')
-        self.compareActualToExpected(fd.read(), self._body)
+        if self.compareActualToExpected(fd.read(), self._body) == returnStatus.SUCCESS:
+            self.printOk("Posted entire body")
         if os.path.exists(filename):
             os.remove(filename)
 

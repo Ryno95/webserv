@@ -12,7 +12,8 @@ from Request import Request, DELETERequest
 EXIT_CODE = 0
 
 #  ----------- Test dir in server to test DELETE method -----------
-os.mkdir("../../root/deleteFolderTest")
+if not os.path.exists("../../root/deleteFolderTest"):
+    os.mkdir("../../root/deleteFolderTest")
 
 
 target = "/deleteFolderTest/.algoDentro"
