@@ -123,7 +123,7 @@ class DELETERequest(Request):
         exitCode = 0
         exitCode += self.compareExpectedPositiveResult(expected, self._response)
         exitCode += self.checkIfDeleted(expected)
-        if os.path.exists(self._fullFilePath):
+        if os.path.exists(self._fullFilePath) and not os.path.isdir(self._fullFilePath):
             os.remove(self._fullFilePath)
         return exitCode
 

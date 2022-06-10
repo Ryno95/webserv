@@ -11,6 +11,10 @@ from Request import Request, DELETERequest
 
 EXIT_CODE = 0
 
+#  ----------- Test dir in server to test DELETE method -----------
+os.mkdir("../../root/deleteFolderTest")
+
+
 target = "/deleteFolderTest/.algoDentro"
 deleteRequest = DELETERequest(target)
 deleteRequest.createFileToDelete(0o777)
@@ -27,5 +31,11 @@ deleteRequest = DELETERequest(target)
 deleteRequest.createFileToDelete(0o444)
 deleteRequest.doRequest()
 EXIT_CODE += deleteRequest.compareResult(HttpResponseStatus.FORBIDDEN)
+
+#  -------- try to delete a folder ----------------
+target = "/deleteFolderTest"
+deleteRequest = DELETERequest(target)
+deleteRequest.doRequest()
+EXIT_CODE += deleteRequest.compareResult(HttpResponseStatus.OK)
 
 exit(EXIT_CODE)
