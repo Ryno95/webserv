@@ -96,26 +96,21 @@ namespace Webserver
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 		DEBUG("Using config: " << host.getName());
 
-		if (host.isRedirect())
+		switch (host.getRouteType())
 		{
-			DEBUG("Redirection encountered.");
-			return new RedirectResponse(host.getRoot());
-		}
+			case RouteType::REDIRECT:	return new RedirectResponse(host.getRoot());
+			case RouteType::CGI:		return new OkStatusResponse(HttpStatusCodes::OK);
 
-		if (host.isCgi())
-		{
-			DEBUG("CGI triggered.");
-			return new OkStatusResponse(HttpStatusCodes::OK);
-		}
+			case RouteType::FILESERVER:
+				switch (request.getMethod())
+				{
+					case Method::GET:		return GETMethod(request, host).process();
+					case Method::POST:		return POSTMethod(request, host).process();
+					case Method::DELETE:	return DELETEMethod(request, host).process();
 
-		switch (request.getMethod())
-		{
-			case Method::GET:		return GETMethod(request, host).process();
-			case Method::POST:		return POSTMethod(request, host).process();
-			case Method::DELETE:	return DELETEMethod(request, host).process();
-
-			default:
-				WARN("INVALID method still continued processing, which is not expected to occur.");
+					default:
+						WARN("INVALID method still continued processing, which is not expected to occur.");
+				}
 		}
 		return nullptr;
 	}
