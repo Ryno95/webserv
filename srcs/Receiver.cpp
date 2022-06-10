@@ -1,6 +1,7 @@
 #include <Receiver.hpp>
 #include <defines.hpp>
 #include <Client.hpp>
+#include <Exception.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
