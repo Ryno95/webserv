@@ -88,7 +88,6 @@ class POSTRequest(Request):
         if self.compareActualToExpected(fd.read(), self._body) == returnStatus.SUCCESS:
             self.printOk("Posted entire body")
         if os.path.exists(filename):
-            print("DELETED qFILE IN POST REQUEST")
             os.remove(filename)
 
     def checkCreated(self, response: requests):

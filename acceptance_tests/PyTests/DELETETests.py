@@ -1,7 +1,3 @@
-import requests
-from requests import Session
-from requests.structures import CaseInsensitiveDict
-
 import time
 import os
 
