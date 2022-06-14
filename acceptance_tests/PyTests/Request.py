@@ -57,8 +57,15 @@ class Request:
 
 #  ------------ GET Class definition -----------------
 class GETRequest(Request):
-    def __init__(self):
+    def __init__(self,  uri, expectedHttpCode):
         self._method = Methods.GET
+        self._response = []
+        self._uri = uri
+        self._expected = expectedHttpCode
+
+    def doRequest(self):
+        self._response = requests.get(self._uri)
+        return self.compareExpectedPositiveResult(self._expected, self._response)
 
 
 
@@ -81,6 +88,7 @@ class POSTRequest(Request):
         if self.compareActualToExpected(fd.read(), self._body) == returnStatus.SUCCESS:
             self.printOk("Posted entire body")
         if os.path.exists(filename):
+            print("DELETED qFILE IN POST REQUEST")
             os.remove(filename)
 
     def checkCreated(self, response: requests):
@@ -143,4 +151,36 @@ class CgiRequest(Request):
     def doRequest(self):
         self._response = requests.post(self._uri, data=self._data)
 
-    
+
+
+# ------------ Class to run all methods consecutively --------------
+class IntegrateMethods():
+    def __init__ (self, target, expectedGetResponseCode):
+        self._target = target
+        self._fullFilePath = "../../root" + self._target
+        self._uri = LOCAL_HOST + "/" + target
+        self._postReqest = POSTRequest(self._target)
+        self._getRequest = GETRequest(self._uri, expectedGetResponseCode)
+        self._deleteRequest = DELETERequest("/" + target)
+        self._expectedCode = expectedGetResponseCode
+
+
+    def runMethods(self):
+        EXIT_CODE = 0
+
+        self._postReqest.doRequest()
+        EXIT_CODE += self._postReqest.checkCreated(self._postReqest._response)
+        # self._postRequest.checkCreatedFile()
+        if EXIT_CODE != 0:
+            return EXIT_CODE
+
+        EXIT_CODE += self._getRequest.doRequest()
+        if EXIT_CODE != 0:
+            return EXIT_CODE
+
+        self._deleteRequest.doRequest()
+        EXIT_CODE += self._deleteRequest.compareResult(self._expectedCode)
+        
+        return EXIT_CODE
+
+

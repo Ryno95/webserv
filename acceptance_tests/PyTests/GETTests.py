@@ -11,14 +11,12 @@ from defines import HttpResponseStatus
 EXIT_CODE = 0
 
 localhost = "http://localhost:8080"
-GetRequest = Request.GETRequest()
-response  = requests.get(localhost)
-EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.OK, response)
+GetRequest = Request.GETRequest(localhost, HttpResponseStatus.OK)
+EXIT_CODE += GetRequest.doRequest()
 
 localhost = "http://localhost:8080/applesauce"
-GetRequest = Request.GETRequest()
-response  = requests.get(localhost)
-EXIT_CODE += GetRequest.compareExpectedPositiveResult(HttpResponseStatus.NOT_FOUND, response)
+GetRequest = Request.GETRequest(localhost, HttpResponseStatus.NOT_FOUND)
+EXIT_CODE += GetRequest.doRequest()
 
 time.sleep(0.2)
 
