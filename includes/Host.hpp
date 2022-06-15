@@ -14,9 +14,9 @@ namespace Webserver
 		std::string		getName() const;
 
 	private:
-		static const HostConfig& matchHost(const std::vector<HostConfig>& hosts, const std::string& hostName);
-		static const LocationConfig& matchLocation(const HostConfig& host, const std::string& uri);
+		static const HostConfig& matchHost(const std::vector<HostConfig*>& hosts, const std::string& hostName);
+		static LocationConfig matchLocation(const HostConfig& host, const std::string& uri);
 
-		Host(const HostConfig& config);
+		Host(const LocationConfig& config);
 	};
 }
