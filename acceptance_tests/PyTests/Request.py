@@ -11,43 +11,22 @@ class Request:
     def __init__(self, method: Methods):
         self._method = method
 
-    def printSucces(self, expected, actual):
-        print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL} Expected: {repr(expected)} Actual  : {repr(actual)}")
+    def printSucces(self, expected, actual, testName):
+        print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL}{testName}\n\tExpected: {repr(expected)}\n\tActual  : {repr(actual)}")
 
-    def printKo(slef, optionalMessage):
-        if optionalMessage:
-            print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL} {optionalMessage}")
-        else:
-            print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL}")
-
-    def printOk(self, optionalMessage):
-        if optionalMessage:
-            print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL} {optionalMessage}")
-        else:
-            print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL}")
-
-    def printError(self, expected, actual):
-        print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL}\nExpected: {repr(expected)} Actual  : {repr(actual)}")
+    def printError(self, expected, actual, testName):
+        print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL}{testName} \n\tExpected: {repr(expected)}\n\tActual  : {repr(actual)}")
         return returnStatus.ERROR
 
-    def compareActualToExpected(self, expected, actual):
+    def compareActualToExpected(self, expected, actual, testName):
         if not actual.__eq__(expected):
-            return self.printError(expected, actual)
+            return self.printError(expected, actual, testName)
         else:
+            self.printSucces(expected, actual, testName)
             return returnStatus.SUCCESS
 
     def printRequest(self, response: requests):
-        print(f"\n{self._method.name} request on {response.url}")
-
-    def compareExpectedPositiveResult(self, expectedHttpResponse, response: requests):
-        testStatus = 0
-
-        self.printRequest(response)
-        testStatus += self.compareActualToExpected(expectedHttpResponse, response.status_code)
-
-        if testStatus == returnStatus.SUCCESS:
-            self.printSucces(expectedHttpResponse, response.status_code)
-        return testStatus
+        print(f"\n{Colors.BLUE}{self._method.name} request on {response.url}{Colors.NATURAL}")
 
     # virtual function in python, throw an error if not implemented in child class
     def doRequest():
@@ -65,7 +44,8 @@ class GETRequest(Request):
 
     def doRequest(self):
         self._response = requests.get(self._uri)
-        return self.compareExpectedPositiveResult(self._expected, self._response)
+        self.printRequest(self._response)
+        return self.compareActualToExpected(self._expected, self._response.status_code, "Status Code")
 
 
 
@@ -77,21 +57,27 @@ class POSTRequest(Request):
         self._fd = 0
         self._body = ""
         self._response = []
+        self.createdFile = ""
         self._uri = LOCAL_HOST + "/" + fileName
 
-    def checkCreatedFile(self):
-        createdFile = self._response.headers.get('Created-file')
-        if createdFile is None:
-            self.printError(self._body, createdFile)
-        filename = "".join(("../../", str(createdFile)))
-        fd = open(filename, 'r')
-        if self.compareActualToExpected(fd.read(), self._body) == returnStatus.SUCCESS:
-            self.printOk("Posted entire body")
-        if os.path.exists(filename):
-            os.remove(filename)
+    def checkCreatedFileContent(self):
+        self.createdFile = self._response.headers.get('Created-file')
+        if self.createdFile is None:
+            self.printError(self._body, self.createdFile)
+        self.createdFile = "../../" + self.createdFile
+        fileToPostSize = os.stat(self._fileName).st_size
+        postedFileSize = os.stat(self.createdFile).st_size
+        if self.compareActualToExpected(fileToPostSize, postedFileSize, "File size") == returnStatus.SUCCESS:
+            return 0
+        else:
+            return 1
+
+    def removeCreatedFile(self):
+        if os.path.exists(self.createdFile):
+            os.remove(self.createdFile)
 
     def checkCreated(self, response: requests):
-       return Request.compareExpectedPositiveResult(self, HttpResponseStatus.CREATED, response)
+       return Request.compareActualToExpected(self, HttpResponseStatus.CREATED, response.status_code, "Status Code")
 
     def getBodyFromFile(self):
         self._fd = open(self._fileName, 'r')
@@ -100,9 +86,10 @@ class POSTRequest(Request):
     def doRequest(self):
         self._body = self.getBodyFromFile()
         self._response = requests.post(self._uri, data=self._body)
+        self.printRequest(self._response)
 
 
-
+#   def printSucces(self, expected, actual, testName):
 #  ------------ Delete Class definition -----------------
 class DELETERequest(Request):
     def __init__(self, target):
@@ -118,18 +105,19 @@ class DELETERequest(Request):
 
     def doRequest(self):
         self._response = requests.delete(self._uri)
+        self.printRequest(self._response)
     
     def checkIfDeleted(self, expected: HttpResponseStatus):
         if os.path.exists(self._fullFilePath) and expected is HttpResponseStatus.OK:
-            self.printKo("File should be deleted")
+            self.printError("Exists", "Deleted", "File Status")
             return 1
         else:
-            self.printOk("File doesn't exist anymore")
+            self.printSucces("Deleted", "Deleted", "File Status")
         return 0
 
     def compareResult(self, expected: HttpResponseStatus):
         exitCode = 0
-        exitCode += self.compareExpectedPositiveResult(expected, self._response)
+        exitCode += self.compareActualToExpected(expected, self._response.status_code, "Status Code")
         exitCode += self.checkIfDeleted(expected)
         if os.path.exists(self._fullFilePath) and not os.path.isdir(self._fullFilePath):
             os.remove(self._fullFilePath)
@@ -149,6 +137,7 @@ class CgiRequest(Request):
     
     def doRequest(self):
         self._response = requests.post(self._uri, data=self._data)
+        self.printRequest(self._response)
 
 
 
