@@ -14,6 +14,7 @@ namespace Webserver
 	public:
 		LocationConfig();
 		LocationConfig(const LocationConfig& rhs);
+		LocationConfig(const HostConfig& ref);
 		~LocationConfig();
 		LocationConfig& operator=(const LocationConfig& rhs);
 

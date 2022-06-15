@@ -2,13 +2,19 @@
 
 namespace Webserver
 {
-	LocationConfig::LocationConfig()
+	LocationConfig::LocationConfig() :
+		_routeType(RouteType::FILESERVER)
 	{
 	}
 
 	LocationConfig::LocationConfig(const LocationConfig& ref)
 	{
 		*this = ref;
+	}
+
+	LocationConfig::LocationConfig(const HostConfig& ref) : HostConfig::HostConfig(ref),
+		_routeType(RouteType::FILESERVER)
+	{
 	}
 
 	LocationConfig::~LocationConfig()
