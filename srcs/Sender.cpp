@@ -31,6 +31,8 @@ namespace Webserver
 
 			case SEND_BODY:
 				_dataStream = _response->getBodyStream();
+				if(_dataStream == nullptr)
+					_dataStream = _response->_cgiStream;
 				break;
 
 			case FINISHED:
@@ -50,30 +52,31 @@ namespace Webserver
 			return 0;
 		}
 
-		_dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
+		 _dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
 		return _dataStream->gcount();
 	}
 
 	void Sender::handle()
 	{
-		long bufferSize = 0;
+		long	bufferSize = 0;
+		int		bytes = 0;
 
 		while (bufferSize < BUFFERSIZE && _currentState != FINISHED)
 		{
 			if (_dataStream == nullptr)
 				setDataStream();
-			bufferSize += fillBuffer(bufferSize);
+			bytes = fillBuffer(bufferSize);
+			bufferSize += bytes;
 			if (bufferSize < BUFFERSIZE)
 			{
 				_currentState++;
 				_dataStream = nullptr;
+				break ;
 			}
 		}
 
-		if (_currentState == FINISHED)
-			deleteResponse();
 
-		if (bufferSize == 0)
+		if (bufferSize == 0 )
 		{
 			DEBUG("No bytes to send!");
 			return;
@@ -89,11 +92,16 @@ namespace Webserver
 
 		DEBUG("Sent " << written << " bytes to " << _fd);
 
-		if (written != bufferSize)
+		if (written != bufferSize || written == 0)
 		{
 			WARN("Actual bytes written is not equal to the amount requested to send." << std::endl <<
 					"There is no implementation to catch this issue yet." << std::endl <<
 					"Requested: " << bufferSize << " written: " << written << std::endl);
+		}
+
+		if (_currentState == FINISHED)
+		{
+			deleteResponse();
 		}
 	}
 

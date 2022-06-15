@@ -19,6 +19,15 @@ CLASSES		=	Utility\
 				config/ServerConfig\
 				config/HostConfig\
 				config/LocationConfig\
+				methods/AMethod\
+				methods/GETMethod\
+				methods/POSTMethod\
+				methods/DELETEMethod\
+				responses/Response\
+				responses/OkStatusResponse\
+				responses/BadStatusResponse\
+				responses/RedirectResponse\
+				responses/CgiResponse\
 				MimeTypes\
 				Logger\
 				Webserv\
@@ -26,18 +35,11 @@ CLASSES		=	Utility\
 				Request\
 				Receiver\
 				Sender\
-				AMethod\
-				GETMethod\
-				POSTMethod\
-				DELETEMethod\
+				Cgi\
 				PollHandler\
 				TickHandler\
 				TimeoutHandler\
 				Host\
-				responses/Response\
-				responses/OkStatusResponse\
-				responses/BadStatusResponse\
-				responses/RedirectResponse\
 				Uri\
 				HeaderFields
 
@@ -56,7 +58,8 @@ TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseMimeTypesTests.cpp\
 				$(TEST_DIR)uriParseTests.cpp\
 				$(TEST_DIR)wildcardTests.cpp\
-				$(TEST_DIR)routeTests.cpp
+				$(TEST_DIR)routeTests.cpp\
+				$(TEST_DIR)utilTests.cpp
 
 
 # Section Rules

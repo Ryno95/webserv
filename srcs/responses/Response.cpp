@@ -11,7 +11,7 @@ namespace Webserver
 	{
 	}
 
-	Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr)
+	Response::Response(HttpStatusCode code) : _cgiStream(nullptr), _statusCode(code), _bodyStream(nullptr)
 	{
 		addConstantHeaderFields();
 	}
@@ -25,6 +25,8 @@ namespace Webserver
 	{
 		if (_bodyStream != nullptr)
 			delete _bodyStream;
+		if (_cgiStream != nullptr)
+			delete _cgiStream;
 	}
 
 	Response& Response::operator=(const Response &rhs)
@@ -91,7 +93,6 @@ namespace Webserver
 			header += cursor->second;
 			++cursor;
 		}
-		DEBUG("\n" + header);
 		header += "\r\n\r\n";
 		_headerStream << header;
 		return (&_headerStream);

@@ -1,4 +1,4 @@
-#include <AMethod.hpp>
+#include <methods/AMethod.hpp>
 #include <Request.hpp>
 #include <responses/Response.hpp>
 

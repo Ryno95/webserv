@@ -90,6 +90,23 @@ namespace Webserver
 		return str;
 	}
 
+	std::string prependRoot(const std::string& root, const std::string& target)
+	{
+		const size_t	targetSlashPos = target.find('/');
+		const size_t	rootSlashPos = root.find_last_of('/');
+		const size_t	rootSize = root.size();
+
+		if (target.find(root) != std::string::npos && targetSlashPos == 0)
+			return target.substr(1, target.size());
+		if (rootSlashPos == rootSize - 1 && targetSlashPos == 0)
+			return std::string(root + target.substr(targetSlashPos + 1, target.size()));
+		else if ((rootSlashPos == rootSize - 1 && targetSlashPos != 0)
+					|| (rootSlashPos != rootSize - 1 && targetSlashPos == 0))
+			return std::string(root + target);
+		else
+			return std::string(root + "/" + target);
+	}
+
 	bool wildcard(const std::string& string, const std::string& pattern)
 	{
 		size_t targetIter = 0, patternIter = 0, end = 0;

@@ -13,31 +13,23 @@ emptyFile = "emptyPost.txt"
 
 EXIT_CODE = 0
 
-time.sleep(0.5)
 PostRequest = POSTRequest(basicFile)
 PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
 PostRequest.checkCreatedFile()
-# PostRequest.cleanUp()
-time.sleep(0.5)
 
-time.sleep(0.5)
 PostRequest = POSTRequest(bigFile)
 PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
 PostRequest.checkCreatedFile()
-# PostRequest.cleanUp()
-time.sleep(0.5)
 
 
-time.sleep(0.5)
 PostRequest = POSTRequest(emptyFile)
 PostRequest.doRequest()
 EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
 PostRequest.checkCreatedFile()
-# PostRequest.cleanUp()
-time.sleep(0.5)
+
 # # sleep so that the exit code is that of the python script and not the server
-time.sleep(1)
+time.sleep(0.2)
 
 exit(EXIT_CODE)

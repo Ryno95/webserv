@@ -36,7 +36,6 @@ namespace Webserver
 
 		_recvBuffer.resize(BUFFERSIZE);
 		bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFERSIZE, 0);
-
 		if (bytesRecv == 0)
 			throw Client::DisconnectedException();
 		if (bytesRecv == SYSTEM_ERR) // do we need to handle this?
@@ -49,21 +48,17 @@ namespace Webserver
 
 	void Receiver::processHeaderRecv()
 	{
-		size_t pos = _recvBuffer.find("\r\n\r\n");
-		if (pos == std::string::npos)
-		{
-			_buffer += _recvBuffer;
-			_recvBuffer.resize(0);
-		}
-		else
-		{
-			pos += 4;
-			_buffer += _recvBuffer.substr(0, pos);
-			_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
-			checkHeader();
+		while (_recvBuffer.size() > 0)
+		{	
+			_buffer += _recvBuffer.substr(0, 1);
+			_recvBuffer = _recvBuffer.substr(1, _recvBuffer.size());
+			if (_buffer.find("\r\n\r\n") != std::string::npos)
+			{
+				checkHeader();
+				return ;
+			}
 		}
 	}
-
 
 
 	void Receiver::processBodyRecv()
