@@ -13,8 +13,8 @@ namespace Webserver
 		public:
 			HtmlBuilder(std::string rootTag);
 
-			HtmlBuilder& addElement(std::string elementTag, std::string tagBody, std::string elementContent);
-			std::string build();
+			HtmlBuilder&			addElement(std::string elementTag, std::string tagBody, std::string elementContent);
+			std::string				build();
 
 		private:
 			HtmlElement _root;

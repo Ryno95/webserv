@@ -15,8 +15,8 @@ namespace Webserver
 		public:
 			friend class HtmlBuilder;
 
-			bool 		isSelfClosing() const;
-			std::string to_string(int indentAmonut) const;
+			bool 				isSelfClosing() const;
+			std::string 		to_string(int indentAmonut) const;
 
 		private:
 			HtmlElement();
