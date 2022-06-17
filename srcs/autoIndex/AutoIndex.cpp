@@ -3,6 +3,9 @@
 #include <autoIndex/HtmlBuilder.hpp>
 
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/dir.h>
+
 namespace Webserver
 {
 	AutoIndex::AutoIndex(const std::string &root) : _root(root), _builder(HtmlBuilder("html"))
@@ -27,7 +30,10 @@ namespace Webserver
 			dirEntry = readdir(dir);
 			if (dirEntry == nullptr)
 				break;
-			entries.push_back(dirEntry->d_name);
+			if (dirEntry->d_type == DT_DIR)
+				entries.push_back(std::string(dirEntry->d_name).append("/"));
+			else
+				entries.push_back(dirEntry->d_name);
 		}
 		closedir(dir);
 		return entries;
@@ -35,7 +41,6 @@ namespace Webserver
 
 	std::string AutoIndex::getHtmlPage()
 	{
-		std::cout << _builder.build() << std::endl;
 		return (_builder.build());
 	}
 	
