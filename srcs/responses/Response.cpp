@@ -94,7 +94,6 @@ namespace Webserver
 			++cursor;
 		}
 		_headerStream << "\r\n\r\n";
-		// __headerStream << header;
 		return (&_headerStream);
 	}
 
