@@ -19,6 +19,7 @@ CLASSES		=	Utility\
 				config/ServerConfig\
 				config/HostConfig\
 				config/LocationConfig\
+				config/HostFields\
 				methods/AMethod\
 				methods/GETMethod\
 				methods/POSTMethod\
