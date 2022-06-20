@@ -7,11 +7,10 @@
 
 namespace Webserver
 {
-	struct Host : public LocationConfig
+	class Host : public LocationConfig
 	{
+	public:
 		static Host		determine(const ServerConfig& config, const std::string& hostName, const std::string& uri);
-
-		std::string		getName() const;
 
 	private:
 		static const HostConfig& matchHost(const std::vector<HostConfig*>& hosts, const std::string& hostName);
