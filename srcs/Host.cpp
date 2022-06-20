@@ -41,9 +41,4 @@ namespace Webserver
 	Host::Host(const LocationConfig& config) : LocationConfig::LocationConfig(config)
 	{
 	}
-
-	std::string Host::getName() const
-	{
-		return getHostNames()[0];
-	}
 }
