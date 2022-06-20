@@ -71,7 +71,12 @@ namespace Webserver
 				if (it == _keywords.end())
 					throw std::runtime_error("Keyword '" + key + "' is not supported");
 				else
-					it->second->callback(value);
+				{
+					if (dynamic_cast<IImmediateCommand*>(it->second) != nullptr)
+						it->second->callback(value);
+					else
+						_commands.push_back(std::pair<ICommand*, std::string>(it->second, value));
+				}
 
 				_streamData->currentLine++;
 			}
@@ -91,11 +96,13 @@ namespace Webserver
 
 	protected:
 
+		virtual void fillData() = 0;
 		virtual std::map<std::string, ICommand*> createKeywords() = 0;
 		virtual void validate() = 0;
 
 		StreamData* _streamData;
 		std::map<std::string, ICommand*> _keywords;
+		std::vector<std::pair<ICommand*, std::string> > _commands;
 
 	private:
 		void deleteKeywords()

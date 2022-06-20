@@ -22,7 +22,7 @@ namespace Webserver
 		{
 			_rootParser->setKeywords(_rootParser->createKeywords());
 			_rootParser->readStream();
-			_rootParser->validate();
+			_rootParser->fillData();
 			return _rootParser->getData();
 		}
 

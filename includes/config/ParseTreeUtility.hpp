@@ -36,8 +36,16 @@ namespace Webserver
 
 
 
+	class IImmediateCommand : public ICommand
+	{
+	protected:
+		virtual ~IImmediateCommand() {}
+	};
+
+
+
 	template<class T>
-	class CreateChildCommand : public ICommand
+	class CreateChildCommand : public IImmediateCommand
 	{
 	public:
 		CreateChildCommand(IBranch* instance) : _instance(instance) {}
@@ -77,7 +85,7 @@ namespace Webserver
 	class ATopDownParser; // Forward declaration
 
 
-	class BeginCommand : public ICommand
+	class BeginCommand : public IImmediateCommand
 	{
 	public:
 		BeginCommand(ATopDownParser* instance);
@@ -92,7 +100,7 @@ namespace Webserver
 
 
 
-	class EndCommand : public ICommand
+	class EndCommand : public IImmediateCommand
 	{
 	public:
 		EndCommand(ATopDownParser* instance);

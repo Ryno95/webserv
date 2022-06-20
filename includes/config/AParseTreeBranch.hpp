@@ -18,12 +18,23 @@ namespace Webserver
 			if (args.size() != 0)
 				throw std::runtime_error("Unexpected tokens after keyword: " + args);
 
-			_children.push_back(new child_type(this->_streamData));
-			_children.back()->useBrackets();
-			if (_children.back()->readStream() == false)
-				throw std::runtime_error("Unclosed section encountered.");
-			_children.back()->validate();
-			this->_data->addChild(_children.back()->getData());
+			child_type* newChild = new child_type(this->_streamData);
+			_children.push_back(newChild);
+
+			newChild->useBrackets();
+			if (newChild->readStream() == false)
+				throw std::runtime_error("Unclosed settings block encountered.");
+		}
+
+		void fillData()
+		{
+			AParseTreeLeaf<T>::fillData();
+
+			for (size_t i = 0; i < _children.size(); i++)
+			{
+				_children[i]->fillData();
+				this->_data->addChild(_children[i]->getData());
+			}
 		}
 
 	protected:

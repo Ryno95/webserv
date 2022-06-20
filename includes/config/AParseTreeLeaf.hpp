@@ -17,6 +17,21 @@ namespace Webserver
 			return tmp;
 		}
 
+		virtual void fillData()
+		{
+			std::vector<std::pair<ICommand*, std::string> >::iterator it = _commands.begin();
+			std::vector<std::pair<ICommand*, std::string> >::iterator end = _commands.end();
+
+			while (it != end)
+			{
+				it->first->callback(it->second);
+				it++;
+			}
+			_commands.clear();
+
+			validate();
+		}
+
 	protected:
 		AParseTreeLeaf(StreamData* streamData) : ATopDownParser::ATopDownParser(streamData), _data(new data_type())
 		{

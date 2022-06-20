@@ -14,6 +14,5 @@ namespace Webserver
 
 		void validate();
 		std::map<std::string, ICommand*> createKeywords();
-		void addProtectedKeywords(std::map<std::string, ICommand*>& keywords);
 	};
 }
