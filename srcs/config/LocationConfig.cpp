@@ -3,16 +3,17 @@
 namespace Webserver
 {
 	LocationConfig::LocationConfig() :
+		HostFields::HostFields(),
 		_routeType(RouteType::FILESERVER)
 	{
 	}
 
-	LocationConfig::LocationConfig(const LocationConfig& ref)
+	LocationConfig::LocationConfig(const LocationConfig& ref) : HostFields::HostFields()
 	{
 		*this = ref;
 	}
 
-	LocationConfig::LocationConfig(const HostConfig& ref) : HostConfig::HostConfig(ref),
+	LocationConfig::LocationConfig(const HostFields& ref) : HostFields::HostFields(ref),
 		_routeType(RouteType::FILESERVER)
 	{
 	}

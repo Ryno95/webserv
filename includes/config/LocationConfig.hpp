@@ -7,19 +7,19 @@
 
 namespace Webserver
 {
-	class LocationConfig : public HostConfig
+	class LocationConfig : public HostFields
 	{
 		friend class LocationConfigParser;
 
 	public:
 		LocationConfig();
 		LocationConfig(const LocationConfig& rhs);
-		LocationConfig(const HostConfig& ref);
+		LocationConfig(const HostFields& ref);
 		~LocationConfig();
 		LocationConfig& operator=(const LocationConfig& rhs);
 
-		const std::string& getMatchPattern() const;
 		RouteType::RouteType getRouteType() const;
+		const std::string& getMatchPattern() const;
 
 	private:
 		std::string _pattern;

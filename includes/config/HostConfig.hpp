@@ -5,12 +5,13 @@
 
 #include <Method.hpp>
 #include <config/AComposite.hpp>
+#include <config/HostFields.hpp>
 
 namespace Webserver
 {
 	class LocationConfig;
 
-	class HostConfig : public AComposite<LocationConfig*>
+	class HostConfig : public AComposite<LocationConfig*>, public HostFields
 	{
 		friend class HostConfigParser;
 
@@ -21,20 +22,9 @@ namespace Webserver
 		HostConfig& operator=(const HostConfig& ref);
 
 		const std::vector<std::string>& getHostNames() const;
-		bool isAutoIndexEnabled() const;
-		const std::string& getRoot() const;
-		const std::string& getDefaultIndex() const;
-		const std::string& getDefaultError() const;
-		const std::vector<Method::method> getAcceptedMethods() const;
 
 	private:
 		std::vector<std::string>	_names;
 
-	protected:
-		bool						_autoIndexEnabled;
-		std::string					_root;
-		std::string					_defaultIndex;
-		std::string					_defaultError;
-		std::vector<Method::method>	_acceptedMethods;
 	};
 }

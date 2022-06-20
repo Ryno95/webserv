@@ -2,17 +2,12 @@
 
 namespace Webserver
 {
-	HostConfig::HostConfig() :
-		_autoIndexEnabled(false),
-		_root("root"),
-		_defaultIndex("index.html"),
-		_defaultError("error.html"),
-		_acceptedMethods(Method::GET)
+	HostConfig::HostConfig() : HostFields::HostFields()
 	{
 		_names.push_back("default");
 	}
 
-	HostConfig::HostConfig(const HostConfig& ref)
+	HostConfig::HostConfig(const HostConfig& ref) : HostFields::HostFields(ref)
 	{
 		*this = ref;
 	}
@@ -35,30 +30,5 @@ namespace Webserver
 	const std::vector<std::string>& HostConfig::getHostNames() const
 	{
 		return _names;
-	}
-
-	bool HostConfig::isAutoIndexEnabled() const
-	{
-		return _autoIndexEnabled;
-	}
-
-	const std::string& HostConfig::getRoot() const
-	{
-		return _root;
-	}
-
-	const std::string& HostConfig::getDefaultIndex() const
-	{
-		return _defaultIndex;
-	}
-
-	const std::string& HostConfig::getDefaultError() const
-	{
-		return _defaultError;
-	}
-
-	const std::vector<Method::method> HostConfig::getAcceptedMethods() const
-	{
-		return _acceptedMethods;
 	}
 }
