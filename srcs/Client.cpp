@@ -96,7 +96,6 @@ namespace Webserver
 	Response* Client::processValidRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-		DEBUG("Using config: " << host.getName());
 
 		switch (host.getRouteType())
 		{
