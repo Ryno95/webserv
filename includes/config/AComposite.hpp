@@ -24,25 +24,4 @@ namespace Webserver
 	private:
 		std::vector<T> _children;
 	};
-
-	template<class T>
-	class AComposite<T*>
-	{
-	public:
-		void addChild(T* toAdd)
-		{
-			_children.push_back(toAdd);
-		}
-
-		const std::vector<T*>& getChildren() const
-		{
-			return _children;
-		}
-
-	protected:
-		virtual ~AComposite() {}
-
-	private:
-		std::vector<T*> _children;
-	};
 }
