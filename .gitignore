@@ -38,7 +38,8 @@ unit_test
 __pycache__
 
 # Server data
-root/images
+*.jpg
+*.png
 
 
 config/defaultVals.config

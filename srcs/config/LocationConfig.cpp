@@ -8,7 +8,7 @@ namespace Webserver
 	{
 	}
 
-	LocationConfig::LocationConfig(const LocationConfig& ref) : HostFields::HostFields()
+	LocationConfig::LocationConfig(const LocationConfig& ref) : HostFields::HostFields(ref)
 	{
 		*this = ref;
 	}
@@ -16,6 +16,7 @@ namespace Webserver
 	LocationConfig::LocationConfig(const HostFields& ref) : HostFields::HostFields(ref),
 		_routeType(RouteType::FILESERVER)
 	{
+		WARN("LocationConfig(HostFields&) called");
 	}
 
 	LocationConfig::~LocationConfig()

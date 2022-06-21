@@ -5,10 +5,11 @@ namespace Webserver
 {
 	void HostConfigParser::addChild(const std::string& args)
 	{
+		DEBUG("Adding LocationConfig");
 		if (args.size() == 0)
 			throw std::runtime_error("No pattern assigned to Location");
 		
-		_children.push_back(new LocationConfigParser(_streamData, args));
+		_children.push_back(new LocationConfigParser(_streamData, args, *_data));
 		_children.back()->useBrackets();
 		if (_children.back()->readStream() == false)
 			throw std::runtime_error("Unclosed section encountered.");
@@ -37,9 +38,5 @@ namespace Webserver
 
 	void HostConfigParser::validate()
 	{
-		if (_data->_acceptedMethods.size() == 0)
-		{
-			WARN(_data->getHostNames()[0] << ": variables are not correctly set");
-		}
 	}
 }

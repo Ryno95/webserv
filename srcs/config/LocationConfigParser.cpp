@@ -2,14 +2,24 @@
 
 namespace Webserver
 {
-	LocationConfigParser::LocationConfigParser(StreamData* streamData, const std::string& pattern) :
-		AParseTreeLeaf::AParseTreeLeaf(streamData)
+	LocationConfigParser::LocationConfigParser(StreamData* streamData, const std::string& pattern, const HostFields& parentData) :
+		AParseTreeLeaf::AParseTreeLeaf(streamData),
+		_parentData(&parentData)
 	{
 		_data->_pattern = pattern;
 	}
 
 	LocationConfigParser::LocationConfigParser(StreamData* streamData) : AParseTreeLeaf::AParseTreeLeaf(streamData)
 	{
+	}
+
+	void LocationConfigParser::fillData()
+	{
+		*_data = *_parentData;
+		// delete _data;
+		// _data = new LocationConfig(*_parentData);
+		DEBUG("default_index: " << _data->getDefaultIndex());
+		AParseTreeLeaf<LocationConfig>::fillData();
 	}
 
 	std::map<std::string, ICommand*> LocationConfigParser::createKeywords()
