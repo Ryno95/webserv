@@ -42,11 +42,7 @@ namespace Webserver
 	{
 		DEBUG("Entering POST method!");
 
-<<<<<<< HEAD
 		const std::string	fileName  = prependRoot(_host.getRoot(), _request.getTarget());
-=======
-		const std::string	fileName  = prependRoot(_host.getRoot() ,_request.getTarget());
->>>>>>> 6291d33b4b60d4f43875230eb85148c866607045
 		std::ofstream       *outfile = new std::ofstream();
 		bool				isCreatingNewFile = false;
 		
