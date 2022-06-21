@@ -7,28 +7,35 @@
 #include <vector>
 
 #include <Client.hpp>
+#include <config/ServerConfig.hpp>
+#include <IPollable.hpp>
+#include <ITickable.hpp>
+#include <PollHandler.hpp>
 
-#define BACKLOG_AMOUNT 42
-#define DISCONNECT 17
-
-class Webserv
+namespace Webserver
 {
-	public:
-		Webserv(uint port, std::string name);
-		~Webserv();
 
-		void run();
+	class Client;
 
-	private:
-		void setupSocket();
-		void handleListener();
-		void handleClients();
-		void handleTimeout();
-		void removeClient(int index);
+	class Webserv : public IPollable, public ITickable
+	{
+		public:
+			Webserv(const ServerConfig& config);
+			~Webserv();
 
-		uint				_port;
-		int					_listenFd;
-		std::vector<pollfd>	_fds;
-		std::vector<Client>	_clients;
-		std::string			_name;
-};
+			int getFd() const;
+			void onRead();
+			void onWrite();
+			void onTick();
+			const ServerConfig& getConfig() const;
+			void checkClientsStatus();
+
+		private:
+			void setup();
+
+			const ServerConfig& _config;
+
+			int						_listenerFd;
+			std::vector<Client*>	_clients;
+	};
+}

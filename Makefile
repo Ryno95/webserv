@@ -12,14 +12,33 @@ MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Webserv\
 				Client\
 				Request\
-				Response\
 				Receiver\
 				Sender\
-				AMethod\
-				GETMethod\
+				methods/AMethod\
+				methods/GETMethod\
+				methods/POSTMethod\
+				methods/DELETEMethod\
+				Cgi\
 				MimeTypes\
 				Logger\
-				POSTMethod
+				PollHandler\
+				TickHandler\
+				TimeoutHandler\
+				Host\
+				Utility\
+				responses/Response\
+				responses/OkStatusResponse\
+				responses/BadStatusResponse\
+				responses/RedirectResponse\
+				responses/CgiResponse\
+				Uri\
+				config/ConfigFileParser\
+				config/AConfig\
+				config/HostConfig\
+				config/ServerConfig\
+				config/GlobalConfig\
+				config/LocationConfig\
+				HeaderFields
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -32,14 +51,18 @@ LINKING		=	-I $(INCL_DIR)
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
-				$(TEST_DIR)parseMimeTypesTests.cpp
+				$(TEST_DIR)parseMimeTypesTests.cpp\
+				$(TEST_DIR)uriParseTests.cpp\
+				$(TEST_DIR)wildcardTests.cpp\
+				$(TEST_DIR)routeTests.cpp\
+				$(TEST_DIR)utilTests.cpp
 
 
 # Section Rules
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HPPS)
+$(NAME): $(OBJS) $(HPPS) $(MAIN)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC) $(OBJS)
@@ -59,17 +82,14 @@ run: $(NAME)
 	./$(NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
+	@mkdir -p $(OBJ_DIR) $(@D)
 	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
-
-$(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
 
 re: fclean all
 
 clean:
 	rm -rf $(OBJ_DIR)
+	rm -rf root/uploads/*.txt
 
 fclean: clean
 	rm -f $(TEST_NAME)

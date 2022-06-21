@@ -1,8 +1,12 @@
 #pragma once
 
-typedef enum method
+namespace Method
 {
-	GET,
-	POST,
-	DELETE
-} method;
+	enum method
+	{
+		GET,
+		POST,
+		DELETE,
+		INVALID
+	};
+}

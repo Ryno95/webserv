@@ -1,80 +1,76 @@
-#include <Logger.hpp>
 #include <Colors.hpp>
+#include <Logger.hpp>
+#include <Utility.hpp>
+#include <config/GlobalConfig.hpp>
 
 #include <ctime>
 #include <sstream>
 
-std::ofstream Logger::_logFile(LOGFILE);
-
-static std::string getTimeStamp()
+namespace Webserver
 {
-	std::string timestamp;
-	struct tm* timeinfo;
-	time_t rawtime;
+	std::ofstream Logger::_logFile;
+	std::stringstream Logger::inputStream;
 
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-
-	timestamp = "[";
-	timestamp += asctime(timeinfo);
-	timestamp.pop_back();
-	timestamp += "] ";
-	return timestamp;
-}
-
-static void printWarning(const std::string& msg)
-{
-	std::cout << C_YELLOW << "[WARNING] " << C_RESET << msg << std::endl;
-}
-
-static void printDebug(const std::string& msg)
-{
-	std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
-}
-
-void Logger::log(const std::string& msg)
-{
-	if (!ENABLE_LOGGING)
-		return;
-
-	if (!_logFile.is_open())
+	static void printError(const std::string& msg)
 	{
-		printWarning("There's no logfile, no logs will be saved.");
-		return;
+		std::cout << C_RED << "[ERROR] " << C_RESET << msg << std::endl;
 	}
 
-	std::string timestamp = getTimeStamp();
+	static void printWarning(const std::string& msg)
+	{
+		std::cout << C_YELLOW << "[WARNING] " << C_RESET << msg << std::endl;
+	}
 
-	_logFile.write(timestamp.c_str(), timestamp.size());
-	_logFile.write(msg.c_str(), msg.size());
-	_logFile.write("\n", 1);
-	_logFile.flush();
-}
+	static void printDebug(const std::string& msg)
+	{
+		if (GlobalConfig::get().debugEnabled)
+			std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
+	}
 
-void Logger::warn(const std::string& msg)
-{
-	printWarning(msg);
-	log("[WARNING] " + msg);
-}
+	void Logger::log(const std::string& msg)
+	{
+		if (!GlobalConfig::get().loggingEnabled)
+			return;
 
-void Logger::debug(const std::string& msg)
-{
-	if (!ENABLE_DEBUGGING)
-		return;
-	printDebug(msg);
+		if (!_logFile.is_open())
+		{
+			_logFile.open(LOGFILE);
+			if (!_logFile.is_open())
+				{
+					printWarning("There's no logfile, no logs will be saved.");
+					return;
+				}
+		}
 
-	if (ENABLE_DEBUG_LOGGING)
-		log("[DEBUG] " + msg);
-}
+		std::string timestamp = "[ " + getTimeStamp() + " ] ";
 
-void Logger::warn(const std::ostream& s)
-{
-	const std::stringstream& ss = static_cast<const std::stringstream&>(s);
-	Logger::warn(ss.str());
-}
+		_logFile.write(timestamp.c_str(), timestamp.size());
+		_logFile.write(msg.c_str(), msg.size());
+		_logFile.write("\n", 1);
+		_logFile.flush();
+	}
 
-void Logger::debug(const std::ostream& s)
-{
-	const std::stringstream& ss = static_cast<const std::stringstream&>(s);
-	Logger::debug(ss.str());
+	void Logger::error()
+	{
+		std::string str = inputStream.str();
+		inputStream.str("");
+		printError(str);
+		log("[ERROR] " + str);
+	}
+
+	void Logger::warn()
+	{
+		std::string str = inputStream.str();
+		inputStream.str("");
+		printWarning(str);
+		log("[WARNING] " + str);
+	}
+
+	void Logger::debug()
+	{
+		std::string str = inputStream.str();
+		inputStream.str("");
+		printDebug(str);
+		log("[DEBUG] " + str);
+	}
 }

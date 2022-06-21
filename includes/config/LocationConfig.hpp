@@ -1,0 +1,48 @@
+#pragma once
+
+#include <string>
+
+#include <config/AConfig.hpp>
+
+namespace MatchType
+{
+	enum MatchType
+	{
+		PREFIX,
+		SUFFIX
+	};
+}
+
+namespace RouteType
+{
+	enum RouteType
+	{
+		CHANGE_ROOT,
+		REDIRECT,
+		UPLOAD,
+		CGI
+	};
+}
+
+namespace Webserver
+{
+	struct LocationConfig : public AConfig
+	{
+		LocationConfig();
+		LocationConfig(const std::string& value);
+		LocationConfig(const LocationConfig& rhs);
+		~LocationConfig();
+		LocationConfig& operator=(const LocationConfig& rhs);
+
+		map_type fillVariablesMap();
+		void validate() const;
+		MatchType::MatchType getMatchType() const;
+
+		std::string	pattern;
+		std::string route;
+		RouteType::RouteType routeType;
+
+	private:
+		void parseRouteType(const std::string& value);
+	};
+}

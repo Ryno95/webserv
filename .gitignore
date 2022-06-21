@@ -35,3 +35,10 @@
 .vscode
 unit_test
 *.log
+__pycache__
+
+# Server data
+root/images
+
+
+config/defaultVals.config
