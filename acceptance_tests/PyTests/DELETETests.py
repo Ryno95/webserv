@@ -1,7 +1,3 @@
-import requests
-from requests import Session
-from requests.structures import CaseInsensitiveDict
-
 import time
 import os
 
@@ -10,6 +6,11 @@ from Request import Request, DELETERequest
 
 
 EXIT_CODE = 0
+
+#  ----------- Test dir in server to test DELETE method -----------
+if not os.path.exists("../../root/deleteFolderTest"):
+    os.mkdir("../../root/deleteFolderTest")
+
 
 target = "/deleteFolderTest/.algoDentro"
 deleteRequest = DELETERequest(target)
@@ -27,5 +28,11 @@ deleteRequest = DELETERequest(target)
 deleteRequest.createFileToDelete(0o444)
 deleteRequest.doRequest()
 EXIT_CODE += deleteRequest.compareResult(HttpResponseStatus.FORBIDDEN)
+
+#  -------- try to delete a folder ----------------
+target = "/deleteFolderTest"
+deleteRequest = DELETERequest(target)
+deleteRequest.doRequest()
+EXIT_CODE += deleteRequest.compareResult(HttpResponseStatus.OK)
 
 exit(EXIT_CODE)
