@@ -3,7 +3,6 @@
 #include <responses/BadStatusResponse.hpp>
 #include <Utility.hpp>
 #include <Logger.hpp>
-#include <config/GlobalConfig.hpp>
 
 namespace Webserver
 {

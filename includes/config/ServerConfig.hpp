@@ -3,27 +3,25 @@
 #include <vector>
 
 #include <config/HostConfig.hpp>
-#include <config/AConfig.hpp>
+#include <config/AComposite.hpp>
 
 namespace Webserver
 {
 	typedef unsigned int uint;
 
-	struct ServerConfig : public AConfig
+	class ServerConfig : public AComposite<HostConfig*>
 	{
+		friend class ServerConfigParser;
+
+	public:
 		ServerConfig();
 		ServerConfig(const ServerConfig& ref);
 		~ServerConfig();
 		ServerConfig& operator=(const ServerConfig& ref);
 
-		uint					port;
-		std::vector<HostConfig>	hosts;
-
-		void		validate() const;
+		uint getPort() const;
 
 	private:
-		map_type 	fillVariablesMap();
-
-		static const int	_maxPortNumber = 65535;
+		uint _port;
 	};
 }

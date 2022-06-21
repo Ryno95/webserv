@@ -16,7 +16,7 @@ namespace Webserver
 	}
 
 	// add !isMethodAllowed()
-	Response* GETMethod::process()
+	Response* GETMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering GET method!");
 

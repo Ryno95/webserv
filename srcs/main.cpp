@@ -1,11 +1,12 @@
 #include <iostream>
-
+#include <fstream>
 #include <Webserv.hpp>
 #include <Logger.hpp>
-#include <config/ConfigFileParser.hpp>
 
 #include <TickHandler.hpp>
 #include <TimeoutHandler.hpp>
+#include <config/Parser.hpp>
+#include <config/AppConfigParser.hpp>
 
 namespace Webserver
 {
@@ -20,6 +21,21 @@ namespace Webserver
 		}
 	}
 
+	AppConfig* parseConfig(const std::string& path)
+	{
+		try
+		{
+			std::ifstream fstream(path);
+			if (fstream.fail())
+				throw FileNotFoundException(path);
+			return Parser<AppConfigParser>(fstream).parse();
+		}
+		catch(const std::exception& e)
+		{
+			throw std::runtime_error(std::string("In config file: ") + e.what());
+		}
+	}
+
 	int run(int argc, char** argv)
 	{
 		std::vector<Webserv*> servers;
@@ -31,13 +47,12 @@ namespace Webserver
 				path = argv[1];
 			else
 				path = "config/default.config";
+			AppConfig* config = parseConfig(path);
+			Webserv::config(config);
 
-			ConfigFileParser parser(path);
-			std::vector<ServerConfig>& configs = parser.parse();
-
-			for (size_t i = 0; i < configs.size(); i++)
+			for (size_t i = 0; i < config->getChildren().size(); i++)
 			{
-				servers.push_back(new Webserv(configs[i]));
+				servers.push_back(new Webserv(*config->getChildren()[i]));
 			}
 
 			loop();

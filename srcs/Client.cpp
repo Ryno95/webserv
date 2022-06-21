@@ -96,29 +96,25 @@ namespace Webserver
 	Response* Client::processValidRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-		DEBUG("Using config: " << host.getName());
+		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
 
-		if (host.isRedirect())
+		switch (host.getRouteType())
 		{
-			DEBUG("Redirection encountered.");
-			return new RedirectResponse(host.getRoot());
-		}
+			case RouteType::REDIRECT:	return new RedirectResponse(host.getRoot());
+			case RouteType::CGI:		return new CgiResponse(request, host, uri);
 
-		if (host.isCgi())
-		{
-			DEBUG("CGI triggered.");
-			return  new CgiResponse(request, host);
-		}
+			case RouteType::FILESERVER:
+				switch (request.getMethod())
+				{
+					case Method::GET:		return GETMethod(request, host).process(uri);
+					case Method::POST:		return POSTMethod(request, host).process(uri);
+					case Method::DELETE:	return DELETEMethod(request, host).process(uri);
 
-		switch (request.getMethod())
-		{
-			case Method::GET:		return GETMethod(request, host).process();
-			case Method::POST:		return POSTMethod(request, host).process();
-			case Method::DELETE:	return DELETEMethod(request, host).process();
-
-			default:
-				WARN("INVALID method still continued processing, which is not expected to occur.");
+					default:
+						WARN("INVALID method still continued processing, which is not expected to occur.");
+				}
 		}
+		WARN("Returning nullptr instead of a response.");
 		return nullptr;
 	}
 
