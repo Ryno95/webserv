@@ -90,6 +90,10 @@ namespace Webserver
 		return str;
 	}
 
+
+	// Root can't be empty
+	// Atleast "/" or "//" as target
+	// Accept ony the full path or no root as viable options
 	std::string prependRoot(const std::string &root, const std::string& target)
 	{
 		const size_t	targetSlashPos = target.find('/');

@@ -38,24 +38,24 @@ namespace Webserver
 
 		void				appendBody(const std::string &body);
 
+		Uri 				_uri;
 	private:
 		size_t 	parseRequestLine();
 		void 	parseHeaderFields(size_t pos);
 		void 	parseKeyValuePair(const std::string &src, size_t newLinePos);
 
-		size_t parseRequestMethod();
-		size_t parseUri(size_t pos);
-		size_t parseVersion(size_t pos);
-		void validate() const;
+		size_t 	parseRequestMethod();
+		size_t 	parseUri(size_t pos);
+		size_t 	parseVersion(size_t pos);
+		void	validate() const;
 
 		std::string	_query;
 
 		Method::method		_method;
-		Uri _uri;
-		std::string	_version;
-		std::string	_body;
-
-		HttpStatusCode _status;
+		std::string			_version;
+		std::string			_body;
+		HttpStatusCode		_status;
+		
 
 	};
 }

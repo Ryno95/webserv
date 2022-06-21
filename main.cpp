@@ -92,10 +92,14 @@ int main(void)
 
     // std::cout << me.to_string() << std::endl;
 
-    std::cout << "\nExpected: root/index.html\nActual:   " << prependRoot("root", "root/index.html") <<  std::endl;
+// ROOT  : root/cgi-bin/
+// TARGET: /cgi-bin/hello.py
+
+    std::cout << "\nExpected: root/index.html\nActual:   "       << prependRoot("root", "root/index.html") <<  std::endl;
     std::cout << "\nExpected: root/cgi-bin/hello.py\nActual:   " << prependRoot("root/cgi-bin/", "root/cgi-bin/hello.py") <<  std::endl;
-    std::cout << "\nExpected: root/index.html\nActual:   " << prependRoot("root", "root/index.html") <<  std::endl;
-    std::cout << "\nExpected: root/index.html\nActual:   " << prependRoot("root", "/root/index.html") <<  std::endl;
+    std::cout << "\nExpected: root/index.html\nActual:   "       << prependRoot("root", "root/index.html") <<  std::endl;
+    std::cout << "\nExpected: root/index.html\nActual:   "       << prependRoot("root", "/root/index.html") <<  std::endl;
+    std::cout << "\nExpected: root/cgi-bin/hello.py\nActual:   " << prependRoot("root/cgi-bin/", "/cgi-bin/hello.py") <<  std::endl;
 }
 
 
