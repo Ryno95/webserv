@@ -10,7 +10,7 @@ namespace Webserver
 			POSTMethod(const Request &request, const Host& host);
 			~POSTMethod();
 
-			Response	*process();
+			Response	*process(const std::string& uri);
 
 			private:
 				std::string _location;

@@ -51,11 +51,11 @@ namespace Webserver
 
 	}
 
-	Response* POSTMethod::process()
+	Response* POSTMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering POST method!");
 
-		const std::string	fileName  = createFileName(_request.getTarget());
+		const std::string	fileName  = prependRoot(_host.getRoot(), _request.getTarget());
 		std::ofstream       *outfile = new std::ofstream();
 		bool				isCreatingNewFile = false;
 		
@@ -65,7 +65,7 @@ namespace Webserver
 		outfile->open(fileName, std::ios_base::app);
 		if (!outfile->is_open())
 		{
-			perror("");
+			perror("File not created");
 			_response = new BadStatusResponse(HttpStatusCodes::NOT_FOUND);
 			delete outfile;
 			return _response;

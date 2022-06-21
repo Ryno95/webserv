@@ -96,18 +96,19 @@ namespace Webserver
 	Response* Client::processValidRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
 
 		switch (host.getRouteType())
 		{
 			case RouteType::REDIRECT:	return new RedirectResponse(host.getRoot());
-			case RouteType::CGI:		return new CgiResponse(request, host);
+			case RouteType::CGI:		return new CgiResponse(request, host, uri);
 
 			case RouteType::FILESERVER:
 				switch (request.getMethod())
 				{
-					case Method::GET:		return GETMethod(request, host).process();
-					case Method::POST:		return POSTMethod(request, host).process();
-					case Method::DELETE:	return DELETEMethod(request, host).process();
+					case Method::GET:		return GETMethod(request, host).process(uri);
+					case Method::POST:		return POSTMethod(request, host).process(uri);
+					case Method::DELETE:	return DELETEMethod(request, host).process(uri);
 
 					default:
 						WARN("INVALID method still continued processing, which is not expected to occur.");

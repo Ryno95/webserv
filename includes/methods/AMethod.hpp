@@ -46,7 +46,7 @@ namespace Webserver
 	{
 	public:
 		AMethod(Request const& request, const Host& host);
-		virtual Response* process() = 0;
+		virtual Response* process(const std::string& uri) = 0;
 
 		void writeFile();
 
