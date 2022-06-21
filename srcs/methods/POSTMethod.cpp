@@ -18,19 +18,6 @@ namespace Webserver
 
 	POSTMethod::~POSTMethod() {}
 
-	std::string POSTMethod::createFileName(const std::string &target)
-	{
-		const std::string	root(ROOT); // Will be replaced by config file
-		std::string			fileName;
-		
-		fileName =  root;
-		size_t found = target.find_last_of("/");
-		fileName += target.substr(1, found);
-		fileName += target.substr(found + 1);
-		return (fileName);
-	}
-
-//  Location: http://www.w3.org/pub/WWW/People.html
 	void POSTMethod::addLocationHeader()
 	{
 		const std::string HttpProtocol("http://");
@@ -55,7 +42,11 @@ namespace Webserver
 	{
 		DEBUG("Entering POST method!");
 
+<<<<<<< HEAD
 		const std::string	fileName  = prependRoot(_host.getRoot(), _request.getTarget());
+=======
+		const std::string	fileName  = prependRoot(_host.getRoot() ,_request.getTarget());
+>>>>>>> 6291d33b4b60d4f43875230eb85148c866607045
 		std::ofstream       *outfile = new std::ofstream();
 		bool				isCreatingNewFile = false;
 		

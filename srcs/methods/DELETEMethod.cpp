@@ -24,6 +24,8 @@ namespace Webserver
 		const bool			isMethodAllowed = true;
 		struct stat 		fileInfo;
 
+		DEBUG("DELETE METHOD");
+
 		if (stat(fullTarget.c_str(), &fileInfo) == SYSTEM_ERR)
 			return new BadStatusResponse(HttpStatusCodes::NOT_FOUND);
 		else if (!isMethodAllowed || (!(fileInfo.st_mode & S_IWUSR) && !(fileInfo.st_mode & S_IXUSR))) // check that file has write/exec permissions
