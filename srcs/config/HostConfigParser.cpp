@@ -5,7 +5,6 @@ namespace Webserver
 {
 	void HostConfigParser::addChild(const std::string& args)
 	{
-		DEBUG("Adding LocationConfig");
 		if (args.size() == 0)
 			throw std::runtime_error("No pattern assigned to Location");
 		

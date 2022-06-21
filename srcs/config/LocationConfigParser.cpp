@@ -16,9 +16,6 @@ namespace Webserver
 	void LocationConfigParser::fillData()
 	{
 		*_data = *_parentData;
-		// delete _data;
-		// _data = new LocationConfig(*_parentData);
-		DEBUG("default_index: " << _data->getDefaultIndex());
 		AParseTreeLeaf<LocationConfig>::fillData();
 	}
 
