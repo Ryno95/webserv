@@ -3,7 +3,7 @@
 #include <responses/Response.hpp>
 #include <Utility.hpp>
 #include <Exception.hpp>
-#include <config/GlobalConfig.hpp>
+#include <Webserv.hpp>
 
 namespace Webserver
 {
@@ -61,7 +61,7 @@ namespace Webserver
 		if (extensionIndex != std::string::npos)
 			fileExtensionWithoutDot = fileName.substr(extensionIndex + 1, std::string::npos);
 
-		mimeType = GlobalConfig::get().mimeTypes.getMIMEType(fileExtensionWithoutDot);
+		mimeType = Webserv::config().getMimeTypes().getMIMEType(fileExtensionWithoutDot);
 
 		return mimeType;
 	}

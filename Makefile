@@ -9,39 +9,44 @@ INCL_DIR	=	includes/
 TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
-CLASSES		=	Webserv\
-				Client\
-				Request\
-				Receiver\
-				Sender\
+CLASSES		=	Utility\
+				config/ParseTreeUtility\
+				config/AppConfigParser\
+				config/ServerConfigParser\
+				config/HostConfigParser\
+				config/LocationConfigParser\
+				config/AppConfig\
+				config/ServerConfig\
+				config/HostConfig\
+				config/LocationConfig\
+				config/HostFields\
 				methods/AMethod\
 				methods/GETMethod\
 				methods/POSTMethod\
 				methods/DELETEMethod\
-				Cgi\
-				MimeTypes\
-				Logger\
-				PollHandler\
-				TickHandler\
-				TimeoutHandler\
-				Host\
-				Utility\
 				responses/Response\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
 				responses/CgiResponse\
+				MimeTypes\
+				Logger\
+				Webserv\
+				Client\
+				Request\
+				Receiver\
+				Sender\
+				Cgi\
+				PollHandler\
+				TickHandler\
+				TimeoutHandler\
+				Host\
 				Uri\
-				config/ConfigFileParser\
-				config/AConfig\
-				config/HostConfig\
-				config/ServerConfig\
-				config/GlobalConfig\
-				config/LocationConfig\
 				HeaderFields\
 				autoIndex/HtmlBuilder\
 				autoIndex/HtmlElement\
-				autoIndex/AutoIndex\
+				autoIndex/AutoIndex
+
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -88,7 +93,8 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a s
 	@mkdir -p $(OBJ_DIR) $(@D)
 	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
 
-re: fclean all
+re: fclean
+	$(MAKE) -j5
 
 clean:
 	rm -rf $(OBJ_DIR)

@@ -32,11 +32,7 @@ namespace Webserver
 	}
 
 	// add !isMethodAllowed()
-
-	// for autoindex:
-	//     if requests end on "/"
-	//	
-	Response* GETMethod::process()
+	Response* GETMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering GET method!");
 

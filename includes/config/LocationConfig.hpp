@@ -2,47 +2,28 @@
 
 #include <string>
 
-#include <config/AConfig.hpp>
-
-namespace MatchType
-{
-	enum MatchType
-	{
-		PREFIX,
-		SUFFIX
-	};
-}
-
-namespace RouteType
-{
-	enum RouteType
-	{
-		CHANGE_ROOT,
-		REDIRECT,
-		UPLOAD,
-		CGI
-	};
-}
+#include <config/HostConfig.hpp>
+#include <RouteType.hpp>
 
 namespace Webserver
 {
-	struct LocationConfig : public AConfig
+	class LocationConfig : public HostFields
 	{
+		friend class LocationConfigParser;
+
+	public:
 		LocationConfig();
-		LocationConfig(const std::string& value);
 		LocationConfig(const LocationConfig& rhs);
+		LocationConfig(const HostFields& ref);
 		~LocationConfig();
+		LocationConfig& operator=(const HostFields& ref);
 		LocationConfig& operator=(const LocationConfig& rhs);
 
-		map_type fillVariablesMap();
-		void validate() const;
-		MatchType::MatchType getMatchType() const;
-
-		std::string	pattern;
-		std::string route;
-		RouteType::RouteType routeType;
+		RouteType::RouteType getRouteType() const;
+		const std::string& getMatchPattern() const;
 
 	private:
-		void parseRouteType(const std::string& value);
+		std::string _pattern;
+		RouteType::RouteType _routeType;
 	};
 }

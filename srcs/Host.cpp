@@ -1,6 +1,7 @@
 #include <Host.hpp>
 #include <config/HostConfig.hpp>
 #include <config/ServerConfig.hpp>
+#include <Utility.hpp>
 
 #include <algorithm>
 
@@ -8,90 +9,36 @@ namespace Webserver
 {
 	Host Host::determine(const ServerConfig& config, const std::string& hostName, const std::string& uri)
 	{
-		return Host(matchHost(config.hosts, hostName), uri);
+		const HostConfig& host = matchHost(config.getChildren(), hostName);
+		return Host(matchLocation(host, uri));
 	}
 
-	const HostConfig& Host::matchHost(const std::vector<HostConfig>& hosts, const std::string& hostName)
+	const HostConfig& Host::matchHost(const std::vector<HostConfig*>& hosts, const std::string& hostName)
 	{
 		for (size_t i = 0; i < hosts.size(); i++)
 		{
-			for (size_t j = 0; j < hosts[i].names.size(); j++)
+			const std::vector<std::string>& hostNames = hosts[i]->getHostNames();
+			for (size_t j = 0; j < hostNames.size(); j++)
 			{
-				if (stringToLower(hostName) == stringToLower(hosts[i].names[j]))
-					return hosts[i];
+				if (stringToLower(hostName) == stringToLower(hostNames[j]))
+					return *hosts[i];
 			}
 		}
-		return hosts[0];
+		return *hosts[0];
 	}
 
-	Host::Host(const HostConfig& config, const std::string& uri)
-		: HostConfig::HostConfig(config), _routeType(RouteType::CHANGE_ROOT)
+	LocationConfig Host::matchLocation(const HostConfig& host, const std::string& uri)
 	{
-		matchLocation(uri);
-	}
-
-	void Host::matchLocation(const std::string& uri)
-	{
+		const std::vector<LocationConfig*>& locations = host.getChildren();
 		for (size_t i = 0; i < locations.size(); i++)
 		{
-			if (wildcard(uri, locations[i].pattern) == true)
-			{
-				_routeType = locations[i].routeType;
-				root = locations[i].route;
-				break;
-			}
+			if (wildcard(uri, locations[i]->getMatchPattern()) == true)
+				return *locations[i];
 		}
+		return LocationConfig(host);
 	}
 
-	std::string Host::getName() const
+	Host::Host(const LocationConfig& config) : LocationConfig::LocationConfig(config)
 	{
-		return names[0];
-	}
-
-	bool Host::getAutoIndexEnabled() const
-	{
-		return autoIndexEnabled;
-	}
-
-	std::string Host::getRoot() const
-	{
-		return root;
-	}
-
-	std::string Host::getDefaultIndex() const
-	{
-		return defaultIndex;
-	}
-
-	std::string Host::getDefaultError() const
-	{
-		return defaultError;
-	}
-
-	bool Host::isMethodAccepted(Method::method m) const
-	{
-		if (std::find(acceptedMethods.begin(), acceptedMethods.end(), m) == acceptedMethods.end())
-			return false;
-		return true;
-	}
-
-	bool Host::isRedirect() const
-	{
-		return _routeType == RouteType::REDIRECT;
-	}
-
-	bool Host::isUpload() const
-	{
-		return _routeType == RouteType::UPLOAD;
-	}
-
-	bool Host::isChangeRoot() const
-	{
-		return _routeType == RouteType::CHANGE_ROOT;
-	}
-
-	bool Host::isCgi() const
-	{
-		return _routeType == RouteType::CGI;
 	}
 }

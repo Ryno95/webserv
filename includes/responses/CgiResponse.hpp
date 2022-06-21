@@ -15,7 +15,7 @@ namespace Webserver
 		
 		public: 
 		// Constructor 
-			CgiResponse(const Request &request, const Host &host);
+			CgiResponse(const Request &request, const Host &host, const std::string& uri);
 			~CgiResponse() {};
 	};
 	 

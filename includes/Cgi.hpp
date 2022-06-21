@@ -19,7 +19,7 @@ namespace Webserver
 				WRITE_FD
 			} FDs;
 	
-			Cgi(const Request &request, const Host &host);
+			Cgi(const Request &request, const Host &host, const std::string& uri);
 			~Cgi();
 
 			void		execute();
@@ -50,5 +50,6 @@ namespace Webserver
 			std::stringstream* 	_cgiStream;
 			const Host&			_host;
 			HttpStatusCode		_status;
+			const std::string&	_uri;
 	};
 }

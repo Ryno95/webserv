@@ -1,5 +1,4 @@
 #include <responses/OkStatusResponse.hpp>
-#include <config/GlobalConfig.hpp>
 #include <Utility.hpp>
 
 namespace Webserver
