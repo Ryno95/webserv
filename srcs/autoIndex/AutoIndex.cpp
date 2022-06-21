@@ -1,6 +1,7 @@
 
 #include <autoIndex/AutoIndex.hpp>
 #include <autoIndex/HtmlBuilder.hpp>
+#include <Logger.hpp>
 
 #include <dirent.h>
 #include <sys/types.h>
@@ -30,10 +31,13 @@ namespace Webserver
 			dirEntry = readdir(dir);
 			if (dirEntry == nullptr)
 				break;
-			if (dirEntry->d_type == DT_DIR)
-				entries.push_back(std::string(dirEntry->d_name).append("/"));
-			else
-				entries.push_back(dirEntry->d_name);
+			if (std::strcmp(dirEntry->d_name, ".") != 0)
+			{
+				if (dirEntry->d_type == DT_DIR)
+					entries.push_back(std::string(dirEntry->d_name).append("/"));
+				else
+					entries.push_back(dirEntry->d_name);
+			}
 		}
 		closedir(dir);
 		return entries;

@@ -43,13 +43,18 @@ namespace Webserver
 		std::ifstream*	stream = new std::ifstream();
 		std::string		target = prependRoot(_host.getRoot(), _request.getTarget());
 
-		DEBUG("TARGET: " << target);
-		if (target[target.size() - 1] == '/')
+		DEBUG("TARGET: " << _request.getTarget());
+		if ( _request.getTarget()[ _request.getTarget().size() - 1] == '/')
 		{
-			if (_host.getDefaultIndex() == "")
+			DEBUG("ENTERING AUTOIDEX CHECK");
+			if (_host.getDefaultIndex() != "")
+			{
+				DEBUG("Setting default Page");
 				target = _host.getDefaultIndex();
+			}
 			else if (_host.getAutoIndexEnabled())
 			{
+				DEBUG("ENTERING AutoIndex");
 				std::stringstream *oss = new std::stringstream();
 				*oss << AutoIndex(target).getHtmlPage();
 				return new OkStatusResponse(oss, HttpStatusCodes::OK);
@@ -58,6 +63,8 @@ namespace Webserver
 			else
 				return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 		}
+		target = prependRoot(_host.getRoot(),  _request.getTarget());
+		DEBUG("TARGET: " << target);
 		stream->open(target);
 		if (stream->fail())
 		{
