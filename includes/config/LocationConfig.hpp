@@ -16,6 +16,7 @@ namespace Webserver
 		LocationConfig(const LocationConfig& rhs);
 		LocationConfig(const HostFields& ref);
 		~LocationConfig();
+		LocationConfig& operator=(const HostFields& ref);
 		LocationConfig& operator=(const LocationConfig& rhs);
 
 		RouteType::RouteType getRouteType() const;

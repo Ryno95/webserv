@@ -3,24 +3,29 @@
 namespace Webserver
 {
 	LocationConfig::LocationConfig() :
-		HostFields::HostFields(),
+		HostFields(),
 		_routeType(RouteType::FILESERVER)
 	{
 	}
 
-	LocationConfig::LocationConfig(const LocationConfig& ref) : HostFields::HostFields(ref)
+	LocationConfig::LocationConfig(const LocationConfig& ref) : HostFields(ref)
 	{
 		*this = ref;
 	}
 
-	LocationConfig::LocationConfig(const HostFields& ref) : HostFields::HostFields(ref),
+	LocationConfig::LocationConfig(const HostFields& ref) : HostFields(ref),
 		_routeType(RouteType::FILESERVER)
 	{
-		WARN("LocationConfig(HostFields&) called");
 	}
 
 	LocationConfig::~LocationConfig()
 	{
+	}
+
+	LocationConfig& LocationConfig::operator=(const HostFields& ref)
+	{
+		HostFields::operator=(ref);
+		return *this;
 	}
 
 	LocationConfig& LocationConfig::operator=(const LocationConfig& ref)
