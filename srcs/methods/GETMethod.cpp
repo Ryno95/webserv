@@ -31,6 +31,13 @@ namespace Webserver
 
 	}
 
+
+	static bool	doesEndOnSlash(const std::string& target)
+	{
+		const size_t lastChar = target.size() - 1;
+		
+		return target[lastChar] == '/';
+	}
 	// add !isMethodAllowed()
 	Response* GETMethod::process(const std::string& uri)
 	{
@@ -39,8 +46,8 @@ namespace Webserver
 		std::ifstream*	stream = new std::ifstream();
 		std::string		target = prependRoot(_host.getRoot(), _request.getTarget());
 
-		DEBUG("TARGET: " << _request.getTarget());
-		if ( _request.getTarget()[ _request.getTarget().size() - 1] == '/')
+		// DEBUG("TARGET: " << _request.getTarget());
+		if (doesEndOnSlash(_request.getTarget()))
 		{
 			// DEBUG("ENTERING AUTOIDEX CHECK");
 			// if (_host.getDefaultIndex() == "")
