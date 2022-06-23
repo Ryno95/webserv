@@ -11,13 +11,15 @@ namespace Webserver
 			AutoIndex(const std::string &root);
 			~AutoIndex(){};
 
-			std::vector<std::string> getDirEntries();
 
 			std::string getHtmlPage();
 		
 		private:
-			const std::string&	_root;
-			HtmlBuilder			_builder;
+			void		getDirEntries();
+
+			const std::string&			_root;
+			HtmlBuilder					_builder;
+			std::vector<std::string> 	_dirEntries;
 	};
 
 }
