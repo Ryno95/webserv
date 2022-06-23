@@ -11,7 +11,7 @@ namespace Webserver
 	{
 	}
 
-	Response::Response(HttpStatusCode code) : _cgiStream(nullptr), _statusCode(code), _bodyStream(nullptr)
+	Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr), _cgiStream(nullptr)
 	{
 		addConstantHeaderFields();
 	}

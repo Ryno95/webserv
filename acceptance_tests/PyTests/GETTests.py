@@ -33,6 +33,15 @@ localhost = "http://localhost:8080/cgi-bin/"
 GetRequest = Request.GETRequest(localhost, HttpResponseStatus.OK)
 EXIT_CODE += GetRequest.doRequest()
 
+localhost = "http://localhost:8080/cgi-bin"
+GetRequest = Request.GETRequest(localhost, HttpResponseStatus.OK)
+EXIT_CODE += GetRequest.doRequest()
+
+# dir doesn't exist
+localhost = "http://localhost:8080/nonExistantDir/"
+GetRequest = Request.GETRequest(localhost, HttpResponseStatus.NOT_FOUND)
+EXIT_CODE += GetRequest.doRequest()
+
 
 time.sleep(0.2)
 

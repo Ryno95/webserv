@@ -18,21 +18,12 @@ namespace Webserver
 
 	}
 
-
-	static bool	endsOnSlash(const std::string& target)
-	{
-		const size_t lastChar = target.size() - 1;
-		
-		return target[lastChar] == '/';
-	}
-
 	static bool	dirHasDefaultIndex(const std::string path)
 	{
 		struct stat fileInfo;
 
 		return stat(path.c_str(), &fileInfo) == 0; 
 	}
-
 
 	static bool isDir(const std::string& target)
 	{
@@ -48,17 +39,15 @@ namespace Webserver
 		std::ifstream*	stream = new std::ifstream();
 		std::string		target(uri);
 
-		if (endsOnSlash(target))
+		if (isDir(target))
 		{
-			if (_host.getDefaultIndex() != "" && dirHasDefaultIndex(target + _host.getDefaultIndex()))
+			if (dirHasDefaultIndex(target + _host.getDefaultIndex()))
 				target = uri + _host.getDefaultIndex();
 			else if (_host.isAutoIndexEnabled())
 				return new AutoIndexResponse(target);
 			else
 				return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 		}
-		else if (isDir(target))
-			return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 
 		stream->open(target);
 		if (stream->fail())

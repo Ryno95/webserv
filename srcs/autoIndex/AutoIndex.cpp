@@ -2,6 +2,7 @@
 #include <autoIndex/AutoIndex.hpp>
 #include <autoIndex/HtmlBuilder.hpp>
 #include <Logger.hpp>
+#include <Exception.hpp>
 
 #include <dirent.h>
 #include <sys/types.h>
@@ -13,22 +14,36 @@ namespace Webserver
 	{
 		const std::string 			htmlHeader("<!DOCTYPE html>\n");
 
-		getDirEntries();
+		createDirEntries();
 		std::vector<std::string>::const_iterator it = _dirEntries.begin();
 		for(; it != _dirEntries.end(); it++)
 			_builder.addElement("body", "", HtmlBuilder("p")
 									.addElement("a" , "href=" + *it, *it)
 									.addElement("br", "", "")
-									.build());
+									.build()
+								);
 	}
 
-	void AutoIndex::getDirEntries()
+	AutoIndex::AutoIndex(const AutoIndex &ins) : _root(ins._root), _builder(HtmlBuilder("html"))
+	{
+		*this = ins;
+	}
+	
+	AutoIndex& AutoIndex::operator=(const AutoIndex& rhs)
+	{
+		(void)rhs;
+		return (*this);
+	}
+	
+	void AutoIndex::createDirEntries()
 	{
 		const std::string			currDirectory(".");
 		DIR* 						dir;
 		dirent* 					dirEntry;
 
 		dir = opendir(_root.c_str());
+		if (!dir)
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
 		while (true)
 		{
 			dirEntry = readdir(dir);
@@ -45,7 +60,7 @@ namespace Webserver
 		closedir(dir);
 	}
 
-	std::string AutoIndex::getHtmlPage()
+	const std::string AutoIndex::getHtmlPage()
 	{
 		return (_builder.build());
 	}

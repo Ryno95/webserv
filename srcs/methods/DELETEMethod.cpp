@@ -20,7 +20,6 @@ namespace Webserver
 	Response* DELETEMethod::process(const std::string& uri)
 	{
 		const std::string 	fullTarget = prependRoot(_host.getRoot(), _request.getTarget());
-		// const bool			isMethodAllowed = _host.isMethodAccepted(this->_request.getMethod());
 		const bool			isMethodAllowed = true;
 		struct stat 		fileInfo;
 
