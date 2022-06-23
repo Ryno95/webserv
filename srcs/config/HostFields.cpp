@@ -54,7 +54,7 @@ namespace Webserver
 		return _defaultError;
 	}
 
-	const std::vector<Method::method> HostFields::getAcceptedMethods() const
+	const std::vector<Method::method>& HostFields::getAcceptedMethods() const
 	{
 		return _acceptedMethods;
 	}

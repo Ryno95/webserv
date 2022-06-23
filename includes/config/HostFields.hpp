@@ -19,7 +19,7 @@ namespace Webserver
 		const std::string& getRoot() const;
 		const std::string& getDefaultIndex() const;
 		const std::string& getDefaultError() const;
-		const std::vector<Method::method> getAcceptedMethods() const;
+		const std::vector<Method::method>& getAcceptedMethods() const;
 		bool isUploadAllowed() const;
 
 	protected:
