@@ -9,7 +9,8 @@ namespace Webserver
 		_root("root"),
 		_defaultIndex("index.html"),
 		_defaultError("error.html"),
-		_acceptedMethods(Method::GET)
+		_acceptedMethods(Method::GET),
+		_allowUpload(false)
 	{
 	}
 
@@ -25,6 +26,7 @@ namespace Webserver
 		_defaultIndex = ref._defaultIndex;
 		_defaultError = ref._defaultError;
 		_acceptedMethods = ref._acceptedMethods;
+		_allowUpload = ref._allowUpload;
 		return *this;
 	}
 
@@ -55,5 +57,10 @@ namespace Webserver
 	const std::vector<Method::method> HostFields::getAcceptedMethods() const
 	{
 		return _acceptedMethods;
+	}
+
+	bool HostFields::isUploadAllowed() const
+	{
+		return _allowUpload;
 	}
 }
