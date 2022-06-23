@@ -38,7 +38,6 @@ namespace Webserver
 		const std::string& getHost() const;
 
 		bool isAbsolute() const;
-		void setPath(const std::string &path);
 
 	private:
 		void format();

@@ -107,11 +107,6 @@ namespace Webserver
 		setPath(_raw.substr(end, std::string::npos));
 	}
 
-	void Uri::setPath(const std::string &path)
-	{
-		_path = path;
-	}
-
 	void Uri::parse()
 	{
 		// parse host if it's an absolute uri (determined with ':')
