@@ -15,34 +15,32 @@ namespace Webserver
 	#define NotFoundErrorPage "root/NotFoundErrorPage.html"
 	#define BadRequestErrorPage "root/BadRequestErrorPage.html"
 
-	class Response : public HeaderFields
+	class AResponse : public HeaderFields
 	{
 	protected:
-		Response();
-		Response(const Response &ref);
-		Response(HttpStatusCode code);
-		Response &operator=(const Response &rhs);
+		AResponse();
+		AResponse(const AResponse &ref);
+		AResponse(HttpStatusCode code);
+		AResponse &operator=(const AResponse &rhs);
 
 	public:
-		virtual ~Response();
+		virtual std::istream *getBodyStream() = 0;
+		virtual ~AResponse();
 
 		void	setStatusCode(HttpStatusCode code);
-		void	setBodyStream(std::ifstream* stream);
 
 		void				buildHeader();
-		std::stringstream	*getHeaderStream();
+		std::istream		*getHeaderStream();
 		void				createContentHeaders(const std::string &fileName);
 
-		std::ifstream		*getBodyStream();
 		HttpStatusCode		getStatusCode() const;
 		const HeaderFields& getHeaders() const;
 
-		std::stringstream					*_cgiStream;
+
 	protected:
 
-		HttpStatusCode 						_statusCode;
-		std::stringstream 					_headerStream;
-		std::ifstream						*_bodyStream;
+		HttpStatusCode		_statusCode;
+		std::stringstream	_headerStream;
 
 		void				addConstantHeaderFields(); // hard coded for now to get the flow going
 	

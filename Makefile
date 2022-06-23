@@ -24,7 +24,9 @@ CLASSES		=	Utility\
 				methods/GETMethod\
 				methods/POSTMethod\
 				methods/DELETEMethod\
-				responses/Response\
+				responses/AResponse\
+				responses/AFileResponse\
+				responses/AEmptyBodyResponse\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\

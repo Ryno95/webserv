@@ -1,6 +1,6 @@
 #include <methods/AMethod.hpp>
 #include <Request.hpp>
-#include <responses/Response.hpp>
+#include <responses/AResponse.hpp>
 
 namespace Webserver
 {
@@ -10,7 +10,7 @@ namespace Webserver
 			POSTMethod(const Request &request, const Host& host);
 			~POSTMethod();
 
-			Response	*process(const std::string& uri);
+			AResponse	*process(const std::string& uri);
 
 			private:
 				std::string _location;

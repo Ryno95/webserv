@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include <responses/Response.hpp>
+#include <responses/AEmptyBodyResponse.hpp>
 
 namespace Webserver
 {
-	class RedirectResponse : public Response
+	class RedirectResponse : public AEmptyBodyResponse
 	{
 	public:
 		RedirectResponse(const std::string& url);

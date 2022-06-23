@@ -1,17 +1,15 @@
 #pragma once
 
-#include <responses/Response.hpp>
+#include <responses/AFileResponse.hpp>
 
 namespace Webserver
 {
-	class OkStatusResponse: public Response
+	class OkStatusResponse: public AFileResponse
 	{
 		public:
 			OkStatusResponse(HttpStatusCode code);
 			OkStatusResponse(std::stringstream* strStream, HttpStatusCode code);
 			OkStatusResponse(std::ifstream* stream, const std::string &fileName, HttpStatusCode code);
 			~OkStatusResponse();
-
-		private:
 	};
 }

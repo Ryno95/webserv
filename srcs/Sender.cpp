@@ -31,8 +31,6 @@ namespace Webserver
 
 			case SEND_BODY:
 				_dataStream = _response->getBodyStream();
-				if(_dataStream == nullptr)
-					_dataStream = _response->_cgiStream;
 				break;
 
 			case FINISHED:
@@ -119,7 +117,7 @@ namespace Webserver
 		return _currentState != FINISHED;
 	}
 
-	void Sender::setResponse(Response* response)
+	void Sender::setResponse(AResponse* response)
 	{
 		_response = response;
 		_currentState = SEND_HEADER;

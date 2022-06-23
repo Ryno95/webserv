@@ -6,20 +6,17 @@
 
 namespace Webserver
 {
-	BadStatusResponse::BadStatusResponse(HttpStatusCode code) : Response(code)
+	BadStatusResponse::BadStatusResponse(HttpStatusCode code) : AFileResponse(code)
 	{
 	}
 
-	BadStatusResponse::BadStatusResponse(HttpStatusCode code, const std::string &errorPage) : Response(code)
+	BadStatusResponse::BadStatusResponse(HttpStatusCode code, const std::string &errorPage) : AFileResponse(code)
 	{
-
-		setBodyStream(new std::ifstream(errorPage));
-		if (!_bodyStream->is_open())
-			throw std::runtime_error("Errorfile doens't exist");
+		openFile(errorPage);
 		createContentHeaders(errorPage);
 	}
-	
+
 	BadStatusResponse::~BadStatusResponse()
 	{
-	}	
+	}
 }

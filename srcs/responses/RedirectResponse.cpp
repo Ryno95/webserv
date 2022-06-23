@@ -3,7 +3,7 @@
 
 namespace Webserver
 {
-	RedirectResponse::RedirectResponse(const std::string& url) : Response(HttpStatusCodes::REDIRECT)
+	RedirectResponse::RedirectResponse(const std::string& url) : AEmptyBodyResponse(HttpStatusCodes::REDIRECT)
 	{
 		addHeader(Header::Location, url);
 	}

@@ -12,6 +12,6 @@ namespace Webserver
 		GETMethod(Request const& request, const Host& host);
 		~GETMethod();
 
-		Response* process(const std::string& uri);
+		AResponse* process(const std::string& uri);
 	};
 }

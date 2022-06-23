@@ -38,7 +38,7 @@ namespace Webserver
 
 	}
 
-	Response* POSTMethod::process(const std::string& uri)
+	AResponse* POSTMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering POST method!");
 
