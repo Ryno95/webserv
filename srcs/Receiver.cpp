@@ -38,25 +38,23 @@ namespace Webserver
 		bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFERSIZE, 0);
 		if (bytesRecv == 0)
 			throw Client::DisconnectedException();
-		if (bytesRecv == SYSTEM_ERR) // do we need to handle this?
-		{
-			perror("Read error");
+		if (bytesRecv == SYSTEM_ERR)
 			bytesRecv = 0;
-		}
 		_recvBuffer.resize(bytesRecv);
 	}
 
 	void Receiver::processHeaderRecv()
 	{
-		while (_recvBuffer.size() > 0)
-		{	
-			_buffer += _recvBuffer.substr(0, 1);
-			_recvBuffer = _recvBuffer.substr(1, _recvBuffer.size());
-			if (_buffer.find("\r\n\r\n") != std::string::npos)
-			{
-				checkHeader();
-				return ;
-			}
+		size_t pos;
+
+		_buffer += _recvBuffer;
+		_recvBuffer.clear();
+		pos = _buffer.find("\r\n\r\n");
+		if (pos != std::string::npos)
+		{
+			_recvBuffer = _buffer.substr(pos + 4);
+			_buffer = _buffer.erase(pos + 4);
+			checkHeader();
 		}
 	}
 
@@ -82,7 +80,9 @@ namespace Webserver
 			{
 				_state = RECV_BODY;
 				_bodyBytesReceived = 0;
-				_bodySize = _newRequest.getBodySize(); // body size < max body size?
+				_bodySize = _newRequest.getBodySize();
+				if (_bodySize > Webserv::config().getMaxRequestBodySize())
+					throw InvalidRequestException(HttpStatusCodes::PAYLOAD_TOO_LARGE);
 				return ;
 			}
 		}
