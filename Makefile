@@ -28,6 +28,7 @@ CLASSES		=	Utility\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
+				responses/AutoIndexResponse\
 				responses/CgiResponse\
 				MimeTypes\
 				Logger\
