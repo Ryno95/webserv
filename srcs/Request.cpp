@@ -199,7 +199,7 @@ namespace Webserver
 		std::string length;
 		if (tryGetHeader(Header::ContentLength, length))
 			return std::atol(length.c_str());
-		return -1;
+		return 0;
 	}
 
 	/*
