@@ -11,12 +11,15 @@ namespace Webserver
 {
 	AutoIndex::AutoIndex(const std::string &root) : _root(root), _builder(HtmlBuilder("html"))
 	{
-		const std::string htmlHeader("<!DOCTYPE html>\n");
-		std::vector<std::string> dirEntries = getDirEntries();
-
+		const std::string 			htmlHeader("<!DOCTYPE html>\n");
+		std::vector<std::string> 	dirEntries = getDirEntries();
+		
 		std::vector<std::string>::const_iterator it = dirEntries.begin();
-		for(; it != dirEntries.end(); it++)
-			_builder.addElement("body", "", HtmlBuilder("p").addElement("a" , "href=" + *it, *it).addElement("br", "", "").build());
+		for(; it++ != dirEntries.end(); it++)
+			_builder.addElement("body", "", HtmlBuilder("p")
+					.addElement("a" , "href=" + *it, *it)
+					.addElement("br", "", "")
+					.build());
 	}
 
 	std::vector<std::string> AutoIndex::getDirEntries()

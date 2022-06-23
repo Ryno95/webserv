@@ -15,13 +15,14 @@ namespace Webserver
 		public:
 			friend class HtmlBuilder;
 
-			bool 				isSelfClosing() const;
-			std::string 		to_string(int indentAmonut) const;
+			std::string 		toString(int indentAmonut) const;
 
 		private:
 			HtmlElement();
 			HtmlElement(const std::string &tag, const std::string &tagBody, const std::string &content);
 
+			bool 				isSelfClosing() const;
+	
 			std::string					_tag;
 			std::string					_tagBody;
 			std::string					_content;

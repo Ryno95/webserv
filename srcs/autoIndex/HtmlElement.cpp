@@ -21,26 +21,25 @@ namespace Webserver
 		return false;
 	}
 
-	std::string HtmlElement::to_string(int indentAmonut) const
-		{
-			std::stringstream oss;
+	std::string HtmlElement::toString(int indentAmonut) const
+	{
+		std::stringstream oss;
 
-			oss << std::string(_indentSize * indentAmonut, SPACE) << "<" << _tag;
-			if (_tagBody.size())
-				oss << " " << _tagBody <<  ">" << std::endl;
-			else
-				oss << ">" << std::endl;
+		oss << std::string(_indentSize * indentAmonut, SPACE) << "<" << _tag;
+		if (_tagBody.size())
+			oss << " " << _tagBody << std::endl;
+		oss << ">" << std::endl;
 
-			if (_content.size())
-				oss << std::string(_indentSize * (indentAmonut + 1), SPACE) << _content << std::endl;
-			std::vector<HtmlElement>::const_iterator element = _collection.begin();
+		if (_content.size())
+			oss << std::string(_indentSize * (indentAmonut + 1), SPACE) << _content << std::endl;
+		std::vector<HtmlElement>::const_iterator element = _collection.begin();
 
-			for (; element != _collection.end(); element++)
-				oss << element->to_string(indentAmonut);
+		for (; element != _collection.end(); element++)
+			oss << element->toString(indentAmonut);
 
-			if (!this->isSelfClosing())
-				oss << std::string(_indentSize * indentAmonut, SPACE) << "</" << _tag << ">" << std::endl;
+		if (!this->isSelfClosing())
+			oss << std::string(_indentSize * indentAmonut, SPACE) << "</" << _tag << ">" << std::endl;
 
-			return oss.str();
-		}
+		return oss.str();
+	}
 }
