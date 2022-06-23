@@ -97,7 +97,7 @@ namespace Webserver
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
-		if (std::find(host.getAcceptedMethods().begin(), host.getAcceptedMethods().end(), request.getMethod()) == host.getAcceptedMethods().end())
+		if (!host.isMethodAllowed(request.getMethod()))
 			return new BadStatusResponse(HttpStatusCodes::METHOD_NOT_ALLOWED);
 
 		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
