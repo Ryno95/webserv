@@ -41,4 +41,9 @@ namespace Webserver
 	Host::Host(const LocationConfig& config) : LocationConfig::LocationConfig(config)
 	{
 	}
+
+	bool Host::isMethodAllowed(Method::method method) const
+	{
+		return std::find(getAcceptedMethods().begin(), getAcceptedMethods().end(), method) != getAcceptedMethods().end();
+	}
 }

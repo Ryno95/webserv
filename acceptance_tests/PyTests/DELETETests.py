@@ -8,8 +8,8 @@ from Request import Request, DELETERequest
 EXIT_CODE = 0
 
 #  ----------- Test dir in server to test DELETE method -----------
-if not os.path.exists("../../root/deleteFolderTest"):
-    os.mkdir("../../root/deleteFolderTest")
+if not os.path.exists("../../root/data/uploads/deleteFolderTest"):
+    os.mkdir("../../root/data/uploads/deleteFolderTest")
 
 
 target = "/deleteFolderTest/.algoDentro"

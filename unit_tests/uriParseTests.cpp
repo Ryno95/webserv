@@ -143,6 +143,12 @@ Test(UriTests, NormalizePath5)
 	cr_expect(uri.getResourcePath() == "/images/pngs/image.png");
 }
 
+Test(UriTests, EmptyUri)
+{
+	Uri uri("");
+	cr_expect(uri.getResourcePath() == "/");
+}
+
 Test(UriTests, NormalizePath6)
 {
 	Uri uri("../..");

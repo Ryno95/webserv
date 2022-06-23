@@ -171,6 +171,9 @@ namespace Webserver
 		return _status;
 	}
 
+	/*
+		The target of a uri is guarenteed to be at least "/"
+	*/
 	const std::string& Request::getTarget() const
 	{
 		return _uri.getResourcePath();
@@ -199,7 +202,7 @@ namespace Webserver
 		std::string length;
 		if (tryGetHeader(Header::ContentLength, length))
 			return std::atol(length.c_str());
-		return -1;
+		return 0;
 	}
 
 	/*
