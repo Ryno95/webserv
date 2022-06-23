@@ -39,8 +39,8 @@ namespace Webserver
 		std::deque<Request> _readyRequests;
 		int _fd;
 		state _state;
-		int _bodyBytesReceived;
-		int _bodySize;
+		uint _bodyBytesReceived;
+		uint _bodySize;
 
 	};
 }
