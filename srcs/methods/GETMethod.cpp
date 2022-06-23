@@ -2,6 +2,7 @@
 #include <responses/OkStatusResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 #include <Utility.hpp>
+#include <sys/stat.h>
 #include <autoIndex/AutoIndex.hpp>
 
 
@@ -32,43 +33,40 @@ namespace Webserver
 	}
 
 
-	static bool	doesEndOnSlash(const std::string& target)
+	static bool	endsOnSlash(const std::string& target)
 	{
 		const size_t lastChar = target.size() - 1;
 		
 		return target[lastChar] == '/';
 	}
-	// add !isMethodAllowed()
+
+	static bool	dirHasDefaultIndex(const std::string path)
+	{
+		struct stat fileInfo;
+
+  		return stat(path.c_str(), &fileInfo) == 0; 
+	}
+
 	Response* GETMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering GET method!");
 
 		std::ifstream*	stream = new std::ifstream();
-		std::string		target = prependRoot(_host.getRoot(), _request.getTarget());
+		std::string		target(uri);
 
-		// DEBUG("TARGET: " << _request.getTarget());
-		if (doesEndOnSlash(_request.getTarget()))
+		if (endsOnSlash(target))
 		{
-			// DEBUG("ENTERING AUTOIDEX CHECK");
-			// if (_host.getDefaultIndex() == "")
-			// {
-			// 	DEBUG("Setting default Page");
-			// 	target = _host.getDefaultIndex();
-			// }
-			// else 
-			if (_host.isAutoIndexEnabled())
+			if (_host.getDefaultIndex() != "" && dirHasDefaultIndex(target + _host.getDefaultIndex()))
+				target = uri + _host.getDefaultIndex();
+			else if (_host.isAutoIndexEnabled())
 			{
-				DEBUG("ENTERING AutoIndex");
 				std::stringstream *oss = new std::stringstream();
 				*oss << AutoIndex(target).getHtmlPage();
 				return new OkStatusResponse(oss, HttpStatusCodes::OK);
-				exit(1); // return autoindexObject
 			}
 			else
 				return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 		}
-		target = prependRoot(_host.getRoot(), _request.getTarget());
-		DEBUG("TARGET: " << target);
 		stream->open(target);
 		if (stream->fail())
 		{
