@@ -5,21 +5,6 @@
 #include <sys/stat.h>
 #include <autoIndex/AutoIndex.hpp>
 
-
-// Explaining the Nginx directory index file#
-// By default, Nginx tries to display a directory listing when a particular URL path ends with a /. For example, if you were to use the path /assets/css/,
-// then Nginx would look in the /css/ directory to see if it can find an index.html file (that is if it has permissions).
-// If the autoindex module is not active and there is no index.html present, then Nginx will return a 404 Not Found error.
-
-// However, in the event that you do have an index.html file in that directory, then Nginx will use that to generate a directory listing of the assets that live within that directory.
-//  For example, as seen in the screenshot below, an index is generated within the /test/ directory which then displays both items that live within /test/.
-
-// To add autoindexing
-// location			/ 
-// {
-//    autoindex true
-// }
-
 namespace Webserver
 {
 	GETMethod::GETMethod(Request const& request, const Host& host) : AMethod(request, host)
