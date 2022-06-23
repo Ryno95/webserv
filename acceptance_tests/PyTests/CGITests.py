@@ -9,7 +9,7 @@ from Request import Request, CgiRequest
 
 EXIT_CODE = 0
 
-localhost = "http://localhost:8080/add.py"
+localhost = "http://localhost:8080/cgi-bin/add.py"
 
 # Create query string QUERY_STRING=val1=6&val2=63
 _data={"val1":"6",
@@ -28,7 +28,7 @@ if not cgiRequest._response.text.find(_data["val1"] + _data["val2"]):
 
 
 
-localhost = "http://localhost:8080/NonExistantScript.py"
+localhost = "http://localhost:8080/cgi-bin/NonExistantScript.py"
 # Create query string QUERY_STRING=val1=6&val2=63
 _data={"val1":"6",
         "val2":"63"}

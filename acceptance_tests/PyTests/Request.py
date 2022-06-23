@@ -58,7 +58,7 @@ class POSTRequest(Request):
         self._body = ""
         self._response = []
         self.createdFile = ""
-        self._uri = LOCAL_HOST + "/" + fileName
+        self._uri = LOCAL_HOST + "/uploads/" + fileName
 
     def checkCreatedFileContent(self):
         self.createdFile = self._response.headers.get('Created-file')
@@ -95,8 +95,8 @@ class DELETERequest(Request):
     def __init__(self, target):
         self._method = Methods.DELETE
         self._target = target
-        self._fullFilePath = "../../root" + self._target
-        self._uri = LOCAL_HOST + target
+        self._fullFilePath = "../../root/data/uploads" + self._target
+        self._uri = LOCAL_HOST + "/uploads" + target
         self._response = []
         self._fd = None
 
