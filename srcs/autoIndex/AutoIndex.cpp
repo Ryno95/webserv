@@ -15,7 +15,6 @@ namespace Webserver
 
 		getDirEntries();
 		std::vector<std::string>::const_iterator it = _dirEntries.begin();
-
 		for(; it != _dirEntries.end(); it++)
 			_builder.addElement("body", "", HtmlBuilder("p")
 									.addElement("a" , "href=" + *it, *it)
