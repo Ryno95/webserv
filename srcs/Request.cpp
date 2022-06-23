@@ -171,6 +171,9 @@ namespace Webserver
 		return _status;
 	}
 
+	/*
+		The target of a uri is guarenteed to be at least "/"
+	*/
 	const std::string& Request::getTarget() const
 	{
 		return _uri.getResourcePath();
