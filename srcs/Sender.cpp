@@ -36,7 +36,6 @@ namespace Webserver
 				break;
 
 			case FINISHED:
-				std::cerr << "FINSIHED" << std::endl;
 				_dataStream = nullptr;
 				break;
 		}

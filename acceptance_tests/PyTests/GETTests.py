@@ -22,11 +22,11 @@ GetRequest = Request.GETRequest(localhost, HttpResponseStatus.OK)
 EXIT_CODE += GetRequest.doRequest()
 
 localhost = "http://localhost:8080/root/cgi-bin/hello.py"
-GetRequest = Request.GETRequest(localhost, HttpResponseStatus.OK)
+GetRequest = Request.GETRequest(localhost, HttpResponseStatus.METHOD_NOT_ALLOWED)
 EXIT_CODE += GetRequest.doRequest()
 
 localhost = "http://localhost:8080/cgi-bin/hello.py"
-GetRequest = Request.GETRequest(localhost, HttpResponseStatus.OK)
+GetRequest = Request.GETRequest(localhost, HttpResponseStatus.METHOD_NOT_ALLOWED)
 EXIT_CODE += GetRequest.doRequest()
 
 localhost = "http://localhost:8080/cgi-bin/"

@@ -96,6 +96,10 @@ namespace Webserver
 	Response* Client::processValidRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+
+		if (!host.isMethodAllowed(request.getMethod()))
+			return new BadStatusResponse(HttpStatusCodes::METHOD_NOT_ALLOWED);
+
 		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
 
 		switch (host.getRouteType())
@@ -124,7 +128,6 @@ namespace Webserver
 		{
 			Response *response = nullptr;
 			Request const& request = _requestQueue.front();
-			Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
 			// an error occured during parsing / preparing the request, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)

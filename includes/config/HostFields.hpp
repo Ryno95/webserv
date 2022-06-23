@@ -19,7 +19,8 @@ namespace Webserver
 		const std::string& getRoot() const;
 		const std::string& getDefaultIndex() const;
 		const std::string& getDefaultError() const;
-		const std::vector<Method::method> getAcceptedMethods() const;
+		const std::vector<Method::method>& getAcceptedMethods() const;
+		bool isUploadAllowed() const;
 
 	protected:
 		bool						_autoIndexEnabled;
@@ -27,5 +28,6 @@ namespace Webserver
 		std::string					_defaultIndex;
 		std::string					_defaultError;
 		std::vector<Method::method>	_acceptedMethods;
+		bool						_allowUpload;
 	};
 }

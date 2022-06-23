@@ -25,6 +25,7 @@ namespace Webserver
 		bool isDebugEnabled() const;
 		bool isDebugLoggingEnabled() const;
 		const std::string& getLogFileName() const;
+		uint getMaxRequestBodySize() const;
 
 	private:
 		MimeTypes	_mimeTypes;
@@ -35,5 +36,6 @@ namespace Webserver
 		bool		_debugEnabled;
 		bool		_loggingEnabled;
 		std::string	_logFile;
+		uint		_maxRequestBodySize;
 	};
 }

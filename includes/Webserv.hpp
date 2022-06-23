@@ -20,8 +20,9 @@ namespace Webserver
 
 	class Webserv : public IPollable, public ITickable
 	{
-		public:
 			static AppConfig* _appConfig;
+
+		public:
 			static void config(AppConfig* config);
 			static const AppConfig& config();
 

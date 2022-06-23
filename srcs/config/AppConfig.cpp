@@ -5,11 +5,12 @@ namespace Webserver
 {
 	AppConfig::AppConfig() :
 		_listenBacklog(42),
-		_bufferSize(2048),
+		_bufferSize(4096),
 		_mimeFilePath("mime.config"),
 		_debugEnabled(false),
 		_loggingEnabled(false),
-		_logFile("logs.log")
+		_logFile("logs.log"),
+		_maxRequestBodySize(40960)
 	{
 	}
 
@@ -62,4 +63,10 @@ namespace Webserver
 	{
 		return _logFile;
 	}
+
+	uint AppConfig::getMaxRequestBodySize() const
+	{
+		return _maxRequestBodySize;
+	}
+
 }

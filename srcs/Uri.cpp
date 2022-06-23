@@ -104,7 +104,7 @@ namespace Webserver
 			throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
 
 		_host = _raw.substr(schemeLen, end - schemeLen);
-		setPath(_raw.substr(end, std::string::npos));
+		_path = _raw.substr(end, std::string::npos);
 	}
 
 	void Uri::parse()
