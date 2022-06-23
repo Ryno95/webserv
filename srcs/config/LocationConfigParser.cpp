@@ -28,6 +28,7 @@ namespace Webserver
 		keywords["default_index"]		= new ParseVariableCommand<std::string>(&_data->_defaultIndex);
 		keywords["default_error"]		= new ParseVariableCommand<std::string>(&_data->_defaultError);
 		keywords["accepted_methods"]	= new ParseVariableCommand<std::vector<Method::method> >(&_data->_acceptedMethods);
+		keywords["allow_upload"]		= new ParseVariableCommand<bool>(&_data->_allowUpload);
 
 		keywords["route_type"]	= new ParseVariableCommand<RouteType::RouteType>(&_data->_routeType);
 
