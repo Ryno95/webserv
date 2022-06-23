@@ -24,9 +24,10 @@ namespace Webserver
 
 	std::vector<std::string> AutoIndex::getDirEntries()
 	{
-		dirent* dirEntry;
-		DIR* dir;
-		std::vector<std::string> entries;
+		const std::string			currDir(".");
+		DIR* 						dir;
+		dirent* 					dirEntry;
+		std::vector<std::string> 	entries;
 
 		dir = opendir(_root.c_str());
 		while (true)
@@ -34,7 +35,7 @@ namespace Webserver
 			dirEntry = readdir(dir);
 			if (dirEntry == nullptr)
 				break;
-			if (std::strcmp(dirEntry->d_name, ".") != 0)
+			if (currDir.compare(dirEntry->d_name) != 0)
 			{
 				if (dirEntry->d_type == DT_DIR)
 					entries.push_back(std::string(dirEntry->d_name).append("/"));
