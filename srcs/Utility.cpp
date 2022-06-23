@@ -54,10 +54,8 @@ namespace Webserver
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
 
-		// timestamp = "[";
 		timestamp += asctime(timeinfo);
 		timestamp.pop_back();
-		// timestamp += "] ";
 		return timestamp;
 	}
 
@@ -100,8 +98,6 @@ namespace Webserver
 		const size_t	rootSlashPos = root.find_last_of('/');
 		const size_t	rootSize = root.size();
 
-		std::cerr << "ROOT: " << root << std::endl;
-		std::cerr << "TARGET: " << target << std::endl;
 		if (target.find(root) != std::string::npos)
 		{
 			if (targetSlashPos == 0)

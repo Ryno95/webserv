@@ -36,6 +36,7 @@ namespace Webserver
 				break;
 
 			case FINISHED:
+				std::cerr << "FINSIHED" << std::endl;
 				_dataStream = nullptr;
 				break;
 		}
@@ -52,7 +53,7 @@ namespace Webserver
 			return 0;
 		}
 
-		 _dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
+		_dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
 		return _dataStream->gcount();
 	}
 

@@ -60,7 +60,6 @@ namespace Webserver
 		}
 	}
 
-
 	void Receiver::processBodyRecv()
 	{
 		_bodyBytesReceived += _recvBuffer.length();
