@@ -32,10 +32,18 @@ namespace Webserver
   		return stat(path.c_str(), &fileInfo) == 0; 
 	}
 
+
+	static bool isDir(const std::string& target)
+	{
+		struct stat fileInfo;
+		if (stat(target.c_str(), &fileInfo) == 0 && fileInfo.st_mode & S_IFDIR)
+			return true;
+  		return false;
+	}
+
 	Response* GETMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering GET method!");
-
 		std::ifstream*	stream = new std::ifstream();
 		std::string		target(uri);
 
@@ -52,6 +60,9 @@ namespace Webserver
 			else
 				return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 		}
+		else if (isDir(target))
+			return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
+
 		stream->open(target);
 		if (stream->fail())
 		{
