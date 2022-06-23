@@ -1,5 +1,6 @@
 #include <methods/GETMethod.hpp>
 #include <responses/OkStatusResponse.hpp>
+#include <responses/AutoIndexResponse.hpp>
 #include <responses/BadStatusResponse.hpp>
 #include <Utility.hpp>
 #include <sys/stat.h>
@@ -29,7 +30,7 @@ namespace Webserver
 	{
 		struct stat fileInfo;
 
-  		return stat(path.c_str(), &fileInfo) == 0; 
+		return stat(path.c_str(), &fileInfo) == 0; 
 	}
 
 
@@ -52,11 +53,7 @@ namespace Webserver
 			if (_host.getDefaultIndex() != "" && dirHasDefaultIndex(target + _host.getDefaultIndex()))
 				target = uri + _host.getDefaultIndex();
 			else if (_host.isAutoIndexEnabled())
-			{
-				std::stringstream *oss = new std::stringstream();
-				*oss << AutoIndex(target).getHtmlPage();
-				return new OkStatusResponse(oss, HttpStatusCodes::OK);
-			}
+				return new AutoIndexResponse(target);
 			else
 				return new BadStatusResponse(HttpStatusCodes::NOT_FOUND, NotFoundErrorPage);
 		}

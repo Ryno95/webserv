@@ -10,8 +10,6 @@ namespace Webserver
 			OkStatusResponse(HttpStatusCode code);
 			OkStatusResponse(std::stringstream* strStream, HttpStatusCode code);
 			OkStatusResponse(std::ifstream* stream, const std::string &fileName, HttpStatusCode code);
-			~OkStatusResponse();
-
-		private:
+			virtual ~OkStatusResponse();
 	};
 }
