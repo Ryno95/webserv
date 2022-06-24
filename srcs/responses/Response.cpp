@@ -107,6 +107,7 @@ namespace Webserver
 		getBodyStream()->seekg(0, std::ios_base::end);
 		addHeader(Header::ContentLength, std::to_string(_bodyStream->tellg()));
 		addHeader(Header::ContentType, getContentTypeHeader(fileName));
+		getBodyStream()->seekg(0);
 	}
 
 	std::istream* Response::getBodyStream() const
