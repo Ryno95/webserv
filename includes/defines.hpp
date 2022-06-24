@@ -11,7 +11,7 @@
 
 #define ROOT "./root/uploads/"
 
-#define ERROR_PAGES_DIR "config/error_pages/"
+#define ERROR_PAGES_DIR "root/error_pages/"
 
 #pragma region CONFIG FILE
 

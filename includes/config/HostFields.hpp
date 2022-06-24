@@ -13,8 +13,8 @@ namespace Webserver
 	{
 	public:
 
-	typedef std::pair<uint, std::string>	ErrorPage;
-	typedef std::map<uint, std::string>		ErrorPages;
+	typedef std::pair<unsigned int, std::string>	ErrorPage;
+	typedef std::map<unsigned int, std::string>		ErrorPages;
 
 		HostFields();
 		~HostFields();
