@@ -46,8 +46,8 @@ namespace Webserver
 
 		void processRequests();
 		Response* processRequest(const Request& request);
-		Response* processValidRequest(const Request& request);
-		Response* processInvalidRequest(HttpStatusCode code);
+		Response* processValidRequest(const Host& host, const Request& request);
+		Response* processInvalidRequest(const Host& host, HttpStatusCode code);
 
 		timeval _lastCommunicated;
 

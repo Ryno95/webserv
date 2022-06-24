@@ -22,9 +22,6 @@ namespace Webserver
 		const MimeTypes& getMimeTypes() const;
 		uint getListenBacklog() const;
 		uint getBufferSize() const;
-		bool isDebugEnabled() const;
-		bool isDebugLoggingEnabled() const;
-		const std::string& getLogFileName() const;
 		uint getMaxRequestBodySize() const;
 
 	private:
@@ -33,9 +30,6 @@ namespace Webserver
 		uint		_listenBacklog;
 		uint		_bufferSize;
 		std::string	_mimeFilePath;
-		bool		_debugEnabled;
-		bool		_loggingEnabled;
-		std::string	_logFile;
 		uint		_maxRequestBodySize;
 	};
 }

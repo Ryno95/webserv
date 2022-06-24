@@ -5,6 +5,7 @@
 #include <vector>
 #include <Exception.hpp>
 #include <RouteType.hpp>
+#include <config/HostFields.hpp>
 
 namespace Webserver
 {
@@ -66,7 +67,6 @@ namespace Webserver
 	inline std::vector<Method::method> VariableParser::parse(const std::string& value) const
 	{
 		std::string str = value;
-		std::string methodStr;
 		std::vector<Method::method> values;
 
 		while (true)
@@ -99,5 +99,39 @@ namespace Webserver
 			return RouteType::CGI;
 		else
 			throw Webserver::InvalidValueException(value);
+	}
+
+	template<>
+	inline HostFields::ErrorPages VariableParser::parse(const std::string& value) const
+	{
+		std::string str = value;
+		HostFields::ErrorPages pages;
+
+		size_t lastWhitespace = str.rfind(' ');
+		size_t lastHorizontalTab = str.rfind('\t');
+
+		if (lastWhitespace == std::string::npos)
+			lastWhitespace = lastHorizontalTab;
+		else if (lastHorizontalTab != std::string::npos)
+			lastWhitespace = std::max(lastWhitespace, lastHorizontalTab);
+
+		std::string page = str.substr(lastWhitespace + 1);
+		str = removeTrailingWhitespace(str.substr(0, lastWhitespace));
+
+		while (true)
+		{
+			size_t end = std::min(std::min(str.find(' '), str.find('\t')), str.size());
+
+			uint statusCode = parse<uint>(str.substr(0, end));
+
+			pages.insert(HostFields::ErrorPage(statusCode, page));
+
+			if (end == str.size())
+				break;
+
+			str = str.substr(end, str.size() - end);
+			str = removeLeadingWhitespace(str);
+		}
+		return pages;
 	}
 }
