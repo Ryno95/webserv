@@ -6,26 +6,41 @@
 
 using namespace Webserver;
 
-// Test(Mimes, valid)
-// {
-// 	AppConfig* config = Parser<AppConfigParser>(new std::fstream("default.config")).parse();
-// 	Webserv::config(config);
-// 	MimeTypes mimes("unit_tests/test.mime");
+AppConfig* parseConfig(const std::string& path)
+{
+	try
+	{
+		std::ifstream fstream(path);
+		if (fstream.fail())
+			throw FileNotFoundException(path);
+		return Parser<AppConfigParser>(fstream).parse();
+	}
+	catch(const std::exception& e)
+	{
+		throw std::runtime_error(std::string("In config file: ") + e.what());
+	}
+}
 
-// 	cr_expect(mimes.getMIMEType("html") == "text/html");
-// 	cr_expect(mimes.getMIMEType("htm") == "text/html");
-// 	cr_expect(mimes.getMIMEType("shtml") == "text/html");
-// 	cr_expect(mimes.getMIMEType("mng") == "video/x-mng");
-// }
+Test(Mimes, valid)
+{
+	AppConfig* config = parseConfig("default.config");
+	Webserv::config(config);
+	MimeTypes mimes("unit_tests/test.mime");
 
-// Test(Mimes, invalid)
-// {
-// 	AppConfig* config = Parser<AppConfigParser>(new std::fstream("default.config")).parse();
-// 	Webserv::config(config);
-// 	MimeTypes mimes("unit_tests/test.mime");
+	cr_expect(mimes.getMIMEType("html") == "text/html");
+	cr_expect(mimes.getMIMEType("htm") == "text/html");
+	cr_expect(mimes.getMIMEType("shtml") == "text/html");
+	cr_expect(mimes.getMIMEType("mng") == "video/x-mng");
+}
 
-// 	cr_expect(mimes.getMIMEType("doenstExists") == "application/octet-stream");
-// 	cr_expect(mimes.getMIMEType(".") == "application/octet-stream");
-// 	cr_expect(mimes.getMIMEType("") == "application/octet-stream");
-// 	cr_expect(mimes.getMIMEType("html.") == "application/octet-stream");
-// }
+Test(Mimes, invalid)
+{
+	AppConfig* config = parseConfig("default.config");
+	Webserv::config(config);
+	MimeTypes mimes("unit_tests/test.mime");
+
+	cr_expect(mimes.getMIMEType("doenstExists") == "application/octet-stream");
+	cr_expect(mimes.getMIMEType(".") == "application/octet-stream");
+	cr_expect(mimes.getMIMEType("") == "application/octet-stream");
+	cr_expect(mimes.getMIMEType("html.") == "application/octet-stream");
+}
