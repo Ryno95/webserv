@@ -1,23 +1,26 @@
 #pragma once
 
 #include <iostream>
+#include <sys/stat.h>
 
 namespace Webserver
 {
 	class TargetInfo
 	{
 		public:
-			TargetInfo(std::string &target);
+			TargetInfo(std::string target);
 			
-			bool isDir();
+			bool isDir() const;
+			bool isWriteable() const;
+			bool isExecutable() const;
+			bool entryExists() const;
+
+			const std::string& getTarget() const;
 
 		private:
-			int				_stats;
-			std::string&	_target;
+			std::string		_target;
+			struct stat		_stats;
 			bool			_entryExists;
 	};
-
-	
-
 	
 }

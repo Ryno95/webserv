@@ -1,6 +1,4 @@
 #include <Utility.hpp>
-#include <sys/stat.h>
-
 #include <HttpStatusCode.hpp>
 #include <Logger.hpp>
 #include <methods/DELETEMethod.hpp>
@@ -17,17 +15,15 @@ namespace Webserver
 	{
 	}
 
-	Response* DELETEMethod::process(const std::string& uri)
+	Response* DELETEMethod::process(const TargetInfo& uri)
 	{
 		DEBUG("DELETE METHOD");
 
-		struct stat 		fileInfo;
-
-		if (stat(uri.c_str(), &fileInfo) == SYSTEM_ERR)
+		if (!uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
-		else if ((!(fileInfo.st_mode & S_IWUSR) && !(fileInfo.st_mode & S_IXUSR))) // check that file has write/exec permissions
+		else if (!uri.isWriteable() && !uri.isExecutable())
 			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
-		else if (remove(uri.c_str()) == SYSTEM_ERR)
+		else if (remove(uri.getTarget().c_str()) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
 		return new Response(HttpStatusCodes::OK);
