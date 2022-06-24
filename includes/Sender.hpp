@@ -1,6 +1,6 @@
 #pragma once
 
-#include <responses/AResponse.hpp>
+#include <responses/Response.hpp>
 
 #include <iostream>
 
@@ -20,7 +20,7 @@ namespace Webserver
 
 		void handle();
 		bool hasResponse() const;
-		void setResponse(AResponse* response);
+		void setResponse(Response* response);
 
 	private:
 		enum state
@@ -37,7 +37,7 @@ namespace Webserver
 
 		int _fd;
 		int _currentState;
-		AResponse* _response;
+		Response* _response;
 		std::istream *_dataStream;
 		char* _buffer;
 	};
