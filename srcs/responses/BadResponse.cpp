@@ -8,17 +8,42 @@ namespace Webserver
 {
 	BadResponse::BadResponse(HttpStatusCode code) : Response(code)
 	{
-		addErrorFile();
 	}
+
+	BadResponse::BadResponse(const Host& host, HttpStatusCode code) : Response(code)
+	{
+		addErrorFile(host.getDefaultError(), host.getErrorPages());
+	}
+	
 
 	BadResponse::~BadResponse()
 	{
 	}
 
-	void BadResponse::addErrorFile()
+	void BadResponse::addErrorFile(const std::string& defaultError, const HostFields::ErrorPages& errorPages)
 	{
-		// search for the http status code in a map containing:
-		// code -> file
-		// if not found, send general error page
+		HostFields::ErrorPages::const_iterator errorPage = errorPages.find(_statusCode.first);
+		if (errorPage != errorPages.end())
+		{
+			try
+			{
+				addFile(ERROR_PAGES_DIR + errorPage->second);
+				WARN("Added specific error file to body");
+				return;
+			}
+			catch(const std::exception& e)
+			{
+			}
+		}
+
+		try
+		{
+			addFile(ERROR_PAGES_DIR + defaultError);
+			WARN("Added default error file to body");
+		}
+		catch(const std::exception& e)
+		{
+			ERROR("Default error not found!");
+		}
 	}
 }
