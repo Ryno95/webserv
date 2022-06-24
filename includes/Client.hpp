@@ -9,7 +9,7 @@
 #include <config/ServerConfig.hpp>
 #include <Request.hpp>
 #include <Receiver.hpp>
-#include <responses/AResponse.hpp>
+#include <responses/Response.hpp>
 #include <Cgi.hpp>
 #include <Sender.hpp>
 #include <IPollable.hpp>
@@ -43,13 +43,16 @@ namespace Webserver
 		void setLastCommunicated();
 		void recvRequests();
 		void sendResponses();
+
 		void processRequests();
-		AResponse* processValidRequest(const Request& request);
+		Response* processRequest(const Request& request);
+		Response* processValidRequest(const Request& request);
+		Response* processInvalidRequest(HttpStatusCode code);
 
 		timeval _lastCommunicated;
 
 		std::deque<Request> _requestQueue;
-		std::deque<AResponse *> _responseQueue;
+		std::deque<Response *> _responseQueue;
 
 		int _fd;
 		Receiver _receiver;

@@ -7,10 +7,11 @@
 #include <Logger.hpp>
 #include <PollHandler.hpp>
 #include <TimeoutHandler.hpp>
-#include <responses/RedirectResponse.hpp>
-#include <responses/BadStatusResponse.hpp>
-#include <responses/OkStatusResponse.hpp>
+#include <responses/Response.hpp>
+#include <responses/BadResponse.hpp>
 #include <responses/CgiResponse.hpp>
+#include <responses/RedirectResponse.hpp>
+#include <Exception.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -93,12 +94,18 @@ namespace Webserver
 		}
 	}
 
+	/*
+		Process the valid request with the requested method and host.
+		If no error occurs during processing, a response object is returned,
+		containing the results of the request.
+		If an error occurs, an InvalidRequestException is thrown. (Nothing returned, catch instead)
+	*/
 	Response* Client::processValidRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
 
 		if (!host.isMethodAllowed(request.getMethod()))
-			return new BadStatusResponse(HttpStatusCodes::METHOD_NOT_ALLOWED);
+			throw InvalidRequestException(HttpStatusCodes::METHOD_NOT_ALLOWED);
 
 		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
 
@@ -114,12 +121,32 @@ namespace Webserver
 					case Method::POST:		return POSTMethod(request, host).process(uri);
 					case Method::DELETE:	return DELETEMethod(request, host).process(uri);
 
-					default:
-						WARN("INVALID method still continued processing, which is not expected to occur.");
+					default:				break;
 				}
 		}
-		WARN("Returning nullptr instead of a response.");
-		return nullptr;
+		WARN("Unexpected: The requested routetype (" << host.getRouteType() << ") or method (" << request.getMethod() << ") is not supported.");
+		throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
+	}
+
+	Response* Client::processInvalidRequest(HttpStatusCode code)
+	{
+		return new BadResponse(code);
+	}
+
+	Response* Client::processRequest(const Request& request)
+	{
+		try
+		{
+			// The request we received is invalid, so we send the error-code back
+			if (request.getStatus() != HttpStatusCodes::OK)
+				throw InvalidRequestException(request.getStatus());
+
+			return processValidRequest(request);
+		}
+		catch(const InvalidRequestException& e)
+		{
+			return processInvalidRequest(e.getStatus());
+		}
 	}
 
 	void Client::processRequests()
@@ -129,11 +156,7 @@ namespace Webserver
 			Response *response = nullptr;
 			Request const& request = _requestQueue.front();
 
-			// an error occured during parsing / preparing the request, so we send the error-code back
-			if (request.getStatus() != HttpStatusCodes::OK)
-				response = new BadStatusResponse(request.getStatus());
-			else
-				response = processValidRequest(request);
+			response = processRequest(request);
 
 			// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
 			std::string connectionValue;
@@ -143,8 +166,7 @@ namespace Webserver
 				response->addHeader(Header::Connection, "keep-alive");
 
 			_requestQueue.pop_front();
-			if (response != nullptr) // If we ALWAYS want to respond, we could send BAD_REQUEST
-				_responseQueue.push_back(response);
+			_responseQueue.push_back(response);
 		}
 	}
 
