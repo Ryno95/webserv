@@ -19,13 +19,6 @@ namespace Webserver
 	{
 	}
 
-	bool Request::hasBodyField() const
-	{
-		if (_method == Method::POST)
-			return true;
-		return false;
-	}
-
 	void Request::appendBody(const std::string &body)
 	{
 		_body += body;
@@ -162,6 +155,7 @@ namespace Webserver
 	void Request::parse()
 	{
 		size_t pos = parseRequestLine();
+		std::cerr << this->getTarget() << std::endl;
 		parseHeaderFields(pos);
 		validate();
 	}

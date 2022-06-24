@@ -67,6 +67,16 @@ namespace Webserver
 			_state = ADD_REQUEST;
 	}
 
+	bool Receiver::requestHasBodyField(const Request& req)
+	{
+		_bodySize = req.getBodySize();
+		if (_bodySize > Webserv::config().getMaxRequestBodySize())
+			throw InvalidRequestException(HttpStatusCodes::PAYLOAD_TOO_LARGE);
+		else if (_bodySize == 0)
+			return false;
+		return true;
+	}
+
 	void Receiver::checkHeader()
 	{
 		_newRequest = Request(_buffer);
@@ -75,13 +85,10 @@ namespace Webserver
 		try
 		{
 			_newRequest.parse();
-			if (_newRequest.hasBodyField())
+			if (requestHasBodyField(_newRequest))
 			{
 				_state = RECV_BODY;
 				_bodyBytesReceived = 0;
-				_bodySize = _newRequest.getBodySize();
-				if (_bodySize > Webserv::config().getMaxRequestBodySize())
-					throw InvalidRequestException(HttpStatusCodes::PAYLOAD_TOO_LARGE);
 				return ;
 			}
 		}

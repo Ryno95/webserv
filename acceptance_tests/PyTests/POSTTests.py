@@ -9,7 +9,8 @@ from Request import Request, POSTRequest
 
 bigFile = "bigPost.txt"
 basicFile = "simplePost.txt"
-emptyFile = "emptyPost.txt"
+singleLineFile = "singleLineFile.txt"
+emptyFile = "emptyFile.txt"
 
 EXIT_CODE = 0
 
@@ -26,11 +27,18 @@ postRequest.checkCreatedFileContent()
 postRequest.removeCreatedFile()
 
 
+postRequest = POSTRequest(singleLineFile)
+postRequest.doRequest()
+EXIT_CODE += postRequest.checkCreated(postRequest._response)
+postRequest.checkCreatedFileContent()
+postRequest.removeCreatedFile()
+
 postRequest = POSTRequest(emptyFile)
 postRequest.doRequest()
 EXIT_CODE += postRequest.checkCreated(postRequest._response)
 postRequest.checkCreatedFileContent()
 postRequest.removeCreatedFile()
+
 
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(0.2)
