@@ -24,7 +24,7 @@ namespace Webserver
 		Response &operator=(const Response &rhs);
 		virtual ~Response();
 
-		virtual std::istream *getBodyStream() const;
+		std::istream *getBodyStream() const;
 
 		void			addFile(const std::string& filePath);
 		std::istream	*getHeaderStream();
