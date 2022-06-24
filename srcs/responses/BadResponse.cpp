@@ -28,7 +28,6 @@ namespace Webserver
 			try
 			{
 				addFile(ERROR_PAGES_DIR + errorPage->second);
-				WARN("Added specific error file to body");
 				return;
 			}
 			catch(const std::exception& e)
@@ -39,7 +38,6 @@ namespace Webserver
 		try
 		{
 			addFile(ERROR_PAGES_DIR + defaultError);
-			WARN("Added default error file to body");
 		}
 		catch(const std::exception& e)
 		{
