@@ -41,22 +41,21 @@ namespace Webserver
 	{
 		DEBUG("Entering POST method!");
 
-		const std::string	fileName  = prependRoot(_host.getRoot(), _request.getTarget());
 		std::ofstream		outfile;
 		bool				isCreatingNewFile = false;
 		
 		// check if file aready exists
-		if (access(fileName.c_str(), R_OK) == -1)
+		if (access(uri.c_str(), R_OK) == -1)
 			isCreatingNewFile = true;
 
-		outfile.open(fileName, std::ios_base::app);
+		outfile.open(uri, std::ios_base::app);
 		if (!outfile.is_open())
 		{
-			WARN("Unexpected: File '" << fileName << "' could not be opened, while we just tried to create it.");
+			WARN("Unexpected: File '" << uri << "' could not be opened, while we just tried to create it.");
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
 
-		_absPathForCreatedFile = fileName;
+		_absPathForCreatedFile = uri;
 		outfile << _request.getBody();
 
 		_response = new Response(HttpStatusCodes::OK);
