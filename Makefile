@@ -24,11 +24,8 @@ CLASSES		=	Utility\
 				methods/GETMethod\
 				methods/POSTMethod\
 				methods/DELETEMethod\
-				responses/AResponse\
-				responses/AFileResponse\
-				responses/AEmptyBodyResponse\
-				responses/OkStatusResponse\
-				responses/BadStatusResponse\
+				responses/Response\
+				responses/BadResponse\
 				responses/RedirectResponse\
 				responses/CgiResponse\
 				MimeTypes\
@@ -45,7 +42,6 @@ CLASSES		=	Utility\
 				Host\
 				Uri\
 				HeaderFields
-
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
