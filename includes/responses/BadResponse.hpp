@@ -3,8 +3,7 @@
 #include <responses/Response.hpp>
 #include <config/HostFields.hpp>
 #include <Host.hpp>
-
-#define ERROR_PAGES_DIR "config/error_pages/"
+#include <defines.hpp>
 
 namespace Webserver
 {
