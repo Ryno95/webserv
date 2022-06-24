@@ -1,6 +1,10 @@
 #pragma once
 
 #include <responses/Response.hpp>
+#include <config/HostFields.hpp>
+#include <Host.hpp>
+
+#define ERROR_PAGES_DIR "config/error_pages/"
 
 namespace Webserver
 {
@@ -8,9 +12,10 @@ namespace Webserver
 	{
 		public:
 			BadResponse(HttpStatusCode code);
+			BadResponse(const Host& host, HttpStatusCode code);
 			~BadResponse();
 
 		private:
-			void addErrorFile();
+			void addErrorFile(const std::string& defaultError, const HostFields::ErrorPages& errorPages);
 	};
 }
