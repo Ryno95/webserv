@@ -14,13 +14,8 @@ namespace Webserver
 	{
 		setStatusCode(_cgiRequest.getStatus());
 		if (_statusCode == HttpStatusCodes::NOT_FOUND)
-		{
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
-			// setBodyStream(new std::ifstream("root/NotFoundErrorPage.html"));
-			// if (!_bodyStream->is_open())
-			// 	throw std::runtime_error("Errorfile doens't exist");
-			// createContentHeaders("root/NotFoundErrorPage.html");
-		}
+
 		addHeader(Header::ContentType, "text/html");
 		setBodyStream(_cgiRequest.getCgiStream());
 	}

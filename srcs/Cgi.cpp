@@ -29,11 +29,11 @@ namespace Webserver
 			_uri(uri)
 	{
 		_pipeFd[READ_FD] = SYSTEM_ERR;
-		if (pipe(_pipeFd) <  0)
-			throw SystemCallFailedException("Pipe()");
+		if (pipe(_pipeFd) < 0)
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Fork()");
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		else if (_pid == CHILD_PROCESS)
 		{
 			try {
@@ -44,10 +44,12 @@ namespace Webserver
 				exit(1);
 			}
 		}
+
 		// parent
 		reapChild();
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
-			throw SystemCallFailedException("fcntl");
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
+
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -56,6 +58,7 @@ namespace Webserver
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
+
 		if (_pipeFd[READ_FD] != SYSTEM_ERR)
 			close(_pipeFd[READ_FD]);
 	}
@@ -142,14 +145,14 @@ namespace Webserver
 	{
 		struct timeval time;
 		if (gettimeofday(&time, NULL) == SYSTEM_CALL_ERROR)
-			throw (SystemCallFailedException("gettimeofday()"));
+			throw (SystemCallFailedException("gettimeofday()")); // Server will break
 		return (time);
 	}
 
 	void Cgi::onRead()
 	{
 		char 				buffer[BUFFERSIZE];
-        int 				readBytes = 0;
+		int 				readBytes = 0;
 
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
 		if (readBytes == SYSTEM_ERR || readBytes == 0)
