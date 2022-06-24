@@ -65,21 +65,20 @@ namespace Webserver
 		std::map<std::string, std::string>::const_iterator cursor = headersBegin();
 		std::map<std::string, std::string>::const_iterator end = headersEnd();
 		
-		std::string	header = HTTPVERSION;
-		header += " ";
-		header += std::to_string(_statusCode.first);
-		header += " ";
-		header += _statusCode.second;
+		_headerStream << HTTPVERSION;
+		_headerStream << " ";
+		_headerStream << std::to_string(_statusCode.first);
+		_headerStream << " ";
+		_headerStream << _statusCode.second;
 		while (cursor != end)
 		{
-			header += "\r\n";
-			header += cursor->first;
-			header += ": ";
-			header += cursor->second;
+			_headerStream << "\r\n";
+			_headerStream << cursor->first;
+			_headerStream << ": ";
+			_headerStream << cursor->second;
 			++cursor;
 		}
-		header += "\r\n\r\n";
-		_headerStream << header;
+		_headerStream << "\r\n\r\n";
 		return &_headerStream;
 	}
 

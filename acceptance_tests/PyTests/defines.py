@@ -1,14 +1,16 @@
 from enum import Enum
 
 class HttpResponseStatus:
-    OK				= 200
-    CREATED			= 201
-    BAD_REQUEST		= 400
-    FORBIDDEN		= 403
-    NOT_FOUND		= 404
-    URI_TOO_LONG	= 414
-    TEAPOT			= 418
-    NOT_IMPLEMENTED	= 501
+    OK				        = 200
+    CREATED			        = 201
+    BAD_REQUEST		        = 400
+    FORBIDDEN		        = 403
+    NOT_FOUND		        = 404
+    METHOD_NOT_ALLOWED		= 405
+    PAYLOAD_TOO_LARGE       = 413
+    URI_TOO_LONG	        = 414
+    TEAPOT			        = 418
+    NOT_IMPLEMENTED	        = 501
 
 class returnStatus:
     ERROR   = 1
