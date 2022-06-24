@@ -2,14 +2,20 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <Method.hpp>
+#include <HttpStatusCode.hpp>
 
 namespace Webserver
 {
 	class HostFields
 	{
 	public:
+
+	typedef std::pair<uint, std::string>	ErrorPage;
+	typedef std::map<uint, std::string>		ErrorPages;
+
 		HostFields();
 		~HostFields();
 		HostFields(const HostFields& ref);
@@ -21,6 +27,7 @@ namespace Webserver
 		const std::string& getDefaultError() const;
 		const std::vector<Method::method>& getAcceptedMethods() const;
 		bool isUploadAllowed() const;
+		const ErrorPages& getErrorPages() const;
 
 	protected:
 		bool						_autoIndexEnabled;
@@ -29,5 +36,6 @@ namespace Webserver
 		std::string					_defaultError;
 		std::vector<Method::method>	_acceptedMethods;
 		bool						_allowUpload;
+		ErrorPages					_errorPages;
 	};
 }
