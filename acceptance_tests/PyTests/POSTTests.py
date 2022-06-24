@@ -1,11 +1,11 @@
-import requests
-from requests import Session
-from requests.structures import CaseInsensitiveDict
-
 import time
 
 from defines import Colors, returnStatus, Methods, HttpResponseStatus, LOCAL_HOST
 from Request import Request, POSTRequest
+
+# PostRequest expects the path to a file
+# checkCreated() method will check that the return code == 201
+# checkCreatedFileContent() will check that the file to post and the posted file has the same contents
 
 bigFile = "bigPost.txt"
 basicFile = "simplePost.txt"
@@ -13,21 +13,24 @@ emptyFile = "emptyPost.txt"
 
 EXIT_CODE = 0
 
-PostRequest = POSTRequest(basicFile)
-PostRequest.doRequest()
-EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
-PostRequest.checkCreatedFile()
+postRequest = POSTRequest(basicFile)
+postRequest.doRequest()
+EXIT_CODE += postRequest.checkCreated(postRequest._response)
+postRequest.checkCreatedFileContent()
+postRequest.removeCreatedFile()
 
-PostRequest = POSTRequest(bigFile)
-PostRequest.doRequest()
-EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
-PostRequest.checkCreatedFile()
+postRequest = POSTRequest(bigFile)
+postRequest.doRequest()
+EXIT_CODE += postRequest.checkCreated(postRequest._response)
+postRequest.checkCreatedFileContent()
+postRequest.removeCreatedFile()
 
 
-PostRequest = POSTRequest(emptyFile)
-PostRequest.doRequest()
-EXIT_CODE += PostRequest.checkCreated(PostRequest._response)
-PostRequest.checkCreatedFile()
+postRequest = POSTRequest(emptyFile)
+postRequest.doRequest()
+EXIT_CODE += postRequest.checkCreated(postRequest._response)
+postRequest.checkCreatedFileContent()
+postRequest.removeCreatedFile()
 
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(0.2)

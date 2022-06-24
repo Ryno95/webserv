@@ -36,6 +36,7 @@ namespace Webserver
 
 		const std::string& getResourcePath() const;
 		const std::string& getHost() const;
+
 		bool isAbsolute() const;
 
 	private:

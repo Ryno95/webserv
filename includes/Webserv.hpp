@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <Client.hpp>
+#include <config/AppConfig.hpp>
 #include <config/ServerConfig.hpp>
 #include <IPollable.hpp>
 #include <ITickable.hpp>
@@ -15,11 +16,16 @@
 namespace Webserver
 {
 
-	class Client;
+	class Client; // forward declaration
 
 	class Webserv : public IPollable, public ITickable
 	{
+			static AppConfig* _appConfig;
+
 		public:
+			static void config(AppConfig* config);
+			static const AppConfig& config();
+
 			Webserv(const ServerConfig& config);
 			~Webserv();
 

@@ -13,12 +13,27 @@
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <Webserv.hpp>
-#include <config/GlobalConfig.hpp>
 #include <Exception.hpp>
 #include <TickHandler.hpp>
 
 namespace Webserver
 {
+
+#pragma region Singleton AppConfig
+
+	AppConfig* Webserv::_appConfig;
+	void Webserv::config(AppConfig* config)
+	{
+		_appConfig = config;
+	}
+
+	const AppConfig& Webserv::config()
+	{
+		return *_appConfig;
+	}
+
+#pragma endregion
+
 	Webserv::Webserv(const ServerConfig& config)
 		: _config(config)
 	{
@@ -26,7 +41,7 @@ namespace Webserver
 		PollHandler::get().add(this);
 		TickHandler::get().add(this);
 
-		DEBUG("Created server instance on port: " << _config.port);
+		DEBUG("Created server instance on port: " << _config.getPort());
 	}
 
 	Webserv::~Webserv()
@@ -35,7 +50,7 @@ namespace Webserver
 		PollHandler::get().remove(this);
 		TickHandler::get().remove(this);
 
-		DEBUG("Destroyed server instance on port: " << _config.port);
+		DEBUG("Destroyed server instance on port: " << _config.getPort());
 	}
 
 	void Webserv::setup()
@@ -44,7 +59,7 @@ namespace Webserver
 		struct sockaddr_in servAddr;
 
 		servAddr.sin_family = AF_INET;
-		servAddr.sin_port = htons(_config.port);
+		servAddr.sin_port = htons(_config.getPort());
 		servAddr.sin_addr.s_addr = INADDR_ANY;
 
 		_listenerFd = socket(AF_INET, SOCK_STREAM, STD_TCP);
@@ -61,7 +76,7 @@ namespace Webserver
 		if (fcntl(_listenerFd, F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw SystemCallFailedException("fcntl");
 
-		if (listen(_listenerFd, GlobalConfig::get().listenBacklog) == SYSTEM_ERR) // store GlobalConfig as a member of this class?
+		if (listen(_listenerFd, config().getListenBacklog()) == SYSTEM_ERR)
 			throw SystemCallFailedException("listen");
 	}
 

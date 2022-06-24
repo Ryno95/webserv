@@ -14,7 +14,7 @@ try:
     num2 = int(input_data["val2"].value)
 except:
     print("<output>Sorry, the script cannot turn your inputs into numbers (integers).</output>\n</body>\n</html>")
-    raise SystemExit(1)
+    raise SystemExit(0)
 
 
 print("<output>{0} + {1} = {2}</output>".format(num1, num2, num1 + num2))

@@ -10,6 +10,6 @@ namespace Webserver
 				DELETEMethod(const Request &request, const Host& host);
 				~DELETEMethod();
 
-				Response	*process();
+				Response	*process(const std::string& uri);
 	};
 }

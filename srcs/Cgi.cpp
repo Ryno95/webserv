@@ -21,12 +21,13 @@
 namespace Webserver
 {
 	// add Root to target, again
-	Cgi::Cgi(const Request &request, const Host &host)
+	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
 			_cgiStream(new std::stringstream()),
 			_host(host),
-			_status(HttpStatusCodes::OK)
+			_status(HttpStatusCodes::OK),
+			_uri(uri)
 	{
 		_pipeFd[READ_FD] = SYSTEM_ERR;
 		if (pipe(_pipeFd) <  0)
@@ -65,7 +66,6 @@ namespace Webserver
 		int status;
 
 		close(_pipeFd[WRITE_FD]);
-		// WNOHANG returns _pid when the _pid process has actually finished
 		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
@@ -111,12 +111,12 @@ namespace Webserver
 
 	void Cgi::executeCommand()
 	{
-		std::string	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget());
+		// std::string	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget());
 		std::string	queryString = createQueryString();
 		const char* env[] = {queryString.c_str(), NULL};
-		const char* argv[] = {"python3", completeCgiTarget.c_str(), NULL};
+		const char* argv[] = {"python3", _uri.c_str(), NULL};
 
-		if (access(completeCgiTarget.c_str(), F_OK ) == SYSTEM_ERR || _cgiExecutable == "")
+		if (access(_uri.c_str(), F_OK ) == SYSTEM_ERR || _cgiExecutable == "")
 			exit(2);
 		else if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
@@ -156,7 +156,8 @@ namespace Webserver
 		if (readBytes == SYSTEM_ERR || readBytes == 0)
 			return ;
 		buffer[readBytes] = '\0';
-		*_cgiStream << buffer;
+		if (_cgiStream)
+			*_cgiStream << buffer;
 	}
 
 	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }

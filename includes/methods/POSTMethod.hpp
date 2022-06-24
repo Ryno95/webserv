@@ -10,7 +10,7 @@ namespace Webserver
 			POSTMethod(const Request &request, const Host& host);
 			~POSTMethod();
 
-			Response	*process();
+			Response	*process(const std::string& uri);
 
 			private:
 				std::string _location;
@@ -18,6 +18,5 @@ namespace Webserver
 
 				void		setPostResponseHeaders(bool isCreated);
 				void		addLocationHeader();
-				std::string createFileName(const std::string &target);
 	};
 }
