@@ -23,7 +23,7 @@ AppConfig* parseConfig(const std::string& path)
 
 Test(Mimes, valid)
 {
-	AppConfig* config = parseConfig("default.config");
+	AppConfig* config = parseConfig("unit_tests/default.config");
 	Webserv::config(config);
 	MimeTypes mimes("unit_tests/test.mime");
 
@@ -35,7 +35,7 @@ Test(Mimes, valid)
 
 Test(Mimes, invalid)
 {
-	AppConfig* config = parseConfig("default.config");
+	AppConfig* config = parseConfig("unit_tests/default.config");
 	Webserv::config(config);
 	MimeTypes mimes("unit_tests/test.mime");
 
