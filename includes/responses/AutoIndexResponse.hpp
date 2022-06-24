@@ -2,11 +2,11 @@
 
 #include <string>
 
-#include <responses/OkStatusResponse.hpp>
+#include <responses/Response.hpp>
 
 namespace Webserver
 {
-	class AutoIndexResponse : public OkStatusResponse
+	class AutoIndexResponse : public Response
 	{
 	public:
 		AutoIndexResponse(const std::string& targetDir);

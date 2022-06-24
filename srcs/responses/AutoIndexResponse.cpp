@@ -5,8 +5,10 @@
 namespace Webserver
 {
 	AutoIndexResponse::AutoIndexResponse(const std::string& targetDir) :
-		OkStatusResponse(new std::stringstream(AutoIndex(targetDir).getHtmlPage()), HttpStatusCodes::OK)
+		Response(HttpStatusCodes::OK)
 	{
+		const std::string autoIndexPage = AutoIndex(targetDir).getHtmlPage();
+		setBodyStream(new std::stringstream(autoIndexPage));
 	}
 
 	AutoIndexResponse::~AutoIndexResponse()
