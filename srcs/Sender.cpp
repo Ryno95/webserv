@@ -117,7 +117,7 @@ namespace Webserver
 		return _currentState != FINISHED;
 	}
 
-	void Sender::setResponse(AResponse* response)
+	void Sender::setResponse(Response* response)
 	{
 		_response = response;
 		_currentState = SEND_HEADER;
