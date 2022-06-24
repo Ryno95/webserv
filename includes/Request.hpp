@@ -25,7 +25,6 @@ namespace Webserver
 		~Request();
 
 		void			parse();
-		bool 			hasBodyField() const;
 
 		HttpStatusCode		getStatus() const;
 		Method::method 		getMethod() const;
