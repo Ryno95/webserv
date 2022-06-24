@@ -32,6 +32,8 @@ namespace Webserver
 		void processBodyRecv();
 		void checkHeader();
 
+		bool requestHasBodyField(const Request& req);
+
 		std::string _buffer;
 		std::string _recvBuffer;
 
