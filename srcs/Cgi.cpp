@@ -66,7 +66,6 @@ namespace Webserver
 		int status;
 
 		close(_pipeFd[WRITE_FD]);
-		// WNOHANG returns _pid when the _pid process has actually finished
 		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
@@ -157,7 +156,8 @@ namespace Webserver
 		if (readBytes == SYSTEM_ERR || readBytes == 0)
 			return ;
 		buffer[readBytes] = '\0';
-		*_cgiStream << buffer;
+		if (_cgiStream)
+			*_cgiStream << buffer;
 	}
 
 	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }

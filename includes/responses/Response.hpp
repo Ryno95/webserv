@@ -23,6 +23,12 @@ namespace Webserver
 		Response(HttpStatusCode code);
 		Response &operator=(const Response &rhs);
 
+		HttpStatusCode 						_statusCode;
+		std::stringstream 					_headerStream;
+		std::ifstream						*_bodyStream;
+
+		void				addConstantHeaderFields(); // hard coded for now to get the flow going
+	
 	public:
 		virtual ~Response();
 
@@ -37,14 +43,7 @@ namespace Webserver
 		HttpStatusCode		getStatusCode() const;
 		const HeaderFields& getHeaders() const;
 
+		// public to protected
 		std::stringstream					*_cgiStream;
-	protected:
-
-		HttpStatusCode 						_statusCode;
-		std::stringstream 					_headerStream;
-		std::ifstream						*_bodyStream;
-
-		void				addConstantHeaderFields(); // hard coded for now to get the flow going
-	
 	};
 }

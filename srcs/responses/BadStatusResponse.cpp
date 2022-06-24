@@ -12,7 +12,6 @@ namespace Webserver
 
 	BadStatusResponse::BadStatusResponse(HttpStatusCode code, const std::string &errorPage) : Response(code)
 	{
-
 		setBodyStream(new std::ifstream(errorPage));
 		if (!_bodyStream->is_open())
 			throw std::runtime_error("Errorfile doens't exist");

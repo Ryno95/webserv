@@ -28,6 +28,7 @@ CLASSES		=	Utility\
 				responses/OkStatusResponse\
 				responses/BadStatusResponse\
 				responses/RedirectResponse\
+				responses/AutoIndexResponse\
 				responses/CgiResponse\
 				MimeTypes\
 				Logger\
@@ -42,7 +43,10 @@ CLASSES		=	Utility\
 				TimeoutHandler\
 				Host\
 				Uri\
-				HeaderFields
+				HeaderFields\
+				autoIndex/HtmlBuilder\
+				autoIndex/HtmlElement\
+				autoIndex/AutoIndex
 
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
@@ -60,7 +64,7 @@ TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)uriParseTests.cpp\
 				$(TEST_DIR)wildcardTests.cpp\
 				$(TEST_DIR)routeTests.cpp\
-				$(TEST_DIR)utilTests.cpp
+				$(TEST_DIR)prependTests.cpp
 
 
 # Section Rules
