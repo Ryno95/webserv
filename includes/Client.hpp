@@ -43,8 +43,11 @@ namespace Webserver
 		void setLastCommunicated();
 		void recvRequests();
 		void sendResponses();
+
 		void processRequests();
+		Response* processRequest(const Request& request);
 		Response* processValidRequest(const Request& request);
+		Response* processInvalidRequest(HttpStatusCode code);
 
 		timeval _lastCommunicated;
 

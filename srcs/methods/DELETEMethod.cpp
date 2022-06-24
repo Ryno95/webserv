@@ -4,8 +4,8 @@
 #include <HttpStatusCode.hpp>
 #include <Logger.hpp>
 #include <methods/DELETEMethod.hpp>
-#include <responses/BadStatusResponse.hpp>
-#include <responses/OkStatusResponse.hpp>
+#include <responses/Response.hpp>
+#include <Exception.hpp>
 
 namespace Webserver
 {
@@ -19,19 +19,17 @@ namespace Webserver
 
 	Response* DELETEMethod::process(const std::string& uri)
 	{
-		const std::string 	fullTarget = prependRoot(_host.getRoot(), _request.getTarget());
-		const bool			isMethodAllowed = true;
-		struct stat 		fileInfo;
-
 		DEBUG("DELETE METHOD");
 
-		if (stat(fullTarget.c_str(), &fileInfo) == SYSTEM_ERR)
-			return new BadStatusResponse(HttpStatusCodes::NOT_FOUND);
-		else if (!isMethodAllowed || (!(fileInfo.st_mode & S_IWUSR) && !(fileInfo.st_mode & S_IXUSR))) // check that file has write/exec permissions
-			return new BadStatusResponse(HttpStatusCodes::FORBIDDEN);
-		else if (remove(fullTarget.c_str()) == SYSTEM_ERR)
-			return new BadStatusResponse(HttpStatusCodes::INTERNAL_ERROR);
+		struct stat 		fileInfo;
 
-		return new OkStatusResponse(HttpStatusCodes::OK);
+		if (stat(uri.c_str(), &fileInfo) == SYSTEM_ERR)
+			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+		else if ((!(fileInfo.st_mode & S_IWUSR) && !(fileInfo.st_mode & S_IXUSR))) // check that file has write/exec permissions
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
+		else if (remove(uri.c_str()) == SYSTEM_ERR)
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
+
+		return new Response(HttpStatusCodes::OK);
 	}
 }

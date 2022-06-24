@@ -1,5 +1,4 @@
 #include <responses/RedirectResponse.hpp>
-#include <Logger.hpp>
 
 namespace Webserver
 {

@@ -1,19 +1,18 @@
 #include <iostream>
-#include <Cgi.hpp>
-#include <responses/OkStatusResponse.hpp>
 #include <unistd.h>
-#include <Exception.hpp>
-#include <PollHandler.hpp>
-#include <TimeoutHandler.hpp>
-#include <Host.hpp>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <fcntl.h>
+
+#include <Cgi.hpp>
+#include <Exception.hpp>
+#include <PollHandler.hpp>
+#include <TimeoutHandler.hpp>
+#include <Host.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
-
 #include <Sender.hpp>
 
 #define TERMINATOR '\0'
@@ -24,17 +23,16 @@ namespace Webserver
 	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
-			_cgiStream(new std::stringstream()),
 			_host(host),
 			_status(HttpStatusCodes::OK),
 			_uri(uri)
 	{
 		_pipeFd[READ_FD] = SYSTEM_ERR;
-		if (pipe(_pipeFd) <  0)
-			throw SystemCallFailedException("Pipe()");
+		if (pipe(_pipeFd) < 0)
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Fork()");
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		else if (_pid == CHILD_PROCESS)
 		{
 			try {
@@ -45,10 +43,13 @@ namespace Webserver
 				exit(1);
 			}
 		}
+
 		// parent
 		reapChild();
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
-			throw SystemCallFailedException("fcntl");
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
+
+		_cgiStream = new std::stringstream;
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -57,6 +58,7 @@ namespace Webserver
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
+
 		if (_pipeFd[READ_FD] != SYSTEM_ERR)
 			close(_pipeFd[READ_FD]);
 	}
@@ -69,8 +71,6 @@ namespace Webserver
 		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			delete _cgiStream;
-			_cgiStream = nullptr;
 			_status = HttpStatusCodes::NOT_FOUND;
 		}
 	}
@@ -143,14 +143,14 @@ namespace Webserver
 	{
 		struct timeval time;
 		if (gettimeofday(&time, NULL) == SYSTEM_CALL_ERROR)
-			throw (SystemCallFailedException("gettimeofday()"));
+			throw (SystemCallFailedException("gettimeofday()")); // Server will break
 		return (time);
 	}
 
 	void Cgi::onRead()
 	{
 		char 				buffer[BUFFERSIZE];
-        int 				readBytes = 0;
+		int 				readBytes = 0;
 
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
 		if (readBytes == SYSTEM_ERR || readBytes == 0)
@@ -159,6 +159,11 @@ namespace Webserver
 		if (_cgiStream)
 			*_cgiStream << buffer;
 	}
+
+	void Cgi::onWrite()
+	{
+	}
+
 
 	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }
 

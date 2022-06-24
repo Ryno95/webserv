@@ -1,4 +1,6 @@
+#include <fstream>
 #include <iostream>
+
 #include <Logger.hpp>
 #include <responses/Response.hpp>
 #include <Utility.hpp>
@@ -7,11 +9,15 @@
 
 namespace Webserver
 {
-	Response::Response() : _bodyStream(nullptr)
+	Response::Response() :
+		_statusCode(HttpStatusCodes::OK),
+		_bodyStream(nullptr)
 	{
 	}
 
-	Response::Response(HttpStatusCode code) : _statusCode(code), _bodyStream(nullptr), _cgiStream(nullptr)
+	Response::Response(HttpStatusCode code) :
+		_statusCode(code),
+		_bodyStream(nullptr)
 	{
 		addConstantHeaderFields();
 	}
@@ -25,24 +31,12 @@ namespace Webserver
 	{
 		if (_bodyStream != nullptr)
 			delete _bodyStream;
-		if (_cgiStream != nullptr)
-			delete _cgiStream;
 	}
 
 	Response& Response::operator=(const Response &rhs)
 	{
 		this->_statusCode = rhs._statusCode;
 		return (*this);
-	}
-
-	void Response::setBodyStream(std::ifstream* stream)
-	{
-		_bodyStream = stream;
-	}
-
-	void Response::setStatusCode(HttpStatusCode code)
-	{
-		this->_statusCode = code;
 	}
 
 	void Response::addConstantHeaderFields()
@@ -66,16 +60,7 @@ namespace Webserver
 		return mimeType;
 	}
 
-	void Response::createContentHeaders(const std::string &fileName)
-	{
-		if (!_bodyStream->is_open()) // throw exception
-			throw SystemCallFailedException("Response file not opened");
-		getBodyStream()->seekg(0, std::ios_base::end);
-		addHeader(Header::ContentLength, std::to_string(_bodyStream->tellg()));
-		addHeader(Header::ContentType, getContentTypeHeader(fileName));
-	}
-
-	std::stringstream	*Response::getHeaderStream()
+	std::istream *Response::getHeaderStream()
 	{
 		std::map<std::string, std::string>::const_iterator cursor = headersBegin();
 		std::map<std::string, std::string>::const_iterator end = headersEnd();
@@ -94,14 +79,43 @@ namespace Webserver
 			++cursor;
 		}
 		_headerStream << "\r\n\r\n";
-		return (&_headerStream);
+		return &_headerStream;
 	}
 
-	std::ifstream* Response::getBodyStream()
+	void Response::addFile(const std::string& filePath)
 	{
-		if (_bodyStream == nullptr || !_bodyStream->is_open())
-			return nullptr;
-		_bodyStream->seekg(0, std::ios_base::beg);
+		std::ifstream* stream = new std::ifstream(filePath);
+		setBodyStream(stream);
+
+		if (!stream->is_open())
+			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+
+		createBodyHeaders(filePath); // probably not OK yet, because this is the full file path and not just the file name.
+	}
+
+	void Response::setBodyStream(std::istream* stream)
+	{
+		if (_bodyStream != nullptr)
+			delete _bodyStream;
+
+		_bodyStream = stream;
+	}
+
+	void Response::createBodyHeaders(const std::string &fileName)
+	{
+		getBodyStream()->seekg(0, std::ios_base::end);
+		addHeader(Header::ContentLength, std::to_string(_bodyStream->tellg()));
+		addHeader(Header::ContentType, getContentTypeHeader(fileName));
+		getBodyStream()->seekg(0);
+	}
+
+	std::istream* Response::getBodyStream() const
+	{
 		return _bodyStream;
+	}
+
+	void Response::setStatusCode(HttpStatusCode code)
+	{
+		_statusCode = code;
 	}
 }

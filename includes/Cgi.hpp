@@ -25,11 +25,11 @@ namespace Webserver
 			void		execute();
 
 			void		onRead();
-			void		onWrite() {};
+			void		onWrite();
 			int			getFd() const;
 
 			// what to do on timeout???
-			void 	onTimeout() {WARN("ENTIRING TIEOUT CGI");};
+			void 	onTimeout() {WARN("Timeout handling on CGI is not implemented yet!");};
 			timeval getLastCommunicated() const;
 		
 			std::stringstream* 	getCgiStream() const;

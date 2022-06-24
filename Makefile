@@ -25,8 +25,7 @@ CLASSES		=	Utility\
 				methods/POSTMethod\
 				methods/DELETEMethod\
 				responses/Response\
-				responses/OkStatusResponse\
-				responses/BadStatusResponse\
+				responses/BadResponse\
 				responses/RedirectResponse\
 				responses/AutoIndexResponse\
 				responses/CgiResponse\
@@ -47,7 +46,6 @@ CLASSES		=	Utility\
 				autoIndex/HtmlBuilder\
 				autoIndex/HtmlElement\
 				autoIndex/AutoIndex
-
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)

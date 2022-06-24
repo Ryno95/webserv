@@ -17,33 +17,30 @@ namespace Webserver
 
 	class Response : public HeaderFields
 	{
-	protected:
+	public:
 		Response();
 		Response(const Response &ref);
 		Response(HttpStatusCode code);
 		Response &operator=(const Response &rhs);
-
-		HttpStatusCode 						_statusCode;
-		std::stringstream 					_headerStream;
-		std::ifstream						*_bodyStream;
-
-		void				addConstantHeaderFields(); // hard coded for now to get the flow going
-	
-	public:
 		virtual ~Response();
 
-		void	setStatusCode(HttpStatusCode code);
-		void	setBodyStream(std::ifstream* stream);
+		std::istream *getBodyStream() const;
 
-		void				buildHeader();
-		std::stringstream	*getHeaderStream();
-		void				createContentHeaders(const std::string &fileName);
+		void			addFile(const std::string& filePath);
+		std::istream	*getHeaderStream();
+		HttpStatusCode	getStatusCode() const;
+		void			setStatusCode(HttpStatusCode code);
 
-		std::ifstream		*getBodyStream();
-		HttpStatusCode		getStatusCode() const;
-		const HeaderFields& getHeaders() const;
+	protected:
+		void setBodyStream(std::istream* fileStream);
 
-		// public to protected
-		std::stringstream					*_cgiStream;
+		HttpStatusCode		_statusCode;
+
+	private:
+		void createBodyHeaders(const std::string &fileName);
+		void addConstantHeaderFields();
+
+		std::istream*		_bodyStream;
+		std::stringstream	_headerStream;
 	};
 }
