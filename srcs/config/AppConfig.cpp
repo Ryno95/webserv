@@ -7,9 +7,6 @@ namespace Webserver
 		_listenBacklog(42),
 		_bufferSize(4096),
 		_mimeFilePath("mime.config"),
-		_debugEnabled(false),
-		_loggingEnabled(false),
-		_logFile("logs.log"),
 		_maxRequestBodySize(40960)
 	{
 	}
@@ -28,9 +25,6 @@ namespace Webserver
 		_listenBacklog = ref._listenBacklog;
 		_bufferSize = ref._bufferSize;
 		_mimeTypes = ref._mimeTypes;
-		_debugEnabled = ref._debugEnabled;
-		_loggingEnabled = ref._loggingEnabled;
-		_logFile = ref._logFile;
 		return *this;
 	}
 
@@ -49,24 +43,8 @@ namespace Webserver
 		return _listenBacklog;
 	}
 
-	bool AppConfig::isDebugEnabled() const
-	{
-		return _debugEnabled;
-	}
-
-	bool AppConfig::isDebugLoggingEnabled() const
-	{
-		return _loggingEnabled;
-	}
-
-	const std::string& AppConfig::getLogFileName() const
-	{
-		return _logFile;
-	}
-
 	uint AppConfig::getMaxRequestBodySize() const
 	{
 		return _maxRequestBodySize;
 	}
-
 }
