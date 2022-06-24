@@ -6,21 +6,18 @@
 #include <Cgi.hpp>
 #include <Request.hpp>
 #include <Host.hpp>
-#include <responses/AResponse.hpp>
+#include <responses/Response.hpp>
  
 namespace Webserver
 {
-	class CgiResponse : public AResponse
+	class CgiResponse : public Response
 	{
 	private: 
 		Cgi			_cgiRequest;
 	
 	public: 
-	// Constructor 
 		CgiResponse(const Request &request, const Host &host, const std::string& uri);
-		~CgiResponse() {};
-
-		std::istream *getBodyStream();
+		~CgiResponse();
 
 	};
 }
