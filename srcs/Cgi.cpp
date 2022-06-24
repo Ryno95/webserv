@@ -23,7 +23,6 @@ namespace Webserver
 	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
-			_cgiStream(new std::stringstream()),
 			_host(host),
 			_status(HttpStatusCodes::OK),
 			_uri(uri)
@@ -50,6 +49,7 @@ namespace Webserver
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
+		_cgiStream = new std::stringstream;
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -71,8 +71,6 @@ namespace Webserver
 		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			delete _cgiStream;
-			_cgiStream = nullptr;
 			_status = HttpStatusCodes::NOT_FOUND;
 		}
 	}
