@@ -100,13 +100,8 @@ namespace Webserver
 		containing the results of the request.
 		If an error occurs, an InvalidRequestException is thrown. (Nothing returned, catch instead)
 	*/
-	Response* Client::processValidRequest(const Request& request)
+	Response* Client::processValidRequest(const Host& host, const Request& request)
 	{
-		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-
-		if (!host.isMethodAllowed(request.getMethod()))
-			throw InvalidRequestException(HttpStatusCodes::METHOD_NOT_ALLOWED);
-
 		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
 
 		switch (host.getRouteType())
@@ -128,24 +123,29 @@ namespace Webserver
 		throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 	}
 
-	Response* Client::processInvalidRequest(HttpStatusCode code)
+	Response* Client::processInvalidRequest(const Host& host, HttpStatusCode code)
 	{
-		return new BadResponse(code);
+		return new BadResponse(host, code);
 	}
 
 	Response* Client::processRequest(const Request& request)
 	{
+		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
+
 		try
 		{
+			if (!host.isMethodAllowed(request.getMethod()))
+				throw InvalidRequestException(HttpStatusCodes::METHOD_NOT_ALLOWED);
+
 			// The request we received is invalid, so we send the error-code back
 			if (request.getStatus() != HttpStatusCodes::OK)
 				throw InvalidRequestException(request.getStatus());
 
-			return processValidRequest(request);
+			return processValidRequest(host, request);
 		}
 		catch(const InvalidRequestException& e)
 		{
-			return processInvalidRequest(e.getStatus());
+			return processInvalidRequest(host, e.getStatus());
 		}
 	}
 
