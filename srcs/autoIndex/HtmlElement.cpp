@@ -8,6 +8,9 @@ namespace Webserver
 
 	HtmlElement::HtmlElement(const std::string &tag, const std::string &tagBody, const std::string &content)
 			: _tag(tag), _tagBody(tagBody), _content(content) {}
+
+	HtmlElement::HtmlElement(const std::string &tag)
+			: _tag(tag), _tagBody(""), _content("") {}
 	
 	bool HtmlElement::isSelfClosing() const
 	{

@@ -14,6 +14,12 @@ namespace Webserver
 		return *this;
 	}
 
+	HtmlBuilder& HtmlBuilder::addElement(std::string elementTag)
+	{
+		_root._collection.push_back(HtmlElement(elementTag));
+		return *this;
+	}
+
 	std::string HtmlBuilder::build()
 	{
 		const int rootIndentAmount = 0;

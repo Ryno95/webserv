@@ -20,6 +20,7 @@ namespace Webserver
 		private:
 			HtmlElement();
 			HtmlElement(const std::string &tag, const std::string &tagBody, const std::string &content);
+			HtmlElement(const std::string &tag);
 
 			bool 				isSelfClosing() const;
 	

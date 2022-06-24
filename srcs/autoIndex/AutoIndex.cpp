@@ -19,7 +19,7 @@ namespace Webserver
 		for(; it != _dirEntries.end(); it++)
 			_builder.addElement("body", "", HtmlBuilder("p")
 									.addElement("a" , "href=" + *it, *it)
-									.addElement("br", "", "")
+									.addElement("br")
 									.build()
 								);
 	}
