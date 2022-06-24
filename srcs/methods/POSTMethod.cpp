@@ -1,14 +1,14 @@
 #include <fstream>
 #include <iostream>
 #include <ctime>
+#include <unistd.h>
 
 #include <config/ServerConfig.hpp>
 #include <HttpStatusCode.hpp>
 #include <methods/POSTMethod.hpp>
 #include <Logger.hpp>
-#include <responses/OkStatusResponse.hpp>
-#include <responses/BadStatusResponse.hpp>
-#include <unistd.h>
+#include <responses/Response.hpp>
+#include <Exception.hpp>
 
 namespace Webserver
 {
@@ -35,33 +35,31 @@ namespace Webserver
 		_response->addHeader(Header::ContentLength, std::to_string(_request.getBodySize()));
 		if (isCreated)
 			addLocationHeader();
-
 	}
 
-	AResponse* POSTMethod::process(const std::string& uri)
+	Response* POSTMethod::process(const std::string& uri)
 	{
 		DEBUG("Entering POST method!");
 
 		const std::string	fileName  = prependRoot(_host.getRoot(), _request.getTarget());
-		std::ofstream       *outfile = new std::ofstream();
+		std::ofstream		outfile;
 		bool				isCreatingNewFile = false;
 		
 		// check if file aready exists
 		if (access(fileName.c_str(), R_OK) == -1)
 			isCreatingNewFile = true;
-		outfile->open(fileName, std::ios_base::app);
-		if (!outfile->is_open())
-		{
-			perror("File not created");
-			_response = new BadStatusResponse(HttpStatusCodes::NOT_FOUND);
-			delete outfile;
-			return _response;
-		}
-		_absPathForCreatedFile = fileName;
-		*outfile << _request.getBody();
-		delete outfile;
 
-		_response = new OkStatusResponse(HttpStatusCodes::OK);
+		outfile.open(fileName, std::ios_base::app);
+		if (!outfile.is_open())
+		{
+			WARN("Unexpected: File '" << fileName << "' could not be opened, while we just tried to create it.");
+			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+		}
+
+		_absPathForCreatedFile = fileName;
+		outfile << _request.getBody();
+
+		_response = new Response(HttpStatusCodes::OK);
 		if (isCreatingNewFile == true)
 			_response->setStatusCode(HttpStatusCodes::CREATED);
 		setPostResponseHeaders(isCreatingNewFile);

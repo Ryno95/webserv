@@ -2,7 +2,7 @@
 
 #include <Request.hpp>
 #include <Host.hpp>
-#include <responses/AResponse.hpp>
+#include <responses/Response.hpp>
 
 #include <iostream>
 #include <string>
@@ -46,13 +46,13 @@ namespace Webserver
 	{
 	public:
 		AMethod(Request const& request, const Host& host);
-		virtual AResponse* process(const std::string& uri) = 0;
+		virtual Response* process(const std::string& uri) = 0;
 
 		void writeFile();
 
 	protected:
 		const Request& _request;
 		const Host& _host;
-		AResponse* _response;
+		Response* _response;
 	};
 }
