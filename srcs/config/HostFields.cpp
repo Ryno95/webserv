@@ -27,6 +27,7 @@ namespace Webserver
 		_defaultError = ref._defaultError;
 		_acceptedMethods = ref._acceptedMethods;
 		_allowUpload = ref._allowUpload;
+		_errorPages = ref._errorPages;
 		return *this;
 	}
 
@@ -62,5 +63,10 @@ namespace Webserver
 	bool HostFields::isUploadAllowed() const
 	{
 		return _allowUpload;
+	}
+
+	const HostFields::ErrorPages& HostFields::getErrorPages() const
+	{
+		return _errorPages;
 	}
 }
