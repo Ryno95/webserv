@@ -1,19 +1,18 @@
 #include <iostream>
-#include <Cgi.hpp>
-#include <responses/OkStatusResponse.hpp>
 #include <unistd.h>
-#include <Exception.hpp>
-#include <PollHandler.hpp>
-#include <TimeoutHandler.hpp>
-#include <Host.hpp>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <fcntl.h>
+
+#include <Cgi.hpp>
+#include <Exception.hpp>
+#include <PollHandler.hpp>
+#include <TimeoutHandler.hpp>
+#include <Host.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
-
 #include <Sender.hpp>
 
 #define TERMINATOR '\0'
@@ -70,7 +69,7 @@ namespace Webserver
 		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			delete _cgiStream;
+			delete _cgiStream; // check if the response destructor also deletes this, causing double free!
 			_cgiStream = nullptr;
 			_status = HttpStatusCodes::NOT_FOUND;
 		}
