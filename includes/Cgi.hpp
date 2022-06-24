@@ -25,7 +25,7 @@ namespace Webserver
 			void		execute();
 
 			void		onRead();
-			void		onWrite() {};
+			void		onWrite();
 			int			getFd() const;
 
 			// what to do on timeout???

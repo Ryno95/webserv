@@ -71,7 +71,7 @@ namespace Webserver
 		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			delete _cgiStream; // check if the response destructor also deletes this, causing double free!
+			delete _cgiStream;
 			_cgiStream = nullptr;
 			_status = HttpStatusCodes::NOT_FOUND;
 		}
@@ -161,6 +161,11 @@ namespace Webserver
 		if (_cgiStream)
 			*_cgiStream << buffer;
 	}
+
+	void Cgi::onWrite()
+	{
+	}
+
 
 	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }
 
