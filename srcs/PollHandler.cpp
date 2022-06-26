@@ -40,8 +40,16 @@ namespace Webserver
 
 		for (size_t i = 0; i < _fds.size(); i++)
 		{
-			if (BIT_ISSET(_fds[i].revents, POLLIN_BIT))
+			if (_fds[i].revents & POLLIN)
 				_subscribers[i]->onRead();
+			else if (_fds[i].revents & POLLHUP)
+			{
+				ERROR("FD: " << _fds[i].fd << " HUNG UP!");
+				_subscribers[i]->onRead();
+			}
+		}
+		for (size_t i = 0; i < _fds.size(); i++)
+		{
 			if (BIT_ISSET(_fds[i].revents, POLLOUT_BIT))
 				_subscribers[i]->onWrite();
 		}
