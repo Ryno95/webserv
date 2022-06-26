@@ -4,13 +4,15 @@
 #include <Host.hpp>
 #include <ITimeoutable.hpp>
 #include <IPollable.hpp>
+#include <ITickable.hpp>
+#include <SendStream.hpp>
 
 namespace Webserver
 {
 	#define SYSTEM_CALL_ERROR -1
 	#define CHILD_PROCESS  0
 
-	class Cgi : public ITimeoutable, public IPollable
+	class Cgi : public ITimeoutable, public IPollable, public ITickable
 	{
 		public:
 			enum FDs
@@ -27,14 +29,13 @@ namespace Webserver
 			void		onRead();
 			void		onWrite();
 			int			getFd() const;
+			void		onTick();
+			void 		onTimeout();
 
-			// what to do on timeout???
-			void 	onTimeout() {WARN("Timeout handling on CGI is not implemented yet!");};
 			timeval getLastCommunicated() const;
 		
-			std::stringstream* 	getCgiStream() const;
+			SendStream* 		getCgiStream() const;
 			HttpStatusCode 		getStatus() const;
-		
 
 		private:
 			std::string			getExecutablePath(const std::string &exe);
@@ -47,9 +48,10 @@ namespace Webserver
 			int					_pid;
 			int					_pipeFd[2];
 			const Request&		_request;
-			std::stringstream* 	_cgiStream;
+			SendStream*			_sendStream;
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const std::string&	_uri;
+			bool				_isChildReaped;
 	};
 }
