@@ -1,6 +1,7 @@
 #pragma once
 
 #include <responses/Response.hpp>
+#include <SendStream.hpp>
 
 #include <iostream>
 
@@ -31,14 +32,13 @@ namespace Webserver
 			FINISHED
 		};
 
-		void setDataStream();
-		long fillBuffer(long bufferSize);
+		void setStream();
 		void deleteResponse();
 
 		int _fd;
 		int _currentState;
 		Response* _response;
-		std::istream *_dataStream;
+		SendStream* _sendStream;
 		char* _buffer;
 	};
 }

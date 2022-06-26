@@ -9,6 +9,7 @@
 #include <defines.hpp>
 #include <Utility.hpp>
 #include <HeaderFields.hpp>
+#include <SendStream.hpp>
 
 namespace Webserver
 {
@@ -24,15 +25,15 @@ namespace Webserver
 		Response &operator=(const Response &rhs);
 		virtual ~Response();
 
-		std::istream *getBodyStream() const;
+		SendStream *getBodyStream() const;
 
 		void			addFile(const std::string& filePath);
-		std::istream	*getHeaderStream();
+		SendStream	*getHeaderStream();
 		HttpStatusCode	getStatusCode() const;
 		void			setStatusCode(HttpStatusCode code);
 
 	protected:
-		void setBodyStream(std::istream* fileStream);
+		void setBodyStream(SendStream* fileStream);
 
 		HttpStatusCode		_statusCode;
 
@@ -40,7 +41,7 @@ namespace Webserver
 		void createBodyHeaders(const std::string &fileName);
 		void addConstantHeaderFields();
 
-		std::istream*		_bodyStream;
-		std::stringstream	_headerStream;
+		SendStream*	_bodyStream;
+		SendStream	_headerStream;
 	};
 }
