@@ -23,13 +23,13 @@ namespace Webserver
 
 	static void printDebug(const std::string& msg)
 	{
-		if (Webserv::config().isDebugEnabled())
+		if (DEBUG_ENABLED)
 			std::cout << C_CYAN << "[DEBUG] " << C_RESET << msg << std::endl;
 	}
 
 	void Logger::log(const std::string& msg)
 	{
-		if (!Webserv::config().isDebugLoggingEnabled())
+		if (!LOGGING_ENABLED)
 			return;
 
 		if (!_logFile.is_open())
@@ -37,7 +37,7 @@ namespace Webserver
 			_logFile.open(LOGFILE);
 			if (!_logFile.is_open())
 				{
-					printWarning("There's no logfile, no logs will be saved.");
+					printWarning("Could not create a logfile, no logs will be saved.");
 					return;
 				}
 		}

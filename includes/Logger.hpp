@@ -5,10 +5,9 @@
 #include <fstream>
 #include <sstream>
 
-#define ENABLE_DEBUGGING		true
-#define ENABLE_DEBUG_LOGGING	true
-#define ENABLE_LOGGING			true
-#define LOGFILE					"logs.log"
+#define DEBUG_ENABLED		true
+#define LOGGING_ENABLED		true
+#define LOGFILE				"logs.log"
 
 #define DEBUG(x) Logger::inputStream << x; Logger::debug()
 #define WARN(x) Logger::inputStream << x; Logger::warn()

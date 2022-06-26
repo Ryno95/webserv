@@ -81,6 +81,26 @@ namespace Webserver
 		VariableParser _parser;
 	};
 
+	template<class T>
+	class AppendVariableCommand : public ICommand
+	{
+	public:
+		AppendVariableCommand(T* dest) : _dest(dest) {}
+		~AppendVariableCommand() {}
+
+		void callback(const std::string& args)
+		{
+			if (args.find(' ') == std::string::npos && args.find('\t') == std::string::npos)
+				throw std::runtime_error("Not enough parameters supplied");
+			T tmp = _parser.parse<T>(args);
+			_dest->insert(tmp.begin(), tmp.end());
+		}
+
+	private:
+		T* _dest;
+		VariableParser _parser;
+	};
+
 
 	class ATopDownParser; // Forward declaration
 
