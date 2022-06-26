@@ -52,6 +52,5 @@ namespace Webserver
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const std::string&	_uri;
-			bool				_isChildReaped;
 	};
 }
