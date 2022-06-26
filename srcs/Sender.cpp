@@ -21,86 +21,65 @@ namespace Webserver
 		deleteResponse();
 	}
 
-	void Sender::setDataStream()
+	void Sender::setStream()
 	{
 		switch (_currentState)
 		{
 			case SEND_HEADER:
-				_dataStream = _response->getHeaderStream();
+				_sendStream = _response->getHeaderStream();
 				break;
 
 			case SEND_BODY:
-				_dataStream = _response->getBodyStream();
+				_sendStream = _response->getBodyStream();
 				break;
 
 			case FINISHED:
-				_dataStream = nullptr;
+				_sendStream = nullptr;
 				break;
 		}
-	}
-
-	long Sender::fillBuffer(long bufferSize)
-	{
-		if (_dataStream == nullptr)
-		{
-			if (_currentState != SEND_BODY)
-			{
-				WARN("THIS SHOULD NOT OCCUR!");
-			}
-			return 0;
-		}
-
-		_dataStream->read(_buffer + bufferSize, BUFFERSIZE - bufferSize);
-		return _dataStream->gcount();
 	}
 
 	void Sender::handle()
 	{
-		long	bufferSize = 0;
-		int		bytes = 0;
+		uint	bufferBytesFilled = 0;
+		uint	prevBytesFilled;
 
-		while (bufferSize < BUFFERSIZE && _currentState != FINISHED)
+		while (bufferBytesFilled < BUFFERSIZE && _currentState != FINISHED)
 		{
-			if (_dataStream == nullptr)
-				setDataStream();
-			bytes = fillBuffer(bufferSize);
-			bufferSize += bytes;
-			if (bufferSize < BUFFERSIZE)
+			prevBytesFilled = bufferBytesFilled;
+			if (_sendStream == nullptr)
+				setStream();
+
+			if (_sendStream != nullptr)
 			{
-				_currentState++;
-				_dataStream = nullptr;
-				break ;
+				bufferBytesFilled += _sendStream->read(_buffer + bufferBytesFilled, BUFFERSIZE - bufferBytesFilled);
+
+				// The stream is completely filled, but we have not read all bytes from it.
+				// That means we have read every byte in the buffer, so we can continue to our next task.
+				if (_sendStream->getIsFilled() && bufferBytesFilled != BUFFERSIZE)
+				{
+					_currentState++;
+					_sendStream = nullptr;
+				}
 			}
+
+			// (NON-BLOCKING) - No bytes have been added to the stream this iteration. the stream is not marked as finished, but was not ready to read on.
+			if (bufferBytesFilled == prevBytesFilled)
+				break;
 		}
 
-
-		if (bufferSize == 0 )
+		// remove this, it's a possible leak because it can prevent deleteResponse() from being called.
+		// see end of this function!
+		if (bufferBytesFilled != 0)
 		{
-			DEBUG("No bytes to send!");
-			return;
-		}
+			ssize_t written;
+			written = write(_fd, _buffer, bufferBytesFilled);
 
-		if (bufferSize > BUFFERSIZE)
-		{
-			WARN("UNEXPECTED AMOUNT OF BYTES STORED IN THE BUFFER! (Sender.cpp)"); // DEBUG LINE
-		}
-
-		ssize_t written;
-		written = write(_fd, _buffer, bufferSize);
-
-		DEBUG("Sent " << written << " bytes to " << _fd);
-
-		if (written != bufferSize || written == 0)
-		{
-			WARN("Actual bytes written is not equal to the amount requested to send." << std::endl <<
-					"There is no implementation to catch this issue yet." << std::endl <<
-					"Requested: " << bufferSize << " written: " << written << std::endl);
+			DEBUG("Sent " << written << " bytes to " << _fd);
 		}
 
 		if (_currentState == FINISHED)
-		{
 			deleteResponse();
-		}
 	}
 
 	void Sender::deleteResponse()
@@ -121,6 +100,6 @@ namespace Webserver
 	{
 		_response = response;
 		_currentState = SEND_HEADER;
-		_dataStream = nullptr;
+		_sendStream = nullptr;
 	}
 }
