@@ -10,6 +10,7 @@
 #include <Exception.hpp>
 #include <PollHandler.hpp>
 #include <TimeoutHandler.hpp>
+#include <TickHandler.hpp>
 #include <Host.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
@@ -19,7 +20,6 @@
 
 namespace Webserver
 {
-	// add Root to target, again
 	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
@@ -28,14 +28,17 @@ namespace Webserver
 			_uri(uri)
 	{
 		_pipeFd[READ_FD] = SYSTEM_ERR;
+		_pipeFd[WRITE_FD] = SYSTEM_ERR;
 		if (pipe(_pipeFd) < 0)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
+
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		else if (_pid == CHILD_PROCESS)
 		{
-			try {
+			try
+			{
 				executeCgiFile();
 			}
 			catch (std::exception &e) {
@@ -45,33 +48,44 @@ namespace Webserver
 		}
 
 		// parent
-		reapChild();
+		close(_pipeFd[WRITE_FD]);
+		_pipeFd[WRITE_FD] = SYSTEM_ERR;
+
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
-		_cgiStream = new std::stringstream;
+		_sendStream = new SendStream(new std::stringstream);
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
+		TickHandler::get().add(this);
 	}	
 
 	Cgi::~Cgi()
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
+		TickHandler::get().remove(this);
 
 		if (_pipeFd[READ_FD] != SYSTEM_ERR)
 			close(_pipeFd[READ_FD]);
+		if (_pipeFd[WRITE_FD] != SYSTEM_ERR)
+			close(_pipeFd[WRITE_FD]);
 	}
 
-	void				Cgi::reapChild()
+	void Cgi::reapChild()
 	{
 		int status;
+		if (waitpid(_pid, &status, WNOHANG) == 0)
+			return;
 
-		close(_pipeFd[WRITE_FD]);
-		waitpid(_pid, &status, 0);
+		WARN("Child reaped!");
+
+		TickHandler::get().remove(this);
+
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
 			_status = HttpStatusCodes::NOT_FOUND;
+			WARN("What is this exactly?");
 		}
 	}
 
@@ -111,7 +125,6 @@ namespace Webserver
 
 	void Cgi::executeCommand()
 	{
-		// std::string	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget());
 		std::string	queryString = createQueryString();
 		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", _uri.c_str(), NULL};
@@ -149,23 +162,41 @@ namespace Webserver
 
 	void Cgi::onRead()
 	{
-		char 				buffer[BUFFERSIZE];
-		int 				readBytes = 0;
+		char buffer[BUFFERSIZE];
+		int readBytes = 0;
 
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
-		if (readBytes == SYSTEM_ERR || readBytes == 0)
-			return ;
-		buffer[readBytes] = '\0';
-		if (_cgiStream)
-			*_cgiStream << buffer;
+		if (readBytes == SYSTEM_ERR)
+		{
+			WARN("Cgi read was blocking, continue.");
+		}
+		else if (readBytes == 0)
+		{
+			_sendStream->setIsFilled();
+		}
+		else
+		{
+			buffer[readBytes] = '\0';  
+			if (_sendStream)
+				*_sendStream << buffer;
+		}
+	}
+
+	void Cgi::onTick()
+	{
+		reapChild();
+	}
+
+	void Cgi::onTimeout()
+	{
+		WARN("Timeout handling on CGI is not implemented yet!");
 	}
 
 	void Cgi::onWrite()
 	{
 	}
 
-
-	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }
+	SendStream* 	Cgi::getCgiStream() const { return _sendStream; }
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
 }
