@@ -15,17 +15,19 @@
 #include <Logger.hpp>
 #include <Utility.hpp>
 #include <Sender.hpp>
+#include <responses/CgiResponse.hpp>
 
 #define TERMINATOR '\0'
 
 namespace Webserver
 {
-	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri)
+	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri, CgiResponse& response)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
 			_host(host),
 			_status(HttpStatusCodes::OK),
-			_uri(uri)
+			_uri(uri),
+			_response(response)
 	{
 		_pipeFd[READ_FD] = SYSTEM_ERR;
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
@@ -84,7 +86,9 @@ namespace Webserver
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
 			WARN("What is this exactly?"); // Ryno - help me out?
-			_status = HttpStatusCodes::NOT_FOUND;
+			_response.setStatusCode(HttpStatusCodes::NOT_FOUND);
+			// _status = HttpStatusCodes::NOT_FOUND;
+			// throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
 	}
 
@@ -92,7 +96,7 @@ namespace Webserver
 	{
 		struct stat	status;
 
-		return(stat(full_path_executable, &status) == F_OK);
+		return stat(full_path_executable, &status) == F_OK;
 	}
 
 	std::string	Cgi::getExecutablePath(const std::string &exe)
@@ -102,7 +106,7 @@ namespace Webserver
 		int 			i = 0;
 
 		if (all_paths.size() < 1)
-			return ("");
+			return "";
 		SinglePathLen = all_paths.find(COLON);
 		while (SinglePathLen != std::string::npos)
 		{
@@ -112,7 +116,7 @@ namespace Webserver
 			i = SinglePathLen + 1;
 			SinglePathLen = all_paths.find(COLON, i);
 		}
-		return ("");
+		return "";
 	}
 
 	std::string Cgi::createQueryString()
@@ -156,7 +160,7 @@ namespace Webserver
 		struct timeval time;
 		if (gettimeofday(&time, NULL) == SYSTEM_CALL_ERROR)
 			throw (SystemCallFailedException("gettimeofday()")); // Server will break
-		return (time);
+		return time;
 	}
 
 	void Cgi::onRead()

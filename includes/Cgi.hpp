@@ -12,6 +12,8 @@ namespace Webserver
 	#define SYSTEM_CALL_ERROR -1
 	#define CHILD_PROCESS  0
 
+	class CgiResponse;
+
 	class Cgi : public ITimeoutable, public IPollable
 	{
 		public:
@@ -21,7 +23,8 @@ namespace Webserver
 				WRITE_FD
 			} FDs;
 	
-			Cgi(const Request &request, const Host &host, const std::string& uri);
+			// Cgi(const Request &request, const Host &host, const std::string& uri);
+			Cgi(const Request &request, const Host &host, const std::string& uri, CgiResponse& response);
 			~Cgi();
 
 			void		execute();
@@ -51,5 +54,6 @@ namespace Webserver
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const std::string&	_uri;
+			CgiResponse&	_response;
 	};
 }
