@@ -54,28 +54,24 @@ namespace Webserver
 			{
 				bufferBytesFilled += _sendStream->read(_buffer + bufferBytesFilled, BUFFERSIZE - bufferBytesFilled);
 
-				// The stream is completely filled, but we have not read all bytes from it.
-				// That means we have read every byte in the buffer, so we can continue to our next task.
-				if (_sendStream->getIsFilled() && bufferBytesFilled != BUFFERSIZE)
+				// If the stream is finished with filling (writing end) and the amount of bytes in the buffer is less than buffer size,
+				// that means that the stream we are currently reading from is depleted.
+				if (_sendStream->getIsFilled() && bufferBytesFilled < BUFFERSIZE)
 				{
 					_currentState++;
 					_sendStream = nullptr;
 				}
 			}
 
-			// (NON-BLOCKING) - No bytes have been added to the stream this iteration. the stream is not marked as finished, but was not ready to read on.
+			// (NON-BLOCKING) - No bytes have been added to the stream this iteration. the stream is not marked as finished, but is not ready to read on.
 			if (bufferBytesFilled == prevBytesFilled)
 				break;
 		}
 
-		// remove this, it's a possible leak because it can prevent deleteResponse() from being called.
-		// see end of this function!
 		if (bufferBytesFilled != 0)
 		{
 			ssize_t written;
 			written = write(_fd, _buffer, bufferBytesFilled);
-
-			DEBUG("Sent " << written << " bytes to " << _fd);
 		}
 
 		if (_currentState == FINISHED)
