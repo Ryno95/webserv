@@ -12,7 +12,7 @@ namespace Webserver
 	#define SYSTEM_CALL_ERROR -1
 	#define CHILD_PROCESS  0
 
-	class Cgi : public ITimeoutable, public IPollable, public ITickable
+	class Cgi : public ITimeoutable, public IPollable
 	{
 		public:
 			enum FDs
@@ -29,7 +29,6 @@ namespace Webserver
 			void		onRead();
 			void		onWrite();
 			int			getFd() const;
-			void		onTick();
 			void 		onTimeout();
 
 			timeval getLastCommunicated() const;

@@ -57,14 +57,12 @@ namespace Webserver
 		_sendStream = new SendStream(new std::stringstream);
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
-		TickHandler::get().add(this);
 	}	
 
 	Cgi::~Cgi()
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
-		TickHandler::get().remove(this);
 
 		if (_pipeFd[READ_FD] != SYSTEM_ERR)
 			close(_pipeFd[READ_FD]);
@@ -76,16 +74,17 @@ namespace Webserver
 	{
 		int status;
 		if (waitpid(_pid, &status, WNOHANG) == 0)
+		{
+			DEBUG("Child not ready to be reaped.");
 			return;
+		}
 
-		WARN("Child reaped!");
-
-		TickHandler::get().remove(this);
+		DEBUG("Child reaped!");
 
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
+			WARN("What is this exactly?"); // Ryno - help me out?
 			_status = HttpStatusCodes::NOT_FOUND;
-			WARN("What is this exactly?");
 		}
 	}
 
@@ -151,7 +150,7 @@ namespace Webserver
 	{
 		return _pipeFd[READ_FD];
 	}
-	
+
 	timeval Cgi::getLastCommunicated() const
 	{
 		struct timeval time;
@@ -168,23 +167,19 @@ namespace Webserver
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
 		if (readBytes == SYSTEM_ERR)
 		{
-			WARN("Cgi read was blocking, continue.");
+			DEBUG("Cgi read is blocking, continue.");
 		}
 		else if (readBytes == 0)
 		{
 			_sendStream->setIsFilled();
+			reapChild();
 		}
 		else
 		{
-			buffer[readBytes] = '\0';  
+			buffer[readBytes] = '\0';
 			if (_sendStream)
 				*_sendStream << buffer;
 		}
-	}
-
-	void Cgi::onTick()
-	{
-		reapChild();
 	}
 
 	void Cgi::onTimeout()
