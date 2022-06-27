@@ -51,16 +51,14 @@ namespace Webserver
 				setStream();
 
 			if (_sendStream != nullptr)
-			{
 				bufferBytesFilled += _sendStream->read(_buffer + bufferBytesFilled, BUFFERSIZE - bufferBytesFilled);
 
-				// If the stream is finished with filling (writing end) and the amount of bytes in the buffer is less than buffer size,
-				// that means that the stream we are currently reading from is depleted.
-				if (_sendStream->getIsFilled() && bufferBytesFilled < BUFFERSIZE)
-				{
-					_currentState++;
-					_sendStream = nullptr;
-				}
+			// If the stream is finished with filling (writing end) and the amount of bytes in the buffer is less than buffer size,
+			// that means that the stream we are currently reading from is depleted.
+			if (_sendStream == nullptr || (_sendStream->getIsFilled() && bufferBytesFilled < BUFFERSIZE))
+			{
+				_currentState++;
+				_sendStream = nullptr;
 			}
 
 			// (NON-BLOCKING) - No bytes have been added to the stream this iteration. the stream is not marked as finished, but is not ready to read on.
