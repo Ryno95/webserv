@@ -3,7 +3,7 @@
 
 namespace Webserver
 {
-	TargetInfo::TargetInfo(std::string target) : _target(target)
+	TargetInfo::TargetInfo(const std::string& target) : _target(target)
 	{
 		_entryExists = stat(target.c_str(), &_stats) == 0;
 	}

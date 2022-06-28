@@ -8,7 +8,7 @@ namespace Webserver
 	class TargetInfo
 	{
 		public:
-			TargetInfo(std::string target);
+			TargetInfo(const std::string& target);
 			
 			bool isDir() const;
 			bool isWriteable() const;
