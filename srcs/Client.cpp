@@ -22,7 +22,7 @@
 namespace Webserver
 {
 	Client::Client(const ServerConfig& config, int fd)
-		: _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false), _currentResponse(nullptr)
+		: _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false), _currentlyProcessing(nullptr)
 	{
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
@@ -54,36 +54,6 @@ namespace Webserver
 		}
 	}
 
-	int Client::getFd() const
-	{
-		return _fd;
-	}
-
-	void Client::onWrite()
-	{
-		if (_needsRemove == true)
-			return;
-
-		createCurrentResponse();
-		setLastCommunicated();
-		if (_responseQueue.size() == 0 && !_sender.hasResponse() && _currentResponse == nullptr)
-		{
-			WARN("DEACTIVATING WRITE FLAG");
-			PollHandler::get().setWriteEnabled(this, false);
-			return ;
-		}
-
-		try
-		{
-			sendResponses();
-		}
-		catch(const DisconnectedException& e)
-		{
-			DEBUG("Client disconnected: " << _fd);
-			_needsRemove = true;
-		}
-	}
-
 	void Client::recvRequests()
 	{
 		_receiver.handle();
@@ -99,6 +69,33 @@ namespace Webserver
 		{
 			_requestQueue.push_back(*first);
 			++first;
+		}
+	}
+
+	void Client::onWrite()
+	{
+		if (_needsRemove == true)
+			return;
+
+		setLastCommunicated();
+		startProcessingRequest();
+		addResponseToQueue();
+
+		// Is there something to start sending, something being sent or something to process?
+		if (_responseQueue.size() == 0 && !_sender.hasResponse() && _currentlyProcessing == nullptr)
+		{
+			PollHandler::get().setWriteEnabled(this, false);
+			return;
+		}
+
+		try
+		{
+			sendResponses();
+		}
+		catch(const DisconnectedException& e)
+		{
+			DEBUG("Client disconnected: " << _fd);
+			_needsRemove = true;
 		}
 	}
 
@@ -157,30 +154,29 @@ namespace Webserver
 		}
 	}
 
-	void Client::createCurrentResponse()
+	void Client::startProcessingRequest()
 	{
-			// Response *response = nullptr;
-		if (_requestQueue.size() == 0)
+		if (_requestQueue.size() == 0 || _currentlyProcessing != nullptr)
 			return ;
-		Request const& request = _requestQueue.front();
 
-		if (_currentResponse == nullptr)
-			_currentResponse = processRequest(request);
+		_currentlyProcessing = processRequest(_requestQueue.front());
+	}
 
-
-		if (!_currentResponse->isFinished())
+	void Client::addResponseToQueue()
+	{
+		if (_currentlyProcessing == nullptr || !_currentlyProcessing->isFinished())
 			return;
 
 		// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
 		std::string connectionValue;
-		if (request.tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
-			_currentResponse->addHeader(Header::Connection, "close");
+		if (_requestQueue.front().tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
+			_currentlyProcessing->addHeader(Header::Connection, "close");
 		else
-			_currentResponse->addHeader(Header::Connection, "keep-alive");
+			_currentlyProcessing->addHeader(Header::Connection, "keep-alive");
 
 		_requestQueue.pop_front();
-		_responseQueue.push_back(_currentResponse);
-		_currentResponse = nullptr;
+		_responseQueue.push_back(_currentlyProcessing);
+		_currentlyProcessing = nullptr;
 	}
 
 	void Client::sendResponses()
@@ -229,11 +225,16 @@ namespace Webserver
 	void Client::onTimeout()
 	{
 		_needsRemove = true;
-		DEBUG("FD " << _fd << " timed-out.");
+		DEBUG("Client " << _fd << " timed-out.");
 	}
 
 	timeval Client::getLastCommunicated() const
 	{
 		return _lastCommunicated;
+	}
+
+	int Client::getFd() const
+	{
+		return _fd;
 	}
 }
