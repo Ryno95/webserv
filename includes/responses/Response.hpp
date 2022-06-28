@@ -28,9 +28,13 @@ namespace Webserver
 		SendStream *getBodyStream() const;
 
 		void			addFile(const std::string& filePath);
-		SendStream	*getHeaderStream();
+		SendStream		*getHeaderStream();
 		HttpStatusCode	getStatusCode() const;
 		void			setStatusCode(HttpStatusCode code);
+
+		bool			isFinished() const;
+		void			setFinished();
+		void			setNotFinished();
 
 	protected:
 		void setBodyStream(SendStream* fileStream);
@@ -43,5 +47,6 @@ namespace Webserver
 
 		SendStream*	_bodyStream;
 		SendStream	_headerStream;
+		bool		_isFinished;
 	};
 }

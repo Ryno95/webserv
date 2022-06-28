@@ -44,7 +44,7 @@ namespace Webserver
 		void recvRequests();
 		void sendResponses();
 
-		void processRequests();
+		void createCurrentResponse();
 		Response* processRequest(const Request& request);
 		Response* processValidRequest(const Host& host, const Request& request);
 		Response* processInvalidRequest(const Host& host, HttpStatusCode code);
@@ -54,11 +54,12 @@ namespace Webserver
 		std::deque<Request> _requestQueue;
 		std::deque<Response *> _responseQueue;
 
-		int _fd;
-		Receiver _receiver;
-		Sender _sender;
+		int 				_fd;
+		Receiver 			_receiver;
+		Sender 				_sender;
 		const ServerConfig& _serverConfig;
-		bool _closeAfterRespond;
-		bool _needsRemove;
+		bool 				_closeAfterRespond;
+		bool 				_needsRemove;
+		Response 			*_currentResponse;
 	};
 }

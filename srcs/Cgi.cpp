@@ -90,6 +90,7 @@ namespace Webserver
 			// _status = HttpStatusCodes::NOT_FOUND;
 			// throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
+		_response.setFinished();
 	}
 
 	static int	is_executable(const char *full_path_executable)

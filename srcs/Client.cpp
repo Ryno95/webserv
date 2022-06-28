@@ -21,7 +21,8 @@
 
 namespace Webserver
 {
-	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false)
+	Client::Client(const ServerConfig& config, int fd)
+		: _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false), _currentResponse(nullptr)
 	{
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
@@ -45,7 +46,6 @@ namespace Webserver
 		{
 			setLastCommunicated();
 			recvRequests();
-			processRequests();
 		}
 		catch(const DisconnectedException& e)
 		{
@@ -64,9 +64,17 @@ namespace Webserver
 		if (_needsRemove == true)
 			return;
 
+		createCurrentResponse();
+		setLastCommunicated();
+		if (_responseQueue.size() == 0 && !_sender.hasResponse() && _currentResponse == nullptr)
+		{
+			WARN("DEACTIVATING WRITE FLAG");
+			PollHandler::get().setWriteEnabled(this, false);
+			return ;
+		}
+
 		try
 		{
-			setLastCommunicated();
 			sendResponses();
 		}
 		catch(const DisconnectedException& e)
@@ -149,25 +157,30 @@ namespace Webserver
 		}
 	}
 
-	void Client::processRequests()
+	void Client::createCurrentResponse()
 	{
-		while (_requestQueue.size() > 0)
-		{
-			Response *response = nullptr;
-			Request const& request = _requestQueue.front();
+			// Response *response = nullptr;
+		if (_requestQueue.size() == 0)
+			return ;
+		Request const& request = _requestQueue.front();
 
-			response = processRequest(request);
+		if (_currentResponse == nullptr)
+			_currentResponse = processRequest(request);
 
-			// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
-			std::string connectionValue;
-			if (request.tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
-				response->addHeader(Header::Connection, "close");
-			else
-				response->addHeader(Header::Connection, "keep-alive");
 
-			_requestQueue.pop_front();
-			_responseQueue.push_back(response);
-		}
+		if (!_currentResponse->isFinished())
+			return;
+
+		// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
+		std::string connectionValue;
+		if (request.tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
+			_currentResponse->addHeader(Header::Connection, "close");
+		else
+			_currentResponse->addHeader(Header::Connection, "keep-alive");
+
+		_requestQueue.pop_front();
+		_responseQueue.push_back(_currentResponse);
+		_currentResponse = nullptr;
 	}
 
 	void Client::sendResponses()
@@ -192,10 +205,6 @@ namespace Webserver
 
 		if (_sender.hasResponse()) // if we have a current response set, send that
 			_sender.handle();
-		else
-		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::get().setWriteEnabled(this, false);
-		}
 
 		if (_sender.hasResponse() == false && _closeAfterRespond == true)
 			_needsRemove = true;

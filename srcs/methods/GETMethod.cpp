@@ -48,6 +48,7 @@ namespace Webserver
 
 		Response* response = new Response();
 		response->addFile(target);
+		response->setFinished();
 		return response;
 	}
 }

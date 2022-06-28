@@ -54,6 +54,6 @@ namespace Webserver
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const std::string&	_uri;
-			CgiResponse&	_response;
+			CgiResponse&		_response;
 	};
 }

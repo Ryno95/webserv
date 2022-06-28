@@ -12,14 +12,16 @@ namespace Webserver
 	Response::Response() :
 		_statusCode(HttpStatusCodes::OK),
 		_bodyStream(nullptr),
-		_headerStream(new std::stringstream)
+		_headerStream(new std::stringstream),
+		_isFinished(true)
 	{
 	}
 
 	Response::Response(HttpStatusCode code) :
 		_statusCode(code),
 		_bodyStream(nullptr),
-		_headerStream(new std::stringstream)
+		_headerStream(new std::stringstream),
+		_isFinished(true)
 	{
 		addConstantHeaderFields();
 	}
@@ -119,4 +121,20 @@ namespace Webserver
 	{
 		_statusCode = code;
 	}
+
+	bool Response::isFinished() const
+	{
+		return _isFinished;
+	}
+	
+	void Response::setFinished()
+	{
+		_isFinished = true;
+	}
+
+	void Response::setNotFinished()
+	{
+		_isFinished = false;
+	}
+	
 }
