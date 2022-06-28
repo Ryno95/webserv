@@ -32,8 +32,12 @@ namespace Webserver
 		HttpStatusCode	getStatusCode() const;
 		void			setStatusCode(HttpStatusCode code);
 
-	protected:
+		bool			isFinished() const;
+		void			setFinished();
+		void			setNotFinished();
+
 		void setBodyStream(SendStream* fileStream);
+	protected:
 
 		HttpStatusCode		_statusCode;
 
@@ -43,5 +47,6 @@ namespace Webserver
 
 		SendStream*	_bodyStream;
 		SendStream	_headerStream;
+		bool		_isFinished;
 	};
 }
