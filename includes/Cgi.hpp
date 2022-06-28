@@ -4,6 +4,7 @@
 #include <Host.hpp>
 #include <ITimeoutable.hpp>
 #include <IPollable.hpp>
+#include <methods/TargetInfo.hpp>
 
 namespace Webserver
 {
@@ -19,7 +20,7 @@ namespace Webserver
 				WRITE_FD
 			} FDs;
 	
-			Cgi(const Request &request, const Host &host, const std::string& uri);
+			Cgi(const Request &request, const Host &host, const TargetInfo& uri);
 			~Cgi();
 
 			void		execute();
@@ -50,6 +51,6 @@ namespace Webserver
 			std::stringstream* 	_cgiStream;
 			const Host&			_host;
 			HttpStatusCode		_status;
-			const std::string&	_uri;
+			const TargetInfo&	_uri;
 	};
 }

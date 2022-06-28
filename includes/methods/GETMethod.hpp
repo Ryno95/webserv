@@ -1,6 +1,7 @@
 #pragma once
 
 #include <methods/AMethod.hpp>
+#include <methods/TargetInfo.hpp>
 
 #include <string>
 
@@ -12,6 +13,6 @@ namespace Webserver
 		GETMethod(Request const& request, const Host& host);
 		~GETMethod();
 
-		Response* process(const std::string& uri);
+		Response* process(const TargetInfo& w);
 	};
 }

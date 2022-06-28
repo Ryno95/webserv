@@ -2,6 +2,7 @@
 #include <methods/GETMethod.hpp>
 #include <methods/POSTMethod.hpp>
 #include <methods/DELETEMethod.hpp>
+#include <methods/TargetInfo.hpp>
 #include <Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
@@ -102,7 +103,8 @@ namespace Webserver
 	*/
 	Response* Client::processValidRequest(const Host& host, const Request& request)
 	{
-		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
+		// const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
+		const TargetInfo uri(prependRoot(host.getRoot(), request.getTarget()));
 
 		switch (host.getRouteType())
 		{

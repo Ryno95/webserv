@@ -30,3 +30,4 @@ class Methods(Enum):
 
 LOCAL_HOST = "http://localhost:8080"
 TEST_FILE_DIR = "acceptance_tests/PyTests/"
+TEST_FILES_DIR =  "testFiles/"
