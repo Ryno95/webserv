@@ -41,6 +41,9 @@ namespace Webserver
 	{
 		DEBUG("Entering POST method!");
 
+		if (!_host.isUploadAllowed())
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
+
 		std::ofstream		outfile;
 		bool				isCreatingNewFile = false;
 		
