@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <fcntl.h>
@@ -15,12 +16,12 @@
 #include <Utility.hpp>
 #include <Sender.hpp>
 #include <responses/CgiResponse.hpp>
+#include <methods/TargetInfo.hpp>
 
 #define TERMINATOR '\0'
 
 namespace Webserver
 {
-	// add Root to target, again
 	Cgi::Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
@@ -29,6 +30,11 @@ namespace Webserver
 			_uri(uri),
 			_response(response)
 	{
+		if (!_uri.entryExists())
+			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+		// else if (!_uri.isReadable()) // Needs to be implemented yet!
+			// throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
+
 		_pipeFd[READ_FD] = SYSTEM_ERR;
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
 		if (pipe(_pipeFd) < 0)
@@ -85,11 +91,10 @@ namespace Webserver
 
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			WARN("What is this exactly?"); // Ryno - help me out?
-			_response.setStatusCode(HttpStatusCodes::NOT_FOUND);
-			// _status = HttpStatusCodes::NOT_FOUND;
-			// throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
+			_response.setBodyStream(nullptr);
 		}
+		_response.setFinished();
 	}
 
 	static int	is_executable(const char *full_path_executable)
@@ -132,9 +137,9 @@ namespace Webserver
 		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
 
-		if (!_uri.entryExists() || _cgiExecutable == "")
-			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
-		else if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
+		// if (access(_uri.c_str(), F_OK ) == SYSTEM_ERR || _cgiExecutable == "")
+		// 	exit(2);
+		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}
 
