@@ -85,10 +85,7 @@ namespace Webserver
 
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			WARN("What is this exactly?"); // Ryno - help me out?
 			_response.setStatusCode(HttpStatusCodes::NOT_FOUND);
-			// _status = HttpStatusCodes::NOT_FOUND;
-			// throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
 		_response.setFinished();
 	}
@@ -175,10 +172,7 @@ namespace Webserver
 			DEBUG("Cgi read is blocking, continue.");
 		}
 		else if (readBytes == 0)
-		{
-			_sendStream->setIsFilled();
 			reapChild();
-		}
 		else
 		{
 			buffer[readBytes] = '\0';
