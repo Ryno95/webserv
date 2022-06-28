@@ -3,6 +3,7 @@
 #include <Request.hpp>
 #include <Host.hpp>
 #include <responses/Response.hpp>
+#include <methods/TargetInfo.hpp>
 
 #include <iostream>
 #include <string>
@@ -46,7 +47,7 @@ namespace Webserver
 	{
 	public:
 		AMethod(Request const& request, const Host& host);
-		virtual Response* process(const std::string& uri) = 0;
+		virtual Response* process(const TargetInfo& uri) = 0;
 
 		void writeFile();
 

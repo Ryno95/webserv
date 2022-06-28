@@ -155,7 +155,6 @@ namespace Webserver
 	void Request::parse()
 	{
 		size_t pos = parseRequestLine();
-		std::cerr << this->getTarget() << std::endl;
 		parseHeaderFields(pos);
 		validate();
 	}

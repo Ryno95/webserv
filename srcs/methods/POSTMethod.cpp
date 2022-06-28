@@ -1,9 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include <ctime>
-#include <unistd.h>
 
-#include <config/ServerConfig.hpp>
 #include <HttpStatusCode.hpp>
 #include <methods/POSTMethod.hpp>
 #include <Logger.hpp>
@@ -23,11 +20,11 @@ namespace Webserver
 		const std::string HttpProtocol("http://");
 		const std::string localHost("127.0.0.1");
 		const std::string listenPort("8080");
-		const std::string absPath = _absPathForCreatedFile.substr(_absPathForCreatedFile.find_first_of("/"),  _absPathForCreatedFile.size());
+		const std::string absPath = _relativeCreatedPath.substr(_relativeCreatedPath.find_first_of("/"),  _relativeCreatedPath.size());
 		const std::string location(HttpProtocol + localHost + ":" + listenPort + absPath);
 
 		_response->addHeader(Header::Location, location);
-		_response->addHeader("Created-file", _absPathForCreatedFile);
+		_response->addHeader("Created-file", _relativeCreatedPath);
 	}
 
 	void POSTMethod::setPostResponseHeaders(bool isCreated)
@@ -37,25 +34,24 @@ namespace Webserver
 			addLocationHeader();
 	}
 
-	Response* POSTMethod::process(const std::string& uri)
+	Response* POSTMethod::process(const TargetInfo& uri)
 	{
 		DEBUG("Entering POST method!");
 
 		std::ofstream		outfile;
 		bool				isCreatingNewFile = false;
 		
-		// check if file aready exists
-		if (access(uri.c_str(), R_OK) == -1)
+		if (!uri.entryExists())
 			isCreatingNewFile = true;
 
-		outfile.open(uri, std::ios_base::app);
+		outfile.open(uri.getTarget(), std::ios_base::app);
 		if (!outfile.is_open())
 		{
-			WARN("Unexpected: File '" << uri << "' could not be opened, while we just tried to create it.");
+			WARN("Unexpected: File '" << uri.getTarget() << "' could not be opened, while we just tried to create it.");
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
 
-		_absPathForCreatedFile = uri;
+		_relativeCreatedPath = uri.getTarget();
 		outfile << _request.getBody();
 
 		_response = new Response(HttpStatusCodes::OK);

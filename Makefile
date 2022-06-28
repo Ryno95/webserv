@@ -25,6 +25,7 @@ CLASSES		=	Utility\
 				methods/GETMethod\
 				methods/POSTMethod\
 				methods/DELETEMethod\
+				methods/TargetInfo\
 				responses/Response\
 				responses/BadResponse\
 				responses/RedirectResponse\

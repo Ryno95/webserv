@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <fcntl.h>
@@ -21,7 +20,8 @@
 
 namespace Webserver
 {
-	Cgi::Cgi(const Request &request, const Host &host, const std::string& uri, CgiResponse& response)
+	// add Root to target, again
+	Cgi::Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
 			_host(host),
@@ -130,10 +130,10 @@ namespace Webserver
 	{
 		std::string	queryString = createQueryString();
 		const char* env[] = {queryString.c_str(), NULL};
-		const char* argv[] = {"python3", _uri.c_str(), NULL};
+		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
 
-		if (access(_uri.c_str(), F_OK ) == SYSTEM_ERR || _cgiExecutable == "")
-			exit(2);
+		if (!_uri.entryExists() || _cgiExecutable == "")
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		else if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}

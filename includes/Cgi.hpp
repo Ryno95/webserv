@@ -6,6 +6,7 @@
 #include <IPollable.hpp>
 #include <ITickable.hpp>
 #include <SendStream.hpp>
+#include <methods/TargetInfo.hpp>
 
 namespace Webserver
 {
@@ -23,8 +24,7 @@ namespace Webserver
 				WRITE_FD
 			} FDs;
 	
-			// Cgi(const Request &request, const Host &host, const std::string& uri);
-			Cgi(const Request &request, const Host &host, const std::string& uri, CgiResponse& response);
+			Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response);
 			~Cgi();
 
 			void		execute();
@@ -53,7 +53,7 @@ namespace Webserver
 			SendStream*			_sendStream;
 			const Host&			_host;
 			HttpStatusCode		_status;
-			const std::string&	_uri;
+			const TargetInfo&	_uri;
 			CgiResponse&	_response;
 	};
 }

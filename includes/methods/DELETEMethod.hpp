@@ -1,6 +1,7 @@
 #pragma once
 
 #include <methods/AMethod.hpp>
+#include <methods/TargetInfo.hpp>
 
 namespace Webserver
 {
@@ -10,6 +11,6 @@ namespace Webserver
 				DELETEMethod(const Request &request, const Host& host);
 				~DELETEMethod();
 
-				Response	*process(const std::string& uri);
+				Response	*process(const TargetInfo& uri);
 	};
 }

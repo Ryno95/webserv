@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 # Multi import from the same module
-from defines import Colors, returnStatus, Methods, HttpResponseStatus, LOCAL_HOST
+from defines import Colors, returnStatus, Methods, HttpResponseStatus, LOCAL_HOST, TEST_FILES_DIR
 
 #Initilize all class vars in __init__
 class Request:
@@ -14,7 +14,7 @@ class Request:
     def printSucces(self, expected, actual, testName):
         print(f"{Colors.OK_GREEN}[OK] {Colors.NATURAL}{testName}\n\tExpected: {repr(expected)}\n\tActual  : {repr(actual)}")
 
-    def printError(self, expected, actual, testName):
+    def printError(self, expected, actual, testName = None):
         print(f"{Colors.FAILED_RED}[KO] {Colors.NATURAL}{testName} \n\tExpected: {repr(expected)}\n\tActual  : {repr(actual)}")
         return returnStatus.ERROR
 
@@ -53,7 +53,7 @@ class GETRequest(Request):
 class POSTRequest(Request):
     def __init__(self, fileName=None):
         self._method = Methods.POST
-        self._fileName = fileName
+        self._fileName = TEST_FILES_DIR + fileName
         self._fd = 0
         self._body = ""
         self._response = []
@@ -62,8 +62,9 @@ class POSTRequest(Request):
 
     def checkCreatedFileContent(self):
         self.createdFile = self._response.headers.get('Created-file')
+        print(self.createdFile)
         if self.createdFile is None:
-            self.printError(self._body, self.createdFile)
+            self.printError("File Created", "File Not Created", "File Creation")
         self.createdFile = "../../" + self.createdFile
         fileToPostSize = os.stat(self._fileName).st_size
         postedFileSize = os.stat(self.createdFile).st_size
