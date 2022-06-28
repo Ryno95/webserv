@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include <Cgi.hpp>
 #include <Exception.hpp>
@@ -63,6 +64,7 @@ namespace Webserver
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
 		_sendStream = new std::stringstream;
+		_lastCommunicated = TimeoutHandler::get().getTime();
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -87,7 +89,8 @@ namespace Webserver
 			return;
 		}
 
-		DEBUG("Child reaped!");
+		DEBUG("Child reaped with status: " << WIFEXITED(status) << ", exit status: " << WEXITSTATUS(status));
+
 
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
@@ -137,8 +140,6 @@ namespace Webserver
 		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
 
-		// if (access(_uri.c_str(), F_OK ) == SYSTEM_ERR || _cgiExecutable == "")
-		// 	exit(2);
 		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}
@@ -162,14 +163,13 @@ namespace Webserver
 
 	timeval Cgi::getLastCommunicated() const
 	{
-		struct timeval time;
-		if (gettimeofday(&time, NULL) == SYSTEM_CALL_ERROR)
-			throw (SystemCallFailedException("gettimeofday()")); // Server will break
-		return time;
+		return _lastCommunicated;
 	}
 
 	void Cgi::onRead()
 	{
+		_lastCommunicated = TimeoutHandler::get().getTime();
+
 		char buffer[BUFFERSIZE];
 		int readBytes = 0;
 
@@ -190,7 +190,10 @@ namespace Webserver
 
 	void Cgi::onTimeout()
 	{
-		WARN("Timeout handling on CGI is not implemented yet!");
+		WARN("CGI TIMEOUT!");
+		kill(_pid, SIGINT);
+		_response.setBodyStream(nullptr);
+		_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 	}
 
 	void Cgi::onWrite()
