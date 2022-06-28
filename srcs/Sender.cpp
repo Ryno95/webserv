@@ -73,8 +73,8 @@ namespace Webserver
 		{
 			ssize_t written;
 			written = write(_fd, _buffer, bufferBytesFilled);
+			DEBUG("Bytes sent to client(" << _fd << "): " << bufferBytesFilled);
 		}
-		DEBUG("bytes written: " << bufferBytesFilled);
 		if (_currentState == FINISHED)
 			deleteResponse();
 	}
