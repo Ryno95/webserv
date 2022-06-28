@@ -53,6 +53,7 @@ namespace Webserver
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const TargetInfo&	_uri;
-			CgiResponse&	_response;
+			CgiResponse&		_response;
+			uint				_bodySize;
 	};
 }

@@ -29,7 +29,8 @@ namespace Webserver
 			_host(host),
 			_status(HttpStatusCodes::OK),
 			_uri(uri),
-			_response(response)
+			_response(response),
+			_bodySize(0)
 	{
 		if (!_uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
@@ -97,6 +98,8 @@ namespace Webserver
 			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 			_response.setBodyStream(nullptr);
 		}
+		else if (_bodySize != 0)
+			_response.addHeader(Header::ContentLength, toString(_bodySize));
 		_response.setFinished();
 	}
 
@@ -182,6 +185,7 @@ namespace Webserver
 			reapChild();
 		else
 		{
+			_bodySize += readBytes;
 			buffer[readBytes] = '\0';
 			if (_sendStream)
 				*_sendStream << buffer;
@@ -194,6 +198,7 @@ namespace Webserver
 		kill(_pid, SIGINT);
 		_response.setBodyStream(nullptr);
 		_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
+		_bodySize = 0;
 	}
 
 	void Cgi::onWrite()
