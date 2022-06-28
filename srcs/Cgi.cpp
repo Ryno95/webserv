@@ -62,7 +62,7 @@ namespace Webserver
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
-		_sendStream = new SendStream(new std::stringstream);
+		_sendStream = new std::stringstream;
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -179,10 +179,7 @@ namespace Webserver
 			DEBUG("Cgi read is blocking, continue.");
 		}
 		else if (readBytes == 0)
-		{
-			_sendStream->setIsFilled();
 			reapChild();
-		}
 		else
 		{
 			buffer[readBytes] = '\0';
@@ -200,7 +197,7 @@ namespace Webserver
 	{
 	}
 
-	SendStream* 	Cgi::getCgiStream() const { return _sendStream; }
+	std::istream* 	Cgi::getCgiStream() const { return _sendStream; }
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
 }

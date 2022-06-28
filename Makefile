@@ -10,7 +10,6 @@ TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
-				SendStream\
 				config/ParseTreeUtility\
 				config/AppConfigParser\
 				config/ServerConfigParser\

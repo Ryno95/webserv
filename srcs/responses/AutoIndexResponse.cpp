@@ -10,8 +10,7 @@ namespace Webserver
 		Response(HttpStatusCodes::OK)
 	{
 		const std::string autoIndexPage = AutoIndex(targetDir).getHtmlPage();
-		setBodyStream(new SendStream(new std::stringstream(autoIndexPage)));
-		getBodyStream()->setIsFilled();
+		setBodyStream(new std::stringstream(autoIndexPage));
 		addHeader(Header::ContentLength, toString(autoIndexPage.size()));
 	}
 

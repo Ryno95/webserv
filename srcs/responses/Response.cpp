@@ -12,7 +12,6 @@ namespace Webserver
 	Response::Response() :
 		_statusCode(HttpStatusCodes::OK),
 		_bodyStream(nullptr),
-		_headerStream(new std::stringstream),
 		_isFinished(true)
 	{
 	}
@@ -20,13 +19,12 @@ namespace Webserver
 	Response::Response(HttpStatusCode code) :
 		_statusCode(code),
 		_bodyStream(nullptr),
-		_headerStream(new std::stringstream),
 		_isFinished(true)
 	{
 		addConstantHeaderFields();
 	}
 
-	Response::Response(const Response &ref) : _headerStream(new std::stringstream)
+	Response::Response(const Response &ref)
 	{
 		*this =	ref;
 	}
@@ -64,7 +62,7 @@ namespace Webserver
 		return mimeType;
 	}
 
-	SendStream *Response::getHeaderStream()
+	std::istream *Response::getHeaderStream()
 	{
 		std::map<std::string, std::string>::const_iterator cursor = headersBegin();
 		std::map<std::string, std::string>::const_iterator end = headersEnd();
@@ -83,14 +81,13 @@ namespace Webserver
 			++cursor;
 		}
 		_headerStream << "\r\n\r\n";
-		_headerStream.setIsFilled();
 		return &_headerStream;
 	}
 
 	void Response::addFile(const std::string& filePath)
 	{
 		std::fstream* stream = new std::fstream(filePath);
-		setBodyStream(new SendStream(stream));
+		setBodyStream(stream);
 
 		if (!stream->is_open())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
@@ -98,7 +95,7 @@ namespace Webserver
 		createBodyHeaders(filePath); // probably not OK yet, because this is the full file path and not just the file name.
 	}
 
-	void Response::setBodyStream(SendStream* stream)
+	void Response::setBodyStream(std::istream* stream)
 	{
 		if (_bodyStream != nullptr)
 			delete _bodyStream;
@@ -108,11 +105,13 @@ namespace Webserver
 
 	void Response::createBodyHeaders(const std::string &fileName)
 	{
-		addHeader(Header::ContentLength, std::to_string(_bodyStream->getSize()));
+		_bodyStream->seekg(0, std::ios_base::end);
+		addHeader(Header::ContentLength, std::to_string(_bodyStream->tellg()));
 		addHeader(Header::ContentType, getContentTypeHeader(fileName));
+		_bodyStream->seekg(0);
 	}
 
-	SendStream* Response::getBodyStream() const
+	std::istream* Response::getBodyStream() const
 	{
 		return _bodyStream;
 	}

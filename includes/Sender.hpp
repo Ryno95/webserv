@@ -1,7 +1,6 @@
 #pragma once
 
 #include <responses/Response.hpp>
-#include <SendStream.hpp>
 
 #include <iostream>
 
@@ -38,7 +37,7 @@ namespace Webserver
 		int _fd;
 		int _currentState;
 		Response* _response;
-		SendStream* _sendStream;
+		std::istream* _sendStream;
 		char* _buffer;
 	};
 }

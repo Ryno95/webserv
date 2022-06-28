@@ -51,11 +51,14 @@ namespace Webserver
 				setStream();
 
 			if (_sendStream != nullptr)
-				bufferBytesFilled += _sendStream->read(_buffer + bufferBytesFilled, BUFFERSIZE - bufferBytesFilled);
+			{
+				_sendStream->read(_buffer + bufferBytesFilled, BUFFERSIZE - bufferBytesFilled);
+				bufferBytesFilled += _sendStream->gcount();
+			}
 
 			// If the stream is finished with filling (writing end) and the amount of bytes in the buffer is less than buffer size,
 			// that means that the stream we are currently reading from is depleted.
-			if (_sendStream == nullptr || (_sendStream->getIsFilled() && bufferBytesFilled < BUFFERSIZE))
+			if (_sendStream == nullptr || bufferBytesFilled < BUFFERSIZE)
 			{
 				_currentState++;
 				_sendStream = nullptr;
@@ -71,7 +74,7 @@ namespace Webserver
 			ssize_t written;
 			written = write(_fd, _buffer, bufferBytesFilled);
 		}
-
+		DEBUG("bytes written: " << bufferBytesFilled);
 		if (_currentState == FINISHED)
 			deleteResponse();
 	}

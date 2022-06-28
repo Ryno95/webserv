@@ -5,7 +5,6 @@
 #include <ITimeoutable.hpp>
 #include <IPollable.hpp>
 #include <ITickable.hpp>
-#include <SendStream.hpp>
 #include <methods/TargetInfo.hpp>
 
 namespace Webserver
@@ -36,7 +35,7 @@ namespace Webserver
 
 			timeval getLastCommunicated() const;
 		
-			SendStream* 		getCgiStream() const;
+			std::istream* 	getCgiStream() const;
 			HttpStatusCode 		getStatus() const;
 
 		private:
@@ -50,7 +49,7 @@ namespace Webserver
 			int					_pid;
 			int					_pipeFd[2];
 			const Request&		_request;
-			SendStream*			_sendStream;
+			std::stringstream*	_sendStream;
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const TargetInfo&	_uri;
