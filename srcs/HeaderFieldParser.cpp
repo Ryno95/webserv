@@ -7,11 +7,10 @@
 #include <string>
 
 #define COLON 			":"
-#define CRLF			"\r\n"
 
 namespace Webserver
 {
-	HeaderFieldParser::HeaderFieldParser()
+	HeaderFieldParser::HeaderFieldParser() : _endl("\r\n")
 	{
 	}
 
@@ -35,7 +34,7 @@ namespace Webserver
 		size_t next, prev = 0;
 		std::string line;
 
-		while ((next = headerFields.find(CRLF, prev)) != std::string::npos)
+		while ((next = headerFields.find(_endl, prev)) != std::string::npos)
 		{
 			line = trimString(headerFields.substr(prev, next - prev));
 			if (line.size() == 0)
@@ -44,5 +43,11 @@ namespace Webserver
 			prev = next;
 		}
 		return _fields;
+	}
+
+	HeaderFieldParser& HeaderFieldParser::setEndl(const std::string& endl)
+	{
+		_endl = endl;
+		return *this;
 	}
 }

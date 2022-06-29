@@ -12,11 +12,14 @@ namespace Webserver
 		~HeaderFieldParser();
 
 		HeaderFields parse(const std::string& headerFields);
+		HeaderFieldParser& setEndl(const std::string& endl);
 
 	protected:
 		HeaderFields _fields;
 
 		void parseKeyValuePair(const std::string& line);
 
+	private:
+		std::string _endl;
 	};
 }
