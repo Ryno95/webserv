@@ -18,6 +18,7 @@
 #include <Sender.hpp>
 #include <responses/CgiResponse.hpp>
 #include <methods/TargetInfo.hpp>
+#include <HeaderFieldParser.hpp>
 
 #define TERMINATOR '\0'
 
@@ -29,8 +30,7 @@ namespace Webserver
 			_host(host),
 			_status(HttpStatusCodes::OK),
 			_uri(uri),
-			_response(response),
-			_bodySize(0)
+			_response(response)
 	{
 		if (!_uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
@@ -64,7 +64,6 @@ namespace Webserver
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
-		_sendStream = new std::stringstream;
 		_lastCommunicated = TimeoutHandler::get().getTime();
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
@@ -92,14 +91,44 @@ namespace Webserver
 
 		DEBUG("Child reaped with status: " << WIFEXITED(status) << ", exit status: " << WEXITSTATUS(status));
 
+		if (_response.isFinished())
+			return;
 
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
 			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
-			_response.setBodyStream(nullptr);
 		}
-		else if (_bodySize != 0)
-			_response.addHeader(Header::ContentLength, toString(_bodySize));
+		else
+		{
+			WARN("Cgi buffer: " << _buffer);
+
+			size_t bodyPos = _buffer.find("\n\n");
+			if (bodyPos != std::string::npos)
+			{
+				DEBUG("parsing header fields...");
+				HeaderFields headerFields = HeaderFieldParser().setEndl("\n").parse(_buffer);
+
+				HeaderFields::const_iterator it = headerFields.headersBegin();
+				HeaderFields::const_iterator end = headerFields.headersEnd();
+
+				while (it != end)
+				{
+					DEBUG(it->first << ": " << it->second);
+					it++;
+				}
+
+				bodyPos += 2;
+			}
+			else
+				bodyPos = 0;
+
+			if (bodyPos < _buffer.size())
+			{
+				_response.addHeader(Header::ContentLength, toString(_buffer.size() - bodyPos));
+				_response.setBodyStream(new std::stringstream(_buffer.substr(bodyPos)));
+			}
+		}
+
 		_response.setFinished();
 	}
 
@@ -185,10 +214,8 @@ namespace Webserver
 			reapChild();
 		else
 		{
-			_bodySize += readBytes;
 			buffer[readBytes] = '\0';
-			if (_sendStream)
-				*_sendStream << buffer;
+			_buffer += buffer;
 		}
 	}
 
@@ -196,16 +223,13 @@ namespace Webserver
 	{
 		WARN("CGI TIMEOUT!");
 		kill(_pid, SIGINT);
-		_response.setBodyStream(nullptr);
 		_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
-		_bodySize = 0;
+		_response.setFinished();
 	}
 
 	void Cgi::onWrite()
 	{
 	}
-
-	std::istream* 	Cgi::getCgiStream() const { return _sendStream; }
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
 }

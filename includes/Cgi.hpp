@@ -49,11 +49,10 @@ namespace Webserver
 			int					_pid;
 			int					_pipeFd[2];
 			const Request&		_request;
-			std::stringstream*	_sendStream;
+			std::string			_buffer;
 			const Host&			_host;
 			HttpStatusCode		_status;
 			const TargetInfo&	_uri;
 			CgiResponse&		_response;
-			uint				_bodySize;
 	};
 }
