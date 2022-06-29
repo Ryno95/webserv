@@ -5,6 +5,22 @@
 
 namespace Webserver
 {
+	/*
+		Returns a trimmed (whitespace removed) copy of the string supplied as a parameter.
+	*/
+	std::string	trimString(const std::string& line)
+	{
+		std::string::const_iterator start = line.begin();
+		std::string::const_iterator end = line.end();
+
+		while (start != end && std::isspace(*start))
+			++start;
+		--end;
+		while (std::distance(start, end) > 0 && std::isspace(*end))
+			--end;
+		return std::string(start, end + 1);
+	}
+
 	std::string removeLeadingWhitespace(const std::string &str)
 	{
 		std::string out = str;
