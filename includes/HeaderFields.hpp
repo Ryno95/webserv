@@ -63,23 +63,27 @@ namespace Header
 	const std::string Via = "Via";
 	const std::string Warning = "Warning";
 	const std::string WWWAuthenticate = "WWW-Authenticate";
+	const std::string SetCookie = "Set-Cookie";
 }
 
 namespace Webserver
 {
-	typedef std::map<std::string, std::string, CmpCaseInsensitive>	map_type;
-	typedef map_type::value_type									pair_type;
-	typedef map_type::const_iterator								const_iterator;
-
 	class HeaderFields
 	{
 	public:
+		typedef std::map<std::string, std::string, CmpCaseInsensitive>	map_type;
+		typedef map_type::value_type									pair_type;
+		typedef map_type::const_iterator								const_iterator;
+
 		bool containsHeader(const std::string& key) const;
 		void addHeader(const std::string& key, const std::string& value);
 		bool tryGetHeader(const std::string& key, std::string& value) const;
 		const_iterator headersBegin() const;
 		const_iterator headersEnd() const;
-	
+
+	protected:
+		void setHeaderFields(const HeaderFields& ref);
+
 	private:
 		map_type _map;
 

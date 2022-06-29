@@ -1,4 +1,5 @@
 #include <Receiver.hpp>
+#include <RequestParser.hpp>
 #include <defines.hpp>
 #include <Client.hpp>
 #include <Exception.hpp>
@@ -79,12 +80,12 @@ namespace Webserver
 
 	void Receiver::checkHeader()
 	{
-		_newRequest = Request(_buffer);
-		_buffer.clear();
+		std::cout << _buffer << std::endl;
 
 		try
 		{
-			_newRequest.parse();
+			_newRequest = RequestParser().parse(_buffer);
+			_buffer.clear();
 			if (requestHasBodyField(_newRequest))
 			{
 				_state = RECV_BODY;
@@ -95,6 +96,7 @@ namespace Webserver
 		catch(const InvalidRequestException& e)
 		{
 			_newRequest.setStatus(e.getStatus());
+			_buffer.clear();
 		}
 		_state = ADD_REQUEST;
 	}
