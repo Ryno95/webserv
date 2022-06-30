@@ -1,40 +1,54 @@
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include <Cgi.hpp>
 #include <Exception.hpp>
 #include <PollHandler.hpp>
 #include <TimeoutHandler.hpp>
+#include <TickHandler.hpp>
 #include <Host.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
 #include <Sender.hpp>
+#include <responses/CgiResponse.hpp>
+#include <methods/TargetInfo.hpp>
 
 #define TERMINATOR '\0'
 
 namespace Webserver
 {
-	// add Root to target, again
-	Cgi::Cgi(const Request &request, const Host &host, const TargetInfo& uri)
+	Cgi::Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response)
 		:	_cgiExecutable(getExecutablePath("/python3")),
 			_request(request),
 			_host(host),
 			_status(HttpStatusCodes::OK),
-			_uri(uri)
+			_uri(uri),
+			_response(response),
+			_bodySize(0)
 	{
+		if (!_uri.entryExists())
+			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+		else if (!_uri.isReadable()) 
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
+
 		_pipeFd[READ_FD] = SYSTEM_ERR;
+		_pipeFd[WRITE_FD] = SYSTEM_ERR;
 		if (pipe(_pipeFd) < 0)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
+
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		else if (_pid == CHILD_PROCESS)
 		{
-			try {
+			try
+			{
 				executeCgiFile();
 			}
 			catch (std::exception &e) {
@@ -44,11 +58,14 @@ namespace Webserver
 		}
 
 		// parent
-		reapChild();
+		close(_pipeFd[WRITE_FD]);
+		_pipeFd[WRITE_FD] = SYSTEM_ERR;
+
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
-		_cgiStream = new std::stringstream;
+		_sendStream = new std::stringstream;
+		_lastCommunicated = TimeoutHandler::get().getTime();
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -60,25 +77,27 @@ namespace Webserver
 
 		if (_pipeFd[READ_FD] != SYSTEM_ERR)
 			close(_pipeFd[READ_FD]);
+		if (_pipeFd[WRITE_FD] != SYSTEM_ERR)
+			close(_pipeFd[WRITE_FD]);
 	}
 
-	void				Cgi::reapChild()
+	void Cgi::reapChild()
 	{
 		int status;
+		if (waitpid(_pid, &status, WNOHANG) == 0)
+		{
+			DEBUG("Child not ready to be reaped.");
+			return;
+		}
 
-		close(_pipeFd[WRITE_FD]);
-		waitpid(_pid, &status, 0);
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
-			_status = HttpStatusCodes::NOT_FOUND;
+			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
+			_response.setBodyStream(nullptr);
 		}
-	}
-
-	static int	is_executable(const char *full_path_executable)
-	{
-		struct stat	status;
-
-		return(stat(full_path_executable, &status) == F_OK);
+		else if (_bodySize != 0)
+			_response.addHeader(Header::ContentLength, toString(_bodySize));
+		_response.setFinished();
 	}
 
 	std::string	Cgi::getExecutablePath(const std::string &exe)
@@ -88,17 +107,17 @@ namespace Webserver
 		int 			i = 0;
 
 		if (all_paths.size() < 1)
-			return ("");
+			return "";
 		SinglePathLen = all_paths.find(COLON);
 		while (SinglePathLen != std::string::npos)
 		{
 			std::string single_path(all_paths.substr(i, SinglePathLen - i));
-			if (is_executable((single_path + exe).c_str()))
+			if (TargetInfo(single_path + exe).isExecutable())
 				return std::string(single_path + exe);
 			i = SinglePathLen + 1;
 			SinglePathLen = all_paths.find(COLON, i);
 		}
-		return ("");
+		return "";
 	}
 
 	std::string Cgi::createQueryString()
@@ -110,14 +129,11 @@ namespace Webserver
 
 	void Cgi::executeCommand()
 	{
-		// std::string	completeCgiTarget = prependRoot(_host.getRoot(), _request.getTarget());
 		std::string	queryString = createQueryString();
 		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
 
-		if (!_uri.entryExists() || _cgiExecutable == "")
-			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
-		else if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
+		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}
 
@@ -137,34 +153,49 @@ namespace Webserver
 	{
 		return _pipeFd[READ_FD];
 	}
-	
+
 	timeval Cgi::getLastCommunicated() const
 	{
-		struct timeval time;
-		if (gettimeofday(&time, NULL) == SYSTEM_CALL_ERROR)
-			throw (SystemCallFailedException("gettimeofday()")); // Server will break
-		return (time);
+		return _lastCommunicated;
 	}
 
 	void Cgi::onRead()
 	{
-		char 				buffer[BUFFERSIZE];
-		int 				readBytes = 0;
+		_lastCommunicated = TimeoutHandler::get().getTime();
+
+		char buffer[BUFFERSIZE];
+		int readBytes = 0;
 
 		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
-		if (readBytes == SYSTEM_ERR || readBytes == 0)
-			return ;
-		buffer[readBytes] = '\0';
-		if (_cgiStream)
-			*_cgiStream << buffer;
+		if (readBytes == SYSTEM_ERR)
+		{
+			DEBUG("Cgi read is blocking, continue.");
+		}
+		else if (readBytes == 0)
+			reapChild();
+		else
+		{
+			_bodySize += readBytes;
+			buffer[readBytes] = '\0';
+			if (_sendStream)
+				*_sendStream << buffer;
+		}
+	}
+
+	void Cgi::onTimeout()
+	{
+		WARN("CGI TIMEOUT!");
+		kill(_pid, SIGINT);
+		_response.setBodyStream(nullptr);
+		_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
+		_bodySize = 0;
 	}
 
 	void Cgi::onWrite()
 	{
 	}
 
-
-	std::stringstream* 	Cgi::getCgiStream() const { return _cgiStream; }
+	std::istream* 	Cgi::getCgiStream() const { return _sendStream; }
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
 }

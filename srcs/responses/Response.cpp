@@ -11,13 +11,15 @@ namespace Webserver
 {
 	Response::Response() :
 		_statusCode(HttpStatusCodes::OK),
-		_bodyStream(nullptr)
+		_bodyStream(nullptr),
+		_isFinished(true)
 	{
 	}
 
 	Response::Response(HttpStatusCode code) :
 		_statusCode(code),
-		_bodyStream(nullptr)
+		_bodyStream(nullptr),
+		_isFinished(true)
 	{
 		addConstantHeaderFields();
 	}
@@ -84,7 +86,7 @@ namespace Webserver
 
 	void Response::addFile(const std::string& filePath)
 	{
-		std::ifstream* stream = new std::ifstream(filePath);
+		std::fstream* stream = new std::fstream(filePath);
 		setBodyStream(stream);
 
 		if (!stream->is_open())
@@ -103,10 +105,10 @@ namespace Webserver
 
 	void Response::createBodyHeaders(const std::string &fileName)
 	{
-		getBodyStream()->seekg(0, std::ios_base::end);
+		_bodyStream->seekg(0, std::ios_base::end);
 		addHeader(Header::ContentLength, std::to_string(_bodyStream->tellg()));
 		addHeader(Header::ContentType, getContentTypeHeader(fileName));
-		getBodyStream()->seekg(0);
+		_bodyStream->seekg(0);
 	}
 
 	std::istream* Response::getBodyStream() const
@@ -117,5 +119,20 @@ namespace Webserver
 	void Response::setStatusCode(HttpStatusCode code)
 	{
 		_statusCode = code;
+	}
+
+	bool Response::isFinished() const
+	{
+		return _isFinished;
+	}
+
+	void Response::setFinished()
+	{
+		_isFinished = true;
+	}
+
+	void Response::setNotFinished()
+	{
+		_isFinished = false;
 	}
 }

@@ -29,7 +29,7 @@ namespace Webserver
 
 	void POSTMethod::setPostResponseHeaders(bool isCreated)
 	{
-		_response->addHeader(Header::ContentLength, std::to_string(_request.getBodySize()));
+		// _response->addHeader(Header::ContentLength, std::to_string(_request.getBodySize()));
 		if (isCreated)
 			addLocationHeader();
 	}
@@ -37,6 +37,9 @@ namespace Webserver
 	Response* POSTMethod::process(const TargetInfo& uri)
 	{
 		DEBUG("Entering POST method!");
+
+		if (!_host.isUploadAllowed())
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
 
 		std::ofstream		outfile;
 		bool				isCreatingNewFile = false;
