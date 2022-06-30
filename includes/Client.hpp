@@ -43,8 +43,8 @@ namespace Webserver
 		void setLastCommunicated();
 		void recvRequests();
 		void sendResponses();
-
-		void processRequests();
+		void startProcessingRequest();
+		void addResponseToQueue();
 		Response* processRequest(const Request& request);
 		Response* processValidRequest(const Host& host, const Request& request);
 		Response* processInvalidRequest(const Host& host, HttpStatusCode code);
@@ -60,5 +60,6 @@ namespace Webserver
 		const ServerConfig& _serverConfig;
 		bool _closeAfterRespond;
 		bool _needsRemove;
+		Response* _currentlyProcessing;
 	};
 }

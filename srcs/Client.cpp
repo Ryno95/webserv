@@ -2,7 +2,6 @@
 #include <methods/GETMethod.hpp>
 #include <methods/POSTMethod.hpp>
 #include <methods/DELETEMethod.hpp>
-#include <methods/TargetInfo.hpp>
 #include <Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
@@ -22,7 +21,8 @@
 
 namespace Webserver
 {
-	Client::Client(const ServerConfig& config, int fd) : _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false)
+	Client::Client(const ServerConfig& config, int fd)
+		: _fd(fd), _receiver(fd), _sender(fd), _serverConfig(config), _needsRemove(false), _currentlyProcessing(nullptr)
 	{
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
@@ -46,29 +46,6 @@ namespace Webserver
 		{
 			setLastCommunicated();
 			recvRequests();
-			processRequests();
-		}
-		catch(const DisconnectedException& e)
-		{
-			DEBUG("Client disconnected: " << _fd);
-			_needsRemove = true;
-		}
-	}
-
-	int Client::getFd() const
-	{
-		return _fd;
-	}
-
-	void Client::onWrite()
-	{
-		if (_needsRemove == true)
-			return;
-
-		try
-		{
-			setLastCommunicated();
-			sendResponses();
 		}
 		catch(const DisconnectedException& e)
 		{
@@ -95,6 +72,33 @@ namespace Webserver
 		}
 	}
 
+	void Client::onWrite()
+	{
+		if (_needsRemove == true)
+			return;
+
+		setLastCommunicated();
+		startProcessingRequest();
+		addResponseToQueue();
+
+		// Is there something to start sending, something being sent or something to process?
+		if (_responseQueue.size() == 0 && !_sender.hasResponse() && _currentlyProcessing == nullptr)
+		{
+			PollHandler::get().setWriteEnabled(this, false);
+			return;
+		}
+
+		try
+		{
+			sendResponses();
+		}
+		catch(const DisconnectedException& e)
+		{
+			DEBUG("Client disconnected: " << _fd);
+			_needsRemove = true;
+		}
+	}
+
 	/*
 		Process the valid request with the requested method and host.
 		If no error occurs during processing, a response object is returned,
@@ -103,8 +107,7 @@ namespace Webserver
 	*/
 	Response* Client::processValidRequest(const Host& host, const Request& request)
 	{
-		// const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
-		const TargetInfo uri(prependRoot(host.getRoot(), request.getTarget()));
+		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
 
 		switch (host.getRouteType())
 		{
@@ -151,25 +154,29 @@ namespace Webserver
 		}
 	}
 
-	void Client::processRequests()
+	void Client::startProcessingRequest()
 	{
-		while (_requestQueue.size() > 0)
-		{
-			Response *response = nullptr;
-			Request const& request = _requestQueue.front();
+		if (_requestQueue.size() == 0 || _currentlyProcessing != nullptr)
+			return ;
 
-			response = processRequest(request);
+		_currentlyProcessing = processRequest(_requestQueue.front());
+	}
 
-			// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
-			std::string connectionValue;
-			if (request.tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
-				response->addHeader(Header::Connection, "close");
-			else
-				response->addHeader(Header::Connection, "keep-alive");
+	void Client::addResponseToQueue()
+	{
+		if (_currentlyProcessing == nullptr || !_currentlyProcessing->isFinished())
+			return;
 
-			_requestQueue.pop_front();
-			_responseQueue.push_back(response);
-		}
+		// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.
+		std::string connectionValue;
+		if (_requestQueue.front().tryGetHeader(Header::Connection, connectionValue) && stringToLower(connectionValue) == "close")
+			_currentlyProcessing->addHeader(Header::Connection, "close");
+		else
+			_currentlyProcessing->addHeader(Header::Connection, "keep-alive");
+
+		_requestQueue.pop_front();
+		_responseQueue.push_back(_currentlyProcessing);
+		_currentlyProcessing = nullptr;
 	}
 
 	void Client::sendResponses()
@@ -194,10 +201,6 @@ namespace Webserver
 
 		if (_sender.hasResponse()) // if we have a current response set, send that
 			_sender.handle();
-		else
-		{ // otherwise we can deactivate POLLOUT, since there's nothing prepared for us...
-			PollHandler::get().setWriteEnabled(this, false);
-		}
 
 		if (_sender.hasResponse() == false && _closeAfterRespond == true)
 			_needsRemove = true;
@@ -222,11 +225,16 @@ namespace Webserver
 	void Client::onTimeout()
 	{
 		_needsRemove = true;
-		DEBUG("FD " << _fd << " timed-out.");
+		DEBUG("Client " << _fd << " timed-out.");
 	}
 
 	timeval Client::getLastCommunicated() const
 	{
 		return _lastCommunicated;
+	}
+
+	int Client::getFd() const
+	{
+		return _fd;
 	}
 }

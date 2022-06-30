@@ -4,10 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-
-#define DEBUG_ENABLED		false
-#define LOGGING_ENABLED		false
-#define LOGFILE				"logs.log"
+#include <defines.hpp>
 
 #define DEBUG(x) Logger::inputStream << x; Logger::debug()
 #define WARN(x) Logger::inputStream << x; Logger::warn()

@@ -15,8 +15,8 @@ namespace Webserver
 	{
 		while (true)
 		{
-			PollHandler::get().update();
 			TickHandler::get().update();
+			PollHandler::get().update();
 			TimeoutHandler::get().update();
 		}
 	}

@@ -13,6 +13,7 @@ namespace Webserver
 			bool isDir() const;
 			bool isWriteable() const;
 			bool isExecutable() const;
+			bool isReadable() const;
 			bool entryExists() const;
 
 			const std::string& getTarget() const;

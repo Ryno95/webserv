@@ -24,15 +24,19 @@ namespace Webserver
 		Response &operator=(const Response &rhs);
 		virtual ~Response();
 
-		std::istream *getBodyStream() const;
+		std::istream	*getBodyStream() const;
 
 		void			addFile(const std::string& filePath);
 		std::istream	*getHeaderStream();
 		HttpStatusCode	getStatusCode() const;
 		void			setStatusCode(HttpStatusCode code);
 
-	protected:
+		bool			isFinished() const;
+		void			setFinished();
+		void			setNotFinished();
+
 		void setBodyStream(std::istream* fileStream);
+	protected:
 
 		HttpStatusCode		_statusCode;
 
@@ -42,5 +46,6 @@ namespace Webserver
 
 		std::istream*		_bodyStream;
 		std::stringstream	_headerStream;
+		bool				_isFinished;
 	};
 }

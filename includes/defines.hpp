@@ -13,6 +13,10 @@
 
 #define ERROR_PAGES_DIR "root/error_pages/"
 
+#define DEBUG_ENABLED		true
+#define LOGGING_ENABLED		true
+#define LOGFILE				"logs.log"
+
 #pragma region CONFIG FILE
 
 #define MAX_TARGET_LEN 50
