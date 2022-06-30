@@ -1,48 +1,64 @@
 #pragma once
 
-#include <poll.h>
-
 #include <stdexcept>
 #include <string>
 #include <deque>
 #include <vector>
 
+#include <Webserv.hpp>
+#include <config/ServerConfig.hpp>
 #include <Request.hpp>
 #include <Receiver.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
+#include <Cgi.hpp>
 #include <Sender.hpp>
+#include <IPollable.hpp>
+#include <ITimeoutable.hpp>
 
-class Client
+namespace Webserver
 {
-
-public:
-	Client(pollfd* fd);
-	~Client();
-
-	bool handle();
-
-	struct DisconnectedException : std::exception
+	class Webserv;
+	class Client : public IPollable, public ITimeoutable
 	{
-		const char* what() const throw()
+	public:
+		Client(const ServerConfig& config, int fd);
+		~Client();
+
+		void onTimeout();
+		timeval getLastCommunicated() const;
+		int getFd() const;
+		void onRead();
+		void onWrite();
+		bool needsRemove() const;
+
+		struct DisconnectedException : std::exception
 		{
-			return "Client disconnected";
-		}
+			const char* what() const throw()
+			{
+				return "Client disconnected";
+			}
+		};
+
+	private:
+		void setLastCommunicated();
+		void recvRequests();
+		void sendResponses();
+
+		void processRequests();
+		Response* processRequest(const Request& request);
+		Response* processValidRequest(const Host& host, const Request& request);
+		Response* processInvalidRequest(const Host& host, HttpStatusCode code);
+
+		timeval _lastCommunicated;
+
+		std::deque<Request> _requestQueue;
+		std::deque<Response *> _responseQueue;
+
+		int _fd;
+		Receiver _receiver;
+		Sender _sender;
+		const ServerConfig& _serverConfig;
+		bool _closeAfterRespond;
+		bool _needsRemove;
 	};
-
-private:
-	bool checkTimeout() const;
-	void hasCommunicated();
-	void handleRequest();
-	void handleResponse();
-	void handleProcessing();
-
-	pollfd* _fd;
-	timeval _lastCommunicated;
-
-	std::deque<Request> _requests;
-	std::deque<Response *> _responses;
-
-	Receiver _receiver;
-	Sender _sender;
-};
-
+}

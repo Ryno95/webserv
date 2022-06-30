@@ -3,7 +3,9 @@
 #include <map>
 #include <iostream>
 #include <Request.hpp>
-#include <Response.hpp>
+#include <responses/Response.hpp>
+
+using namespace Webserver;
 
 Test(ResponseTests, BasicGETRequest)
 {
@@ -15,11 +17,11 @@ Test(ResponseTests, BasicGETRequest)
 
 	request.parse();
     Response response(request._status);
-	response.addHeaderFields();
+	response.addConstantHeaderFields();
 	// response.setBody("Hello Mr.Client");
 	
 	cr_expect(response._statusCode == HttpStatusCodes::OK);
 	// cr_expect(response._body == "Hello Mr.Client");
-	cr_expect(response._headerFields["Server"] == "Simply the best");
-	// cr_expect(response._headerFields["Content-Length"] == "15");
+	cr_expect(response._map["Server"] == "Webserv");
+	// cr_expect(response._map["Content-Length"] == "15");
 }

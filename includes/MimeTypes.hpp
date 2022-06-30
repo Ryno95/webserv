@@ -5,19 +5,22 @@
 #include <sstream>
 #include <map>
 
-class MimeTypes
+namespace Webserver
 {
-public:
-	MimeTypes();
-	MimeTypes(const std::string& filePath);
-	~MimeTypes();
+	class MimeTypes
+	{
+	public:
+		MimeTypes();
+		MimeTypes(const std::string& filePath);
+		~MimeTypes();
 
-	const std::string& getMIMEType(const std::string& extension) const;
+		const std::string getMIMEType(const std::string& extension) const;
 
-private:
-	void parse();
+	private:
+		void parse();
 
-	std::map<const std::string, const std::string> _types;
-	std::string _filePath;
+		std::map<const std::string, const std::string> _types;
+		std::string _filePath;
 
-};
+	};
+}

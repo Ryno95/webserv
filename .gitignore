@@ -36,3 +36,10 @@
 unit_test
 *.log
 __pycache__
+
+# Server data
+*.jpg
+*.png
+
+
+config/defaultVals.config

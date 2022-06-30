@@ -1,6 +1,7 @@
 #include <Receiver.hpp>
 #include <defines.hpp>
 #include <Client.hpp>
+#include <Exception.hpp>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -8,119 +9,122 @@
 #include <stdexcept>
 #include <iostream>
 
-Receiver::Receiver(int fd)
-	: _fd(fd), _state(RECV_HEADER), _bodyBytesReceived(0), _bodySize(0)
+namespace Webserver
 {
-}
-
-Receiver::~Receiver()
-{
-}
-
-/*
-	Returns the currently prepared requests and removes those from the object's storage.
-*/
-std::deque<Request> const Receiver::collectRequests()
-{
-	std::deque<Request> current = _readyRequests;
-	_readyRequests.clear();
-	return current;
-}
-
-void Receiver::receive()
-{
-	int bytesRecv;
-
-	_recvBuffer.resize(BUFFER_SIZE);
-	bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFER_SIZE, 0);
-
-	if (bytesRecv == 0)
-		throw Client::DisconnectedException();
-	if (bytesRecv == SYSTEM_ERR) // do we need to handle this?
+	Receiver::Receiver(int fd)
+		: _fd(fd), _state(RECV_HEADER), _bodyBytesReceived(0), _bodySize(0)
 	{
-		perror("Read error");
-		bytesRecv = 0;
 	}
-	_recvBuffer.resize(bytesRecv);
-}
 
-void Receiver::processHeaderRecv()
-{
-	size_t pos = _recvBuffer.find("\r\n\r\n");
-	if (pos == std::string::npos)
+	Receiver::~Receiver()
 	{
+	}
+
+	/*
+		Returns the currently prepared requests and removes those from the object's storage.
+	*/
+	std::deque<Request> const Receiver::collectRequests()
+	{
+		std::deque<Request> current = _readyRequests;
+		_readyRequests.clear();
+		return current;
+	}
+
+	void Receiver::receive()
+	{
+		int bytesRecv;
+
+		_recvBuffer.resize(BUFFERSIZE);
+		bytesRecv = recv(_fd, &_recvBuffer.front(), BUFFERSIZE, 0);
+		if (bytesRecv == 0)
+			throw Client::DisconnectedException();
+		if (bytesRecv == SYSTEM_ERR)
+			bytesRecv = 0;
+		_recvBuffer.resize(bytesRecv);
+	}
+
+	void Receiver::processHeaderRecv()
+	{
+		size_t pos;
+
 		_buffer += _recvBuffer;
+		_recvBuffer.clear();
+		pos = _buffer.find("\r\n\r\n");
+		if (pos != std::string::npos)
+		{
+			_recvBuffer = _buffer.substr(pos + 4);
+			_buffer = _buffer.erase(pos + 4);
+			checkHeader();
+		}
+	}
+
+	void Receiver::processBodyRecv()
+	{
+		_bodyBytesReceived += _recvBuffer.length();
+		_newRequest.appendBody(_recvBuffer);
 		_recvBuffer.resize(0);
+		if (_bodyBytesReceived >= _bodySize)
+			_state = ADD_REQUEST;
 	}
-	else
+
+	bool Receiver::requestHasBodyField(const Request& req)
 	{
-		pos += 4;
-		_buffer += _recvBuffer.substr(0, pos);
-		_recvBuffer = _recvBuffer.substr(pos, _recvBuffer.size() - pos);
-		checkHeader();
+		_bodySize = req.getBodySize();
+		if (_bodySize > Webserv::config().getMaxRequestBodySize())
+			throw InvalidRequestException(HttpStatusCodes::PAYLOAD_TOO_LARGE);
+		else if (_bodySize == 0)
+			return false;
+		return true;
 	}
-}
 
+	void Receiver::checkHeader()
+	{
+		_newRequest = Request(_buffer);
+		_buffer.clear();
 
-
-void Receiver::processBodyRecv()
-{
-	_bodyBytesReceived += _recvBuffer.length();
-	_newRequest.appendBody(_recvBuffer);
-	_recvBuffer.resize(0);
-	if (_bodyBytesReceived >= _bodySize)
+		try
+		{
+			_newRequest.parse();
+			if (requestHasBodyField(_newRequest))
+			{
+				_state = RECV_BODY;
+				_bodyBytesReceived = 0;
+				return ;
+			}
+		}
+		catch(const InvalidRequestException& e)
+		{
+			_newRequest.setStatus(e.getStatus());
+		}
 		_state = ADD_REQUEST;
-}
-
-void Receiver::checkHeader()
-{
-	_newRequest = Request(_buffer);
-	_buffer.clear();
-
-	try
-	{
-		_newRequest.parse();
-		if (_newRequest.hasBodyField())
-		{
-			_state = RECV_BODY;
-			_bodyBytesReceived = 0;
-			_bodySize = _newRequest.getBodySize();
-			return ;
-		}
 	}
-	catch(const std::exception& e) // only catch parse exceptions?
-	{
-		std::cerr << e.what() << '\n';
-	}
-	_state = ADD_REQUEST;
-}
 
-/*
-	Returns whether or not the handling is finished and ready to be collected.
-*/
-void Receiver::handle()
-{
-	receive();
-
-	while (1)
+	/*
+		Returns whether or not the handling is finished and ready to be collected.
+	*/
+	void Receiver::handle()
 	{
-		switch (_state)
+		receive();
+
+		while (1)
 		{
-			case RECV_HEADER:
-				processHeaderRecv();
-				break;
+			switch (_state)
+			{
+				case RECV_HEADER:
+					processHeaderRecv();
+					break;
 
-			case RECV_BODY:
-				processBodyRecv();
-				break;
+				case RECV_BODY:
+					processBodyRecv();
+					break;
 
-			case ADD_REQUEST:
-				_readyRequests.push_back(_newRequest);
-				_state = RECV_HEADER;
-				std::cout << "Added request to queue!" << std::endl;
-				break;
+				case ADD_REQUEST:
+					_readyRequests.push_back(_newRequest);
+					_state = RECV_HEADER;
+					break;
+			}
+			if ((_state == RECV_HEADER || _state == RECV_BODY) && _recvBuffer.size() == 0)
+				break ;
 		}
-		if ((_state == RECV_HEADER || _state == RECV_BODY) && _recvBuffer.size() == 0)
-			break ;
 	}
 }

@@ -7,28 +7,41 @@
 #include <vector>
 
 #include <Client.hpp>
+#include <config/AppConfig.hpp>
+#include <config/ServerConfig.hpp>
+#include <IPollable.hpp>
+#include <ITickable.hpp>
+#include <PollHandler.hpp>
 
-#define BACKLOG_AMOUNT 42
-#define DISCONNECT 17
-
-class Webserv
+namespace Webserver
 {
-	public:
-		Webserv(uint port, std::string name);
-		~Webserv();
 
-		void run();
+	class Client; // forward declaration
 
-	private:
-		void setupSocket();
-		void handleListener();
-		void handleClients();
-		void handleTimeout();
-		void removeClient(int index);
+	class Webserv : public IPollable, public ITickable
+	{
+			static AppConfig* _appConfig;
 
-		uint				_port;
-		int					_listenFd;
-		std::vector<pollfd>	_fds;
-		std::vector<Client>	_clients;
-		std::string			_name;
-};
+		public:
+			static void config(AppConfig* config);
+			static const AppConfig& config();
+
+			Webserv(const ServerConfig& config);
+			~Webserv();
+
+			int getFd() const;
+			void onRead();
+			void onWrite();
+			void onTick();
+			const ServerConfig& getConfig() const;
+			void checkClientsStatus();
+
+		private:
+			void setup();
+
+			const ServerConfig& _config;
+
+			int						_listenerFd;
+			std::vector<Client*>	_clients;
+	};
+}

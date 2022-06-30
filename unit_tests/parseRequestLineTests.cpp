@@ -1,5 +1,8 @@
 #include <criterion/criterion.h>
 #include <Request.hpp>
+#include "../includes/Exception.hpp"
+
+using namespace Webserver;
 
 Test(simple, valid)
 {
@@ -10,14 +13,15 @@ Test(requestLineTests, INVALID_METHOD)
 {
 	std::string seed = "BLADIEBLA / HTTP/1.1\r\n";
 	Request request(seed);
+
 	try
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
-
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
 }
 
@@ -29,12 +33,12 @@ Test(requestLineTests, GET_valid_request)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
-
-	cr_expect(request._method == GET);
-	cr_expect(request._target == "/");
+	cr_expect(request._method == Method::GET);
+	cr_expect(request._uri.getResourcePath() == "/");
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
 }
 
@@ -46,15 +50,16 @@ Test(requestLineTests, GET_valid_request_large_path)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	if (request.getStatus() == HttpStatusCodes::URI_TOO_LONG)
 		return;
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-	cr_expect(request._method == GET);
-	cr_expect(request._target == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
+	cr_expect(request._method == Method::GET);
+	cr_expect(request._uri.getResourcePath() == "/fjadsffkjadskljffffjadsffkjadskljfffdsfadsjfjdjsfkldjfadjslfkjdsfadsjfjdjsfkldjfadjslfkj");
 }
 
 Test(requestLineTests, POST_valid_request)
@@ -65,13 +70,14 @@ Test(requestLineTests, POST_valid_request)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-	cr_expect(request._method == POST);
-	cr_expect(request._target == "/");
+	cr_expect(request._method == Method::POST);
+	cr_expect(request._uri.getResourcePath() == "/");
 }
 
 Test(requestLineTests, DELETE_valid_request)
@@ -82,13 +88,14 @@ Test(requestLineTests, DELETE_valid_request)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-	cr_expect(request._method == DELETE);
-	cr_expect(request._target == "/");
+	cr_expect(request._method == Method::DELETE);
+	cr_expect(request._uri.getResourcePath() == "/");
 }
 
 Test(requestLineTests, DELETE_no_target)
@@ -99,8 +106,9 @@ Test(requestLineTests, DELETE_no_target)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -114,8 +122,9 @@ Test(requestLineTests, DELETE_no_version)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -129,8 +138,9 @@ Test(requestLineTests, DELETE_no_version2)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -144,8 +154,9 @@ Test(requestLineTests, DELETE_too_many_whitespace1)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -159,8 +170,9 @@ Test(requestLineTests, DELETE_too_many_whitespace2)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -174,8 +186,9 @@ Test(requestLineTests, empty_seed)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -189,8 +202,9 @@ Test(requestLineTests, DELETE_leading_whitespace)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -204,54 +218,12 @@ Test(requestLineTests, DELETE_trailing_whitespace)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
-}
-
-Test(requestLineTests, target_just_fits)
-{
-	std::string seed = "GET ";
-	for (size_t i = 0; i < MAX_TARGET_LEN; ++i)
-	{
-		seed += "a";
-	}
-	seed += " HTTP/1.1\r\n";
-	
-	Request request(seed);
-	try
-	{
-		request.parseRequestLine();
-	}
-	catch(const std::exception& e)
-	{
-	}
-
-	cr_expect(request.getStatus() == HttpStatusCodes::OK);
-}
-
-
-Test(requestLineTests, target_just_too_long)
-{
-	std::string seed = "GET ";
-	for (size_t i = 0; i <= MAX_TARGET_LEN; ++i)
-	{
-		seed += "a";
-	}
-	seed += " HTTP/1.1\r\n";
-	
-	Request request(seed);
-	try
-	{
-		request.parseRequestLine();
-	}
-	catch(const std::exception& e)
-	{
-	}
-
-	cr_expect(request.getStatus() == HttpStatusCodes::URI_TOO_LONG);
 }
 
 Test(requestLineTests, GET_invalid_version1)
@@ -262,8 +234,9 @@ Test(requestLineTests, GET_invalid_version1)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -277,8 +250,9 @@ Test(requestLineTests, GET_invalid_version2)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -292,8 +266,9 @@ Test(requestLineTests, GET_invalid_version3)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -307,8 +282,9 @@ Test(requestLineTests, GET_invalid_version4)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -322,8 +298,9 @@ Test(requestLineTests, GET_invalid_version5)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -337,8 +314,9 @@ Test(requestLineTests, GET_invalid_version6)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -352,8 +330,9 @@ Test(requestLineTests, GET_redundant_zeros)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::OK);
@@ -367,8 +346,9 @@ Test(requestLineTests, GET_CR_in_target)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -382,8 +362,9 @@ Test(requestLineTests, GET_LF_in_target)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -397,8 +378,9 @@ Test(requestLineTests, GET_CRLF_in_target)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);
@@ -412,8 +394,9 @@ Test(requestLineTests, GET_LFCR_in_target)
 	{
 		request.parseRequestLine();
 	}
-	catch(const std::exception& e)
+	catch(const InvalidRequestException& e)
 	{
+		request.setStatus(e.getStatus());
 	}
 
 	cr_expect(request.getStatus() == HttpStatusCodes::BAD_REQUEST);

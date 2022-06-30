@@ -6,53 +6,55 @@
 #include <defines.hpp>
 #include <HttpStatusCode.hpp>
 #include <Method.hpp>
+#include <Uri.hpp>
+#include <Utility.hpp>
+#include <HeaderFields.hpp>
 
-class Request
+namespace Webserver
 {
-#define COLON 			":"
-#define CRLF			"\r\n"
-#define CRLF_CHAR_COUNT	2
-#define TERMINATOR_LEN	4
+	class Request : public HeaderFields
+	{
+	#define COLON 			":"
+	#define CRLF			"\r\n"
+	#define CRLF_CHAR_COUNT	2
+	#define TERMINATOR_LEN	4
 
-public:
-	Request();
-	Request(std::string query);
-	~Request();
+	public:
+		Request();
+		Request(std::string query);
+		~Request();
 
-	HttpStatusCode	getStatus() const;
-	void 			throwError(HttpStatusCode code);
-	void			parse();
-	bool 			hasBodyField() const;
-	std::string 	getTarget() const;
-	method 			getMethod() const;
-	size_t 			getBodySize() const;
+		void			parse();
 
-	const std::string	&getBody() const;
-	void				appendBody(const std::string &body);
+		HttpStatusCode		getStatus() const;
+		Method::method 		getMethod() const;
+		const std::string&	getTarget() const;
+		std::string			getHost() const;
+		size_t 				getBodySize() const;
+		const std::string	&getBody() const;
 
-private:
-	size_t 	parseRequestLine();
-	void 	parseHeaderFields(size_t pos);
-	void 	addKeyValuePair(const std::string &src, size_t newLinePos);
+		void				setStatus(HttpStatusCode status);
 
-	size_t parseMethod();
-	size_t parseTarget(size_t pos);
-	size_t parseVersion(size_t pos);
+		void				appendBody(const std::string &body);
 
-	std::string	_query;
+		Uri 				_uri;
+	private:
+		size_t 	parseRequestLine();
+		void 	parseHeaderFields(size_t pos);
+		void 	parseKeyValuePair(const std::string &src, size_t newLinePos);
 
-	method		_method;
-	std::string	_target;
-	std::string	_version;
-	std::map<std::string, std::string>	_headerFields;
-	std::string	_body;
+		size_t 	parseRequestMethod();
+		size_t 	parseUri(size_t pos);
+		size_t 	parseVersion(size_t pos);
+		void	validate() const;
 
-	HttpStatusCode _status;
-};
+		std::string	_query;
 
+		Method::method		_method;
+		std::string			_version;
+		std::string			_body;
+		HttpStatusCode		_status;
+		
 
-
-
-
-
-
+	};
+}

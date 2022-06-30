@@ -9,17 +9,44 @@ INCL_DIR	=	includes/
 TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
-CLASSES		=	Webserv\
-				Client\
-				Request\
-				Response\
-				Receiver\
-				Sender\
-				AMethod\
-				GETMethod\
+CLASSES		=	Utility\
+				config/ParseTreeUtility\
+				config/AppConfigParser\
+				config/ServerConfigParser\
+				config/HostConfigParser\
+				config/LocationConfigParser\
+				config/AppConfig\
+				config/ServerConfig\
+				config/HostConfig\
+				config/LocationConfig\
+				config/HostFields\
+				methods/AMethod\
+				methods/GETMethod\
+				methods/POSTMethod\
+				methods/DELETEMethod\
+				methods/TargetInfo\
+				responses/Response\
+				responses/BadResponse\
+				responses/RedirectResponse\
+				responses/AutoIndexResponse\
+				responses/CgiResponse\
 				MimeTypes\
 				Logger\
-				POSTMethod
+				Webserv\
+				Client\
+				Request\
+				Receiver\
+				Sender\
+				Cgi\
+				PollHandler\
+				TickHandler\
+				TimeoutHandler\
+				Host\
+				Uri\
+				HeaderFields\
+				autoIndex/HtmlBuilder\
+				autoIndex/HtmlElement\
+				autoIndex/AutoIndex
 
 OBJS		=	$(CLASSES:%=$(OBJ_DIR)%.o)
 HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
@@ -32,14 +59,18 @@ LINKING		=	-I $(INCL_DIR)
 TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)parseRequestLineTests.cpp\
 				$(TEST_DIR)processResponseTests.cpp\
-				$(TEST_DIR)parseMimeTypesTests.cpp
+				$(TEST_DIR)parseMimeTypesTests.cpp\
+				$(TEST_DIR)uriParseTests.cpp\
+				$(TEST_DIR)wildcardTests.cpp\
+				$(TEST_DIR)routeTests.cpp\
+				$(TEST_DIR)prependTests.cpp
 
 
 # Section Rules
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HPPS)
+$(NAME): $(OBJS) $(HPPS) $(MAIN)
 	$(CC) -o $(NAME) $(OBJS) $(MAIN) $(LINKING) $(CFLAGS)
 
 test: $(TEST_SRC) $(OBJS)
@@ -59,14 +90,11 @@ run: $(NAME)
 	./$(NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
+	@mkdir -p $(OBJ_DIR) $(@D)
 	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
 
-$(OBJS): | $(OBJ_DIR) # pipe in recipe checks that it's only called once
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
-
-re: fclean all
+re: fclean
+	$(MAKE) -j5
 
 clean:
 	rm -rf $(OBJ_DIR)
