@@ -24,7 +24,9 @@ namespace Webserver
 		class Command : public ICommand
 		{
 		public:
-			Command(T& instance, void (T::*function)(const std::string&)) : _ref(instance), _callback(function)
+			Command() : _instance(nullptr), _callback(nullptr) {}
+
+			Command(T* instance, void (T::*function)(const std::string&)) : _instance(instance), _callback(function)
 			{
 			}
 
@@ -32,13 +34,20 @@ namespace Webserver
 			{
 			}
 
+			Command& operator=(const Command& ref)
+			{
+				_instance = ref._instance;
+				_callback = ref._callback;
+				return *this;
+			}
+
 			void callback(const std::string& args)
 			{
-				_ref.*_callback(args);
+				(_instance->*_callback)(args);
 			}
 
 		private:
-			T& _ref;
+			T* _instance;
 			void (T::*_callback)(const std::string&);
 		};
 
@@ -59,7 +68,7 @@ namespace Webserver
 			int			getFd() const;
 			void 		onTimeout();
 
-			std::map<std::string, ICommand*> getKeywords();
+			std::map<std::string, Command<Cgi> > getKeywords();
 			void statusCallback(const std::string& arg);
 			void locationCallback(const std::string& arg);
 			void contentTypeCallback(const std::string& arg);
@@ -77,6 +86,7 @@ namespace Webserver
 			void				reapChild();
 
 			void				parseResult();
+			void				processHeaderFields(const HeaderFields& headerFields);
 
 			const std::string 	_cgiExecutable;
 			int					_pid;
@@ -87,7 +97,5 @@ namespace Webserver
 			HttpStatusCode		_status;
 			const TargetInfo&	_uri;
 			CgiResponse&		_response;
-
-			std::vector<ICommand*> checkHeaderFields(const HeaderFields& headerFields);
 	};
 }

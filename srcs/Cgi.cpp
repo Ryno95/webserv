@@ -82,62 +82,91 @@ namespace Webserver
 
 	void Cgi::statusCallback(const std::string& arg)
 	{
-		// _response.setStatusCode(arg);
+		try
+		{
+			_response.setStatusCode(parseHttpStatusCode(arg));
+		}
+		catch(const std::exception& e)
+		{
+			ERROR("Invalid status code received from cgi: " << arg);
+			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
+		}
 	}
 
 	void Cgi::locationCallback(const std::string& arg)
 	{
-		// absolute URI location of relative location
-		// if absolute() URI addHeader(arg);
-		// if relative() absolute path
+		Uri uri(arg);
+		if (uri.isAbsolute())
+			_response.addHeader(Header::Location, arg);
+		else
+		{
+			if (arg.size() > 0 && arg[0] == '/')
+			{
+				try
+				{
+					_response.addFile(arg);
+					return;
+				}
+				catch(const std::exception& e)
+				{
+					ERROR("Cgi server redirected: File existance/permissions error: " << arg);
+				}
+			}
+			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
+		}
 	}
 
 	// void Cgi::contentTypeCallback(const std::string& arg)
 	// {
 	// }
 
-	std::map<std::string, ICommand*> Cgi::getKeywords()
+	std::map<std::string, Cgi::Command<Cgi> > Cgi::getKeywords()
 	{
-		std::map<std::string, ICommand*> keywords;
+		std::map<std::string, Command<Cgi> > keywords;
 
-		keywords[Header::Status] = new Cgi::Command<Cgi>(*this, &Cgi::statusCallback);
-		keywords[Header::Location] = new Cgi::Command<Cgi>(*this, &Cgi::locationCallback);
+		keywords[Header::Status] = Command<Cgi>(this, &Cgi::statusCallback);
+		keywords[Header::Location] = Command<Cgi>(this, &Cgi::locationCallback);
 		// keywords[Header::ContentType] = new Command<Cgi>(Cgi::contentTypeCallback);
 		return keywords;
 	}
 
-	std::vector<ICommand*> Cgi::checkHeaderFields(const HeaderFields& headerFields)
+	void Cgi::processHeaderFields(const HeaderFields& headerFields)
 	{
-		std::vector<ICommand*> commands;
-		return commands;
-	}
+		std::map<std::string, Command<Cgi> > keywords = getKeywords();
 
+		HeaderFields::const_iterator it = headerFields.headersBegin();
+		HeaderFields::const_iterator end = headerFields.headersEnd();
+		while (it != end)
+		{
+			if (keywords.find(it->first) != keywords.end())
+			{
+				// The header is a 'special' one we want to process
+				keywords[it->first].callback(it->second);
+				keywords.erase(it->first);
+			}
+			else
+			{
+				// The header was not one we need to process, so we just add it to the response headers
+				_response.addHeader(it->first, it->second);
+			}
+			it++;
+		}
+	}
 
 	void Cgi::parseResult()
 	{
-		WARN("Cgi buffer: " << _buffer);
-
 		size_t bodyPos = _buffer.find("\n\n");
 		if (bodyPos != std::string::npos)
 		{
-			DEBUG("parsing header fields...");
 			HeaderFields headerFields = HeaderFieldParser().setEndl("\n").parse(_buffer);
-
-			HeaderFields::const_iterator it = headerFields.headersBegin();
-			HeaderFields::const_iterator end = headerFields.headersEnd();
-
-			while (it != end)
-			{
-				DEBUG(it->first << ": " << it->second);
-				it++;
-			}
+			processHeaderFields(headerFields);
 
 			bodyPos += 2;
 		}
 		else
 			bodyPos = 0;
 
-		if (bodyPos < _buffer.size())
+		if (bodyPos < _buffer.size() && _response.getBodyStream() == nullptr)
 		{
 			_response.addHeader(Header::ContentLength, toString(_buffer.size() - bodyPos));
 			_response.setBodyStream(new std::stringstream(_buffer.substr(bodyPos)));
@@ -158,7 +187,7 @@ namespace Webserver
 		if (_response.isFinished())
 			return;
 
-		if ((WIFEXITED(status) && WEXITSTATUS(status) > 0) || WIFSIGNALED(status))
+		if (WEXITSTATUS(status) > 0 || WIFSIGNALED(status))
 			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 		else
 		{
@@ -168,7 +197,7 @@ namespace Webserver
 			}
 			catch(const std::exception& e)
 			{
-				std::cerr << e.what() << '\n';
+				ERROR("During parsing cgi");
 				_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 			}
 		}
