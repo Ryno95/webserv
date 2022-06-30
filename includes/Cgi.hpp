@@ -44,16 +44,21 @@ namespace Webserver
 			void				executeCgiFile();
 			void				executeCommand();
 			void				reapChild();
+			void				createEnv();
+			void				addEnvElement(const std::string key, const std::string value);
 
-			const std::string 	_cgiExecutable;
-			int					_pid;
-			int					_pipeFd[2];
-			const Request&		_request;
-			std::stringstream*	_sendStream;
-			const Host&			_host;
-			HttpStatusCode		_status;
-			const TargetInfo&	_uri;
-			CgiResponse&		_response;
-			uint				_bodySize;
+			const std::string 					_cgiExecutable;
+			int									_pid;
+			int									_pipeFd[2];
+			const Request&						_request;
+			std::stringstream*					_sendStream;
+			const Host&							_host;
+			HttpStatusCode						_status;
+			const TargetInfo&					_uri;
+			CgiResponse&						_response;
+			uint								_bodySize;
+			std::map<std::string, std::string> 	_env;
 	};
+
+	
 }

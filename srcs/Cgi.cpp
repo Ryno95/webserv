@@ -60,6 +60,7 @@ namespace Webserver
 		// parent
 		close(_pipeFd[WRITE_FD]);
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
+		createEnv();
 
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
@@ -198,4 +199,42 @@ namespace Webserver
 	std::istream* 	Cgi::getCgiStream() const { return _sendStream; }
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
+	
+
+	void Cgi::createEnv()
+	{
+		const int numOfMethods = 3;
+		const char* methods[3] = {"GET", "POST", "DELETE"};
+		
+		_env["GATEWAY_INTERFACE"] 	= "CGI/1.1";
+		_env["REQUEST_METHOD"] 		= methods[_request.getMethod()];
+
+		_env["QUERY_STRING"]		= _request.getBody();
+		_env["CONTENT_LENGTH"]		= _request.getBody().size();
+
+		_env["HTTP_HOST"]			= "https://" + _request.getHost();
+		_env["SERVER_PROTOCOL"]		= HTTPVERSION;
+		_env["SCRIPT_NAME"]			= _request.getTarget();
+		// _env["SERVER_PORT"]			= std::to_string(ServerConfig::getPort());
+		_env["SERVER_NAME"]			= SERVER_NAME;
+	}
+
+	void Cgi::addEnvElement(const std::string key, const std::string value)
+	{
+		_env[key] = value;
+	}
+
 }
+// REQUEST_METHOD
+// CONTENT_LENGTH = -1 default
+// CONTENT_TYPE = MIMETYPE of body in request
+// GATEWAY INTERFACE = CGI/1.1
+// HTTP_HOST: Specifies the Internet host and port number of the resource being requested. Required for all HTTP/1.1 requests.
+// QUERY_STRING
+// SCRIPT_NAME = Returns the part of the URL from the protocol name up to the query string in the first line of the HTTP request.
+//  Website: https://localhost:8080/add.py
+// 		SERVER_NAME: Webserv
+// 		HTTP_HOST: https://localhost:8080
+// 		SERVER_PORT: 8080
+// SERVER_PROTOCOL: HTTP/1.1
+// HTTP_COOKIE: HTTP Cookie String.
