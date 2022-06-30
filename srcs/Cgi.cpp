@@ -34,8 +34,8 @@ namespace Webserver
 	{
 		if (!_uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
-		// else if (!_uri.isReadable()) // Needs to be implemented yet!
-			// throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
+		else if (!_uri.isReadable()) 
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
 
 		_pipeFd[READ_FD] = SYSTEM_ERR;
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
