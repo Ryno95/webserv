@@ -66,8 +66,8 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 		status = false;
 	}
 
-	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
-	cr_expect(myRequest._map.size() == 1);
+	cr_expect(fields._map["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(fields._map.size() == 1);
 }
 
 Test(ParseHeaderTests, WhiteSpaceBeforeKey)
@@ -85,7 +85,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 		status = false;
 	}
 
-	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(fields._map["User-Agent"] == "libcurl/7.16.3");
 }
 
 Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
@@ -103,8 +103,8 @@ Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 		status = false;
 	}
 
-	cr_expect(myRequest._map["User-Agent"] == "libcurl/7.16.3");
-	cr_expect(myRequest._map.size() == 1);
+	cr_expect(fields._map["User-Agent"] == "libcurl/7.16.3");
+	cr_expect(fields._map.size() == 1);
 }
 
 // // Might change as we continue
@@ -124,7 +124,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 	}
 
 	cr_expect(status == true);
-	cr_expect(myRequest._map.size() == 0);
+	cr_expect(fields._map.size() == 0);
 }
 
 Test(ParseHeaderTests, NoColon)
@@ -143,7 +143,7 @@ Test(ParseHeaderTests, NoColon)
 	}
 
 	cr_expect(status == false);
-	cr_expect(myRequest._map.size() == 0);
+	cr_expect(fields._map.size() == 0);
 }
 
 Test(ParseHeaderTests, MultiLineNoColon)
@@ -163,7 +163,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 	}
 
 	cr_expect(status == false);
-	cr_expect(myRequest._map.size() == 0);
+	cr_expect(fields._map.size() == 0);
 }
 
 Test(ParseHeaderTests, ColonInHeader)
@@ -181,8 +181,8 @@ Test(ParseHeaderTests, ColonInHeader)
 		status = false;
 	}
 
-	cr_expect(myRequest._map.size() == 1);
-	cr_expect(myRequest._map["Host"] == "localhost:8080");
+	cr_expect(fields._map.size() == 1);
+	cr_expect(fields._map["Host"] == "localhost:8080");
 
 }
 
@@ -203,7 +203,7 @@ Test(HeaderFieldTests, CaseSensitivity)
 		status = false;
 	}
 
-	cr_expect(myRequest._map["USER-AGENT"] == "libcurl/7.16.3");
-	cr_expect(myRequest._map["host"] == "www.example.com");
-	cr_expect(myRequest._map["accept-language"] == "en, mi");
+	cr_expect(fields._map["USER-AGENT"] == "libcurl/7.16.3");
+	cr_expect(fields._map["host"] == "www.example.com");
+	cr_expect(fields._map["accept-language"] == "en, mi");
 }
