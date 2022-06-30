@@ -80,8 +80,6 @@ namespace Webserver
 
 	void Receiver::checkHeader()
 	{
-		std::cout << _buffer << std::endl;
-
 		try
 		{
 			_newRequest = RequestParser().parse(_buffer);
