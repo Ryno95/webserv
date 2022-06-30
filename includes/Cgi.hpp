@@ -1,11 +1,15 @@
 #pragma once
 
+#include <map>
+
 #include <Request.hpp>
 #include <Host.hpp>
 #include <ITimeoutable.hpp>
 #include <IPollable.hpp>
 #include <ITickable.hpp>
 #include <methods/TargetInfo.hpp>
+#include <config/ParseTreeUtility.hpp>
+#include <ICommand.hpp>
 
 namespace Webserver
 {
@@ -16,6 +20,28 @@ namespace Webserver
 
 	class Cgi : public ITimeoutable, public IPollable
 	{
+		template<class T>
+		class Command : public ICommand
+		{
+		public:
+			Command(T& instance, void (T::*function)(const std::string&)) : _ref(instance), _callback(function)
+			{
+			}
+
+			~Command()
+			{
+			}
+
+			void callback(const std::string& args)
+			{
+				_ref.*_callback(args);
+			}
+
+		private:
+			T& _ref;
+			void (T::*_callback)(const std::string&);
+		};
+
 		public:
 			enum FDs
 			{
@@ -33,6 +59,11 @@ namespace Webserver
 			int			getFd() const;
 			void 		onTimeout();
 
+			std::map<std::string, ICommand*> getKeywords();
+			void statusCallback(const std::string& arg);
+			void locationCallback(const std::string& arg);
+			void contentTypeCallback(const std::string& arg);
+
 			timeval getLastCommunicated() const;
 		
 			std::istream* 	getCgiStream() const;
@@ -45,6 +76,8 @@ namespace Webserver
 			void				executeCommand();
 			void				reapChild();
 
+			void				parseResult();
+
 			const std::string 	_cgiExecutable;
 			int					_pid;
 			int					_pipeFd[2];
@@ -54,5 +87,7 @@ namespace Webserver
 			HttpStatusCode		_status;
 			const TargetInfo&	_uri;
 			CgiResponse&		_response;
+
+			std::vector<ICommand*> checkHeaderFields(const HeaderFields& headerFields);
 	};
 }

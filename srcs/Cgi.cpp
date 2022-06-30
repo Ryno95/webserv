@@ -80,6 +80,70 @@ namespace Webserver
 			close(_pipeFd[WRITE_FD]);
 	}
 
+	void Cgi::statusCallback(const std::string& arg)
+	{
+		// _response.setStatusCode(arg);
+	}
+
+	void Cgi::locationCallback(const std::string& arg)
+	{
+		// absolute URI location of relative location
+		// if absolute() URI addHeader(arg);
+		// if relative() absolute path
+	}
+
+	// void Cgi::contentTypeCallback(const std::string& arg)
+	// {
+	// }
+
+	std::map<std::string, ICommand*> Cgi::getKeywords()
+	{
+		std::map<std::string, ICommand*> keywords;
+
+		keywords[Header::Status] = new Cgi::Command<Cgi>(*this, &Cgi::statusCallback);
+		keywords[Header::Location] = new Cgi::Command<Cgi>(*this, &Cgi::locationCallback);
+		// keywords[Header::ContentType] = new Command<Cgi>(Cgi::contentTypeCallback);
+		return keywords;
+	}
+
+	std::vector<ICommand*> Cgi::checkHeaderFields(const HeaderFields& headerFields)
+	{
+		std::vector<ICommand*> commands;
+		return commands;
+	}
+
+
+	void Cgi::parseResult()
+	{
+		WARN("Cgi buffer: " << _buffer);
+
+		size_t bodyPos = _buffer.find("\n\n");
+		if (bodyPos != std::string::npos)
+		{
+			DEBUG("parsing header fields...");
+			HeaderFields headerFields = HeaderFieldParser().setEndl("\n").parse(_buffer);
+
+			HeaderFields::const_iterator it = headerFields.headersBegin();
+			HeaderFields::const_iterator end = headerFields.headersEnd();
+
+			while (it != end)
+			{
+				DEBUG(it->first << ": " << it->second);
+				it++;
+			}
+
+			bodyPos += 2;
+		}
+		else
+			bodyPos = 0;
+
+		if (bodyPos < _buffer.size())
+		{
+			_response.addHeader(Header::ContentLength, toString(_buffer.size() - bodyPos));
+			_response.setBodyStream(new std::stringstream(_buffer.substr(bodyPos)));
+		}
+	}
+
 	void Cgi::reapChild()
 	{
 		int status;
@@ -94,38 +158,18 @@ namespace Webserver
 		if (_response.isFinished())
 			return;
 
-		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
-		{
+		if ((WIFEXITED(status) && WEXITSTATUS(status) > 0) || WIFSIGNALED(status))
 			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
-		}
 		else
 		{
-			WARN("Cgi buffer: " << _buffer);
-
-			size_t bodyPos = _buffer.find("\n\n");
-			if (bodyPos != std::string::npos)
+			try
 			{
-				DEBUG("parsing header fields...");
-				HeaderFields headerFields = HeaderFieldParser().setEndl("\n").parse(_buffer);
-
-				HeaderFields::const_iterator it = headerFields.headersBegin();
-				HeaderFields::const_iterator end = headerFields.headersEnd();
-
-				while (it != end)
-				{
-					DEBUG(it->first << ": " << it->second);
-					it++;
-				}
-
-				bodyPos += 2;
+				parseResult();
 			}
-			else
-				bodyPos = 0;
-
-			if (bodyPos < _buffer.size())
+			catch(const std::exception& e)
 			{
-				_response.addHeader(Header::ContentLength, toString(_buffer.size() - bodyPos));
-				_response.setBodyStream(new std::stringstream(_buffer.substr(bodyPos)));
+				std::cerr << e.what() << '\n';
+				_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 			}
 		}
 
@@ -223,8 +267,6 @@ namespace Webserver
 	{
 		WARN("CGI TIMEOUT!");
 		kill(_pid, SIGINT);
-		_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
-		_response.setFinished();
 	}
 
 	void Cgi::onWrite()
