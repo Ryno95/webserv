@@ -40,7 +40,7 @@ namespace Webserver
 			if (line.size() == 0)
 				break;
 			parseKeyValuePair(line);
-			prev = next;
+			prev = next + _endl.size();
 		}
 		return _fields;
 	}
