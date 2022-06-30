@@ -63,7 +63,13 @@ namespace Header
 	const std::string Via = "Via";
 	const std::string Warning = "Warning";
 	const std::string WWWAuthenticate = "WWW-Authenticate";
+
 	const std::string SetCookie = "Set-Cookie";
+
+	/*
+		Cgi specific headers
+	*/
+	const std::string Status = "Status";
 }
 
 namespace Webserver
