@@ -4,6 +4,7 @@
 #include <iostream>
 #include <../includes/Request.hpp>
 #include <../includes/Exception.hpp>
+#include <../includes/RequestParser.hpp>
 
 using namespace Webserver;
 
@@ -13,7 +14,8 @@ Test(ParseHeaderTests, ValidHeader)
 								"Host: www.example.com\r\n"
 								"Accept-Language: en, mi\r\n\r\n";
 
-	Request myRequest(input);
+	
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 	try 
 	{
@@ -39,7 +41,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeColon)
 {
 
 	const std::string input = "User-Agent : libcurl/7.16.3\r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 	try
 	{
@@ -57,7 +59,7 @@ Test(ParseHeaderTests, WhiteSpaceAfterColon)
 {
 
 	const std::string input = "User-Agent:       libcurl/7.16.3\r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 
 	HttpStatusCode status;
 	try
@@ -78,7 +80,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeKey)
 {
 
 	const std::string input = "       User-Agent: libcurl/7.16.3\r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 
 	try
@@ -98,7 +100,7 @@ Test(ParseHeaderTests, WhiteSpaceBeforeAndAfterValue)
 {
 
 	const std::string input = "User-Agent: libcurl/7.16.3    \r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 
 	HttpStatusCode status;
 
@@ -121,7 +123,7 @@ Test(ParseHeaderTests, EmptyHeaderString)
 {
 
 	const std::string input = "";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 
 	try
@@ -141,7 +143,7 @@ Test(ParseHeaderTests, NoColon)
 {
 
 	const std::string input = "User-Agent  libcurl/7.16.3\r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 
 	try
@@ -162,7 +164,7 @@ Test(ParseHeaderTests, MultiLineNoColon)
 
 	const std::string input = 	"User-Agent  libcurl/7.16.3\r\n"
 								"Host: www.example.com\r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 
 	try
@@ -183,7 +185,7 @@ Test(ParseHeaderTests, ColonInHeader)
 {
 
 	const std::string input = 	"Host: localhost:8080\r\n\r\n";
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 
 	try
@@ -208,7 +210,7 @@ Test(HeaderFieldTests, CaseSensitivity)
 								"HOST: www.example.com\r\n"
 								"AccEpt-LangUagE: en, mi\r\n\r\n";
 
-	Request myRequest(input);
+	Request myRequest = RequestParser().parse(input);
 	HttpStatusCode status;
 	myRequest.parseHeaderFields(0);
 
