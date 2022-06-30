@@ -23,6 +23,11 @@ namespace Webserver
 		return _entryExists && _stats.st_mode & S_IXUSR;
 	}
 	
+	bool TargetInfo::isReadable() const
+	{
+		return _entryExists && _stats.st_mode & S_IRUSR;
+	}
+
 	bool TargetInfo::entryExists() const
 	{
 		return _entryExists;

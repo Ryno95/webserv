@@ -34,8 +34,8 @@ namespace Webserver
 	{
 		if (!_uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
-		// else if (!_uri.isReadable()) // Needs to be implemented yet!
-			// throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
+		else if (!_uri.isReadable()) 
+			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
 
 		_pipeFd[READ_FD] = SYSTEM_ERR;
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
@@ -205,13 +205,6 @@ namespace Webserver
 		_response.setFinished();
 	}
 
-	static int	is_executable(const char *full_path_executable)
-	{
-		struct stat	status;
-
-		return stat(full_path_executable, &status) == F_OK;
-	}
-
 	std::string	Cgi::getExecutablePath(const std::string &exe)
 	{
 		std::string		all_paths(getenv("PATH"));
@@ -224,7 +217,7 @@ namespace Webserver
 		while (SinglePathLen != std::string::npos)
 		{
 			std::string single_path(all_paths.substr(i, SinglePathLen - i));
-			if (is_executable((single_path + exe).c_str()))
+			if (TargetInfo(single_path + exe).isExecutable())
 				return std::string(single_path + exe);
 			i = SinglePathLen + 1;
 			SinglePathLen = all_paths.find(COLON, i);
