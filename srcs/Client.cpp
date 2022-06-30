@@ -213,8 +213,7 @@ namespace Webserver
 	*/
 	void Client::setLastCommunicated()
 	{
-		// Use TimeoutHandler::getTime() instead for optimization
-		gettimeofday(&_lastCommunicated, NULL);
+		_lastCommunicated = TimeoutHandler::get().getTime();
 	}
 
 	bool Client::needsRemove() const
