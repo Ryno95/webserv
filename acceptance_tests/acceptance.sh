@@ -6,7 +6,7 @@
 PID=$!
 
 # sleep for 1 second to give the server time to start-up
-sleep 0.5
+sleep 1
 
 # save the return val of the tests for actions
 ExitCode=0
