@@ -97,7 +97,7 @@ namespace Webserver
 		}
 		else if (_bodySize != 0)
 			_response.addHeader(Header::ContentLength, toString(_bodySize));
-		_response.setFinished();
+		_response.setIsReadyToSend();
 	}
 
 	std::string	Cgi::getExecutablePath(const std::string &exe)
