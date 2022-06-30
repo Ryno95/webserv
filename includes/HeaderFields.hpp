@@ -4,6 +4,7 @@
 #include <map>
 
 #include <Utility.hpp>
+#include <defines.hpp>
 
 namespace Header
 {
