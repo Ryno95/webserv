@@ -30,10 +30,9 @@ namespace Webserver
 		std::istream	*getHeaderStream();
 		HttpStatusCode	getStatusCode() const;
 		void			setStatusCode(HttpStatusCode code);
-		bool			isFinished() const;
-		void			setFinished();
-		void			setNotFinished();
 		void			setBodyStream(std::istream* fileStream);
+		bool			isReadyToSend() const;
+		void			setReadyToSend(bool value);
 
 	protected:
 
@@ -45,6 +44,6 @@ namespace Webserver
 
 		std::istream*		_bodyStream;
 		std::stringstream	_headerStream;
-		bool				_isFinished;
+		bool				_isReadyToSend;
 	};
 }

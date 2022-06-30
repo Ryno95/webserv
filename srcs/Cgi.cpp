@@ -184,7 +184,7 @@ namespace Webserver
 
 		DEBUG("Child reaped with status: " << WIFEXITED(status) << ", exit status: " << WEXITSTATUS(status));
 
-		if (_response.isFinished())
+		if (_response.isReadyToSend())
 			return;
 
 		if (WEXITSTATUS(status) > 0 || WIFSIGNALED(status))
@@ -201,8 +201,7 @@ namespace Webserver
 				_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 			}
 		}
-
-		_response.setFinished();
+		_response.setReadyToSend(true);
 	}
 
 	std::string	Cgi::getExecutablePath(const std::string &exe)

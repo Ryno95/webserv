@@ -39,7 +39,6 @@ EXIT_CODE += postRequest.checkCreated(postRequest._response)
 postRequest.checkCreatedFileContent()
 postRequest.removeCreatedFile()
 
-
 # # sleep so that the exit code is that of the python script and not the server
 time.sleep(0.2)
 
