@@ -30,12 +30,11 @@ namespace Webserver
 		std::istream	*getHeaderStream();
 		HttpStatusCode	getStatusCode() const;
 		void			setStatusCode(HttpStatusCode code);
-
 		bool			isFinished() const;
 		void			setFinished();
 		void			setNotFinished();
+		void			setBodyStream(std::istream* fileStream);
 
-		void setBodyStream(std::istream* fileStream);
 	protected:
 
 		HttpStatusCode		_statusCode;
