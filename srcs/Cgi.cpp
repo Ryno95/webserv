@@ -67,7 +67,7 @@ namespace Webserver
 		_lastCommunicated = TimeoutHandler::get().getTime();
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
-	}	
+	}
 
 	Cgi::~Cgi()
 	{
@@ -116,17 +116,12 @@ namespace Webserver
 		}
 	}
 
-	// void Cgi::contentTypeCallback(const std::string& arg)
-	// {
-	// }
-
 	std::map<std::string, Cgi::Command<Cgi> > Cgi::getKeywords()
 	{
 		std::map<std::string, Command<Cgi> > keywords;
 
 		keywords[Header::Status] = Command<Cgi>(this, &Cgi::statusCallback);
 		keywords[Header::Location] = Command<Cgi>(this, &Cgi::locationCallback);
-		// keywords[Header::ContentType] = new Command<Cgi>(Cgi::contentTypeCallback);
 		return keywords;
 	}
 
