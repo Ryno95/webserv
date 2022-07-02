@@ -1,5 +1,13 @@
 # Webserver
 
+**Todo: Talk about the next topics:**
+* Overview of the project
+* Compilation / dependencies
+* Running the program
+* Testing strategy
+* Pipelining
+* Cgi restrictions/design
+* Design patterns
 
 # Configuration file
 The configuration file consists of a 4 different classes:
