@@ -12,7 +12,7 @@ The structure is simply: application stores server objects, the server stores ho
 
 The root of the file writes into the Application object while the other classes are instantiated by writing their name (in lowercase)
 and then opening / closing brackets to define their region.
-
+**Host and Location share most keywords, as the host sets them as default values and the location can override the host's values for it's specific route.**
 
 **Application:**
 | Keyword | Values | Default | Description |
@@ -29,14 +29,16 @@ and then opening / closing brackets to define their region.
 | host			| none | none | Define the beginning of a host object. |
 | port			| uint | 80   | Port on which this server will be running. |
 
-
-**!! Host and Location share most keywords, as the host sets them as default values, and the location can override the host's values.**
-
 **Host:**
 | Keyword | Values | Default | Description |
 |---------|--------|---------|-------------|
 | location		| string | null   | Defines a specific location object with a pattern to match with routing and custom settings. Wildcard's can be used in the pattern. Example: ```location /images/*.jpg``` |
 | name			| strings | default | Hostname of this host. Used in routing by matching 'Host' headerfield with this value. |
+
+**Location:**
+| Keyword | Values | Default | Description |
+|---------|--------|---------|-------------|
+| route_type | fileserver cgi redirect | fileserver | Specify how to process uri matches. |
 
 **Host/Location:**
 | Keyword | Values | Default | Description |
@@ -45,7 +47,7 @@ and then opening / closing brackets to define their region.
 | autoindex		| bool | false | Enable/disable listing of files for when the uri targets a directory. |
 | default_index		| string | index.html   | Name of file to return when the uri targets a directory. |
 | default_error		| string | error.html   | Error page to return when no specific error page is defined. |
-| accepted_methods	| GET POST DELETE | null   | Methods allowed on this location. |
+| accepted_methods	| GET POST DELETE | null   | Method(s) allowed on this location. |
 | allow_upload		| boolean | false   | Allow/disallow uploading files in this location. |
 | error_page		| [n * uint] string | null | Define specific error pages to be shown on specific error codes. Example: ```error_page 405 500 myerrorpage.html``` |
 
