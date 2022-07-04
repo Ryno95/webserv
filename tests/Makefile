@@ -26,7 +26,7 @@ SRC_LINKING	=	-I $(SRC_DIR)includes/
 all: srcs $(NAME)
 
 srcs:
-	$(MAKE) -C $(SRC_LIB) $(SRC_LIB_NAME) -j5
+	$(MAKE) -C $(SRC_DIR) $(SRC_LIB_NAME) -j5
 
 $(NAME): $(TEST_SRC) $(SRC_LIB)
 	$(CC) -D TEST=1 -o $(NAME) $(TEST_SRC) $(SRC_LIB) $(TEST_CFLAGS) $(SRC_LINKING) -L /usr/local/lib -lcriterion -I /usr/local/include -std=c++11 -Wl,-rpath=/usr/local/lib
