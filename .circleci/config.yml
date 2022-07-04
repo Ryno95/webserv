@@ -14,5 +14,5 @@ jobs:
           command: "tests/unit_tests/unit_test.sh"
       - run:
           name: Acceptance-Test
-          command: tests/acceptance_tests/acceptance.sh
+          command: "tests/acceptance_tests/acceptance.sh"
 
