@@ -219,13 +219,16 @@ namespace Webserver
 
 		// check if content type is specified, otherwise set to default val octet-stream
 		std::string contentTypeVal("");
-		if (!_request.tryGetHeader("CONTENT_TYPE", contentTypeVal))
+		if (!_request.tryGetHeader("content_type", contentTypeVal))
 			_env["CONTENT_TYPE"]		=  Webserv::config().getMimeTypes().getMIMEType("");
 		else
 			_env["CONTENT_TYPE"] = contentTypeVal;
 
 		_env["HTTP_HOST"]			= "https://" + _request.getHost();
-		_env["HTTP_COOKIE"]			= "https://" + _request.getHost();
+
+		std::string cookieBuffer("");
+		if (_request.tryGetHeader("cookie", cookieBuffer))
+			_env["HTTP_COOKIE"]			= cookieBuffer;
 
 		_env["SCRIPT_NAME"]			= _request.getTarget();
 
