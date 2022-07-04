@@ -11,7 +11,7 @@ jobs:
           command: 'echo Building'
       - run:
           name: Unit-Test
-          command: "make -C tests/ && tests/unit_test"
+          command: "tests/unit_tests/unit_test.sh"
       - run:
           name: Acceptance-Test
           command: tests/acceptance_tests/acceptance.sh
