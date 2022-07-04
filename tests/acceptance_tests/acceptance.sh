@@ -1,6 +1,13 @@
 #!/bin/bash
-# the & runs a command/program in the background
-./Webserver.out &
+
+# Compile and move executable to correct directory
+make -C src/ -j5
+mv src/webserv server/
+
+# The & runs a command/program in the background
+cd server/
+./webserv &
+cd ..
 
 # Save the PID to kill the webserv
 PID=$!
@@ -12,7 +19,7 @@ sleep 1
 ExitCode=0
 
 # run the tests
-cd acceptance_tests/PyTests/
+cd tests/acceptance_tests/PyTests/
 python3 GETTests.py
 ExitCode+=$?
 
@@ -25,7 +32,7 @@ ExitCode+=$?
 python3 CGITests.py
 ExitCode+=$?
 
-rm -rf ./root/uploads/*.txt
+# rm -rf ./root/uploads/*.txt
 
 sleep 0.1
 kill $PID
