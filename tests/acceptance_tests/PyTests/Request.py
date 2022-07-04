@@ -65,7 +65,7 @@ class POSTRequest(Request):
         print(self.createdFile)
         if self.createdFile is None:
             self.printError("File Created", "File Not Created", "File Creation")
-        self.createdFile = "../../" + self.createdFile
+        self.createdFile = "../../../server/" + self.createdFile
         fileToPostSize = os.stat(self._fileName).st_size
         postedFileSize = os.stat(self.createdFile).st_size
         if self.compareActualToExpected(fileToPostSize, postedFileSize, "File size") == returnStatus.SUCCESS:
@@ -96,7 +96,7 @@ class DELETERequest(Request):
     def __init__(self, target):
         self._method = Methods.DELETE
         self._target = target
-        self._fullFilePath = "../../root/data/uploads" + self._target
+        self._fullFilePath = "../../../server/root/data/uploads" + self._target
         self._uri = LOCAL_HOST + "/uploads" + target
         self._response = []
         self._fd = None
@@ -146,7 +146,7 @@ class CgiRequest(Request):
 class IntegrateMethods():
     def __init__ (self, target, expectedGetResponseCode):
         self._target = target
-        self._fullFilePath = "../../root" + self._target
+        self._fullFilePath = "../../../server/root" + self._target
         self._uri = LOCAL_HOST + "/" + target
         self._postReqest = POSTRequest(self._target)
         self._getRequest = GETRequest(self._uri, expectedGetResponseCode)

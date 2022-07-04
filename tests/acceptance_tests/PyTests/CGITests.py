@@ -43,13 +43,13 @@ EXIT_CODE += cgiRequest.compareActualToExpected(HttpResponseStatus.METHOD_NOT_AL
 
 
 #  creatign file with only execution rights, needs write permissions to be executable
-fd = open(os.open("../../root/cgi-bin/scriptWithWrongRights.py", os.O_CREAT, 0o100), "w")
+fd = open(os.open("../../../server/root/cgi-bin/scriptWithWrongRights.py", os.O_CREAT, 0o100), "w")
 localhost = "http://localhost:8080/cgi-bin/scriptWithWrongRights.py"
 data = None
 cgiRequest = CgiRequest(localhost, data=_data)
 cgiRequest.doRequest()
 EXIT_CODE += cgiRequest.compareActualToExpected(HttpResponseStatus.FORBIDDEN, cgiRequest._response.status_code, "Status Code")
-os.remove("../../root/cgi-bin/scriptWithWrongRights.py")
+os.remove("../../../server/root/cgi-bin/scriptWithWrongRights.py")
 
 localhost = "http://localhost:8080/cgi-bin/hello.py"
 data = None
