@@ -34,6 +34,12 @@ namespace Webserver
 
 
 		/*
+			Runtime tasks
+		*/
+		_data->_mimeTypes = MimeTypes(_data->_mimeFilePath);
+
+
+		/*
 			Warnings
 		*/
 
