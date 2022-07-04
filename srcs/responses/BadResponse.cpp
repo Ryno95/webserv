@@ -12,36 +12,48 @@ namespace Webserver
 
 	BadResponse::BadResponse(const Host& host, HttpStatusCode code) : Response(code)
 	{
-		addErrorFile(host.getDefaultError(), host.getErrorPages());
+		if (checkSpecificErrorPages(host) == false)
+		{
+			if (addErrorFile(host.getErrorPagesRoot() + host.getDefaultError()) == false)
+			{
+				WARN("There is no error-page defined for '" << code.first << " " << code.second <<
+					"' and the default error page '" << host.getErrorPagesRoot() + host.getDefaultError() << "' could not be found.");
+			}
+		}
 	}
-	
 
 	BadResponse::~BadResponse()
 	{
 	}
 
-	void BadResponse::addErrorFile(const std::string& defaultError, const HostFields::ErrorPages& errorPages)
+	bool BadResponse::checkSpecificErrorPages(const Host& host)
 	{
+		const HostFields::ErrorPages& errorPages = host.getErrorPages();
 		HostFields::ErrorPages::const_iterator errorPage = errorPages.find(_statusCode.first);
-		if (errorPage != errorPages.end())
-		{
-			try
-			{
-				addFile(ERROR_PAGES_DIR + errorPage->second);
-				return;
-			}
-			catch(const std::exception& e)
-			{
-			}
-		}
+		if (errorPage == errorPages.end())
+			return false;
 
 		try
 		{
-			addFile(ERROR_PAGES_DIR + defaultError);
+			addErrorFile(host.getErrorPagesRoot() + errorPage->second);
+			return true;
 		}
 		catch(const std::exception& e)
 		{
-			ERROR("Default error not found!");
+			return false;
+		}
+	}
+
+	bool BadResponse::addErrorFile(const std::string& filePath)
+	{
+		try
+		{
+			addFile(filePath);
+			return true;
+		}
+		catch(const std::exception& e)
+		{
+			return false;
 		}
 	}
 }

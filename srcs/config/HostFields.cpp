@@ -6,10 +6,11 @@ namespace Webserver
 {
 	HostFields::HostFields() :
 		_autoIndexEnabled(false),
-		_root("root"),
+		_root("root/"),
 		_defaultIndex("index.html"),
 		_defaultError("error.html"),
-		_allowUpload(false)
+		_allowUpload(false),
+		_errorPagesRoot("root/error_pages/")
 	{
 	}
 
@@ -27,6 +28,7 @@ namespace Webserver
 		_acceptedMethods = ref._acceptedMethods;
 		_allowUpload = ref._allowUpload;
 		_errorPages = ref._errorPages;
+		_errorPagesRoot = ref._errorPagesRoot;
 		return *this;
 	}
 
@@ -67,5 +69,10 @@ namespace Webserver
 	const HostFields::ErrorPages& HostFields::getErrorPages() const
 	{
 		return _errorPages;
+	}
+
+	const std::string& HostFields::getErrorPagesRoot() const
+	{
+		return _errorPagesRoot;
 	}
 }

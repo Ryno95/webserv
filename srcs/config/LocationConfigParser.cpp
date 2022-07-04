@@ -25,6 +25,7 @@ namespace Webserver
 
 		keywords["autoindex"]			= new ParseVariableCommand<bool>(&_data->_autoIndexEnabled);
 		keywords["root"]				= new ParseVariableCommand<std::string>(&_data->_root);
+		keywords["error_root"]			= new ParseVariableCommand<std::string>(&_data->_errorPagesRoot);
 		keywords["default_index"]		= new ParseVariableCommand<std::string>(&_data->_defaultIndex);
 		keywords["default_error"]		= new ParseVariableCommand<std::string>(&_data->_defaultError);
 		keywords["accepted_methods"]	= new ParseVariableCommand<std::vector<Method::method> >(&_data->_acceptedMethods);

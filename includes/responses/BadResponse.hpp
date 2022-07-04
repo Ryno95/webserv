@@ -15,6 +15,7 @@ namespace Webserver
 			~BadResponse();
 
 		private:
-			void addErrorFile(const std::string& defaultError, const HostFields::ErrorPages& errorPages);
+			bool addErrorFile(const std::string& filePath);
+			bool checkSpecificErrorPages(const Host& host);
 	};
 }

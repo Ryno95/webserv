@@ -28,6 +28,7 @@ namespace Webserver
 		const std::vector<Method::method>& getAcceptedMethods() const;
 		bool isUploadAllowed() const;
 		const ErrorPages& getErrorPages() const;
+		const std::string& getErrorPagesRoot() const;
 
 	protected:
 		bool						_autoIndexEnabled;
@@ -37,5 +38,6 @@ namespace Webserver
 		std::vector<Method::method>	_acceptedMethods;
 		bool						_allowUpload;
 		ErrorPages					_errorPages;
+		std::string					_errorPagesRoot;
 	};
 }
