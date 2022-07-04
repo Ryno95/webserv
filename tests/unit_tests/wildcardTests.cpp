@@ -1,5 +1,5 @@
 #include <criterion/criterion.h>
-#include "../includes/Utility.hpp"
+#include <Utility.hpp>
 
 using namespace Webserver;
 

@@ -6,25 +6,23 @@
 
 using namespace Webserver;
 
-AppConfig* parseConfig(const std::string& path)
-{
-	try
-	{
-		std::ifstream fstream(path);
-		if (fstream.fail())
-			throw FileNotFoundException(path);
-		return Parser<AppConfigParser>(fstream).parse();
-	}
-	catch(const std::exception& e)
-	{
-		throw std::runtime_error(std::string("In config file: ") + e.what());
-	}
-}
+// AppConfig* parseConfig(const std::string& path)
+// {
+// 	try
+// 	{
+// 		std::ifstream fstream(path);
+// 		if (fstream.fail())
+// 			throw FileNotFoundException(path);
+// 		return Parser<AppConfigParser>(fstream).parse();
+// 	}
+// 	catch(const std::exception& e)
+// 	{
+// 		throw std::runtime_error(std::string("In config file: ") + e.what());
+// 	}
+// }
 
 Test(Mimes, valid)
 {
-	AppConfig* config = parseConfig("unit_tests/default.config");
-	Webserv::config(config);
 	MimeTypes mimes("unit_tests/test.mime");
 
 	cr_expect(mimes.getMIMEType("html") == "text/html");
@@ -35,8 +33,6 @@ Test(Mimes, valid)
 
 Test(Mimes, invalid)
 {
-	AppConfig* config = parseConfig("unit_tests/default.config");
-	Webserv::config(config);
 	MimeTypes mimes("unit_tests/test.mime");
 
 	cr_expect(mimes.getMIMEType("doenstExists") == "application/octet-stream");

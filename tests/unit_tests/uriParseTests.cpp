@@ -1,6 +1,6 @@
 #include <criterion/criterion.h>
 #include <iostream>
-#include "../includes/Uri.hpp"
+#include <Uri.hpp>
 
 using namespace Webserver;
 

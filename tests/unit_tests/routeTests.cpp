@@ -1,12 +1,8 @@
 #include <criterion/criterion.h>
-
-// #include "../includes/config/LocationConfig.hpp"
-// #include "../includes/config/ServerConfig.hpp"
-// #include "../includes/config/HostConfig.hpp"
-#include "../includes/config/Parser.hpp"
-#include "../includes/config/AppConfig.hpp"
-#include "../includes/config/AppConfigParser.hpp"
-#include "../includes/Host.hpp"
+#include <config/Parser.hpp>
+#include <config/AppConfig.hpp>
+#include <config/AppConfigParser.hpp>
+#include <Host.hpp>
 
 #include <vector>
 #include <iostream>
