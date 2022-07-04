@@ -5,9 +5,8 @@
 
 namespace Webserver
 {
-	MimeTypes::MimeTypes() : _filePath("config/default.mime")
+	MimeTypes::MimeTypes()
 	{
-		parse();
 	}
 
 	MimeTypes::MimeTypes(const std::string& filePath) : _filePath(filePath)
