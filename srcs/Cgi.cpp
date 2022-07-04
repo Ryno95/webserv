@@ -16,6 +16,7 @@
 #include <Logger.hpp>
 #include <Utility.hpp>
 #include <Sender.hpp>
+#include <Webserv.hpp>
 #include <responses/CgiResponse.hpp>
 #include <methods/TargetInfo.hpp>
 
@@ -203,20 +204,34 @@ namespace Webserver
 
 	void Cgi::createEnv()
 	{
-		const int numOfMethods = 3;
-		const char* methods[3] = {"GET", "POST", "DELETE"};
+		const int 	numOfMethods = 3;
+		const char* methods[numOfMethods] = {"GET", "POST", "DELETE"};
 		
 		_env["GATEWAY_INTERFACE"] 	= "CGI/1.1";
 		_env["REQUEST_METHOD"] 		= methods[_request.getMethod()];
 
 		_env["QUERY_STRING"]		= _request.getBody();
-		_env["CONTENT_LENGTH"]		= _request.getBody().size();
+
+		 // default val as described in the documentation
+		_env["CONTENT_LENGTH"]		= -1;
+		if (_request.getBody().size() > 0)
+			_env["CONTENT_LENGTH"]	= _request.getBody().size();
+
+		// check if content type is specified, otherwise set to default val octet-stream
+		std::string contentTypeVal("");
+		if (!_request.tryGetHeader("CONTENT_TYPE", contentTypeVal))
+			_env["CONTENT_TYPE"]		=  Webserv::config().getMimeTypes().getMIMEType("");
+		else
+			_env["CONTENT_TYPE"] = contentTypeVal;
 
 		_env["HTTP_HOST"]			= "https://" + _request.getHost();
-		_env["SERVER_PROTOCOL"]		= HTTPVERSION;
+		_env["HTTP_COOKIE"]			= "https://" + _request.getHost();
+
 		_env["SCRIPT_NAME"]			= _request.getTarget();
-		// _env["SERVER_PORT"]			= std::to_string(ServerConfig::getPort());
-		_env["SERVER_NAME"]			= SERVER_NAME;
+
+		_env["SERVER_PROTOCOL"]		= HTTPVERSION;
+		
+		_env["SERVER_NAME"]			= _host.getName();
 	}
 
 	void Cgi::addEnvElement(const std::string key, const std::string value)
