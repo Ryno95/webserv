@@ -164,7 +164,7 @@ namespace Webserver
 
 	void Client::addResponseToQueue()
 	{
-		if (_currentlyProcessing == nullptr || !_currentlyProcessing->isFinished())
+		if (_currentlyProcessing == nullptr || !_currentlyProcessing->isReadyToSend())
 			return;
 
 		// after we created a new response, we also need to communicate "Connection: close" if the client requested that from us.

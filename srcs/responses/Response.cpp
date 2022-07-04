@@ -12,14 +12,14 @@ namespace Webserver
 	Response::Response() :
 		_statusCode(HttpStatusCodes::OK),
 		_bodyStream(nullptr),
-		_isFinished(true)
+		_isReadyToSend(true)
 	{
 	}
 
 	Response::Response(HttpStatusCode code) :
 		_statusCode(code),
 		_bodyStream(nullptr),
-		_isFinished(true)
+		_isReadyToSend(true)
 	{
 		addConstantHeaderFields();
 	}
@@ -121,18 +121,18 @@ namespace Webserver
 		_statusCode = code;
 	}
 
-	bool Response::isFinished() const
+	bool Response::isReadyToSend() const
 	{
-		return _isFinished;
+		return _isReadyToSend;
 	}
 
-	void Response::setFinished()
+	void Response::setIsReadyToSend()
 	{
-		_isFinished = true;
+		_isReadyToSend = true;
 	}
 
-	void Response::setNotFinished()
+	void Response::setIsNotReadyToSend()
 	{
-		_isFinished = false;
+		_isReadyToSend = false;
 	}
 }

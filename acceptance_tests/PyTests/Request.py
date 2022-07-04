@@ -159,7 +159,6 @@ class IntegrateMethods():
 
         self._postReqest.doRequest()
         EXIT_CODE += self._postReqest.checkCreated(self._postReqest._response)
-        # self._postRequest.checkCreatedFile()
         if EXIT_CODE != 0:
             return EXIT_CODE
 

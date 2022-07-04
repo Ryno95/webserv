@@ -29,7 +29,6 @@ namespace Webserver
 
 	void POSTMethod::setPostResponseHeaders(bool isCreated)
 	{
-		// _response->addHeader(Header::ContentLength, std::to_string(_request.getBodySize()));
 		if (isCreated)
 			addLocationHeader();
 	}
