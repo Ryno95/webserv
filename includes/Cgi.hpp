@@ -12,6 +12,16 @@ namespace Webserver
 	#define SYSTEM_CALL_ERROR -1
 	#define CHILD_PROCESS  0
 
+	typedef struct tmpFiles
+	{
+		FILE	*fIn;
+		FILE	*fOut;
+		int		fdIn;
+		int		fdOut;
+		int 	saveStdIn;
+		int 	saveStdOut;
+	}			t_tmpFiles;
+
 	class CgiResponse;
 
 	class Cgi : public ITimeoutable, public IPollable
@@ -39,17 +49,20 @@ namespace Webserver
 			HttpStatusCode 		getStatus() const;
 
 		private:
-			std::string			getExecutablePath(const std::string &exe);
-			std::string 		createQueryString();
-			void				executeCgiFile();
-			void				executeCommand();
-			void				reapChild();
-			void				createEnv();
-			void				addEnvElement(const std::string key, const std::string value);
+			std::string		getExecutablePath(const std::string &exe);
+			std::string 	createQueryString();
+			void			executeCgiFile();
+			void			executeCommand();
+			void			reapChild();
+
+			void			createEnv();
+			char**			getCStyleEnv();
+			void			addEnvElement(const std::string key, const std::string value);
 
 			const std::string 					_cgiExecutable;
 			int									_pid;
 			int									_pipeFd[2];
+			tmpFiles							_files;
 			const Request&						_request;
 			std::stringstream*					_sendStream;
 			const Host&							_host;

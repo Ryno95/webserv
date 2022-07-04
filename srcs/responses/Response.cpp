@@ -43,7 +43,7 @@ namespace Webserver
 
 	void Response::addConstantHeaderFields()
 	{
-		addHeader(Header::Server, SERVER_NAME);
+		// addHeader(Header::Server, _request._host.getName());/
 		addHeader(Header::AcceptRanges, "bytes");
 		addHeader(Header::Date, getTimeStamp());
 	}

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <string>
 
 #include <Cgi.hpp>
 #include <Exception.hpp>
@@ -37,12 +38,13 @@ namespace Webserver
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		else if (!_uri.isReadable()) 
 			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
-
+		int saveStdin = dup(STDIN_FILENO);
 		_pipeFd[READ_FD] = SYSTEM_ERR;
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
 		if (pipe(_pipeFd) < 0)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
-
+		write(_pipeFd[READ_FD], _request.getBody().c_str() , _request.getBodySize());
+		lseek(_pipeFd[READ_FD], 0, SEEK_SET);
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
@@ -50,6 +52,7 @@ namespace Webserver
 		{
 			try
 			{
+				createEnv();
 				executeCgiFile();
 			}
 			catch (std::exception &e) {
@@ -61,13 +64,13 @@ namespace Webserver
 		// parent
 		close(_pipeFd[WRITE_FD]);
 		_pipeFd[WRITE_FD] = SYSTEM_ERR;
-		createEnv();
 
 		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
 		_sendStream = new std::stringstream;
 		_lastCommunicated = TimeoutHandler::get().getTime();
+		dup2(saveStdin, STDIN_FILENO);
 		PollHandler::get().add(this);
 		TimeoutHandler::get().add(this);
 	}	
@@ -91,9 +94,9 @@ namespace Webserver
 			DEBUG("Child not ready to be reaped.");
 			return;
 		}
-
 		if (WIFEXITED(status) && WEXITSTATUS(status) > 0)
 		{
+			std::cerr << "SETTING 500 IN REAP CHILD" << std::endl;
 			_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 			_response.setBodyStream(nullptr);
 		}
@@ -132,18 +135,23 @@ namespace Webserver
 	void Cgi::executeCommand()
 	{
 		std::string	queryString = createQueryString();
-		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
+		char** env = getCStyleEnv();
 
-		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
+		for (int i = 0; env[i]; i++)
+			std::cerr << env[i] << std::endl;
+
+		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)getCStyleEnv()) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("execve()");
 	}
 
 	void Cgi::executeCgiFile()
 	{
-		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Close()");
-
+		write(_pipeFd[READ_FD], _request.getBody().c_str() , _request.getBodySize());
+		// lseek(_pipeFd[READ_FD], 0, SEEK_SET);
+		dup2(_pipeFd[READ_FD], STDIN_FILENO);
+		// if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
+		// 	throw SystemCallFailedException("Close()");
 		if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Dup2()");
 	
@@ -202,32 +210,51 @@ namespace Webserver
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
 	
 
+	char** Cgi::getCStyleEnv()
+	{
+		char **env = new char*[_env.size() + 1];
+		std::map<std::string, std::string>::const_iterator it = _env.begin();
+		std::map<std::string, std::string>::const_iterator end = _env.end();
+
+		for (int i = 0; it != end; it++, i++)
+		{
+			std::string keyAndVal(it->first + "=" + it->second);
+			env[i] = new char[keyAndVal.size() + 1];
+			std::strcpy(env[i], keyAndVal.c_str());
+			// std::cerr << env[i] << std::endl;
+		}
+		env[_env.size()] = NULL;
+		return env;
+	}
+
 	void Cgi::createEnv()
 	{
 		const int 	numOfMethods = 3;
 		const char* methods[numOfMethods] = {"GET", "POST", "DELETE"};
 		
 		_env["GATEWAY_INTERFACE"] 	= "CGI/1.1";
-		_env["REQUEST_METHOD"] 		= methods[_request.getMethod()];
+		// _env["REQUEST_METHOD"] 		= std::string(methods[_request.getMethod()]); // this fucks up....
+		// _env["REQUEST_METHOD"] 		= "POST"; // this fucks up....
+		_env["REQUEST_METHOD"] 		= "POST"; 
 
 		_env["QUERY_STRING"]		= _request.getBody();
 
-		 // default val as described in the documentation
-		_env["CONTENT_LENGTH"]		= -1;
+		//  default val as described in the documentation
+		_env["CONTENT_LENGTH"]		= "-1";
 		if (_request.getBody().size() > 0)
-			_env["CONTENT_LENGTH"]	= _request.getBody().size();
+			_env["CONTENT_LENGTH"]	= std::to_string(_request.getBody().size());
 
 		// check if content type is specified, otherwise set to default val octet-stream
 		std::string contentTypeVal("");
 		if (!_request.tryGetHeader("content_type", contentTypeVal))
 			_env["CONTENT_TYPE"]		=  Webserv::config().getMimeTypes().getMIMEType("");
 		else
-			_env["CONTENT_TYPE"] = contentTypeVal;
+			_env["CONTENT_TYPE"] = "multipart/form-data";
 
 		_env["HTTP_HOST"]			= "https://" + _request.getHost();
 
 		std::string cookieBuffer("");
-		if (_request.tryGetHeader("cookie", cookieBuffer))
+		if (_request.tryGetHeader("Cookie", cookieBuffer))
 			_env["HTTP_COOKIE"]			= cookieBuffer;
 
 		_env["SCRIPT_NAME"]			= _request.getTarget();
@@ -243,16 +270,3 @@ namespace Webserver
 	}
 
 }
-// REQUEST_METHOD
-// CONTENT_LENGTH = -1 default
-// CONTENT_TYPE = MIMETYPE of body in request
-// GATEWAY INTERFACE = CGI/1.1
-// HTTP_HOST: Specifies the Internet host and port number of the resource being requested. Required for all HTTP/1.1 requests.
-// QUERY_STRING
-// SCRIPT_NAME = Returns the part of the URL from the protocol name up to the query string in the first line of the HTTP request.
-//  Website: https://localhost:8080/add.py
-// 		SERVER_NAME: Webserv
-// 		HTTP_HOST: https://localhost:8080
-// 		SERVER_PORT: 8080
-// SERVER_PROTOCOL: HTTP/1.1
-// HTTP_COOKIE: HTTP Cookie String.

@@ -136,7 +136,6 @@ namespace Webserver
 	Response* Client::processRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-
 		try
 		{
 			if (!host.isMethodAllowed(request.getMethod()))
