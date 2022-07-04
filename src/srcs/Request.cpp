@@ -49,8 +49,7 @@ namespace Webserver
 		std::string value;
 		if (tryGetHeader(Header::Host, value))
 			return value;
-		WARN("No host could be determined, while this should've been caught during Request::validate()");
-		throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
+		return "";
 	}
 
 	Method::method Request::getMethod() const
