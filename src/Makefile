@@ -1,11 +1,13 @@
 # Section Settings
 
-NAME		=	libwebserv.a
+NAME		=	webserv
+LIB			=	libwebserv.a
 
 OBJ_DIR		=	objs/
 SRC_DIR		=	srcs/
 INCL_DIR	=	includes/
 
+MAIN		=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
 				Request\
 				RequestParser\
@@ -59,10 +61,13 @@ LINKING		=	-I $(INCL_DIR)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HPPS)
-	ar -r $(NAME) $(OBJS)
+$(LIB): $(OBJS) $(HPPS)
+	ar -r $(LIB) $(OBJS)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS) # Need all HPPS here? Remakes all for a single HPP file change?
+$(NAME): $(LIB) $(MAIN)
+	$(CC) $(CFLAGS) $(LINKING) $(MAIN) $(LIB) -o $(NAME)
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp $(HPPS)
 	@mkdir -p $(OBJ_DIR) $(@D)
 	$(CC) $(CFLAGS) $(LINKING) -c $< -o $@
 
@@ -72,5 +77,7 @@ clean:
 	rm -rf $(OBJ_DIR)
 
 fclean: clean
+	rm -f $(NAME)
+	rm -f $(LIB)
 
 .PHONY: all clean fclean re
