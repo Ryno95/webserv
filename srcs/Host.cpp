@@ -10,7 +10,10 @@ namespace Webserver
 	Host Host::determine(const ServerConfig& config, const std::string& hostName, const std::string& uri)
 	{
 		const HostConfig& host = matchHost(config.getChildren(), hostName);
-		return Host(matchLocation(host, uri));
+		
+		Host matched(matchLocation(host, uri));
+		matched.setName(host.getHostNames()[0]);
+		return matched;
 	}
 
 	const HostConfig& Host::matchHost(const std::vector<HostConfig*>& hosts, const std::string& hostName)
@@ -45,5 +48,15 @@ namespace Webserver
 	bool Host::isMethodAllowed(Method::method method) const
 	{
 		return std::find(getAcceptedMethods().begin(), getAcceptedMethods().end(), method) != getAcceptedMethods().end();
+	}
+
+	void Host::setName(std::string name)
+	{
+		_name = name;
+	}
+	
+	const std::string& Host::getName() const
+	{
+		return _name;
 	}
 }
