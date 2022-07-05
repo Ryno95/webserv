@@ -352,8 +352,4 @@ namespace Webserver
 		_env["SERVER_NAME"]	= _host.getName();
 	}
 
-	void Cgi::addEnvElement(const std::string key, const std::string value)
-	{
-		_env[key] = value;
-	}
 }

@@ -85,7 +85,6 @@ namespace Webserver
 
 			void			createEnv();
 			char**			getCStyleEnv();
-			void			addEnvElement(const std::string key, const std::string value);
 			void			parseResult();
 			void			processHeaderFields(const HeaderFields& headerFields);
 
