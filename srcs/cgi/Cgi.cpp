@@ -6,8 +6,10 @@
 #include <string.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <string>
 
-#include <Cgi.hpp>
+#include <cgi/Cgi.hpp>
+#include <cgi/Pipes.hpp>
 #include <Exception.hpp>
 #include <PollHandler.hpp>
 #include <TimeoutHandler.hpp>
@@ -16,6 +18,7 @@
 #include <Logger.hpp>
 #include <Utility.hpp>
 #include <Sender.hpp>
+#include <Webserv.hpp>
 #include <responses/CgiResponse.hpp>
 #include <methods/TargetInfo.hpp>
 #include <HeaderFieldParser.hpp>
@@ -30,18 +33,16 @@ namespace Webserver
 			_host(host),
 			_status(HttpStatusCodes::OK),
 			_uri(uri),
-			_response(response)
+			_response(response),
+			_buffer(_request.getBody()),
+			_bodyIsSent(false)
 	{
 		if (!_uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		else if (!_uri.isReadable()) 
 			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
 
-		_pipeFd[READ_FD] = SYSTEM_ERR;
-		_pipeFd[WRITE_FD] = SYSTEM_ERR;
-		if (pipe(_pipeFd) < 0)
-			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
-
+		_pipes.openPipes();
 		_pid = fork();
 		if (_pid == SYSTEM_CALL_ERROR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
@@ -49,6 +50,8 @@ namespace Webserver
 		{
 			try
 			{
+				_pipes.closeForChild();
+				createEnv();
 				executeCgiFile();
 			}
 			catch (std::exception &e) {
@@ -58,14 +61,15 @@ namespace Webserver
 		}
 
 		// parent
-		close(_pipeFd[WRITE_FD]);
-		_pipeFd[WRITE_FD] = SYSTEM_ERR;
+		_pipes.closeForParent();
 
-		if (fcntl(_pipeFd[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+		if (fcntl(_pipes.CgiToServer[READ_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
-
+		if (fcntl(_pipes.serverToCgi[WRITE_FD], F_SETFL, O_NONBLOCK) == SYSTEM_ERR)
+			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 		_lastCommunicated = TimeoutHandler::get().getTime();
 		PollHandler::get().add(this);
+		PollHandler::get().setWriteEnabled(this, true);
 		TimeoutHandler::get().add(this);
 	}
 
@@ -73,11 +77,6 @@ namespace Webserver
 	{
 		PollHandler::get().remove(this);
 		TimeoutHandler::get().remove(this);
-
-		if (_pipeFd[READ_FD] != SYSTEM_ERR)
-			close(_pipeFd[READ_FD]);
-		if (_pipeFd[WRITE_FD] != SYSTEM_ERR)
-			close(_pipeFd[WRITE_FD]);
 	}
 
 	void Cgi::statusCallback(const std::string& arg)
@@ -172,12 +171,7 @@ namespace Webserver
 	{
 		int status;
 		if (waitpid(_pid, &status, WNOHANG) == 0)
-		{
-			DEBUG("Child not ready to be reaped.");
 			return;
-		}
-
-		DEBUG("Child reaped with status: " << WIFEXITED(status) << ", exit status: " << WEXITSTATUS(status));
 
 		if (_response.isReadyToSend())
 			return;
@@ -192,7 +186,6 @@ namespace Webserver
 			}
 			catch(const std::exception& e)
 			{
-				ERROR("During parsing cgi");
 				_response.setStatusCode(HttpStatusCodes::INTERNAL_ERROR);
 			}
 		}
@@ -218,30 +211,23 @@ namespace Webserver
 		}
 		return "";
 	}
-
-	std::string Cgi::createQueryString()
-	{
-		const std::string queryStringPrefix("QUERY_STRING=");
-
-		return (queryStringPrefix + _request.getBody()).c_str();
-	} 
-
 	void Cgi::executeCommand()
 	{
-		std::string	queryString = createQueryString();
-		const char* env[] = {queryString.c_str(), NULL};
 		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
+		char** 		env = getCStyleEnv();
 
 		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
+		{
+			perror("");
 			throw SystemCallFailedException("execve()");
+		}
 	}
 
 	void Cgi::executeCgiFile()
 	{
-		if (close(_pipeFd[READ_FD]) == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Close()");
-
-		if (dup2(_pipeFd[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
+		if (dup2(_pipes.serverToCgi[READ_FD], STDIN_FILENO) == SYSTEM_CALL_ERROR)
+			throw SystemCallFailedException("Dup2()");
+		if (dup2(_pipes.CgiToServer[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Dup2()");
 	
 		executeCommand();
@@ -250,7 +236,9 @@ namespace Webserver
 	// Write end of the pipe is only used in the child process
 	int Cgi::getFd() const
 	{
-		return _pipeFd[READ_FD];
+		if (_bodyIsSent)
+			return _pipes.CgiToServer[READ_FD];
+		return _pipes.serverToCgi[WRITE_FD];
 	}
 
 	timeval Cgi::getLastCommunicated() const
@@ -265,7 +253,7 @@ namespace Webserver
 		char buffer[BUFFERSIZE];
 		int readBytes = 0;
 
-		readBytes = read(_pipeFd[READ_FD], buffer, BUFFERSIZE);
+		readBytes = read(_pipes.CgiToServer[READ_FD], buffer, BUFFERSIZE);
 		if (readBytes == SYSTEM_ERR)
 		{
 			DEBUG("Cgi read is blocking, continue.");
@@ -287,7 +275,76 @@ namespace Webserver
 
 	void Cgi::onWrite()
 	{
+		int written = write(_pipes.serverToCgi[WRITE_FD], _buffer.c_str(), std::min((size_t)BUFFERSIZE, _buffer.size()));
+		
+		if (written == -1)
+			return ;
+
+		_lastCommunicated = TimeoutHandler::get().getTime();
+		_buffer.erase(0, written);
+		if (written == 0 || _buffer.size() == 0)
+		{
+			PollHandler::get().remove(this);
+			_pipes.tryClose(_pipes.serverToCgi[WRITE_FD]);
+
+			_bodyIsSent = true;
+			PollHandler::get().add(this);
+		}
 	}
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
+	
+
+	char** Cgi::getCStyleEnv()
+	{
+		char **env = new char*[_env.size() + 1];
+		std::map<std::string, std::string>::const_iterator it = _env.begin();
+		std::map<std::string, std::string>::const_iterator end = _env.end();
+
+		for (int i = 0; it != end; it++, i++)
+		{
+			std::string keyAndVal(it->first + "=" + it->second);
+			env[i] = new char[keyAndVal.size() + 1];
+			std::strcpy(env[i], keyAndVal.c_str());
+		}
+		env[_env.size()] = NULL;
+		return env;
+	}
+
+	void Cgi::createEnv()
+	{
+		const int 	numOfMethods = 3;
+		const char* methods[numOfMethods] = {"GET", "POST", "DELETE"};
+		
+		_env["GATEWAY_INTERFACE"] = "CGI/1.1";
+		_env["REQUEST_METHOD"] = std::string(methods[_request.getMethod()]); // this fucks up....
+
+
+
+		if (_request.getMethod() != Method::POST)
+			_env["QUERY_STRING"]		= _request.getBody();
+
+		//  default val as described in the documentation
+		_env["CONTENT_LENGTH"] = "-1";
+		if (_request.getBody().size() > 0)
+			_env["CONTENT_LENGTH"] = std::to_string(_request.getBody().size());
+
+		// check if content type is specified, otherwise set to default val octet-stream
+		std::string contentTypeVal("");
+		if (_request.tryGetHeader("Content-Type", contentTypeVal))
+			_env["CONTENT_TYPE"] = contentTypeVal;
+
+		_env["HTTP_HOST"] = "https://" + _request.getHost();
+
+		std::string cookieBuffer("");
+		if (_request.tryGetHeader("Cookie", cookieBuffer))
+			_env["HTTP_COOKIE"]	= cookieBuffer;
+
+		_env["SCRIPT_NAME"]	= _request.getTarget();
+
+		_env["SERVER_PROTOCOL"]	= HTTPVERSION;
+		
+		_env["SERVER_NAME"]	= _host.getName();
+	}
+
 }

@@ -10,6 +10,9 @@
 #include <methods/TargetInfo.hpp>
 #include <config/ParseTreeUtility.hpp>
 #include <ICommand.hpp>
+#include <cgi/Pipes.hpp>
+
+#include <unistd.h>
 
 namespace Webserver
 {
@@ -52,11 +55,6 @@ namespace Webserver
 		};
 
 		public:
-			enum FDs
-			{
-				READ_FD,
-				WRITE_FD
-			} FDs;
 	
 			Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response);
 			~Cgi();
@@ -79,23 +77,31 @@ namespace Webserver
 			HttpStatusCode 		getStatus() const;
 
 		private:
-			std::string			getExecutablePath(const std::string &exe);
-			std::string 		createQueryString();
-			void				executeCgiFile();
-			void				executeCommand();
-			void				reapChild();
+			std::string		getExecutablePath(const std::string &exe);
+			std::string 	createQueryString();
+			void			executeCgiFile();
+			void			executeCommand();
+			void			reapChild();
 
-			void				parseResult();
-			void				processHeaderFields(const HeaderFields& headerFields);
+			void			createEnv();
+			char**			getCStyleEnv();
+			void			parseResult();
+			void			processHeaderFields(const HeaderFields& headerFields);
 
-			const std::string 	_cgiExecutable;
-			int					_pid;
-			int					_pipeFd[2];
-			const Request&		_request;
-			std::string			_buffer;
-			const Host&			_host;
-			HttpStatusCode		_status;
-			const TargetInfo&	_uri;
-			CgiResponse&		_response;
+			const std::string 					_cgiExecutable;
+			int									_pid;
+			// int									_pipeFd[2];
+			Pipes								_pipes;
+			const Request&						_request;
+			std::stringstream*					_sendStream;
+			const Host&							_host;
+			HttpStatusCode						_status;
+			const TargetInfo&					_uri;
+			CgiResponse&						_response;
+			std::map<std::string, std::string> 	_env;
+			std::string							_buffer;
+			bool								_bodyIsSent;
 	};
+
+	
 }

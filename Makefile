@@ -38,7 +38,8 @@ CLASSES		=	Utility\
 				Client\
 				Receiver\
 				Sender\
-				Cgi\
+				cgi/Cgi\
+				cgi/Pipes\
 				PollHandler\
 				TickHandler\
 				TimeoutHandler\

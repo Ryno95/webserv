@@ -13,12 +13,18 @@ namespace Webserver
 	public:
 		static Host		determine(const ServerConfig& config, const std::string& hostName, const std::string& uri);
 
-		bool isMethodAllowed(Method::method method) const;
+		bool 	isMethodAllowed(Method::method method) const;
+
+		void				setName(const std::string &name);
+		const std::string&	getName() const;
 
 	private:
 		static const HostConfig& matchHost(const std::vector<HostConfig*>& hosts, const std::string& hostName);
 		static LocationConfig matchLocation(const HostConfig& host, const std::string& uri);
 
 		Host(const LocationConfig& config);
+		
+		std::string _name;
 	};
+	
 }

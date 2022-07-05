@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <Cgi.hpp>
+#include <cgi/Cgi.hpp>
 #include <Request.hpp>
 #include <Host.hpp>
 #include <methods/TargetInfo.hpp>
