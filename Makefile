@@ -10,6 +10,8 @@ TEST_DIR	=	unit_tests/
 
 MAIN		?=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
+				Request\
+				RequestParser\
 				config/ParseTreeUtility\
 				config/AppConfigParser\
 				config/ServerConfigParser\
@@ -34,7 +36,6 @@ CLASSES		=	Utility\
 				Logger\
 				Webserv\
 				Client\
-				Request\
 				Receiver\
 				Sender\
 				Cgi\
@@ -44,6 +45,7 @@ CLASSES		=	Utility\
 				Host\
 				Uri\
 				HeaderFields\
+				HeaderFieldParser\
 				autoIndex/HtmlBuilder\
 				autoIndex/HtmlElement\
 				autoIndex/AutoIndex

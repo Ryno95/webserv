@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Request.hpp>
 #include <responses/Response.hpp>
+#include <RequestParser.hpp>
 
 using namespace Webserver;
 
@@ -13,9 +14,8 @@ Test(ResponseTests, BasicGETRequest)
                                 "Host: localhost:8080\r\n"
                                 "User-Agent: curl/7.54.0\r\n"
                                 "Accept: */*\r\n\r\n";
-    Request request(seed);
+    Request request = RequestParser().parse(seed);
 
-	request.parse();
     Response response(request._status);
 	response.addConstantHeaderFields();
 	// response.setBody("Hello Mr.Client");

@@ -5,6 +5,42 @@
 
 namespace Webserver
 {
+	/*
+		Returns a pair of HttpStatusCode if the statuscode string supplied as parameter is a valid status code.
+		Throws exceptions in case of an error.
+	*/
+	std::pair<int, std::string> parseHttpStatusCode(const std::string& statusCode)
+	{
+		std::pair<int, std::string> pair;
+
+		std::string code = statusCode.substr(0, 3);
+		if (code.size() != 3 || code.find_first_not_of("0123456789") != std::string::npos)
+			throw std::exception();
+
+		pair.first = std::atoi(code.c_str());
+		if (pair.first == 0)
+			throw std::exception();
+
+		pair.second = statusCode.substr(4);
+		return pair;
+	}
+
+	/*
+		Returns a trimmed (whitespace removed) copy of the string supplied as a parameter.
+	*/
+	std::string	trimString(const std::string& line)
+	{
+		std::string::const_iterator start = line.begin();
+		std::string::const_iterator end = line.end();
+
+		while (start != end && std::isspace(*start))
+			++start;
+		--end;
+		while (std::distance(start, end) > 0 && std::isspace(*end))
+			--end;
+		return std::string(start, end + 1);
+	}
+
 	std::string removeLeadingWhitespace(const std::string &str)
 	{
 		std::string out = str;

@@ -206,15 +206,9 @@ namespace Webserver
 			_needsRemove = true;
 	}
 
-	/*
-		For the time functions setLastCommunicated() and checkTimeout():
-			We might set current_time once per poll iteration and get that value.
-			It reduces the amount of system calls!
-	*/
 	void Client::setLastCommunicated()
 	{
-		// Use TimeoutHandler::getTime() instead for optimization
-		gettimeofday(&_lastCommunicated, NULL);
+		_lastCommunicated = TimeoutHandler::get().getTime();
 	}
 
 	bool Client::needsRemove() const

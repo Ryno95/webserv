@@ -9,7 +9,6 @@ namespace Webserver
 		_root("root"),
 		_defaultIndex("index.html"),
 		_defaultError("error.html"),
-		_acceptedMethods(Method::GET),
 		_allowUpload(false)
 	{
 	}
