@@ -50,7 +50,7 @@ namespace Webserver
 		return std::find(getAcceptedMethods().begin(), getAcceptedMethods().end(), method) != getAcceptedMethods().end();
 	}
 
-	void Host::setName(std::string name)
+	void Host::setName(const std::string &name)
 	{
 		_name = name;
 	}

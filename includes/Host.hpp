@@ -15,7 +15,7 @@ namespace Webserver
 
 		bool 	isMethodAllowed(Method::method method) const;
 
-		void				setName(std::string name);
+		void				setName(const std::string &name);
 		const std::string&	getName() const;
 
 	private:
