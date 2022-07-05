@@ -275,15 +275,12 @@ namespace Webserver
 
 	void Cgi::onWrite()
 	{
-
 		int written = write(_pipes.serverToCgi[WRITE_FD], _buffer.c_str(), std::min((size_t)BUFFERSIZE, _buffer.size()));
 		
 		if (written == -1)
-		{
-			_lastCommunicated = TimeoutHandler::get().getTime(); // only set this if written != -1 ?
 			return ;
-		}
 
+		_lastCommunicated = TimeoutHandler::get().getTime();
 		_buffer.erase(0, written);
 		if (written == 0 || _buffer.size() == 0)
 		{
