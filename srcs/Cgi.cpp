@@ -327,9 +327,9 @@ namespace Webserver
 			_env["QUERY_STRING"]		= _request.getBody();
 
 		//  default val as described in the documentation
-		// _env["CONTENT_LENGTH"] = "-1";
-		// if (_request.getBody().size() > 0)
-		// 	_env["CONTENT_LENGTH"] = std::to_string(_request.getBody().size());
+		_env["CONTENT_LENGTH"] = "-1";
+		if (_request.getBody().size() > 0)
+			_env["CONTENT_LENGTH"] = std::to_string(_request.getBody().size());
 
 		// check if content type is specified, otherwise set to default val octet-stream
 		std::string contentTypeVal("");
