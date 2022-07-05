@@ -1,6 +1,7 @@
 #include <Sender.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
+#include <Client.hpp>
 
 #include <iostream>
 #include <string>
@@ -73,6 +74,8 @@ namespace Webserver
 		{
 			ssize_t written;
 			written = write(_fd, _buffer, bufferBytesFilled);
+			if (written == 0)
+				throw Client::DisconnectedException();
 			DEBUG("Bytes sent to client(" << _fd << "): " << bufferBytesFilled);
 		}
 		if (_currentState == FINISHED)
