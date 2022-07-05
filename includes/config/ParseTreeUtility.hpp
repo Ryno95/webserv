@@ -4,6 +4,7 @@
 #include <istream>
 
 #include <VariableParser.hpp>
+#include <ICommand.hpp>
 
 namespace Webserver
 {
@@ -23,15 +24,6 @@ namespace Webserver
 
 		std::istream& stream;
 		uint currentLine;
-	};
-
-
-
-	class ICommand
-	{
-	public:
-		virtual void callback(const std::string& args) = 0;
-		virtual ~ICommand() {}
 	};
 
 

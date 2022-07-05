@@ -2,6 +2,11 @@
 
 namespace Webserver
 {
+	void HeaderFields::setHeaderFields(const HeaderFields& ref)
+	{
+		_map = ref._map;
+	}
+
 	bool HeaderFields::containsHeader(const std::string& key) const
 	{
 		return _map.find(key) != _map.end();
@@ -26,12 +31,12 @@ namespace Webserver
 		_map.insert(std::pair<std::string, std::string>(key, value));
 	}
 
-	const_iterator HeaderFields::headersBegin() const
+	HeaderFields::const_iterator HeaderFields::headersBegin() const
 	{
 		return _map.begin();
 	}
 
-	const_iterator HeaderFields::headersEnd() const
+	HeaderFields::const_iterator HeaderFields::headersEnd() const
 	{
 		return _map.end();
 	}

@@ -8,7 +8,7 @@ namespace Webserver
 	/*
 		Receiver will handle receiving bytes and store those in a buffer.
 		When the request has been received, it will parse the headers and optionally receive the body.
-		When the whole request is received, it will signal with FINISHED that the request can be collected by the client handler.
+		Fully received requests are stored and can be retrieved by calling Receiver::collectRequests().
 	*/
 	class Receiver
 	{
@@ -29,10 +29,12 @@ namespace Webserver
 
 		void receive();
 		void processHeaderRecv();
-		void processBodyRecv();
+		void processBodyContentLength();
+		void processBodyChunked();
 		void checkHeader();
 
-		bool requestHasBodyField(const Request& req);
+		bool requestHasContentLength();
+		bool requestHasChunkedEncoding();
 
 		std::string _buffer;
 		std::string _recvBuffer;
@@ -43,6 +45,7 @@ namespace Webserver
 		state _state;
 		uint _bodyBytesReceived;
 		uint _bodySize;
+		void (Receiver::*_processBodyFunction)(void);
 
 	};
 }

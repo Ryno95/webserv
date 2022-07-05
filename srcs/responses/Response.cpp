@@ -126,13 +126,8 @@ namespace Webserver
 		return _isReadyToSend;
 	}
 
-	void Response::setIsReadyToSend()
+	void Response::setReadyToSend(bool value)
 	{
-		_isReadyToSend = true;
-	}
-
-	void Response::setIsNotReadyToSend()
-	{
-		_isReadyToSend = false;
+		_isReadyToSend = value;
 	}
 }

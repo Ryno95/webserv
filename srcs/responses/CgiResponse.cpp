@@ -11,13 +11,10 @@ namespace Webserver
 		: Response(request.getStatus()),
 			_cgiRequest(Cgi(request, host, uri, *this))
 	{
-		setIsNotReadyToSend();
+		setReadyToSend(false);
 		setStatusCode(_cgiRequest.getStatus());
 		if (_statusCode == HttpStatusCodes::NOT_FOUND)
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
-
-		addHeader(Header::ContentType, "text/html");
-		setBodyStream(_cgiRequest.getCgiStream());
 	}
 
 	CgiResponse::~CgiResponse()

@@ -32,9 +32,9 @@ except Exception as e:
     raise SystemExit(0)
 
 
-print("<!DOCTYPE html>\n<html>\n<body>")
 print("Content-Type: text/html") # HTML is following
 print()                         # Leave a blank line
+print("<!DOCTYPE html>\n<html>\n<body>")
 print("<h1>Addition Results</h1>")
 try:
     num1 = int(input_data.getvalue("val1"))

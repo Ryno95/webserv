@@ -6,6 +6,8 @@
 
 namespace Webserver
 {
+	std::pair<int, std::string> parseHttpStatusCode(const std::string& statusCode);
+	std::string		trimString(const std::string& line);
 	std::string 	removeTrailingWhitespace(const std::string &str);
 	std::string 	removeLeadingWhitespace(const std::string &str);
 	std::string 	getTimeStamp();

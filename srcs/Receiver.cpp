@@ -1,4 +1,5 @@
 #include <Receiver.hpp>
+#include <RequestParser.hpp>
 #include <defines.hpp>
 #include <Client.hpp>
 #include <Exception.hpp>
@@ -58,7 +59,7 @@ namespace Webserver
 		}
 	}
 
-	void Receiver::processBodyRecv()
+	void Receiver::processBodyContentLength()
 	{
 		_bodyBytesReceived += _recvBuffer.length();
 		_newRequest.appendBody(_recvBuffer);
@@ -67,40 +68,100 @@ namespace Webserver
 			_state = ADD_REQUEST;
 	}
 
-	bool Receiver::requestHasBodyField(const Request& req)
+	void Receiver::processBodyChunked()
 	{
-		_bodySize = req.getBodySize();
+		// _bodyBytesReceived	= amount of bytes received in this chunk
+		// _bodySize			= amount to receive in this chunk
+
+		_buffer += _recvBuffer;
+		_recvBuffer.clear();
+
+		size_t pos = 0;
+
+		while (true)
+		{
+			if (_bodySize == 0) // get next chunk size
+			{
+				if ((pos = _buffer.find("\r\n")) == std::string::npos)
+					break; // First need to receive more bytes from the client
+
+
+				std::stringstream stream;
+				stream << std::hex << _buffer.substr(0, pos);
+				stream >> _bodySize;
+
+				_buffer.erase(0, pos + 2);
+
+				if (_bodySize == 0)
+				{
+					_state = ADD_REQUEST;
+					break;
+				}
+			}
+			else if (_buffer.size() >= _bodySize + 2)
+			{
+				if (_buffer.substr(_bodySize, 2) != "\r\n")
+					throw InvalidRequestException(HttpStatusCodes::BAD_REQUEST);
+
+				_newRequest.appendBody(_buffer.substr(0, _bodySize));
+				_buffer.erase(0, _bodySize + 2);
+
+				_bodySize = 0;
+			}
+			else
+				break; // First need to receive more bytes from the client
+		}
+	}
+
+	bool Receiver::requestHasContentLength()
+	{
+		_bodySize = _newRequest.getBodySize();
 		if (_bodySize > Webserv::config().getMaxRequestBodySize())
 			throw InvalidRequestException(HttpStatusCodes::PAYLOAD_TOO_LARGE);
 		else if (_bodySize == 0)
 			return false;
+
+		_processBodyFunction = &Receiver::processBodyContentLength;
 		return true;
+	}
+
+	bool Receiver::requestHasChunkedEncoding()
+	{
+		std::string encoding;
+		if (_newRequest.tryGetHeader(Header::TransferEncoding, encoding) && stringToLower(encoding) == "chunked")
+		{
+			_processBodyFunction = &Receiver::processBodyChunked;
+			return true;
+		}
+		return false;
 	}
 
 	void Receiver::checkHeader()
 	{
-		_newRequest = Request(_buffer);
-		_buffer.clear();
-
 		try
 		{
-			_newRequest.parse();
-			if (requestHasBodyField(_newRequest))
+			_newRequest = RequestParser().parse(_buffer);
+			_buffer.clear();
+
+			_bodyBytesReceived = 0;
+			_bodySize = 0;
+			if (requestHasChunkedEncoding() || requestHasContentLength())
 			{
 				_state = RECV_BODY;
-				_bodyBytesReceived = 0;
-				return ;
+				return;
 			}
 		}
 		catch(const InvalidRequestException& e)
 		{
 			_newRequest.setStatus(e.getStatus());
+			_buffer.clear();
 		}
 		_state = ADD_REQUEST;
 	}
 
 	/*
-		Returns whether or not the handling is finished and ready to be collected.
+		Reads on it's configured fd for [buffer_size] bytes and then processes the bytes it has read.
+		Fully received requests are stored in this object and can be retrieved using Receiver::collectRequests().
 	*/
 	void Receiver::handle()
 	{
@@ -115,7 +176,7 @@ namespace Webserver
 					break;
 
 				case RECV_BODY:
-					processBodyRecv();
+					(this->*_processBodyFunction)();
 					break;
 
 				case ADD_REQUEST:
