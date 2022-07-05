@@ -23,6 +23,7 @@ namespace Webserver
 
 	TimeoutHandler::TimeoutHandler()
 	{
+		gettimeofday(&_now, nullptr);
 	}
 
 	TimeoutHandler::~TimeoutHandler()
