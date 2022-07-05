@@ -19,19 +19,33 @@ sleep 1
 ExitCode=0
 
 # run the tests
+
 cd tests/acceptance_tests/PyTests/
-python3 GETTests.py
-ExitCode+=$?
+for i in {1..10}
+do
+    python3 GETTests.py
+    ExitCode+=$?
+done
 
-python3 POSTTests.py
-ExitCode+=$?
+for i in {1..3}
+do
+    python3 POSTTests.py
+    ExitCode+=$?
+done
 
-python3 DELETETests.py
-ExitCode+=$?
+for i in {1..3}
+do
+    python3 DELETETests.py
+    ExitCode+=$?
+done
 
-python3 CGITests.py
-ExitCode+=$?
+for i in {1..10}
+do
+    python3 CGITests.py
+    ExitCode+=$?
+done
 
-sleep 0.1
+sleep 0.5
+
 kill $PID
 exit $ExitCode

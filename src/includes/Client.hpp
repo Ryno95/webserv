@@ -10,7 +10,7 @@
 #include <Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
-#include <Cgi.hpp>
+#include <cgi/Cgi.hpp>
 #include <Sender.hpp>
 #include <IPollable.hpp>
 #include <ITimeoutable.hpp>

@@ -2,7 +2,7 @@
 #include <methods/GETMethod.hpp>
 #include <methods/POSTMethod.hpp>
 #include <methods/DELETEMethod.hpp>
-#include <Cgi.hpp>
+#include <cgi/Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>
@@ -136,7 +136,6 @@ namespace Webserver
 	Response* Client::processRequest(const Request& request)
 	{
 		Host host = Host::determine(_serverConfig, request.getHost(), request.getTarget());
-
 		try
 		{
 			if (!host.isMethodAllowed(request.getMethod()))
@@ -202,7 +201,7 @@ namespace Webserver
 		if (_sender.hasResponse()) // if we have a current response set, send that
 			_sender.handle();
 
-		if (_sender.hasResponse() == false && _closeAfterRespond == true)
+		if (_sender.hasResponse() == false &&  _currentlyProcessing == nullptr && _closeAfterRespond == true)
 			_needsRemove = true;
 	}
 

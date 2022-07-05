@@ -37,6 +37,7 @@ namespace Webserver
 
 		Response* response = new Response();
 		response->addFile(target);
+		response->addHeader(Header::Server, _host.getName());
 		return response;
 	}
 }

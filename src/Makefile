@@ -31,13 +31,14 @@ CLASSES		=	Utility\
 				responses/RedirectResponse\
 				responses/AutoIndexResponse\
 				responses/CgiResponse\
+				cgi/Cgi\
+				cgi/Pipes\
 				MimeTypes\
 				Logger\
 				Webserv\
 				Client\
 				Receiver\
 				Sender\
-				Cgi\
 				PollHandler\
 				TickHandler\
 				TimeoutHandler\

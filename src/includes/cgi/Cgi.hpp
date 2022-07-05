@@ -90,7 +90,6 @@ namespace Webserver
 
 			const std::string 					_cgiExecutable;
 			int									_pid;
-			// int									_pipeFd[2];
 			Pipes								_pipes;
 			const Request&						_request;
 			std::stringstream*					_sendStream;
