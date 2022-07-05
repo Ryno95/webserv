@@ -9,6 +9,9 @@
 * Cgi restrictions/design
 * Design patterns
 
+# Design patterns
+In the design of the program, we've implemented a couple useful and interesting design patterns. Because we are not allowed to multithread the program, we've had to poll for incoming/outgoing operations to reduce the amount of cycles and system resources used by the webserver, while multiplexing and keeping the program non-blocking at all times. That includes socket, CGI and even file communication.
+
 # Configuration file
 The configuration file consists of a 4 different classes:
 * application
