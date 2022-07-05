@@ -333,8 +333,6 @@ namespace Webserver
 		std::string contentTypeVal("");
 		if (_request.tryGetHeader("Content-Type", contentTypeVal))
 			_env["CONTENT_TYPE"] = contentTypeVal;
-		else
-			_env["CONTENT_TYPE"] = "multipart/form-data";
 
 		_env["HTTP_HOST"] = "https://" + _request.getHost();
 
