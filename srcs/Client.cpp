@@ -2,7 +2,7 @@
 #include <methods/GETMethod.hpp>
 #include <methods/POSTMethod.hpp>
 #include <methods/DELETEMethod.hpp>
-#include <Cgi.hpp>
+#include <cgi/Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
 #include <PollHandler.hpp>

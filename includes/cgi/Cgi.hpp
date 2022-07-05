@@ -10,68 +10,14 @@
 #include <methods/TargetInfo.hpp>
 #include <config/ParseTreeUtility.hpp>
 #include <ICommand.hpp>
- #include <unistd.h>
+#include <cgi/Pipes.hpp>
+
+#include <unistd.h>
 
 namespace Webserver
 {
 	#define SYSTEM_CALL_ERROR -1
 	#define CHILD_PROCESS  0
-
-	enum FDs
-	{
-		READ_FD,
-		WRITE_FD
-	};
-
-	class Pipes
-	{
-		public:
-			Pipes()
-			{
-				serverToCgi[READ_FD] = SYSTEM_ERR;
-				serverToCgi[WRITE_FD] = SYSTEM_ERR;
-
-				CgiToServer[READ_FD] = SYSTEM_ERR;
-				CgiToServer[WRITE_FD] = SYSTEM_ERR;
-			}
-
-			~Pipes()
-			{
-				tryClose(serverToCgi[READ_FD]);
-				tryClose(serverToCgi[WRITE_FD]);
-				
-				tryClose(CgiToServer[READ_FD]);
-				tryClose(CgiToServer[WRITE_FD]);
-			}
-
-			void closeForParent()
-			{
-				tryClose(CgiToServer[WRITE_FD]);
-				tryClose(serverToCgi[READ_FD]);
-			}
-
-			void closeForChild()
-			{
-				tryClose(CgiToServer[READ_FD]);
-				tryClose(serverToCgi[WRITE_FD]);
-			}
-
-			void	tryClose(int fd)
-			{
-				if (fd != SYSTEM_ERR)
-					close(fd);
-				fd = SYSTEM_ERR;
-			}
-
-			void	openPipes()
-			{
-				if (pipe(serverToCgi) < 0 || pipe(CgiToServer) < 0)
-					throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
-			}
-
-			int	serverToCgi[2];
-			int	CgiToServer[2];
-	};
 
 	class CgiResponse;
 

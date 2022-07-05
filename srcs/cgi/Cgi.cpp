@@ -8,7 +8,8 @@
 #include <signal.h>
 #include <string>
 
-#include <Cgi.hpp>
+#include <cgi/Cgi.hpp>
+#include <cgi/Pipes.hpp>
 #include <Exception.hpp>
 #include <PollHandler.hpp>
 #include <TimeoutHandler.hpp>
