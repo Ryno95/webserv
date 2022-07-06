@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <ASubscribeable.hpp>
-#include <ITimeoutable.hpp>
+#include <observerApi/ASubscribeable.hpp>
+#include <observerApi/ITimeoutable.hpp>
 
 namespace Webserver
 {

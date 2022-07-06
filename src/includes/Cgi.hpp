@@ -4,9 +4,9 @@
 
 #include <Request.hpp>
 #include <Host.hpp>
-#include <ITimeoutable.hpp>
-#include <IPollable.hpp>
-#include <ITickable.hpp>
+#include <observerApi/ITimeoutable.hpp>
+#include <observerApi/IPollable.hpp>
+#include <observerApi/ITickable.hpp>
 #include <methods/TargetInfo.hpp>
 #include <config/ParseTreeUtility.hpp>
 #include <ICommand.hpp>

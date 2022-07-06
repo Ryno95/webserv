@@ -12,8 +12,8 @@
 #include <responses/Response.hpp>
 #include <cgi/Cgi.hpp>
 #include <Sender.hpp>
-#include <IPollable.hpp>
-#include <ITimeoutable.hpp>
+#include <observerApi/IPollable.hpp>
+#include <observerApi/ITimeoutable.hpp>
 
 namespace Webserver
 {

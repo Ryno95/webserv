@@ -9,8 +9,8 @@
 #include <Client.hpp>
 #include <config/AppConfig.hpp>
 #include <config/ServerConfig.hpp>
-#include <IPollable.hpp>
-#include <ITickable.hpp>
+#include <observerApi/IPollable.hpp>
+#include <observerApi/ITickable.hpp>
 #include <PollHandler.hpp>
 
 namespace Webserver
