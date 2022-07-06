@@ -15,7 +15,7 @@
 #include <observerApi/TimeoutHandler.hpp>
 #include <observerApi/TickHandler.hpp>
 #include <Host.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <Utility.hpp>
 #include <Sender.hpp>
 #include <Webserv.hpp>

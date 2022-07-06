@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <responses/Response.hpp>
 #include <Utility.hpp>
 #include <Exception.hpp>

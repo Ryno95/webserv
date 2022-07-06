@@ -34,7 +34,7 @@ CLASSES		=	Utility\
 				cgi/Cgi\
 				cgi/Pipes\
 				MimeTypes\
-				Logger\
+				logger/Logger\
 				Webserv\
 				Client\
 				Receiver\

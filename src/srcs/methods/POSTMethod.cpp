@@ -3,7 +3,7 @@
 
 #include <HttpStatusCode.hpp>
 #include <methods/POSTMethod.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <responses/Response.hpp>
 #include <Exception.hpp>
 

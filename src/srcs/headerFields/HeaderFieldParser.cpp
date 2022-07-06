@@ -2,7 +2,7 @@
 #include <Utility.hpp>
 #include <HttpStatusCode.hpp>
 #include <Exception.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 
 #include <string>
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <Webserv.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 
 #include <observerApi/TickHandler.hpp>
 #include <observerApi/TimeoutHandler.hpp>

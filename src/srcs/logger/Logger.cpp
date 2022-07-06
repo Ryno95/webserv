@@ -1,5 +1,5 @@
-#include <Colors.hpp>
-#include <Logger.hpp>
+#include <logger/Colors.hpp>
+#include <logger/Logger.hpp>
 #include <Utility.hpp>
 #include <Webserv.hpp>
 

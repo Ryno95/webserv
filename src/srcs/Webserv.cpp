@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #include <defines.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <Webserv.hpp>
 #include <Exception.hpp>
 #include <observerApi/TickHandler.hpp>

@@ -1,6 +1,6 @@
 #include <Sender.hpp>
 #include <defines.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <Client.hpp>
 
 #include <iostream>

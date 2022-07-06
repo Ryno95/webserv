@@ -1,5 +1,5 @@
 #include <responses/AutoIndexResponse.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <autoIndex/AutoIndex.hpp>
 #include <headerFields/HeaderFields.hpp>
 #include <Utility.hpp>

@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <config/ServerConfig.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <MimeTypes.hpp>
 #include <config/AComposite.hpp>
 

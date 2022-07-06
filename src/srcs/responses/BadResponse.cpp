@@ -2,7 +2,7 @@
 
 #include <responses/BadResponse.hpp>
 #include <Utility.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 
 namespace Webserver
 {

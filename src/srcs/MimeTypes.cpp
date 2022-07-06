@@ -1,6 +1,6 @@
 #include <MimeTypes.hpp>
 
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <Exception.hpp>
 
 namespace Webserver

@@ -1,7 +1,7 @@
 #include <algorithm>
 
 #include <observerApi/PollHandler.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <Exception.hpp>
 #include <Utility.hpp>
 

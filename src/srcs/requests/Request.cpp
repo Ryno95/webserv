@@ -5,7 +5,7 @@
 #include <requests/Request.hpp>
 #include <Utility.hpp>
 #include <Exception.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 
 namespace Webserver
 {

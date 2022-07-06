@@ -6,7 +6,7 @@
 #include <exception>
 #include <string>
 
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <Exception.hpp>
 #include <Utility.hpp>
 #include <config/ParseTreeUtility.hpp>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 
 namespace Webserver
 {

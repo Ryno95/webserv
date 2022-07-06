@@ -4,7 +4,7 @@
 #include <methods/DELETEMethod.hpp>
 #include <cgi/Cgi.hpp>
 #include <defines.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <observerApi/PollHandler.hpp>
 #include <observerApi/TimeoutHandler.hpp>
 #include <responses/Response.hpp>

@@ -1,6 +1,6 @@
 #include <Utility.hpp>
 #include <HttpStatusCode.hpp>
-#include <Logger.hpp>
+#include <logger/Logger.hpp>
 #include <methods/DELETEMethod.hpp>
 #include <responses/Response.hpp>
 #include <Exception.hpp>
