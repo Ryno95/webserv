@@ -14,7 +14,7 @@
 #include <Logger.hpp>
 #include <Webserv.hpp>
 #include <Exception.hpp>
-#include <TickHandler.hpp>
+#include <observerApi/TickHandler.hpp>
 
 namespace Webserver
 {

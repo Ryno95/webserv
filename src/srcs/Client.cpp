@@ -5,8 +5,8 @@
 #include <cgi/Cgi.hpp>
 #include <defines.hpp>
 #include <Logger.hpp>
-#include <PollHandler.hpp>
-#include <TimeoutHandler.hpp>
+#include <observerApi/PollHandler.hpp>
+#include <observerApi/TimeoutHandler.hpp>
 #include <responses/Response.hpp>
 #include <responses/BadResponse.hpp>
 #include <responses/CgiResponse.hpp>

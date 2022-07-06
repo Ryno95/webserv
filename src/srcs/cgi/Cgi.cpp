@@ -11,9 +11,9 @@
 #include <cgi/Cgi.hpp>
 #include <cgi/Pipes.hpp>
 #include <Exception.hpp>
-#include <PollHandler.hpp>
-#include <TimeoutHandler.hpp>
-#include <TickHandler.hpp>
+#include <observerApi/PollHandler.hpp>
+#include <observerApi/TimeoutHandler.hpp>
+#include <observerApi/TickHandler.hpp>
 #include <Host.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>

@@ -3,8 +3,8 @@
 #include <Webserv.hpp>
 #include <Logger.hpp>
 
-#include <TickHandler.hpp>
-#include <TimeoutHandler.hpp>
+#include <observerApi/TickHandler.hpp>
+#include <observerApi/TimeoutHandler.hpp>
 #include <config/Parser.hpp>
 #include <config/AppConfigParser.hpp>
 

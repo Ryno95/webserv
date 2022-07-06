@@ -39,9 +39,9 @@ CLASSES		=	Utility\
 				Client\
 				Receiver\
 				Sender\
-				PollHandler\
-				TickHandler\
-				TimeoutHandler\
+				observerAPI/PollHandler\
+				observerAPI/TickHandler\
+				observerAPI/TimeoutHandler\
 				Host\
 				Uri\
 				HeaderFields\
