@@ -2,9 +2,9 @@
 #include <string>
 #include <map>
 #include <iostream>
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <responses/Response.hpp>
-#include <RequestParser.hpp>
+#include <requests/RequestParser.hpp>
 
 using namespace Webserver;
 

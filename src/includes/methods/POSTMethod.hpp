@@ -1,6 +1,6 @@
 #include <methods/AMethod.hpp>
 #include <methods/TargetInfo.hpp>
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <responses/Response.hpp>
 
 namespace Webserver

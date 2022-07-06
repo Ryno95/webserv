@@ -9,8 +9,8 @@ INCL_DIR	=	includes/
 
 MAIN		=	$(SRC_DIR)main.cpp
 CLASSES		=	Utility\
-				Request\
-				RequestParser\
+				requests/Request\
+				requests/RequestParser\
 				config/ParseTreeUtility\
 				config/AppConfigParser\
 				config/ServerConfigParser\

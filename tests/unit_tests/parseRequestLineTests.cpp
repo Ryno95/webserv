@@ -1,8 +1,8 @@
 #include <criterion/criterion.h>
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <Exception.hpp>
-#include <RequestParser.hpp>
-#include <Request.hpp>
+#include <requests/RequestParser.hpp>
+#include <requests/Request.hpp>
 
 // using namespace Webserver;
 

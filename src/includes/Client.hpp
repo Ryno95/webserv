@@ -7,7 +7,7 @@
 
 #include <Webserv.hpp>
 #include <config/ServerConfig.hpp>
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <Receiver.hpp>
 #include <responses/Response.hpp>
 #include <cgi/Cgi.hpp>

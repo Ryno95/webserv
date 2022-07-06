@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <cgi/Cgi.hpp>
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <Host.hpp>
 #include <methods/TargetInfo.hpp>
 #include <responses/Response.hpp>

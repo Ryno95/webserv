@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <Host.hpp>
 #include <responses/Response.hpp>
 #include <methods/TargetInfo.hpp>

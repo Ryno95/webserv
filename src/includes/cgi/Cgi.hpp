@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <Request.hpp>
+#include <requests/Request.hpp>
 #include <Host.hpp>
 #include <observerApi/ITimeoutable.hpp>
 #include <observerApi/IPollable.hpp>
