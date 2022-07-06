@@ -8,7 +8,7 @@
 #include <HttpStatusCode.hpp>
 #include <defines.hpp>
 #include <Utility.hpp>
-#include <HeaderFields.hpp>
+#include <headerFields/HeaderFields.hpp>
 
 namespace Webserver
 {

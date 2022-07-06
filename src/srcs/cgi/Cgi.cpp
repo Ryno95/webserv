@@ -21,7 +21,7 @@
 #include <Webserv.hpp>
 #include <responses/CgiResponse.hpp>
 #include <methods/TargetInfo.hpp>
-#include <HeaderFieldParser.hpp>
+#include <headerFields/HeaderFieldParser.hpp>
 
 #define TERMINATOR '\0'
 

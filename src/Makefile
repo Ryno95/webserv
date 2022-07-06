@@ -44,8 +44,8 @@ CLASSES		=	Utility\
 				observerAPI/TimeoutHandler\
 				Host\
 				Uri\
-				HeaderFields\
-				HeaderFieldParser\
+				headerFields/HeaderFields\
+				headerFields/HeaderFieldParser\
 				autoIndex/HtmlBuilder\
 				autoIndex/HtmlElement\
 				autoIndex/AutoIndex

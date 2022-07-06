@@ -8,7 +8,7 @@
 #include <Method.hpp>
 #include <Uri.hpp>
 #include <Utility.hpp>
-#include <HeaderFields.hpp>
+#include <headerFields/HeaderFields.hpp>
 
 #define COLON 			":"
 #define CRLF			"\r\n"

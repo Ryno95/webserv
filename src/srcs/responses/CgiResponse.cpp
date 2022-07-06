@@ -1,7 +1,7 @@
 #include <Exception.hpp>
 #include <responses/CgiResponse.hpp>
 #include <HttpStatusCode.hpp>
-#include <HeaderFields.hpp>
+#include <headerFields/HeaderFields.hpp>
 #include <methods/TargetInfo.hpp>
 
 namespace Webserver

@@ -1,7 +1,7 @@
 #include <responses/AutoIndexResponse.hpp>
 #include <Logger.hpp>
 #include <autoIndex/AutoIndex.hpp>
-#include <HeaderFields.hpp>
+#include <headerFields/HeaderFields.hpp>
 #include <Utility.hpp>
 
 namespace Webserver
