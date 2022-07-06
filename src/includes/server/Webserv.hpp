@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <Client.hpp>
+#include <server/Client.hpp>
 #include <config/AppConfig.hpp>
 #include <config/ServerConfig.hpp>
 #include <observerApi/IPollable.hpp>

@@ -1,6 +1,6 @@
 #include <criterion/criterion.h>
 #include <MimeTypes.hpp>
-#include <Webserv.hpp>
+#include <server/Webserv.hpp>
 #include <config/AppConfigParser.hpp>
 #include <config/Parser.hpp>
 

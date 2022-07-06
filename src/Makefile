@@ -35,10 +35,10 @@ CLASSES		=	utils/Utility\
 				cgi/Pipes\
 				MimeTypes\
 				logger/Logger\
-				Webserv\
-				Client\
-				Receiver\
-				Sender\
+				server/Webserv\
+				server/Client\
+				server/Receiver\
+				server/Sender\
 				observerAPI/PollHandler\
 				observerAPI/TickHandler\
 				observerAPI/TimeoutHandler\

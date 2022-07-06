@@ -1,7 +1,7 @@
-#include <Receiver.hpp>
+#include <server/Receiver.hpp>
 #include <requests/RequestParser.hpp>
 #include <defines.hpp>
-#include <Client.hpp>
+#include <server/Client.hpp>
 #include <Exception.hpp>
 
 #include <unistd.h>

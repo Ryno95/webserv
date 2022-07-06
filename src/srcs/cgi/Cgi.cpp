@@ -17,8 +17,8 @@
 #include <Host.hpp>
 #include <logger/Logger.hpp>
 #include <utils/Utility.hpp>
-#include <Sender.hpp>
-#include <Webserv.hpp>
+#include <server/Sender.hpp>
+#include <server/Webserv.hpp>
 #include <responses/CgiResponse.hpp>
 #include <methods/TargetInfo.hpp>
 #include <headerFields/HeaderFieldParser.hpp>

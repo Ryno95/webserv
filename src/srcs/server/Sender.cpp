@@ -1,7 +1,7 @@
-#include <Sender.hpp>
+#include <server/Sender.hpp>
 #include <defines.hpp>
 #include <logger/Logger.hpp>
-#include <Client.hpp>
+#include <server/Client.hpp>
 
 #include <iostream>
 #include <string>

@@ -5,13 +5,13 @@
 #include <deque>
 #include <vector>
 
-#include <Webserv.hpp>
+#include <server/Webserv.hpp>
 #include <config/ServerConfig.hpp>
 #include <requests/Request.hpp>
-#include <Receiver.hpp>
+#include <server/Receiver.hpp>
 #include <responses/Response.hpp>
 #include <cgi/Cgi.hpp>
-#include <Sender.hpp>
+#include <server/Sender.hpp>
 #include <observerApi/IPollable.hpp>
 #include <observerApi/ITimeoutable.hpp>
 
