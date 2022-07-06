@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <responses/BadResponse.hpp>
-#include <Utility.hpp>
+#include <utils/Utility.hpp>
 #include <logger/Logger.hpp>
 
 namespace Webserver

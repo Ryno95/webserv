@@ -1,6 +1,6 @@
 #include <iostream>
-#include <Method.hpp>
-#include <Utility.hpp>
+#include <utils/Method.hpp>
+#include <utils/Utility.hpp>
 #include <cctype>
 
 namespace Webserver

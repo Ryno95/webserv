@@ -8,7 +8,7 @@ SRC_DIR		=	srcs/
 INCL_DIR	=	includes/
 
 MAIN		=	$(SRC_DIR)main.cpp
-CLASSES		=	Utility\
+CLASSES		=	utils/Utility\
 				requests/Request\
 				requests/RequestParser\
 				config/ParseTreeUtility\
@@ -43,7 +43,7 @@ CLASSES		=	Utility\
 				observerAPI/TickHandler\
 				observerAPI/TimeoutHandler\
 				Host\
-				Uri\
+				utils/Uri\
 				headerFields/HeaderFields\
 				headerFields/HeaderFieldParser\
 				autoIndex/HtmlBuilder\

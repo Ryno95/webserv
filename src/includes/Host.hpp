@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <Method.hpp>
+#include <utils/Method.hpp>
 #include <config/ServerConfig.hpp>
 #include <config/LocationConfig.hpp>
 

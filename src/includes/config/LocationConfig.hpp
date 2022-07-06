@@ -3,7 +3,7 @@
 #include <string>
 
 #include <config/HostConfig.hpp>
-#include <RouteType.hpp>
+#include <config/RouteType.hpp>
 
 namespace Webserver
 {

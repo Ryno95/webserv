@@ -3,7 +3,7 @@
 #include <string>
 #include <istream>
 
-#include <VariableParser.hpp>
+#include <config/VariableParser.hpp>
 #include <ICommand.hpp>
 
 namespace Webserver

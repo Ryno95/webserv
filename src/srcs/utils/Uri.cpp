@@ -1,7 +1,7 @@
 #include <algorithm>
 
-#include <Uri.hpp>
-#include <Utility.hpp>
+#include <utils/Uri.hpp>
+#include <utils/Utility.hpp>
 #include <Exception.hpp>
 #include <logger/Logger.hpp>
 

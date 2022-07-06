@@ -5,9 +5,9 @@
 
 #include <defines.hpp>
 #include <HttpStatusCode.hpp>
-#include <Method.hpp>
-#include <Uri.hpp>
-#include <Utility.hpp>
+#include <utils/Method.hpp>
+#include <utils/Uri.hpp>
+#include <utils/Utility.hpp>
 #include <headerFields/HeaderFields.hpp>
 
 #define COLON 			":"

@@ -1,7 +1,7 @@
 #include <Host.hpp>
 #include <config/HostConfig.hpp>
 #include <config/ServerConfig.hpp>
-#include <Utility.hpp>
+#include <utils/Utility.hpp>
 
 #include <algorithm>
 

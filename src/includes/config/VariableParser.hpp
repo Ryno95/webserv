@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <Exception.hpp>
-#include <RouteType.hpp>
+#include <config/RouteType.hpp>
 #include <config/HostFields.hpp>
 
 namespace Webserver

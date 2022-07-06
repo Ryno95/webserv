@@ -13,8 +13,8 @@
 
 #define ERROR_PAGES_DIR "root/error_pages/"
 
-#define DEBUG_ENABLED		true
-#define LOGGING_ENABLED		true
+#define DEBUG_ENABLED		false
+#define LOGGING_ENABLED		false
 #define LOGFILE				"logs.log"
 
 #pragma region CONFIG FILE

@@ -2,7 +2,7 @@
 
 #include <string>
 #include <sstream>
-#include <Method.hpp>
+#include <utils/Method.hpp>
 
 namespace Webserver
 {

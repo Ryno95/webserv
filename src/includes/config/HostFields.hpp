@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-#include <Method.hpp>
+#include <utils/Method.hpp>
 #include <HttpStatusCode.hpp>
 
 namespace Webserver

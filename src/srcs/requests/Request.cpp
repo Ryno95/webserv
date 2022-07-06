@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 #include <requests/Request.hpp>
-#include <Utility.hpp>
+#include <utils/Utility.hpp>
 #include <Exception.hpp>
 #include <logger/Logger.hpp>
 

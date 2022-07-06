@@ -16,7 +16,7 @@
 #include <observerApi/TickHandler.hpp>
 #include <Host.hpp>
 #include <logger/Logger.hpp>
-#include <Utility.hpp>
+#include <utils/Utility.hpp>
 #include <Sender.hpp>
 #include <Webserv.hpp>
 #include <responses/CgiResponse.hpp>

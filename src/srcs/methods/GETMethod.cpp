@@ -2,7 +2,7 @@
 #include <responses/Response.hpp>
 #include <responses/AutoIndexResponse.hpp>
 #include <Exception.hpp>
-#include <Utility.hpp>
+#include <utils/Utility.hpp>
 #include <autoIndex/AutoIndex.hpp>
 
 namespace Webserver
