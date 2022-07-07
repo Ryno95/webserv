@@ -42,6 +42,8 @@ file.close()
 
 if password == None:
 	print("No password found in user file", file=sys.stderr)
+	print("Location: " + USER_PAGES + "invalid_login.html\n")
+	exit(0)
 
 print("password from file: " + password, file=sys.stderr)
 
@@ -50,10 +52,9 @@ if password != passwordInput:
 	print("Location: " + USER_PAGES + "invalid_login.html\n")
 	exit(0)
 
-file = open(USERS_FOLDER + usernameInput, "w")
-file.write("password=" + password)
-file.close()
-
 print("Set-Cookie: user=" + usernameInput)
-print("Location: " + USER_PAGES + "logged_in.html")
-print("Status: 200 OK\n")
+print("Location: " + os.environ.get("HTTP_HOST") + "/logged_in.html")
+# print("Location: http://" + os.environ.get("HTTP_HOST") + "/logged_in.html")
+# print("Location: " + USER_PAGES + "logged_in.html\n")
+# print("Status: 200 OK\n")
+print("Status: 301 Redirect\n")
