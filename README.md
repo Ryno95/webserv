@@ -5,13 +5,14 @@
 The project is written in C++98, according to the rules and restrictions as described by the subject-sheet provided by our school, Codam, part of the 42 Network. For anyone interested in the rules / restrictions, we've included the file named subject.pdf.
 
 ## The ✨ most interesting ✨ topics
-#### Design patterns
-In the design of the program, we've implemented a couple useful and interesting design patterns. Because we are not allowed to multithread the program, we've had to poll for incoming/outgoing operations to reduce the amount of cycles and system resources used by the webserver, while multiplexing and keeping the program non-blocking at all times. That includes socket, CGI and even file communication.
+#### Observer pattern
+In the design of the program, we've implemented a couple useful and interesting design patterns. Because we are not allowed to multithread the program, but it should still always be non-blocking, we've had to poll for incoming / outgoing operations to reduce the amount of cycles and system resources used by the webserver. To solve this in a clean way, we've implemented observer pattern, where ```IPollable``` can subscribe to / unsubscribe from ```PollHandler``` which is the only object concerned with poll. ```PollHandler``` will in order fire functions on ```IPollable```'s implementor whenever neccesary. This approach encapsulates poll very well. Timeout-handling for example for CGI and Clients, is implemented using the same strategy.
 
-**Todo: Talk about the next topics:**
-* Pipelining
-* Cgi restrictions/design
-* Design patterns
+#### Composite pattern
+The configuration file parser (see server/default.config for example) has become a top-down parser.
+
+#### Pipelining https://en.wikipedia.org/wiki/HTTP_pipelining
+Is implemented for fun, because it seemed like a cool and fun challenge to implement. It's the reason why we created small state-machines for receiving / sending operations and we've had to create queue's for requests / responses so it remains FIFO. And pipelining is very efficient. Who doens't like efficiency?
 
 ## Testing strategy
 The very first thing we did when starting the project, was setting up the testing environment. For this we attached continuous-integration by CircleCI to Github, set up criterion as our unit-testing framework and (progressively) created Python scripts for runtime tests with the server. (Doing requests, comparing results)
