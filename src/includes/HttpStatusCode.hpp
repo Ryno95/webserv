@@ -8,6 +8,7 @@ namespace HttpStatusCodes
 {
 	const HttpStatusCode OK					= HttpStatusCode(200, "OK");
 	const HttpStatusCode CREATED			= HttpStatusCode(201, "Created");
+	const HttpStatusCode NO_CONTENT			= HttpStatusCode(204, "No Content");
 	const HttpStatusCode REDIRECT			= HttpStatusCode(301, "Redirect");
 	const HttpStatusCode BAD_REQUEST		= HttpStatusCode(400, "Bad Request");
 	const HttpStatusCode FORBIDDEN			= HttpStatusCode(403, "Forbidden");
