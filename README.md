@@ -33,7 +33,7 @@ The configuration file consists of a 4 different classes:
 * host
 * location
 
-The structure is simply: application stores server objects, the server stores host objects, the host stores location objects.
+The structure is as follows: application stores server objects, server stores host objects, host stores location objects.
 
 The root of the file writes into the Application object while the other classes are instantiated by writing their name (in lowercase)
 and then opening / closing brackets to define their region.
