@@ -8,10 +8,10 @@ The project is written in C++98, according to the rules and restrictions as desc
 #### Observer pattern
 In the design of the program, we've implemented a couple useful and interesting design patterns. Because we are not allowed to multithread the program, but it should still always be non-blocking, we've had to poll for incoming / outgoing operations to reduce the amount of cycles and system resources used by the webserver. To solve this in a clean way, we've implemented observer pattern, where ```IPollable``` can subscribe to / unsubscribe from ```PollHandler``` which is the only object concerned with poll. ```PollHandler``` will in order fire functions on ```IPollable```'s implementor whenever neccesary. This approach encapsulates poll very well. Timeout-handling for example for CGI and Clients, is implemented using the same strategy.
 
-#### Composite pattern
-The configuration file parser (see server/default.config for example) has become a top-down parser.
+#### Composite pattern (see [default.config](https://github.com/Ryno95/webserv/blob/main/server/config/default.config) for clarification about the structure)
+The configuration file parser has become a top-down parser, where basicly every layer in the configuration file is represented by an instance of a class. Every 'branch' class can have children and a 'leaf' class can obviously not (More on this in the section Configuration File). Every class in the hierarchy has a set of keywords and commands prepared in a map, which will fire whenever the keyword is encountered in the configuration file. Because we used an interface for commands, we can run callback functions in a generic way. Variables can be parsed to their expected type, for example, or child nodes can be instantiated. See [this example](https://github.com/Ryno95/webserv/blob/main/src/srcs/config/HostConfigParser.cpp).
 
-#### Pipelining https://en.wikipedia.org/wiki/HTTP_pipelining
+#### [HTTP Pipelining](https://en.wikipedia.org/wiki/HTTP_pipelining)
 Is implemented for fun, because it seemed like a cool and fun challenge to implement. It's the reason why we created small state-machines for receiving / sending operations and we've had to create queue's for requests / responses so it remains FIFO. And pipelining is very efficient. Who doens't like efficiency?
 
 ## Testing strategy
@@ -25,10 +25,6 @@ As described in ```run.sh```:
 2. ```cp src/webserv server/``` move the executable to a directory containing your configuration and server files.
 3. ```cd server/``` change directory to the root of ```webserv``` executable, so the program can find the config files it uses by default.
 4. ```./webserv [optional path to configuration file]```
-
-
-
-
 
 ## Configuration file
 The configuration file consists of a 4 different classes:
