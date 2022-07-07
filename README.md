@@ -1,18 +1,35 @@
 # Webserver
 
+#### Capable of serving a fully static website, implementing HTTP 1.1 and CGI according to the RFC's related to the individual components of a webserver.
+
+The project is written in C++98, according to the rules and restrictions as described by the subject-sheet provided by our school, Codam, part of the 42 Network. For anyone interested in the rules / restrictions, we've included the file named subject.pdf.
+
+## The ✨ most interesting ✨ topics
+#### Design patterns
+In the design of the program, we've implemented a couple useful and interesting design patterns. Because we are not allowed to multithread the program, we've had to poll for incoming/outgoing operations to reduce the amount of cycles and system resources used by the webserver, while multiplexing and keeping the program non-blocking at all times. That includes socket, CGI and even file communication.
+
 **Todo: Talk about the next topics:**
-* Overview of the project
-* Compilation / dependencies
-* Running the program
-* Testing strategy
 * Pipelining
 * Cgi restrictions/design
 * Design patterns
 
-# Design patterns
-In the design of the program, we've implemented a couple useful and interesting design patterns. Because we are not allowed to multithread the program, we've had to poll for incoming/outgoing operations to reduce the amount of cycles and system resources used by the webserver, while multiplexing and keeping the program non-blocking at all times. That includes socket, CGI and even file communication.
+## Testing strategy
+The very first thing we did when starting the project, was setting up the testing environment. For this we attached continuous-integration by CircleCI to Github, set up criterion as our unit-testing framework and (progressively) created Python scripts for runtime tests with the server. (Doing requests, comparing results)
 
-# Configuration file
+## Compiling and running the program
+Short answer: ```./run.sh```.
+
+As described in ```run.sh```:
+1. ```make -C src/ -j5``` builds a library and an executable. The library is also used by the ```tests/``` directory, and therefore contains all object files, except ```main.o```.
+2. ```cp src/webserv server/``` move the executable to a directory containing your configuration and server files.
+3. ```cd server/``` change directory to the root of ```webserv``` executable, so the program can find the config files it uses by default.
+4. ```./webserv [optional path to configuration file]```
+
+
+
+
+
+## Configuration file
 The configuration file consists of a 4 different classes:
 * application
 * server
