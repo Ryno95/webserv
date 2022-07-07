@@ -8,7 +8,7 @@ namespace Webserver
 		_autoIndexEnabled(false),
 		_root("root/"),
 		_defaultIndex("index.html"),
-		_defaultError("error.html"),
+		_defaultError("Default.html"),
 		_allowUpload(false),
 		_errorPagesRoot("root/error_pages/")
 	{
