@@ -313,12 +313,10 @@ namespace Webserver
 
 	void Cgi::createEnv()
 	{
-		const int 	numOfMethods = 3;
-		const char* methods[numOfMethods] = {"GET", "POST", "DELETE"};
+		const char* methods[] = {"GET", "POST", "DELETE"};
 		
 		_env["GATEWAY_INTERFACE"] = "CGI/1.1";
-		_env["REQUEST_METHOD"] = std::string(methods[_request.getMethod()]); // this fucks up....
-
+		_env["REQUEST_METHOD"] = std::string(methods[_request.getMethod()]);
 
 
 		if (_request.getMethod() != Method::POST)
@@ -331,10 +329,10 @@ namespace Webserver
 
 		// check if content type is specified, otherwise set to default val octet-stream
 		std::string contentTypeVal("");
-		if (_request.tryGetHeader("Content-Type", contentTypeVal))
+		if (_request.tryGetHeader(Header::ContentType, contentTypeVal))
 			_env["CONTENT_TYPE"] = contentTypeVal;
 
-		_env["HTTP_HOST"] = "https://" + _request.getHost();
+		_env["HTTP_HOST"] = "http://" + _request.getHost();
 
 		std::string cookieBuffer("");
 		if (_request.tryGetHeader("Cookie", cookieBuffer))
@@ -346,5 +344,4 @@ namespace Webserver
 		
 		_env["SERVER_NAME"]	= _host.getName();
 	}
-
 }
