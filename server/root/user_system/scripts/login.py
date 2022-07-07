@@ -30,17 +30,15 @@ if not os.path.exists(USERS_FOLDER + usernameInput):
 	exit(0)
 
 password = None
-cookie = None
 
-
-file = open(USERS_FOLDER + usernameInput, 'r')
+file = open(USERS_FOLDER + usernameInput, "r")
 lines = file.readlines()
 for line in lines:
 	pos = line.find("=")
 	if line.startswith("password="):
 		password = line[pos + 1:]
-	elif line.startswith("cookie="):
-		cookie = line[pos + 1:]
+
+file.close()
 
 if password == None:
 	print("No password found in user file", file=sys.stderr)
@@ -52,6 +50,10 @@ if password != passwordInput:
 	print("Location: " + USER_PAGES + "invalid_login.html\n")
 	exit(0)
 
-# print("Set-Cookie: " + username)
+file = open(USERS_FOLDER + usernameInput, "w")
+file.write("password=" + password)
+file.close()
+
+print("Set-Cookie: user=" + usernameInput)
 print("Location: " + USER_PAGES + "logged_in.html")
 print("Status: 200 OK\n")
