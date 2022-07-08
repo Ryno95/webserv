@@ -1,5 +1,6 @@
-# Create a page containing all the favourite items from the cookie sent by the client.
+# Add an item to the favourites cookie.
 
+from ast import Try
 import cgi, cgitb
 import os
 import sys
@@ -34,22 +35,21 @@ for value in cookies:
 # End of section cookies
 
 if cookies.get("user") == None:
-	print("User is not logged in yet, and thus cannot show favourites.", file=sys.stderr)
+	print("User is not logged in yet, and thus cannot add favourites.", file=sys.stderr)
 	print("Location: " + USER_PAGES + "login.html\n")
 	exit(0)
 
-print("Status: 200 OK\n")
-print("<!DOCTYPE html>\n<html>\n<body>")
+newFavourite = input_data.getvalue("favourite")
+if newFavourite == None:
+	print("No new favourite item supplied", file=sys.stderr)
+	print("Status: 400 Bad Request\n")
+	exit(0)
 
-favouritesCookie = cookies.get("favourites")
-if favouritesCookie == None:
-	print("<h2>There are no favourites added yet :O</h2>")
-	print("<a href=\"/favourites.html\"><button>Let's add some</button></a>")
+favourites = cookies.get("favourites")
+if favourites == None:
+	favourites = newFavourite
 else:
-	favourites = str(favouritesCookie).split("&")
-	print("<p>" + cookies.get("user") + " seems to have some weird favourites:</p>\n<ul>")
-	for favourite in favourites:
-		print("<li>" + favourite + "</li>")
-	print("</ul>")
+	favourites += "&" + newFavourite
 
-print("</body>\n</html>")
+print("Set-Cookie: favourites=" + favourites)
+print("Status: 204 No Content\n")
