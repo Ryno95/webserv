@@ -1,7 +1,7 @@
 #pragma once
 
 #include <methods/AMethod.hpp>
-#include <methods/TargetInfo.hpp>
+#include <FileInfo.hpp>
 
 #include <string>
 
@@ -13,6 +13,6 @@ namespace Webserver
 		GETMethod(Request const& request, const Host& host);
 		~GETMethod();
 
-		Response* process(const TargetInfo& w);
+		Response* process(const FileInfo& w);
 	};
 }

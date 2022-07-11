@@ -15,7 +15,7 @@ namespace Webserver
 	{
 	}
 
-	Response* DELETEMethod::process(const TargetInfo& uri)
+	Response* DELETEMethod::process(const FileInfo& uri)
 	{
 		DEBUG("DELETE METHOD");
 
@@ -23,7 +23,7 @@ namespace Webserver
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		else if (!uri.isWriteable() && !uri.isExecutable())
 			throw InvalidRequestException(HttpStatusCodes::FORBIDDEN);
-		else if (remove(uri.getTarget().c_str()) == SYSTEM_ERR)
+		else if (remove(uri.getFullPath().c_str()) == SYSTEM_ERR)
 			throw InvalidRequestException(HttpStatusCodes::INTERNAL_ERROR);
 
 		return new Response(HttpStatusCodes::OK);
