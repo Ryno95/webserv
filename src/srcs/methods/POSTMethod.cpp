@@ -15,25 +15,13 @@ namespace Webserver
 
 	POSTMethod::~POSTMethod() {}
 
-	void POSTMethod::addLocationHeader()
+	void POSTMethod::addLocationHeader(const std::string& createdFilePath)
 	{
-		const std::string HttpProtocol("http://");
-		const std::string localHost("127.0.0.1");
-		const std::string listenPort("8080");
-		const std::string absPath = _relativeCreatedPath.substr(_relativeCreatedPath.find_first_of("/"),  _relativeCreatedPath.size());
-		const std::string location(HttpProtocol + localHost + ":" + listenPort + absPath);
-
-		_response->addHeader(Header::Location, location);
-		_response->addHeader("Created-file", _relativeCreatedPath);
+		_response->addHeader(Header::Location, "http://" + _request.getHost() + "/" + createdFilePath);
+		_response->addHeader("Created-file", createdFilePath);
 	}
 
-	void POSTMethod::setPostResponseHeaders(bool isCreated)
-	{
-		if (isCreated)
-			addLocationHeader();
-	}
-
-	Response* POSTMethod::process(const TargetInfo& uri)
+	Response* POSTMethod::process(const FileInfo& uri)
 	{
 		DEBUG("Entering POST method!");
 
@@ -46,21 +34,21 @@ namespace Webserver
 		if (!uri.entryExists())
 			isCreatingNewFile = true;
 
-		outfile.open(uri.getTarget(), std::ios_base::app);
+		outfile.open(uri.getFullPath(), std::ios_base::app);
 		if (!outfile.is_open())
 		{
-			WARN("Unexpected: File '" << uri.getTarget() << "' could not be opened, while we just tried to create it.");
+			WARN("Unexpected: File '" << uri.getFullPath() << "' could not be opened, while we just tried to create it.");
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
 
-		_relativeCreatedPath = uri.getTarget();
 		outfile << _request.getBody();
 
 		_response = new Response(HttpStatusCodes::OK);
 		if (isCreatingNewFile == true)
+		{
 			_response->setStatusCode(HttpStatusCodes::CREATED);
-		setPostResponseHeaders(isCreatingNewFile);
-
+			addLocationHeader(uri.getFullPath());
+		}
 		return _response;
 	}
 }
