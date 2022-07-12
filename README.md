@@ -20,7 +20,9 @@ The very first thing we did when starting the project, was setting up the testin
 ## Compiling and running the program
 Short answer: ```./run.sh```.
 
-As described in ```run.sh```:
+There are 2 minor dependencies for building the project. The first is ```make```, which in order relies on a C++ compiler. We used ```clang++```, but feel free to try any compiler you like.
+
+As described in [run.sh](/run.sh):
 1. ```make -C src/ -j5``` builds a library and an executable. The library is also used by the ```tests/``` directory, and therefore contains all object files, except ```main.o```.
 2. ```cp src/webserv server/``` move the executable to a directory containing your configuration and server files.
 3. ```cd server/``` change directory to the root of ```webserv``` executable, so the program can find the config files it uses by default.
