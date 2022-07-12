@@ -8,10 +8,12 @@ SRC_DIR		=	srcs/
 INCL_DIR	=	includes/
 
 MAIN		=	$(SRC_DIR)main.cpp
-CLASSES		=	Utility\
-				FileInfo\
-				Request\
-				RequestParser\
+CLASSES		=	utility/Utility\
+				utility/FileInfo\
+				utility/Logger\
+				utility/Uri\
+				request/Request\
+				request/RequestParser\
 				config/ParseTreeUtility\
 				config/AppConfigParser\
 				config/ServerConfigParser\
@@ -22,6 +24,7 @@ CLASSES		=	Utility\
 				config/HostConfig\
 				config/LocationConfig\
 				config/HostFields\
+				config/MimeTypes\
 				methods/AMethod\
 				methods/GETMethod\
 				methods/POSTMethod\
@@ -34,19 +37,16 @@ CLASSES		=	Utility\
 				cgi/Cgi\
 				cgi/Executable\
 				cgi/Pipes\
-				MimeTypes\
-				Logger\
-				Webserv\
-				Client\
-				Receiver\
-				Sender\
-				PollHandler\
-				TickHandler\
-				TimeoutHandler\
-				Host\
-				Uri\
-				HeaderFields\
-				HeaderFieldParser\
+				transportLayer/Webserv\
+				transportLayer/Client\
+				transportLayer/Receiver\
+				transportLayer/Sender\
+				transportLayer/Host\
+				observerAPI/PollHandler\
+				observerAPI/TickHandler\
+				observerAPI/TimeoutHandler\
+				headerField/HeaderFields\
+				headerField/HeaderFieldParser\
 				autoIndex/HtmlBuilder\
 				autoIndex/HtmlElement\
 				autoIndex/AutoIndex
