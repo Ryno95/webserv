@@ -56,7 +56,17 @@ HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
 
 CC			=	clang++
 CFLAGS		=	-Wall -Wextra -pedantic
-LINKING		=	-I $(INCL_DIR)
+LINKING		=	-I $(INCL_DIR)\
+				-I $(INCL_DIR)autoIndex\
+				-I $(INCL_DIR)headerField\
+				-I $(INCL_DIR)observerAPI\
+				-I $(INCL_DIR)transportLayer\
+				-I $(INCL_DIR)cgi\
+				-I $(INCL_DIR)responses\
+				-I $(INCL_DIR)request\
+				-I $(INCL_DIR)methods\
+				-I $(INCL_DIR)config\
+				-I $(INCL_DIR)utility
 
 
 # Section Rules
