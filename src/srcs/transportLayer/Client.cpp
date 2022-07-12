@@ -107,7 +107,8 @@ namespace Webserver
 	*/
 	Response* Client::processValidRequest(const Host& host, const Request& request)
 	{
-		const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
+		// const std::string uri(prependRoot(host.getRoot(), request.getTarget()));
+		FileInfo uri = FileInfo(request.getTarget(), host.getRoot());
 
 		switch (host.getRouteType())
 		{

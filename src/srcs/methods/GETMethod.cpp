@@ -15,19 +15,14 @@ namespace Webserver
 	{
 	}
 
-	static bool	dirHasDefaultIndex(const std::string path)
-	{
-		return TargetInfo(path).entryExists();
-	}
-
-	Response* GETMethod::process(const TargetInfo& uri)
+	Response* GETMethod::process(const FileInfo& uri)
 	{
 		DEBUG("Entering GET method!");
-		std::string		target(uri.getTarget());
+		std::string		target(uri.getFullPath());
 
 		if (uri.isDir())
 		{
-			if (dirHasDefaultIndex(target + _host.getDefaultIndex()))
+			if (FileInfo(_host.getDefaultIndex(), target).entryExists())
 				target = target + _host.getDefaultIndex();
 			else if (_host.isAutoIndexEnabled())
 				return new AutoIndexResponse(target);

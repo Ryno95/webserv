@@ -14,7 +14,6 @@ namespace Webserver
 	Method::method	parseMethod(const std::string &method);
 	bool			isTerminatorStr(const std::string &str);
 	std::string		stringToLower(std::string str);
-	std::string		prependRoot(const std::string& root, const std::string& target);
 	bool			wildcard(const std::string& string, const std::string& pattern);
 
 	template <typename T>
