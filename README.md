@@ -20,7 +20,7 @@ The very first thing we did when starting the project, was setting up the testin
 ## Compiling and running the program
 Short answer: ```./run.sh```.
 
-There are 2 minor dependencies for building the project. The first is ```make```, which in order relies on a C++ compiler. We used ```clang++```, but feel free to try any compiler you like.
+There are 3 dependencies for building the project. The first is ```make```, which in order relies on a C++ compiler. We used ```clang++```, but feel free to try any compiler you like. The last one is ```ar``` which we use to bundle our srcs into a library.
 
 As described in [run.sh](/run.sh):
 1. ```make -C src/ -j5``` builds a library and an executable. The library is also used by the ```tests/``` directory, and therefore contains all object files, except ```main.o```.
