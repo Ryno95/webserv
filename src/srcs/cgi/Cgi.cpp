@@ -13,29 +13,27 @@
 #include <Exception.hpp>
 #include <PollHandler.hpp>
 #include <TimeoutHandler.hpp>
-#include <TickHandler.hpp>
 #include <Host.hpp>
 #include <Logger.hpp>
 #include <Utility.hpp>
-#include <Sender.hpp>
-#include <Webserv.hpp>
 #include <responses/CgiResponse.hpp>
-#include <methods/TargetInfo.hpp>
+#include <FileInfo.hpp>
 #include <HeaderFieldParser.hpp>
+#include <cgi/Executable.hpp>
 
 #define TERMINATOR '\0'
 
 namespace Webserver
 {
-	Cgi::Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response)
-		:	_cgiExecutable(getExecutablePath("/python3")),
-			_request(request),
+	Cgi::Cgi(const Request &request, const Host &host, const FileInfo& uri, CgiResponse& response)
+		:	_request(request),
 			_host(host),
 			_status(HttpStatusCodes::OK),
 			_uri(uri),
 			_response(response),
 			_buffer(_request.getBody()),
-			_bodyIsSent(false)
+			_bodyIsSent(false),
+			_executables(createExecutablesMap())
 	{
 		if (!_uri.entryExists())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
@@ -51,10 +49,11 @@ namespace Webserver
 			try
 			{
 				_pipes.closeForChild();
-				createEnv();
-				executeCgiFile();
+				redirectIO();
+				getExecutable(_uri).setEnv(createEnv()).execute();
 			}
-			catch (std::exception &e) {
+			catch (std::exception &e)
+			{
 				std::cerr << "CGI EXECUTION FAILED" << std::endl;
 				exit(1);
 			}
@@ -192,48 +191,43 @@ namespace Webserver
 		_response.setReadyToSend(true);
 	}
 
-	std::string	Cgi::getExecutablePath(const std::string &exe)
+	std::map<std::string, std::string> Cgi::createExecutablesMap() const
 	{
-		std::string		all_paths(getenv("PATH"));
-		size_t			SinglePathLen;
-		int 			i = 0;
+		std::map<std::string, std::string> map;
 
-		if (all_paths.size() < 1)
-			return "";
-		SinglePathLen = all_paths.find(COLON);
-		while (SinglePathLen != std::string::npos)
-		{
-			std::string single_path(all_paths.substr(i, SinglePathLen - i));
-			if (TargetInfo(single_path + exe).isExecutable())
-				return std::string(single_path + exe);
-			i = SinglePathLen + 1;
-			SinglePathLen = all_paths.find(COLON, i);
-		}
-		return "";
-	}
-	void Cgi::executeCommand()
-	{
-		const char* argv[] = {"python3", _uri.getTarget().c_str(), NULL};
-		char** 		env = getCStyleEnv();
+		map[".pl"] = "perl";
+		map[".php"] = "php";
+		map[".py"] = "python3";
+		map[".sh"] = "bash";
 
-		if (execve(_cgiExecutable.c_str(), (char *const *)argv, (char *const *)env) == SYSTEM_CALL_ERROR)
-		{
-			perror("");
-			throw SystemCallFailedException("execve()");
-		}
+		return map;
 	}
 
-	void Cgi::executeCgiFile()
+	Executable Cgi::getExecutable(const FileInfo& fileInfo) const
+	{
+		size_t pos = fileInfo.getFileName().find_last_of(".");
+		if (pos == std::string::npos)
+			return Executable(fileInfo.getFullPath());
+
+		std::map<std::string, std::string>::const_iterator it = _executables.find(fileInfo.getFileName().substr(pos));
+		if (it == _executables.end())
+			return Executable(fileInfo.getFullPath());
+		return Executable(fileInfo.getFullPath(), it->second);
+	}
+
+	void Cgi::redirectIO()
 	{
 		if (dup2(_pipes.serverToCgi[READ_FD], STDIN_FILENO) == SYSTEM_CALL_ERROR)
 			throw SystemCallFailedException("Dup2()");
 		if (dup2(_pipes.CgiToServer[WRITE_FD], STDOUT_FILENO) == SYSTEM_CALL_ERROR)
-			throw SystemCallFailedException("Dup2()");
-	
-		executeCommand();
+			throw SystemCallFailedException("Dup2()");	
 	}
 
-	// Write end of the pipe is only used in the child process
+	/*
+		If the body is not yet fully sent to the Cgi process, then we keep on polling for our write fd.
+		When writing is finished, we want to receive the result from the Cgi process,
+		so we start polling for read the fd.
+	*/
 	int Cgi::getFd() const
 	{
 		if (_bodyIsSent)
@@ -293,58 +287,39 @@ namespace Webserver
 	}
 
 	HttpStatusCode 		Cgi::getStatus() const { return _status; }
-	
 
-	char** Cgi::getCStyleEnv()
+	std::map<std::string, std::string> Cgi::createEnv()
 	{
-		char **env = new char*[_env.size() + 1];
-		std::map<std::string, std::string>::const_iterator it = _env.begin();
-		std::map<std::string, std::string>::const_iterator end = _env.end();
-
-		for (int i = 0; it != end; it++, i++)
-		{
-			std::string keyAndVal(it->first + "=" + it->second);
-			env[i] = new char[keyAndVal.size() + 1];
-			std::strcpy(env[i], keyAndVal.c_str());
-		}
-		env[_env.size()] = NULL;
-		return env;
-	}
-
-	void Cgi::createEnv()
-	{
-		const int 	numOfMethods = 3;
-		const char* methods[numOfMethods] = {"GET", "POST", "DELETE"};
+		std::map<std::string, std::string> env;
+		const char* methods[] = {"GET", "POST", "DELETE"};
 		
-		_env["GATEWAY_INTERFACE"] = "CGI/1.1";
-		_env["REQUEST_METHOD"] = std::string(methods[_request.getMethod()]); // this fucks up....
-
-
+		env["GATEWAY_INTERFACE"] = "CGI/1.1";
+		env["REQUEST_METHOD"] = std::string(methods[_request.getMethod()]);
 
 		if (_request.getMethod() != Method::POST)
-			_env["QUERY_STRING"]		= _request.getBody();
+			env["QUERY_STRING"]		= _request.getBody();
 
 		//  default val as described in the documentation
-		_env["CONTENT_LENGTH"] = "-1";
+		env["CONTENT_LENGTH"] = "-1";
 		if (_request.getBody().size() > 0)
-			_env["CONTENT_LENGTH"] = std::to_string(_request.getBody().size());
+			env["CONTENT_LENGTH"] = std::to_string(_request.getBody().size());
 
 		// check if content type is specified, otherwise set to default val octet-stream
 		std::string contentTypeVal("");
-		if (_request.tryGetHeader("Content-Type", contentTypeVal))
-			_env["CONTENT_TYPE"] = contentTypeVal;
+		if (_request.tryGetHeader(Header::ContentType, contentTypeVal))
+			env["CONTENT_TYPE"] = contentTypeVal;
 
-		_env["HTTP_HOST"] = "https://" + _request.getHost();
+		env["HTTP_HOST"] = "http://" + _request.getHost();
 
 		std::string cookieBuffer("");
 		if (_request.tryGetHeader("Cookie", cookieBuffer))
-			_env["HTTP_COOKIE"]	= cookieBuffer;
+			env["HTTP_COOKIE"]	= cookieBuffer;
 
-		_env["SCRIPT_NAME"]	= _request.getTarget();
+		env["SCRIPT_NAME"]	= _request.getTarget();
 
-		_env["SERVER_PROTOCOL"]	= HTTPVERSION;
+		env["SERVER_PROTOCOL"]	= HTTPVERSION;
 		
-		_env["SERVER_NAME"]	= _host.getName();
+		env["SERVER_NAME"]	= _host.getName();
+		return env;
 	}
-
 }

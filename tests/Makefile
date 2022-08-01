@@ -14,12 +14,24 @@ TEST_SRC	=	$(TEST_DIR)parseHeaderFieldsTests.cpp\
 				$(TEST_DIR)uriParseTests.cpp\
 				$(TEST_DIR)wildcardTests.cpp\
 				$(TEST_DIR)routeTests.cpp\
-				$(TEST_DIR)prependTests.cpp
+				$(TEST_DIR)fileInfoTests.cpp
 
 
 CC			=	clang++
 CFLAGS		=	-Wall -Wextra -pedantic
-SRC_LINKING	=	-I $(SRC_DIR)includes/
+
+SRC_LINKING	=	-I $(SRC_DIR)includes/\
+				-I $(SRC_DIR)includes/autoIndex\
+				-I $(SRC_DIR)includes/headerField\
+				-I $(SRC_DIR)includes/observerAPI\
+				-I $(SRC_DIR)includes/transportLayer\
+				-I $(SRC_DIR)includes/cgi\
+				-I $(SRC_DIR)includes/responses\
+				-I $(SRC_DIR)includes/request\
+				-I $(SRC_DIR)includes/methods\
+				-I $(SRC_DIR)includes/config\
+				-I $(SRC_DIR)includes/utility
+
 
 # Section Rules
 

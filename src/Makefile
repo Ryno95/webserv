@@ -8,9 +8,12 @@ SRC_DIR		=	srcs/
 INCL_DIR	=	includes/
 
 MAIN		=	$(SRC_DIR)main.cpp
-CLASSES		=	Utility\
-				Request\
-				RequestParser\
+CLASSES		=	utility/Utility\
+				utility/FileInfo\
+				utility/Logger\
+				utility/Uri\
+				request/Request\
+				request/RequestParser\
 				config/ParseTreeUtility\
 				config/AppConfigParser\
 				config/ServerConfigParser\
@@ -21,31 +24,29 @@ CLASSES		=	Utility\
 				config/HostConfig\
 				config/LocationConfig\
 				config/HostFields\
+				config/MimeTypes\
 				methods/AMethod\
 				methods/GETMethod\
 				methods/POSTMethod\
 				methods/DELETEMethod\
-				methods/TargetInfo\
 				responses/Response\
 				responses/BadResponse\
 				responses/RedirectResponse\
 				responses/AutoIndexResponse\
 				responses/CgiResponse\
 				cgi/Cgi\
+				cgi/Executable\
 				cgi/Pipes\
-				MimeTypes\
-				Logger\
-				Webserv\
-				Client\
-				Receiver\
-				Sender\
-				PollHandler\
-				TickHandler\
-				TimeoutHandler\
-				Host\
-				Uri\
-				HeaderFields\
-				HeaderFieldParser\
+				transportLayer/Webserv\
+				transportLayer/Client\
+				transportLayer/Receiver\
+				transportLayer/Sender\
+				transportLayer/Host\
+				observerAPI/PollHandler\
+				observerAPI/TickHandler\
+				observerAPI/TimeoutHandler\
+				headerField/HeaderFields\
+				headerField/HeaderFieldParser\
 				autoIndex/HtmlBuilder\
 				autoIndex/HtmlElement\
 				autoIndex/AutoIndex
@@ -55,7 +56,17 @@ HPPS		=	$(CLASSES:%=$(INCL_DIR)%.hpp)
 
 CC			=	clang++
 CFLAGS		=	-Wall -Wextra -pedantic
-LINKING		=	-I $(INCL_DIR)
+LINKING		=	-I $(INCL_DIR)\
+				-I $(INCL_DIR)autoIndex\
+				-I $(INCL_DIR)headerField\
+				-I $(INCL_DIR)observerAPI\
+				-I $(INCL_DIR)transportLayer\
+				-I $(INCL_DIR)cgi\
+				-I $(INCL_DIR)responses\
+				-I $(INCL_DIR)request\
+				-I $(INCL_DIR)methods\
+				-I $(INCL_DIR)config\
+				-I $(INCL_DIR)utility
 
 
 # Section Rules

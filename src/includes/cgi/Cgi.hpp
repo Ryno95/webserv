@@ -7,10 +7,11 @@
 #include <ITimeoutable.hpp>
 #include <IPollable.hpp>
 #include <ITickable.hpp>
-#include <methods/TargetInfo.hpp>
+#include <FileInfo.hpp>
 #include <config/ParseTreeUtility.hpp>
 #include <ICommand.hpp>
 #include <cgi/Pipes.hpp>
+#include <cgi/Executable.hpp>
 
 #include <unistd.h>
 
@@ -56,7 +57,7 @@ namespace Webserver
 
 		public:
 	
-			Cgi(const Request &request, const Host &host, const TargetInfo& uri, CgiResponse& response);
+			Cgi(const Request &request, const Host &host, const FileInfo& uri, CgiResponse& response);
 			~Cgi();
 
 			void		execute();
@@ -74,33 +75,31 @@ namespace Webserver
 			timeval getLastCommunicated() const;
 		
 			std::istream* 	getCgiStream() const;
-			HttpStatusCode 		getStatus() const;
+			HttpStatusCode 	getStatus() const;
 
 		private:
 			std::string		getExecutablePath(const std::string &exe);
 			std::string 	createQueryString();
-			void			executeCgiFile();
-			void			executeCommand();
+			void			determineExecutable();
+			void			redirectIO();
 			void			reapChild();
 
-			void			createEnv();
-			char**			getCStyleEnv();
+			std::map<std::string, std::string>	createEnv();
 			void			parseResult();
 			void			processHeaderFields(const HeaderFields& headerFields);
+			Executable		getExecutable(const FileInfo& uri) const;
+			std::map<std::string, std::string> createExecutablesMap() const;
 
-			const std::string 					_cgiExecutable;
 			int									_pid;
 			Pipes								_pipes;
 			const Request&						_request;
 			std::stringstream*					_sendStream;
 			const Host&							_host;
 			HttpStatusCode						_status;
-			const TargetInfo&					_uri;
+			const FileInfo&						_uri;
 			CgiResponse&						_response;
-			std::map<std::string, std::string> 	_env;
 			std::string							_buffer;
 			bool								_bodyIsSent;
+			const std::map<std::string, std::string> _executables;
 	};
-
-	
 }
