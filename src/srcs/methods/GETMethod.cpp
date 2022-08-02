@@ -30,9 +30,11 @@ namespace Webserver
 			else
 				throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
-		else if (!uri.entryExists() || !uri.isReadable())
+		
+		if (!uri.entryExists() || !uri.isReadable())
+		{
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
-
+		}
 		Response* response = new Response();
 		response->addFile(target);
 		response->addHeader(Header::Server, _host.getName());
