@@ -23,7 +23,8 @@ namespace Webserver
 
 		if (uri.isDir())
 		{
-			if (FileInfo(_host.getDefaultIndex(), target).entryExists())
+			FileInfo defaultIndex(_host.getDefaultIndex(), target);
+			if (defaultIndex.entryExists() && defaultIndex.isReadable())
 				target = target + _host.getDefaultIndex();
 			else if (_host.isAutoIndexEnabled())
 				return new AutoIndexResponse(target);
@@ -32,6 +33,7 @@ namespace Webserver
 		}
 		else if (!uri.entryExists() || !uri.isReadable())
 			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
+
 		Response* response = new Response();
 		response->addFile(target);
 		response->addHeader(Header::Server, _host.getName());

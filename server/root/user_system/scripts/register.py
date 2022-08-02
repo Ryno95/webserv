@@ -44,4 +44,3 @@ file.write("password=" + password)
 file.close()
 
 print("Location: " + USER_PAGES + "user_created.html\n")
-print("SUCCESSSS!!!!", file=sys.stderr)
