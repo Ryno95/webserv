@@ -20,6 +20,7 @@ namespace Webserver
 		DEBUG("Entering GET method!");
 		std::string		target(uri.getFullPath());
 
+
 		if (uri.isDir())
 		{
 			if (FileInfo(_host.getDefaultIndex(), target).entryExists())
@@ -29,6 +30,8 @@ namespace Webserver
 			else
 				throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 		}
+		else if (!uri.entryExists() || !uri.isReadable())
+			throw InvalidRequestException(HttpStatusCodes::NOT_FOUND);
 
 		Response* response = new Response();
 		response->addFile(target);
