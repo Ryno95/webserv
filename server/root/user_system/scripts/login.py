@@ -54,7 +54,4 @@ if password != passwordInput:
 
 print("Set-Cookie: user=" + usernameInput)
 print("Location: " + os.environ.get("HTTP_HOST") + "/logged_in.html")
-# print("Location: http://" + os.environ.get("HTTP_HOST") + "/logged_in.html")
-# print("Location: " + USER_PAGES + "logged_in.html\n")
-# print("Status: 200 OK\n")
 print("Status: 301 Redirect\n")
