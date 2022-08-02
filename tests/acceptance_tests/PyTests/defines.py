@@ -28,6 +28,6 @@ class Methods(Enum):
     DELETE  = 3
     CGI     = 4
 
-LOCAL_HOST = "http://localhost:8080"
+LOCAL_HOST = "http://localhost:80"
 TEST_FILE_DIR = "acceptance_tests/PyTests/"
 TEST_FILES_DIR =  "testFiles/"
