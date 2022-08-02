@@ -10,7 +10,7 @@ import os
 
 EXIT_CODE = 0
 
-localhost = "http://localhost:8080/cgi-bin/add.py"
+localhost = "http://localhost:80/cgi-bin/add.py"
 
 # Create query string QUERY_STRING=val1=6&val2=63
 _data={"val1":"6",
@@ -28,7 +28,7 @@ if not cgiRequest._response.text.find(_data["val1"] + _data["val2"]):
         EXIT_CODE += 1
 
 
-localhost = "http://localhost:8080/cgi-bin/NonExistantScript.py"
+localhost = "http://localhost:80/cgi-bin/NonExistantScript.py"
 data = None
 cgiRequest = CgiRequest(localhost, data=_data)
 try:
@@ -40,7 +40,7 @@ except Exception as e:
 EXIT_CODE += cgiRequest.compareActualToExpected(HttpResponseStatus.NOT_FOUND, cgiRequest._response.status_code, "Status Code")
 
 
-localhost = "http://localhost:8080/scriptInNonPostBlock.py"
+localhost = "http://localhost:80/scriptInNonPostBlock.py"
 data = None
 cgiRequest = CgiRequest(localhost, data=_data)
 try:
@@ -54,7 +54,7 @@ EXIT_CODE += cgiRequest.compareActualToExpected(HttpResponseStatus.METHOD_NOT_AL
 
 #  creatign file with only execution rights, needs write permissions to be executable
 fd = open(os.open("../../../server/root/cgi-bin/scriptWithWrongRights.py", os.O_CREAT, 0o100), "w")
-localhost = "http://localhost:8080/cgi-bin/scriptWithWrongRights.py"
+localhost = "http://localhost:80/cgi-bin/scriptWithWrongRights.py"
 data = None
 cgiRequest = CgiRequest(localhost, data=_data)
 try:
@@ -66,7 +66,7 @@ except Exception as e:
 EXIT_CODE += cgiRequest.compareActualToExpected(HttpResponseStatus.FORBIDDEN, cgiRequest._response.status_code, "Status Code")
 os.remove("../../../server/root/cgi-bin/scriptWithWrongRights.py")
 
-localhost = "http://localhost:8080/cgi-bin/hello.py"
+localhost = "http://localhost:80/cgi-bin/hello.py"
 data = None
 cgiRequest = CgiRequest(localhost, data=_data)
 try:
@@ -80,7 +80,7 @@ contentLength = cgiRequest._response.headers.get('Content-Length')
 # Expecting contentLength for "<!DOCTYPE html>\n<html>\n<h1>Hello World!</h1></html>\n" = 55
 EXIT_CODE += cgiRequest.compareActualToExpected(contentLength, "53", "Content-Length")
 
-# localhost = "http://localhost:8080/cgi-bin/bigAssScript.py"
+# localhost = "http://localhost:80/cgi-bin/bigAssScript.py"
 # data = None
 # cgiRequest = CgiRequest(localhost, data=_data)
 # cgiRequest.doRequest()
